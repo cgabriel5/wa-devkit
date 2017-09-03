@@ -24,35 +24,72 @@ $ gulp init --silent # follow the prompt by entering project information.
 ```bash
 # Runs the default task which runs the build and watch tasks. 
 # This creates the needed folders/files, starts browser-sync servers, 
-# & watches project for file changes.
-$ gulp 
+# & watches project for file changes. Only one Gulp instance can be run
+# at a time.
+$ gulp
+
+# Stops active Gulp instance. Only one instance can be run at a time.
+$ gulp --stop
 
 # Builds the needed folders/files for the app.
-$ gulp build 
+$ gulp build
 
 # Watches project for file changes. Running the needed tasks to rebuild files.
-$ gulp watch 
+$ gulp task-watch 
+```
+
+```bash
+# Checks whether Gulp is active or not.
+$ gulp helper-status
+```
+
+```bash
+# Checks the ports being used by the Gulp.
+$ gulp helper-ports
 ```
 
 ```bash
 # Will open the given file at the given port in browser.
-$ gulp open -p/--port [req:num] -f/--file [req:str] 
+$ gulp helper-open -p/--port [req:num] -f/--file [req:str]
 
-$ gulp open -p 3000 -f index.html # Will open index.html at port 3000.  
-$ gulp open -p 3002 -f readme.md # Will open readme.md at port 3002.
+$ gulp helper-open --file index.html --port 3000 # Open index.html in port 3000
 ```
 
 ```bash
-$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only] # Will purify CSS of any unused CSS.
+# Check project for any unused CSS.
+$ gulp helper-purify -D/--delete [optional:boolean] -r/--remove [optional:boolean]
 
-$ gulp purify # Create pure.css and scan for any unused CSS.
-$ gulp purify -D # Delete pure.css file.
-$ gulp purify --remove # Delete pure.css and remove unused CSS from /css/source/styles.css.
+$ gulp helper-purify # Create pure.css containing any unused CSS.
+$ gulp helper-purify --delete # Delete pure.css file.
+$ gulp helper-purify --remove # Delete pure.css and remove unused CSS from /css/source/styles.css.
 ```
 
 ```bash
-$ gulp clean-files # will run js-beautify on HTML, JS, CSS, & JSON project files.
-$ gulp findmin # console logs all minified files in project
+# Convert a MarkDown (.md) file to its HTML equivalent.
+$ gulp helper-tohtml -i/--input [req:string] -o/--output [req:string] -n/--name [optional:string]
+
+# Convert README.md to Converted.html and place in /markdown/preview.
+$ gulp helper-tohtml --input README.md --output /markdown/preview --name Converted.html
+```
+
+```bash
+# Convert README.md to Converted.html and place in /markdown/preview.
+$ gulp helper-clear -n/--names [req:string]
+
+# Clear contents of ./gulp/.gulpports and ./gulp/.gulpstatus.
+$ gulp helper-clear --names="gulpstatus gulpports" 
+$ gulp helper-clear --names="gulpstatus" # Clear contents of ./gulp/.gulpstatus.
+$ gulp helper-clear --names gulpports # Clear contents of ./gulp/.gulpports.
+```
+
+```bash
+# Will run js-beautify on HTML, JS, CSS, & JSON project files.
+$ gulp helper-clean-files 
+```
+
+```bash
+# Console logs all minified files in project.
+$ gulp helper-findmin 
 ```
 
 ## § Files To Modify
@@ -83,7 +120,7 @@ Take a look at...
 
 ### Issues
 
-* Issues if any... 
+* Issues if any...
 
 ### Contributing
 
@@ -98,4 +135,3 @@ See how to contribute [here](https://github.com/{{#git_id}}/{{#repo_name}}/blob/
 ### License
 
 This project uses the [MIT License](https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/LICENSE.txt).
-

@@ -11,66 +11,87 @@
 </head>
 
 <body>
-    <article class="markdown-body"><h2 id="§-read-before-use">§ Read Before Use</h2>
-<ul class="list">
-<li>Make sure to remove the <code>.gitignore</code> file from the <code>img/</code> directory before using. The file is used as a placeholder to include the otherwise empty folder with <code>Git</code>.</li>
-<li>Remove setup sections <code>§</code> from the <code>README</code> after reading and fully understanding what to do.</li>
-<li>Boilerplate uses <code>NodeJS</code>, <code>Gulp</code>, and <code>Yarn</code>. <em>Please make sure they are installed</em>.</li>
-</ul>
-<h2 id="§-yarn-setup">§ Yarn Setup</h2>
-<p>Run the following commands in the following order:</p>
-<pre class="hljs"><code>$ yarn init <span class="hljs-comment"># Create a package.json file. Update package.json as needed.</span>
-$ yarn install <span class="hljs-comment"># Installs needed package.json modules.</span></code></pre><h2 id="§-gulp-setup">§ Gulp Setup</h2>
-<p>First and foremost, <strong>make sure</strong> to initialize the project via <code>Gulp</code> before doing anything else!</p>
-<pre class="hljs"><code>$ gulp init --silent <span class="hljs-comment"># follow the prompt by entering project information.</span></code></pre><h2 id="§-using-gulp">§ Using Gulp</h2>
-<pre class="hljs"><code><span class="hljs-comment"># Runs the default task which runs the build and watch tasks. </span>
+    <article class="markdown-body">
+        <h2 id="§-read-before-use">§ Read Before Use</h2>
+        <ul class="list">
+            <li>Make sure to remove the <code>.gitignore</code> file from the <code>img/</code> directory before using. The file is used as a placeholder to include the otherwise empty folder with <code>Git</code>.</li>
+            <li>Remove setup sections <code>§</code> from the <code>README</code> after reading and fully understanding what to do.</li>
+            <li>Boilerplate uses <code>NodeJS</code>, <code>Gulp</code>, and <code>Yarn</code>. <em>Please make sure they are installed</em>.</li>
+        </ul>
+        <h2 id="§-yarn-setup">§ Yarn Setup</h2>
+        <p>Run the following commands in the following order:</p>
+        <pre class="hljs"><code>$ yarn init <span class="hljs-comment"># Create a package.json file. Update package.json as needed.</span>
+$ yarn install <span class="hljs-comment"># Installs needed package.json modules.</span></code></pre>
+        <h2 id="§-gulp-setup">§ Gulp Setup</h2>
+        <p>First and foremost, <strong>make sure</strong> to initialize the project via <code>Gulp</code> before doing anything else!</p>
+        <pre class="hljs"><code>$ gulp init --silent <span class="hljs-comment"># follow the prompt by entering project information.</span></code></pre>
+        <h2 id="§-using-gulp">§ Using Gulp</h2>
+        <pre class="hljs"><code><span class="hljs-comment"># Runs the default task which runs the build and watch tasks. </span>
 <span class="hljs-comment"># This creates the needed folders/files, starts browser-sync servers, </span>
-<span class="hljs-comment"># &amp; watches project for file changes.</span>
-$ gulp 
+<span class="hljs-comment"># &amp; watches project for file changes. Only one Gulp instance can be run</span>
+<span class="hljs-comment"># at a time.</span>
+$ gulp
+
+<span class="hljs-comment"># Stops active Gulp instance. Only one instance can be run at a time.</span>
+$ gulp --stop
 
 <span class="hljs-comment"># Builds the needed folders/files for the app.</span>
-$ gulp build 
+$ gulp build
 
 <span class="hljs-comment"># Watches project for file changes. Running the needed tasks to rebuild files.</span>
-$ gulp watch</code></pre><pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
-$ gulp open -p/--port [req:num] <span class="hljs-_">-f</span>/--file [req:str] 
+$ gulp task-watch</code></pre><pre class="hljs"><code><span class="hljs-comment"># Checks whether Gulp is active or not.</span>
+$ gulp helper-status</code></pre><pre class="hljs"><code><span class="hljs-comment"># Checks the ports being used by the Gulp.</span>
+$ gulp helper-ports</code></pre><pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
+$ gulp helper-open -p/--port [req:num] <span class="hljs-_">-f</span>/--file [req:str]
 
-$ gulp open -p 3000 <span class="hljs-_">-f</span> index.html <span class="hljs-comment"># Will open index.html at port 3000.  </span>
-$ gulp open -p 3002 <span class="hljs-_">-f</span> readme.md <span class="hljs-comment"># Will open readme.md at port 3002.</span></code></pre><pre class="hljs"><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only] <span class="hljs-comment"># Will purify CSS of any unused CSS.</span>
+$ gulp helper-open --file index.html --port 3000 <span class="hljs-comment"># Open index.html in port 3000</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Check project for any unused CSS.</span>
+$ gulp helper-purify -D/--delete [optional:boolean] -r/--remove [optional:boolean]
 
-$ gulp purify <span class="hljs-comment"># Create pure.css and scan for any unused CSS.</span>
-$ gulp purify -D <span class="hljs-comment"># Delete pure.css file.</span>
-$ gulp purify --remove <span class="hljs-comment"># Delete pure.css and remove unused CSS from /css/source/styles.css.</span></code></pre><pre class="hljs"><code>$ gulp clean-files <span class="hljs-comment"># will run js-beautify on HTML, JS, CSS, &amp; JSON project files.</span>
-$ gulp findmin <span class="hljs-comment"># console logs all minified files in project</span></code></pre><h2 id="§-files-to-modify">§ Files To Modify</h2>
-<ul class="list">
-<li><strong>CSS</strong> &mdash; Modify <code>css/source/styles.css</code>. <code>Gulp</code> will handle auto-prefixing, minifying, and concatenation.</li>
-<li><strong>JS-App</strong> &mdash; Modify <code>js/source/modules/*.js</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
-<li><strong>JS-Libs</strong> &mdash; Add third-party libraries to <code>js/libs/</code>. Then make sure to update the <code>jslibs</code> <code>Gulp</code> task by adding the library path file to the <code>src</code> array. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
-<li><strong>HTML</strong> &mdash; Modify <code>html/source/i*.html</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
-</ul>
-<h1 id="{{#repo_name}}">{{#repo_name}}</h1>
-<p>{{#description}}</p>
-<h3 id="purpose">Purpose</h3>
-<p>The purpose of {{#repo_name}} is to...</p>
-<h3 id="live-demo">Live Demo</h3>
-<p>Live demo can be accessed <a href="https://{{#git_id}}.github.io/{{#repo_name}}/">here</a>.</p>
-<h3 id="how-it-works">How It Works</h3>
-<p>Explain how it works...</p>
-<h3 id="how-to-use">How To Use</h3>
-<p>Take a look at...</p>
-<h3 id="issues">Issues</h3>
-<ul class="list">
-<li>Issues if any... </li>
-</ul>
-<h3 id="contributing">Contributing</h3>
-<p>Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)</p>
-<p>See how to contribute <a href="https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/CONTRIBUTING.md">here</a>.</p>
-<h3 id="todo">TODO</h3>
-<ul class="list">
-<li>[ ] TODO item.</li>
-</ul>
-<h3 id="license">License</h3>
-<p>This project uses the <a href="https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/LICENSE.txt">MIT License</a>.</p>
+$ gulp helper-purify <span class="hljs-comment"># Create pure.css containing any unused CSS.</span>
+$ gulp helper-purify --delete <span class="hljs-comment"># Delete pure.css file.</span>
+$ gulp helper-purify --remove <span class="hljs-comment"># Delete pure.css and remove unused CSS from /css/source/styles.css.</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Convert a MarkDown (.md) file to its HTML equivalent.</span>
+$ gulp helper-tohtml -i/--input [req:string] -o/--output [req:string] -n/--name [optional:string]
+
+<span class="hljs-comment"># Convert README.md to Converted.html and place in /markdown/preview.</span>
+$ gulp helper-tohtml --input README.md --output /markdown/preview --name Converted.html</code></pre><pre class="hljs"><code><span class="hljs-comment"># Convert README.md to Converted.html and place in /markdown/preview.</span>
+$ gulp helper-clear -n/--names [req:string]
+
+<span class="hljs-comment"># Clear contents of ./gulp/.gulpports and ./gulp/.gulpstatus.</span>
+$ gulp helper-clear --names=<span class="hljs-string">"gulpstatus gulpports"</span> 
+$ gulp helper-clear --names=<span class="hljs-string">"gulpstatus"</span> <span class="hljs-comment"># Clear contents of ./gulp/.gulpstatus.</span>
+$ gulp helper-clear --names gulpports <span class="hljs-comment"># Clear contents of ./gulp/.gulpports.</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Will run js-beautify on HTML, JS, CSS, &amp; JSON project files.</span>
+$ gulp helper-clean-files</code></pre><pre class="hljs"><code><span class="hljs-comment"># Console logs all minified files in project.</span>
+$ gulp helper-findmin</code></pre>
+        <h2 id="§-files-to-modify">§ Files To Modify</h2>
+        <ul class="list">
+            <li><strong>CSS</strong> &mdash; Modify <code>css/source/styles.css</code>. <code>Gulp</code> will handle auto-prefixing, minifying, and concatenation.</li>
+            <li><strong>JS-App</strong> &mdash; Modify <code>js/source/modules/*.js</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
+            <li><strong>JS-Libs</strong> &mdash; Add third-party libraries to <code>js/libs/</code>. Then make sure to update the <code>jslibs</code> <code>Gulp</code> task by adding the library path file to the <code>src</code> array. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
+            <li><strong>HTML</strong> &mdash; Modify <code>html/source/i*.html</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
+        </ul>
+        <h1 id="{{#repo_name}}">{{#repo_name}}</h1>
+        <p>{{#description}}</p>
+        <h3 id="purpose">Purpose</h3>
+        <p>The purpose of {{#repo_name}} is to...</p>
+        <h3 id="live-demo">Live Demo</h3>
+        <p>Live demo can be accessed <a href="https://{{#git_id}}.github.io/{{#repo_name}}/">here</a>.</p>
+        <h3 id="how-it-works">How It Works</h3>
+        <p>Explain how it works...</p>
+        <h3 id="how-to-use">How To Use</h3>
+        <p>Take a look at...</p>
+        <h3 id="issues">Issues</h3>
+        <ul class="list">
+            <li>Issues if any...</li>
+        </ul>
+        <h3 id="contributing">Contributing</h3>
+        <p>Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)</p>
+        <p>See how to contribute <a href="https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/CONTRIBUTING.md">here</a>.</p>
+        <h3 id="todo">TODO</h3>
+        <ul class="list">
+            <li>[ ] TODO item.</li>
+        </ul>
+        <h3 id="license">License</h3>
+        <p>This project uses the <a href="https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/LICENSE.txt">MIT License</a>.</p>
     </article>
 </body>
 
