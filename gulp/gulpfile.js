@@ -577,6 +577,22 @@ gulp.task("helper-clear", function(done) {
     }
     done();
 });
+/**
+ * @description [Opens the provided file in the user's browser.]
+ * @param  {String}   file     [The file to open.]
+ * @param  {Number}   port     [The port to open on.]
+ * @param  {Function} callback [The Gulp task callback to run.]
+ * @return {Undefined}         [Nothing is returned.]
+ */
+function open_file_in_browser(file, port, callback) {
+    open(uri(file, port), {
+            app: options.browsers.main
+        })
+        .then(function() {
+            notify("File opened!");
+            callback();
+        });
+};
 // open index.html in browser
 gulp.task("helper-open", function(done) {
     // run yargs
@@ -589,20 +605,37 @@ gulp.task("helper-open", function(done) {
         })
         .option("port", {
             alias: "p",
-            demandOption: true,
+            demandOption: false,
             describe: "The port to open browser in.",
             type: "number"
         })
         .example("$0 --file index.html --port 3000", "Open index.html in port 3000.")
         .argv;
-    // open file in the browser
-    open(uri(_args.f || _args.file, _args.p || _args.port), {
-            app: options.browsers.main
-        })
-        .then(function() {
-            notify("File opened!");
-            done();
+    // get the command line arguments from yargs
+    var file = _args.f || _args.file;
+    var port = _args.p || _args.port;
+    // if port is provided use that
+    if (port) {
+        open_file_in_browser(file, port, done);
+    } else { // else get the used port, if any
+        // get the ports from .gulpports
+        fs.open(paths.gulp.ports, "r", function(err, fd) {
+            if (err) throw err;
+            fs.readFile(paths.gulp.ports, "utf8", function(err, data) {
+                if (err) throw err;
+                // if file is empty
+                if (!data.length) {
+                    log(("[warning]")
+                        .yellow + " No ports are in use.");
+                    return done();
+                }
+                // file is not empty...extract ports
+                var ports = data.split(" ");
+                // open file in the browser
+                open_file_in_browser(file, ports[0], done);
+            });
         });
+    }
 });
 // print the status of gulp (is it running or not?)
 gulp.task("helper-status", function(done) {
