@@ -33,18 +33,16 @@ $ yarn install <span class="hljs-comment"># Installs needed package.json modules
 $ gulp
 
 <span class="hljs-comment"># Stops active Gulp instance. Only one instance can be run at a time.</span>
-$ gulp --stop
-
-<span class="hljs-comment"># Builds the needed folders/files for the app.</span>
-$ gulp build
-
-<span class="hljs-comment"># Watches project for file changes. Running the needed tasks to rebuild files.</span>
-$ gulp task-watch</code></pre><pre class="hljs"><code><span class="hljs-comment"># Checks whether Gulp is active or not.</span>
+$ gulp --stop</code></pre><pre class="hljs"><code><span class="hljs-comment"># Checks whether Gulp is active or not.</span>
 $ gulp helper-status</code></pre><pre class="hljs"><code><span class="hljs-comment"># Checks the ports being used by the Gulp.</span>
-$ gulp helper-ports</code></pre><pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
+$ gulp helper-ports</code></pre>
+        <p><strong>Note</strong>: New tabs should be opened via the terminal using <code>helper-open</code>. Doing so will ensure the generated tab will auto-close when Gulp is closed/existed. Opening tabs by typing/copy-pasting the project URL into the browser address bar will not auto-close the tab(s) <a href="https://stackoverflow.com/questions/19761241/window-close-and-self-close-do-not-close-the-window-in-chrome">due to security issues</a>.</p>
+        <pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
 $ gulp helper-open -p/--port [req:num] <span class="hljs-_">-f</span>/--file [req:str]
 
-$ gulp helper-open --file index.html --port 3000 <span class="hljs-comment"># Open index.html in port 3000</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Check project for any unused CSS.</span>
+<span class="hljs-comment"># When a port is not provided and Gulp is running the currently used port by Gulp will be used.</span>
+$ gulp helper-open --file markdown/preview/README.html
+$ gulp helper-open --file index.html --port 3000 <span class="hljs-comment"># Open index.html in port 3000.</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Check project for any unused CSS.</span>
 $ gulp helper-purify -D/--delete [optional:boolean] -r/--remove [optional:boolean]
 
 $ gulp helper-purify <span class="hljs-comment"># Create pure.css containing any unused CSS.</span>

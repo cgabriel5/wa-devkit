@@ -30,12 +30,6 @@ $ gulp
 
 # Stops active Gulp instance. Only one instance can be run at a time.
 $ gulp --stop
-
-# Builds the needed folders/files for the app.
-$ gulp build
-
-# Watches project for file changes. Running the needed tasks to rebuild files.
-$ gulp task-watch 
 ```
 
 ```bash
@@ -48,11 +42,15 @@ $ gulp helper-status
 $ gulp helper-ports
 ```
 
+**Note**: New tabs should be opened via the terminal using `helper-open`. Doing so will ensure the generated tab will auto-close when Gulp is closed/existed. Opening tabs by typing/copy-pasting the project URL into the browser address bar will not auto-close the tab(s) [due to security issues](https://stackoverflow.com/questions/19761241/window-close-and-self-close-do-not-close-the-window-in-chrome).
+
 ```bash
 # Will open the given file at the given port in browser.
 $ gulp helper-open -p/--port [req:num] -f/--file [req:str]
 
-$ gulp helper-open --file index.html --port 3000 # Open index.html in port 3000
+# When a port is not provided and Gulp is running the currently used port by Gulp will be used.
+$ gulp helper-open --file markdown/preview/README.html
+$ gulp helper-open --file index.html --port 3000 # Open index.html in port 3000.
 ```
 
 ```bash
