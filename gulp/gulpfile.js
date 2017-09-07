@@ -243,7 +243,7 @@ gulp.task("task-watch", function(done) {
     // start browser-sync
     bs.init({
         browser: browser,
-        proxy: uri(paths.base), // uri("markdown/preview/README.html"),
+        proxy: uri(paths.index), // uri("markdown/preview/README.html"),
         port: bs.__ports__[0],
         ui: {
             port: bs.__ports__[1]
