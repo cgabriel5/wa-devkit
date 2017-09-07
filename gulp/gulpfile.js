@@ -10,8 +10,14 @@ var shorthand = require("gulp-shorthand");
 var concat = require("gulp-concat");
 var minify_html = require("gulp-minify-html");
 var clean_css = require("gulp-clean-css");
+var open = require("gulp-open");
+// -------------------------------------
+// // Non es-uglify
+// Remove the following two lines and uncomment the
+// following lines if uglify-es is needed.
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
+// -------------------------------------
 // // Uncomment for uglify-es
 // var composer = require("gulp-uglify/composer");
 // var uglify = composer(require("uglify-es"), console);
@@ -27,7 +33,6 @@ var find_free_port = require("find-free-port");
 var gulpif = require("gulp-if");
 var print = require("gulp-print");
 var mds = require("markdown-styles");
-var open = require("opn");
 var sequence = require("run-sequence");
 var pump = require("pump");
 var args = require("yargs");
@@ -48,6 +53,7 @@ var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var uri = utils.uri;
+var browser = utils.browser;
 // -------------------------------------
 var bs = browser_sync.create("localhost");
 //
@@ -236,7 +242,7 @@ gulp.task("task-watch", function(done) {
     });
     // start browser-sync
     bs.init({
-        browser: options.browsers.main,
+        browser: browser,
         proxy: uri(paths.base), // uri("markdown/preview/README.html"),
         port: bs.__ports__[0],
         ui: {
@@ -585,13 +591,18 @@ gulp.task("helper-clear", function(done) {
  * @return {Undefined}         [Nothing is returned.]
  */
 function open_file_in_browser(file, port, callback) {
-    open(uri(file, port), {
-            app: options.browsers.main
+    pump([gulp.src(file, {
+            cwd: "./",
+            dot: true
+        }),
+        open({
+            app: browser,
+            uri: uri(file, port)
         })
-        .then(function() {
-            notify("File opened!");
-            callback();
-        });
+    ], function() {
+        notify("File opened!");
+        callback();
+    });
 };
 // open index.html in browser
 gulp.task("helper-open", function(done) {
