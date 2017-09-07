@@ -46,7 +46,7 @@ $ gulp helper-ports
 
 ```bash
 # Will open the given file at the given port in browser.
-$ gulp helper-open -p/--port [req:num] -f/--file [req:str]
+$ gulp helper-open -p/--port [optional:num] -f/--file [req:str]
 
 # When a port is not provided and Gulp is running the currently used port by Gulp will be used.
 $ gulp helper-open --file markdown/preview/README.html

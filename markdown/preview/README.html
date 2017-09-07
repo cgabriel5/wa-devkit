@@ -38,7 +38,7 @@ $ gulp helper-status</code></pre><pre class="hljs"><code><span class="hljs-comme
 $ gulp helper-ports</code></pre>
         <p><strong>Note</strong>: New tabs should be opened via the terminal using <code>helper-open</code>. Doing so will ensure the generated tab will auto-close when Gulp is closed/existed. Opening tabs by typing/copy-pasting the project URL into the browser address bar will not auto-close the tab(s) <a href="https://stackoverflow.com/questions/19761241/window-close-and-self-close-do-not-close-the-window-in-chrome">due to security issues</a>.</p>
         <pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
-$ gulp helper-open -p/--port [req:num] <span class="hljs-_">-f</span>/--file [req:str]
+$ gulp helper-open -p/--port [optional:num] <span class="hljs-_">-f</span>/--file [req:str]
 
 <span class="hljs-comment"># When a port is not provided and Gulp is running the currently used port by Gulp will be used.</span>
 $ gulp helper-open --file markdown/preview/README.html
