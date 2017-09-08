@@ -71,13 +71,12 @@ $ gulp helper-tohtml --input README.md --output /markdown/preview --name Convert
 ```
 
 ```bash
-# Convert README.md to Converted.html and place in /markdown/preview.
+# Clear ./gulp/.gulpconfig.json keys if needed.
 $ gulp helper-clear -n/--names [req:string]
 
-# Clear contents of ./gulp/.gulpports and ./gulp/.gulpstatus.
-$ gulp helper-clear --names="gulpstatus gulpports" 
-$ gulp helper-clear --names="gulpstatus" # Clear contents of ./gulp/.gulpstatus.
-$ gulp helper-clear --names gulpports # Clear contents of ./gulp/.gulpports.
+$ gulp helper-clear --names="gulpstatus gulpports" # Clear pid and ports keys.
+$ gulp helper-clear --names="gulpstatus" # Clear pid key.
+$ gulp helper-clear --names gulpports # Clear ports key.
 ```
 
 ```bash

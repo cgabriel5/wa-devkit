@@ -51,13 +51,12 @@ $ gulp helper-purify --remove <span class="hljs-comment"># Delete pure.css and r
 $ gulp helper-tohtml -i/--input [req:string] -o/--output [req:string] -n/--name [optional:string]
 
 <span class="hljs-comment"># Convert README.md to Converted.html and place in /markdown/preview.</span>
-$ gulp helper-tohtml --input README.md --output /markdown/preview --name Converted.html</code></pre><pre class="hljs"><code><span class="hljs-comment"># Convert README.md to Converted.html and place in /markdown/preview.</span>
+$ gulp helper-tohtml --input README.md --output /markdown/preview --name Converted.html</code></pre><pre class="hljs"><code><span class="hljs-comment"># Clear ./gulp/.gulpconfig.json keys if needed.</span>
 $ gulp helper-clear -n/--names [req:string]
 
-<span class="hljs-comment"># Clear contents of ./gulp/.gulpports and ./gulp/.gulpstatus.</span>
-$ gulp helper-clear --names=<span class="hljs-string">"gulpstatus gulpports"</span> 
-$ gulp helper-clear --names=<span class="hljs-string">"gulpstatus"</span> <span class="hljs-comment"># Clear contents of ./gulp/.gulpstatus.</span>
-$ gulp helper-clear --names gulpports <span class="hljs-comment"># Clear contents of ./gulp/.gulpports.</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Will run js-beautify on HTML, JS, CSS, &amp; JSON project files.</span>
+$ gulp helper-clear --names=<span class="hljs-string">"gulpstatus gulpports"</span> <span class="hljs-comment"># Clear pid and ports keys.</span>
+$ gulp helper-clear --names=<span class="hljs-string">"gulpstatus"</span> <span class="hljs-comment"># Clear pid key.</span>
+$ gulp helper-clear --names gulpports <span class="hljs-comment"># Clear ports key.</span></code></pre><pre class="hljs"><code><span class="hljs-comment"># Will run js-beautify on HTML, JS, CSS, &amp; JSON project files.</span>
 $ gulp helper-clean-files</code></pre><pre class="hljs"><code><span class="hljs-comment"># Console logs all minified files in project.</span>
 $ gulp helper-findmin</code></pre>
         <h2 id="§-files-to-modify">§ Files To Modify</h2>
