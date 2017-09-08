@@ -23,6 +23,7 @@ var beautify = require("gulp-jsbeautifier");
 // var uglify = composer(require("uglify-es"), console);
 // var beautify = require("gulp-jsbeautifier");
 // -------------------------------------
+var json = require("json-file");
 var del = require("del");
 var fe = require("file-exists");
 var browser_sync = require("browser-sync");
@@ -38,6 +39,8 @@ var pump = require("pump");
 var args = require("yargs");
 // -------------------------------------
 var config = require("./gulp/config.json");
+// internal Gulp config file
+var __config__ = json.read("./gulp/.gulpconfig.json");
 var paths = config.paths;
 var options = config.options;
 var beautify_options = options.beautify;
@@ -307,15 +310,12 @@ gulp.task("task-clean-jslibs", function(done) {
         clean()
     ], done);
 });
-// update the status of gulp to active in ./gulp/.gulpstatus
+// update the status of gulp to active
 gulp.task("task-start-gulp", function(done) {
-    fs.readFile(paths.gulp.status, "utf8", function(err, data) {
-        if (err) throw err;
-        fs.writeFile(paths.gulp.status, process.pid, "utf8", function(err) {
-            if (err) throw err;
-            done();
-        });
-    });
+    __config__.set("pid", process.pid); // set the status
+    __config__.write(function() { // save changes to file
+        done();
+    }, null, 4);
 });
 // watch for git branch changes:
 // branch name checks are done to check whether the branch was changed after
@@ -351,9 +351,10 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
             });
             // when gulp is closed do a quick cleanup
             cleanup(function(exit_code, signal) {
-                // clear the status of gulp to off
-                fs.writeFileSync(paths.gulp.status, "");
-                fs.writeFileSync(paths.gulp.ports, "");
+                // clear gulp status and ports
+                __config__.set("pid", null);
+                __config__.set("ports", null);
+                __config__.writeSync(null, 4);
                 branch_name = undefined;
                 if (bs) bs.exit();
                 if (process) process.exit();
@@ -386,55 +387,44 @@ gulp.task("default", function(done) {
     // get the command line arguments from yargs
     var stop = _args.s || _args.stop;
     if (stop) { // end the running Gulp process
-        fs.open(paths.gulp.status, "r", function(err, fd) {
-            if (err) throw err;
-            fs.readFile(paths.gulp.status, "utf8", function(err, data) {
-                if (err) throw err;
-                if (data.length) { // kill the open process
-                    log(("[success]")
-                        .green + " Gulp process stopped.");
-                    process.kill(data);
-                    return done();
-                } else { // no open process exists
-                    log(("[warning]")
-                        .yellow + " No open Gulp process exists.");
-                    return done();
-                }
-            });
-        });
+        // get pid, if any
+        var pid = __config__.get("pid");
+        if (pid) { // kill the open process
+            log(("[success]")
+                .green + " Gulp process stopped.");
+            process.kill(pid);
+        } else { // no open process exists
+            log(("[warning]")
+                .yellow + " No Gulp process exists.");
+        }
+        return done();
     } else { // start up Gulp like normal
         return find_free_port(3000, 3100, "127.0.0.1", 2, function(err, p1, p2) {
-            fs.open(paths.gulp.status, "r", function(err, fd) {
-                if (err) throw err;
-                fs.readFile(paths.gulp.status, "utf8", function(err, data) {
-                    if (err) throw err;
-                    // if there is data present it means a Gulp instance has already started.
-                    // therefore, prevent another from starting.
-                    if (data.length) {
-                        log(("[warning]")
-                            .yellow + " A Gulp instance is already running " + ("(pid:" + data + ")")
-                            .yellow + ". Stop that instance before starting a new one.");
-                        return done();
-                    }
-                    fs.open(paths.gulp.ports, "a+", function(err, fd) {
-                        if (err) throw err;
-                        fs.readFile(paths.gulp.ports, "utf8", function(err, data) {
-                            if (err) throw err;
-                            // store ports
-                            fs.writeFile(paths.gulp.ports, [p1, p2].join(" "), "utf8", function(err) {
-                                if (err) throw err;
-                                // store ports on the browser-sync object itself
-                                bs.__ports__ = [p1, p2]; // [app, ui]
-                                // after getting the free ports, finally run the build task
-                                return sequence("task-build", function() {
-                                    sequence("task-watch");
-                                    done();
-                                });
-                            });
-                        });
-                    });
-                });
+            // get pid, if any
+            var pid = __config__.get("pid");
+            // if there is a pid present it means a Gulp instance has already started.
+            // therefore, prevent another from starting.
+            if (pid) {
+                log(("[warning]")
+                    .yellow + " A Gulp instance is already running " + ("(pid:" + pid + ")")
+                    .yellow + ". Stop that instance before starting a new one.");
+                return done();
+            }
+            // store the ports
+            __config__.set("ports", {
+                "local": p1,
+                "ui": p2
             });
+            // save ports
+            __config__.write(function() {
+                // store ports on the browser-sync object itself
+                bs.__ports__ = [p1, p2]; // [app, ui]
+                // after getting the free ports, finally run the build task
+                return sequence("task-build", function() {
+                    sequence("task-watch");
+                    done();
+                });
+            }, null, 4);
         });
     }
 });
@@ -552,7 +542,7 @@ gulp.task("helper-tohtml", function(done) {
         });
     });
 });
-// clear the contents of any ./gulp/.gulp* file
+// clear ./gulp/.gulpconfig.json keys
 gulp.task("helper-clear", function(done) {
     // run yargs
     var _args = args.usage("Usage: $0 --names [string]")
@@ -563,25 +553,30 @@ gulp.task("helper-clear", function(done) {
             type: "string"
         })
         .coerce("names", function(value) {
-            return value.split(" ");
+            return value.replace("gulpstatus", "gulppid")
+                .split(" ");
         })
-        .example("$0 --names=\"gulpstatus gulpports\"", "Clear contents of ./gulp/.gulpports and ./gulp/.gulpstatus.")
-        .example("$0 --names=\"gulpstatus\"", "Clear contents of ./gulp/.gulpstatus.")
-        .example("$0 --names gulpports", "Clear contents of ./gulp/.gulpports.")
+        .example("$0 --names=\"gulpstatus gulpports\"", "Clear pid and ports keys.")
+        .example("$0 --names=\"gulpstatus\"", "Clear pid key.")
+        .example("$0 --names gulpports", "Clear ports key.")
         .argv;
     // get provided parameters
     var names = _args.n || _args.names;
     // loop over provided arguments array
     for (var i = 0, l = names.length; i < l; i++) {
-        var path = paths.gulp[names[i].replace("gulp", "")];
+        var key = names[i].replace("gulp", "");
         // using the flag "w+" will create the file if it does not exists. if
         // it does exists it will truncate the current file. in effect clearing
         // if out. which is what is needed.
-        fs.openSync(path, "w+");
+        __config__.set(key, null);
+        // reset name if needed
+        if (key === "pid") key = "status";
         log(("[complete]")
-            .green + " " + path.yellow + " cleared.");
+            .green + " " + key.yellow + " cleared.");
     }
-    done();
+    __config__.write(function() {
+        done();
+    }, null, 4);
 });
 /**
  * @description [Opens the provided file in the user's browser.]
@@ -629,105 +624,84 @@ gulp.task("helper-open", function(done) {
     if (port) {
         open_file_in_browser(file, port, done);
     } else { // else get the used port, if any
-        // get the ports from .gulpports
-        fs.open(paths.gulp.ports, "r", function(err, fd) {
-            if (err) throw err;
-            fs.readFile(paths.gulp.ports, "utf8", function(err, data) {
-                if (err) throw err;
-                // if file is empty
-                if (!data.length) {
-                    log(("[warning]")
-                        .yellow + " No ports are in use.");
-                    return done();
-                }
-                // file is not empty...extract ports
-                var ports = data.split(" ");
-                // open file in the browser
-                open_file_in_browser(file, ports[0], done);
-            });
-        });
+        // get the ports
+        var ports = __config__.get("ports");
+        // no ports...
+        if (!ports) {
+            log(("[warning]")
+                .yellow + " No ports are in use.");
+            return done();
+        }
+        // open file in the browser
+        open_file_in_browser(file, ports.local, done);
     }
 });
 // print the status of gulp (is it running or not?)
 gulp.task("helper-status", function(done) {
-    // get the status from .gulpstatus
-    fs.open(paths.gulp.status, "r", function(err, fd) {
-        if (err) throw err;
-        fs.readFile(paths.gulp.status, "utf8", function(err, data) {
-            if (err) throw err;
-            log(("[status]")
-                .yellow + " Gulp is " + ((data.length) ? "running." : "not running."));
-            done();
-        });
-    });
+    log(("[status]")
+        .yellow + " Gulp is " + ((__config__.get("pid")) ? "running. " + (("(pid:" + process.pid + ")")
+            .yellow) : "not running."));
+    done();
 });
 // print the used ports for browser-sync
 gulp.task("helper-ports", function(done) {
-    // get the ports from .gulpports
-    fs.open(paths.gulp.ports, "r", function(err, fd) {
-        if (err) throw err;
-        fs.readFile(paths.gulp.ports, "utf8", function(err, data) {
-            if (err) throw err;
-            // if file is empty
-            if (!data.length) {
-                log(("[warning]")
-                    .yellow + " No ports are in use.");
-                return done();
-            }
-            // file is not empty...extract ports
-            var ports = data.split(" ");
-            log(("(local)")
-                .green, ports[0]);
-            log(("(ui)")
-                .green, ports[1]);
-            done();
-        });
-    });
+    // get the ports
+    var ports = __config__.get("ports");
+    // if file is empty
+    if (!ports) {
+        log(("[warning]")
+            .yellow + " No ports are in use.");
+        return done();
+    }
+    // ports exist...
+    log(("(local)")
+        .green, ports.local);
+    log(("(ui)")
+        .green, ports.ui);
+    done();
 });
 // run gulp-jsbeautifier on html, js, css, & json files to clean them
 gulp.task("helper-clean-files", function(done) {
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
-    fs.readFile(paths.gulp.status, "utf8", function(err, data) {
-        if (err) throw err;
-        // if file is empty gulp is not active
-        if (data.length) {
-            log(("[warning]")
-                .yellow + " Files cannot be cleaned while Gulp is running. Close Gulp then try again.");
-            return done();
-        }
-        var condition = function(file) {
-            var filepath = file.path;
-            var parts = filepath.split(".");
-            var ext = parts.pop()
-                .toLowerCase();
-            var path = parts.join(".");
-            // this array may be populated with files needed to be ignored
-            // just add the file's path to the array.
-            var exclude = [];
-            // file ext must be of one of the following types
-            if (!-~["html", "js", "css", "json"].indexOf(ext)) return false;
-            // cannot be in the exclude array
-            if (-~exclude.indexOf(filepath.replace(__path__ + "/", ""))) return false;
-            // check if file is a min
-            var path_parts = path.split("/");
-            var last = path_parts[path_parts.length - 1].toLowerCase();
-            // cannot be a minimized file
-            if (-~last.indexOf(".min")) return false;
-            return true;
-        };
-        // get all files
-        pump([gulp.src(["**/*.*", "!node_modules/**"], {
-                cwd: "./",
-                dot: true
-            }),
-            gulpif(condition, print(function(filepath) {
-                return "file: " + filepath;
-            })),
-            gulpif(condition, beautify(beautify_options)),
-            gulp.dest("./"),
-        ], done);
-    });
+    var pid = __config__.get("pid");
+    // if file is empty gulp is not active
+    if (pid) {
+        log(("[warning]")
+            .yellow + " Files cannot be cleaned while Gulp is running. Close Gulp then try again.");
+        return done();
+    }
+    var condition = function(file) {
+        var filepath = file.path;
+        var parts = filepath.split(".");
+        var ext = parts.pop()
+            .toLowerCase();
+        var path = parts.join(".");
+        // this array may be populated with files needed to be ignored
+        // just add the file's path to the array.
+        var exclude = [];
+        // file ext must be of one of the following types
+        if (!-~["html", "js", "css", "json"].indexOf(ext)) return false;
+        // cannot be in the exclude array
+        if (-~exclude.indexOf(filepath.replace(__path__ + "/", ""))) return false;
+        // check if file is a min
+        var path_parts = path.split("/");
+        var last = path_parts[path_parts.length - 1].toLowerCase();
+        // cannot be a minimized file
+        if (-~last.indexOf(".min")) return false;
+        return true;
+    };
+    // get all files
+    pump([gulp.src(["**/*.*", "!node_modules/**"], {
+            cwd: "./",
+            dot: true
+        }),
+        gulpif(condition, print(function(filepath) {
+            return "file: " + filepath;
+        })),
+        gulpif(condition, beautify(beautify_options)),
+        gulp.dest("./"),
+    ], done);
 });
 // finds all the files that contain .min in the name and prints them
 gulp.task("helper-findmin", function(done) {
