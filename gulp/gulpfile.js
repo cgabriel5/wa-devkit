@@ -11,6 +11,9 @@ var concat = require("gulp-concat");
 var minify_html = require("gulp-minify-html");
 var clean_css = require("gulp-clean-css");
 var open = require("gulp-open");
+var imagemin = require("gulp-imagemin");
+var cache = require("gulp-cache");
+var insert = require("gulp-insert");
 // -------------------------------------
 // // Non es-uglify
 // Remove the following two lines and uncomment the
@@ -59,257 +62,39 @@ var uri = utils.uri;
 var browser = utils.browser;
 // -------------------------------------
 var bs = browser_sync.create("localhost");
-//
-// **************************************************************************
-// *           The following tasks are the main application tasks.          *
-// **************************************************************************
-//
-// init HTML files + minify
-gulp.task("task-html", function(done) {
-    // regexp used for pre and post HTML variable injection
-    var r = regexp.html;
-    var r_pre = r.pre;
-    var r_post = r.post;
-    var r_func = function(match) {
-        var filename = "html/source/regexp/" + match.replace(/\$\:(pre|post)\{|\}$/g, "") + ".text";
-        // check that file exists before opening/reading...
-        // return undefined when file does not exist...else return its contents
-        return (!fe.sync(filename)) ? "undefined" : fs.readFileSync(filename)
-            .toString();
-    };
-    pump([gulp.src(paths.tasks.html, {
-            cwd: "html/source/"
-        }),
-        concat("index.html"),
-        replace(new RegExp(r_pre.p, r_pre.f), r_func),
-        beautify(beautify_options),
-        replace(new RegExp(r_post.p, r_post.f), r_func),
-        gulp.dest("./"),
-        minify_html(),
-        gulp.dest("dist/"),
-        bs.stream()
-    ], done);
-});
-// preform custom regexp replacements
-gulp.task("task-precssapp-clean-styles", function(done) {
-    // regexp used for custom CSS code modifications
-    var r = regexp.css;
-    var pf = r.prefixes;
-    var lz = r.lead_zeros;
-    var ez = r.empty_zero;
-    var lh = r.lowercase_hex;
-    pump([gulp.src(["styles.css"], {
-            cwd: "css/source/"
-        }),
-        // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
-        replace(new RegExp(pf.p, pf.f), pf.r),
-        replace(new RegExp(lz.p, lz.f), lz.r),
-        replace(new RegExp(ez.p, ez.f), ez.r),
-        replace(new RegExp(lh.p, lh.f), function(match) {
-            return match.toLowerCase();
-        }),
-        gulp.dest("css/source/"),
-        bs.stream()
-    ], done);
-});
-// build app.css + autoprefix + minify
-gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
-    pump([gulp.src(paths.tasks.cssapp, {
-            cwd: "css/source/"
-        }),
-        concat("app.css"),
-        autoprefixer(autoprefixer_options),
-        shorthand(),
-        beautify(beautify_options),
-        gulp.dest("css/"),
-        clean_css(),
-        gulp.dest("dist/css/"),
-        bs.stream()
-    ], done);
-});
-// build libs.css + minify + beautify
-gulp.task("task-csslibs", function(done) {
-    pump([gulp.src(paths.tasks.csslibs, {
-            cwd: "css/libs/"
-        }),
-        concat("libs.css"),
-        autoprefixer(autoprefixer_options),
-        shorthand(),
-        beautify(beautify_options),
-        gulp.dest("css/"),
-        clean_css(),
-        gulp.dest("dist/css/"),
-        bs.stream()
-    ], done);
-});
-// build app.js + minify + beautify
-gulp.task("task-jsapp", function(done) {
-    pump([gulp.src(paths.flavor.jsapp, {
-            cwd: "js/source/"
-        }),
-        concat("app.js"),
-        beautify(beautify_options),
-        gulp.dest("js/"),
-        uglify(),
-        gulp.dest("dist/js/"),
-        bs.stream()
-    ], done);
-});
-// build lib/lib.js + lib/lib.min.js
-gulp.task("task-jslibsource", function(done) {
-    // check if application is a library
-    var is_library = __type__ === "library";
-    if (!is_library) return done(); // return on apps of type "webapp"
-    // remove test files from files
-    var files_array = paths.flavor.jsapp.filter(function(filename) {
-        return !(/^test/i)
-            .test(filename);
-    });
-    pump([gulp.src(files_array, {
-            cwd: "js/source/"
-        }),
-        concat("app.js"),
-        beautify(beautify_options),
-        gulpif(is_library, rename("lib.js")),
-        gulpif(is_library, gulp.dest("lib/")),
-        gulpif(is_library, gulp.dest("dist/lib/")), // <-- also add to dist/ directory
-        uglify(),
-        gulpif(is_library, rename("lib.min.js")),
-        gulpif(is_library, gulp.dest("lib/")),
-        gulpif(is_library, gulp.dest("dist/lib/")), // <-- also add to dist/ directory
-        bs.stream()
-    ], done);
-});
-// build libs.js + minify + beautify
-gulp.task("task-jslibs", function(done) {
-    pump([gulp.src(paths.flavor.jslibs, {
-            cwd: "js/libs/"
-        }),
-        concat("libs.js"),
-        beautify(beautify_options),
-        gulp.dest("js/"),
-        uglify(),
-        gulp.dest("dist/js/"),
-        bs.stream()
-    ], done);
-});
-// copy css libraries folder
-gulp.task("task-csslibsfolder", ["task-clean-csslibs"], function(done) {
-    pump([gulp.src(["css/libs/**"]),
-        gulp.dest("dist/css/libs/"),
-        bs.stream()
-    ], done);
-});
-// copy js libraries folder
-gulp.task("task-jslibsfolder", ["task-clean-jslibs"], function(done) {
-    pump([gulp.src(["js/libs/**"]),
-        gulp.dest("dist/js/libs/"),
-        bs.stream()
-    ], done);
-});
-// copy img/ to dist/img/
-gulp.task("task-img", function(done) {
-    // need to copy hidden files/folders?
-    // [https://github.com/klaascuvelier/gulp-copy/issues/5]
-    pump([gulp.src("img/**/*"),
-        gulp.dest("dist/img/"),
-        bs.stream()
-    ], done);
-});
-// markdown to html (with github style/layout)
-gulp.task("task-readme", function(done) {
-    mds.render(mds.resolveArgs({
-        input: path.normalize(process.cwd() + "/README.md"),
-        output: path.normalize(process.cwd() + "/markdown/preview"),
-        layout: path.normalize(process.cwd() + "/markdown/source")
-    }), function() {
-        // cleanup README.html
-        pump([gulp.src("README.html", {
-                cwd: "markdown/preview/"
-            }),
-            beautify(beautify_options),
-            gulp.dest("./markdown/preview/"),
-            bs.stream()
-        ], done);
-    });
-});
-// watch for files changes
-gulp.task("task-watch", function(done) {
-    // add auto tab closing capability to browser-sync. this will
-    // auto close the used bs tabs when gulp closes.
-    bs.use({
-        plugin() {},
-        hooks: {
-            "client:js": bs_autoclose
-        },
-    });
-    // start browser-sync
-    bs.init({
-        browser: browser,
-        proxy: uri(paths.index), // uri("markdown/preview/README.html"),
-        port: bs.__ports__[0],
-        ui: {
-            port: bs.__ports__[1]
-        },
-        notify: false,
-        open: true
-    }, function() {
-        // the gulp watchers
-        // get the watch path
-        var path = paths.watch;
-        gulp.watch(path.html, {
-            cwd: "html/source/"
-        }, function() {
-            return sequence("task-html");
-        });
-        gulp.watch(path.css, {
-            cwd: "css/"
-        }, function() {
-            return sequence("task-cssapp", "task-csslibs", "task-csslibsfolder");
-        });
-        gulp.watch(path.js, {
-            cwd: "js/"
-        }, function() {
-            return sequence("task-jsapp", "task-jslibsource", "task-jslibs", "task-jslibsfolder");
-        });
-        gulp.watch(path.img, {
-            cwd: "./"
-        }, function() {
-            return sequence("task-img");
-        });
-        gulp.watch(["README.md"], {
-            cwd: "./"
-        }, function() {
-            return sequence("task-readme", function() {
-                bs.reload();
-            });
-        });
-        done();
-    });
-});
 // remove options
 var opts = {
     read: false,
     cwd: "./"
 };
-// remove the dist/ folder
-gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
-    pump([gulp.src("dist/", opts),
-        clean()
-    ], done);
-});
-// remove the css/libs/ folder
-gulp.task("task-clean-csslibs", function(done) {
-    pump([gulp.src("dist/css/libs/", opts),
-        clean()
-    ], done);
-});
-// remove the js/libs/ folder
-gulp.task("task-clean-jslibs", function(done) {
-    pump([gulp.src("dist/js/libs/", opts),
-        clean()
-    ], done);
-});
+// -------------------------------------
+/**
+ * @description [Opens the provided file in the user's browser.]
+ * @param  {String}   file     [The file to open.]
+ * @param  {Number}   port     [The port to open on.]
+ * @param  {Function} callback [The Gulp task callback to run.]
+ * @return {Undefined}         [Nothing is returned.]
+ */
+function open_file_in_browser(file, port, callback) {
+    pump([gulp.src(file, {
+            cwd: "./",
+            dot: true
+        }),
+        open({
+            app: browser,
+            uri: uri(file, port)
+        })
+    ], function() {
+        notify("File opened!");
+        callback();
+    });
+};
+// -------------------------------------
+//
+// **************************************************************************
+// *           The following tasks are the main application tasks.          *
+// **************************************************************************
+//
 // update the status of gulp to active
 gulp.task("task-start-gulp", function(done) {
     __config__.set("pid", process.pid); // set the status
@@ -362,6 +147,12 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
             done();
         });
     });
+});
+// remove the dist/ folder
+gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
+    pump([gulp.src("dist/", opts),
+        clean()
+    ], done);
 });
 // build the dist/ folder
 gulp.task("task-build", ["task-clean-dist"], function(done) {
@@ -428,11 +219,280 @@ gulp.task("default", function(done) {
         });
     }
 });
+// -------------------------------------
+// watch for files changes
+gulp.task("task-watch", function(done) {
+    // add auto tab closing capability to browser-sync. this will
+    // auto close the used bs tabs when gulp closes.
+    bs.use({
+        plugin() {},
+        hooks: {
+            "client:js": bs_autoclose
+        },
+    });
+    // start browser-sync
+    bs.init({
+        browser: browser,
+        proxy: uri(paths.index), // uri("markdown/preview/README.html"),
+        port: bs.__ports__[0],
+        ui: {
+            port: bs.__ports__[1]
+        },
+        notify: false,
+        open: true
+    }, function() {
+        // the gulp watchers
+        // get the watch path
+        var path = paths.watch;
+        gulp.watch(path.html, {
+            cwd: "html/source/"
+        }, function() {
+            return sequence("task-html");
+        });
+        gulp.watch(path.css, {
+            cwd: "css/"
+        }, function() {
+            return sequence("task-cssapp", "task-csslibs", "task-csslibsfolder");
+        });
+        gulp.watch(path.js, {
+            cwd: "js/"
+        }, function() {
+            return sequence("task-jsapp", "task-jslibsource", "task-jslibs", "task-jslibsfolder");
+        });
+        gulp.watch(path.img, {
+            cwd: "./"
+        }, function() {
+            return sequence("task-img");
+        });
+        gulp.watch(["README.md"], {
+            cwd: "./"
+        }, function() {
+            return sequence("task-readme", function() {
+                bs.reload();
+            });
+        });
+        done();
+    });
+});
+// -------------------------------------
+// init HTML files + minify
+gulp.task("task-html", function(done) {
+    // regexp used for pre and post HTML variable injection
+    var r = regexp.html;
+    var r_pre = r.pre;
+    var r_post = r.post;
+    var r_func = function(match) {
+        var filename = "html/source/regexp/" + match.replace(/\$\:(pre|post)\{|\}$/g, "") + ".text";
+        // check that file exists before opening/reading...
+        // return undefined when file does not exist...else return its contents
+        return (!fe.sync(filename)) ? "undefined" : fs.readFileSync(filename)
+            .toString();
+    };
+    pump([gulp.src(paths.tasks.html, {
+            cwd: "html/source/"
+        }),
+        concat("index.html"),
+        replace(new RegExp(r_pre.p, r_pre.f), r_func),
+        beautify(beautify_options),
+        replace(new RegExp(r_post.p, r_post.f), r_func),
+        gulp.dest("./"),
+        minify_html(),
+        gulp.dest("dist/"),
+        bs.stream()
+    ], done);
+});
+// -------------------------------------
+// preform custom regexp replacements
+gulp.task("task-precssapp-clean-styles", function(done) {
+    // regexp used for custom CSS code modifications
+    var r = regexp.css;
+    var pf = r.prefixes;
+    var lz = r.lead_zeros;
+    var ez = r.empty_zero;
+    var lh = r.lowercase_hex;
+    pump([gulp.src(["styles.css"], {
+            cwd: "css/source/"
+        }),
+        // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
+        replace(new RegExp(pf.p, pf.f), pf.r),
+        replace(new RegExp(lz.p, lz.f), lz.r),
+        replace(new RegExp(ez.p, ez.f), ez.r),
+        replace(new RegExp(lh.p, lh.f), function(match) {
+            return match.toLowerCase();
+        }),
+        gulp.dest("css/source/"),
+        bs.stream()
+    ], done);
+});
+// build app.css + autoprefix + minify
+gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
+    pump([gulp.src(paths.tasks.cssapp, {
+            cwd: "css/source/"
+        }),
+        concat("app.css"),
+        autoprefixer(autoprefixer_options),
+        shorthand(),
+        beautify(beautify_options),
+        gulp.dest("css/"),
+        clean_css(),
+        gulp.dest("dist/css/"),
+        bs.stream()
+    ], done);
+});
+// build libs.css + minify + beautify
+gulp.task("task-csslibs", function(done) {
+    pump([gulp.src(paths.tasks.csslibs, {
+            cwd: "css/libs/"
+        }),
+        concat("libs.css"),
+        autoprefixer(autoprefixer_options),
+        shorthand(),
+        beautify(beautify_options),
+        gulp.dest("css/"),
+        clean_css(),
+        gulp.dest("dist/css/"),
+        bs.stream()
+    ], done);
+});
+// remove the css/libs/ folder
+gulp.task("task-clean-csslibs", function(done) {
+    pump([gulp.src("dist/css/libs/", opts),
+        clean()
+    ], done);
+});
+// copy css libraries folder
+gulp.task("task-csslibsfolder", ["task-clean-csslibs"], function(done) {
+    pump([gulp.src(["css/libs/**"]),
+        gulp.dest("dist/css/libs/"),
+        bs.stream()
+    ], done);
+});
+// -------------------------------------
+// build app.js + minify + beautify
+gulp.task("task-jsapp", function(done) {
+    pump([gulp.src(paths.flavor.jsapp, {
+            cwd: "js/source/"
+        }),
+        concat("app.js"),
+        beautify(beautify_options),
+        gulp.dest("js/"),
+        uglify(),
+        gulp.dest("dist/js/"),
+        bs.stream()
+    ], done);
+});
+// build lib/lib.js + lib/lib.min.js
+gulp.task("task-jslibsource", function(done) {
+    // check if application is a library
+    var is_library = __type__ === "library";
+    if (!is_library) return done(); // return on apps of type "webapp"
+    // remove test files from files
+    var files_array = paths.flavor.jsapp.filter(function(filename) {
+        return !(/^test/i)
+            .test(filename);
+    });
+    pump([gulp.src(files_array, {
+            cwd: "js/source/"
+        }),
+        concat("app.js"),
+        beautify(beautify_options),
+        gulpif(is_library, rename("lib.js")),
+        gulpif(is_library, gulp.dest("lib/")),
+        gulpif(is_library, gulp.dest("dist/lib/")), // <-- also add to dist/ directory
+        uglify(),
+        gulpif(is_library, rename("lib.min.js")),
+        gulpif(is_library, gulp.dest("lib/")),
+        gulpif(is_library, gulp.dest("dist/lib/")), // <-- also add to dist/ directory
+        bs.stream()
+    ], done);
+});
+// build libs.js + minify + beautify
+gulp.task("task-jslibs", function(done) {
+    pump([gulp.src(paths.flavor.jslibs, {
+            cwd: "js/libs/"
+        }),
+        concat("libs.js"),
+        beautify(beautify_options),
+        gulp.dest("js/"),
+        uglify(),
+        gulp.dest("dist/js/"),
+        bs.stream()
+    ], done);
+});
+// remove the js/libs/ folder
+gulp.task("task-clean-jslibs", function(done) {
+    pump([gulp.src("dist/js/libs/", opts),
+        clean()
+    ], done);
+});
+// copy js libraries folder
+gulp.task("task-jslibsfolder", ["task-clean-jslibs"], function(done) {
+    pump([gulp.src(["js/libs/**"]),
+        gulp.dest("dist/js/libs/"),
+        bs.stream()
+    ], done);
+});
+// -------------------------------------
+// copy img/ to dist/img/
+gulp.task("task-img", function(done) {
+    // need to copy hidden files/folders?
+    // [https://github.com/klaascuvelier/gulp-copy/issues/5]
+    pump([gulp.src("img/**/*"),
+        gulp.dest("dist/img/"),
+        cache(imagemin([
+            imagemin.gifsicle({
+                interlaced: true
+            }),
+            imagemin.jpegtran({
+                progressive: true
+            }),
+            imagemin.optipng({
+                optimizationLevel: 5
+            }),
+            imagemin.svgo({
+                plugins: [{
+                    removeViewBox: true
+                }]
+            })
+        ])),
+        bs.stream()
+    ], done);
+});
+// -------------------------------------
+// markdown to html (with github style/layout)
+gulp.task("task-readme", function(done) {
+    mds.render(mds.resolveArgs({
+        input: path.normalize(process.cwd() + "/README.md"),
+        output: path.normalize(process.cwd() + "/markdown/preview"),
+        layout: path.normalize(process.cwd() + "/markdown/source")
+    }), function() {
+        // cleanup README.html
+        pump([gulp.src("README.html", {
+                cwd: "markdown/preview/"
+            }),
+            beautify(beautify_options),
+            gulp.dest("./markdown/preview/"),
+            bs.stream()
+        ], done);
+    });
+});
+// -------------------------------------
 //
 // **************************************************************************
 // * The following tasks are helper tasks and should be modified as needed. *
 // **************************************************************************
 //
+// build gulpfile.js
+gulp.task("helper-make-gulpfile", function(done) {
+    pump([gulp.src(paths.build, {
+            cwd: "./gulp/source/"
+        }),
+        insert.append("// " + "-".repeat(37)),
+        concat("gulpfile.js"),
+        beautify(beautify_options),
+        gulp.dest("./"),
+    ], done);
+});
 // check for any unused CSS
 gulp.task("helper-purify", function(done) {
     // run yargs
@@ -578,27 +638,6 @@ gulp.task("helper-clear", function(done) {
         done();
     }, null, 4);
 });
-/**
- * @description [Opens the provided file in the user's browser.]
- * @param  {String}   file     [The file to open.]
- * @param  {Number}   port     [The port to open on.]
- * @param  {Function} callback [The Gulp task callback to run.]
- * @return {Undefined}         [Nothing is returned.]
- */
-function open_file_in_browser(file, port, callback) {
-    pump([gulp.src(file, {
-            cwd: "./",
-            dot: true
-        }),
-        open({
-            app: browser,
-            uri: uri(file, port)
-        })
-    ], function() {
-        notify("File opened!");
-        callback();
-    });
-};
 // open index.html in browser
 gulp.task("helper-open", function(done) {
     // run yargs
@@ -730,3 +769,4 @@ gulp.task("helper-findmin", function(done) {
         })),
     ], done);
 });
+// -------------------------------------

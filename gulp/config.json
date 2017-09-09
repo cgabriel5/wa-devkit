@@ -65,6 +65,7 @@
             }
         },
         "order": ["task-cssapp", "task-csslibs", "task-csslibsfolder", "task-jsapp", "task-jslibsource", "task-jslibs", "task-jslibsfolder", "task-img", "task-html", "task-readme"],
+        "build": ["requires.js", "vars.js", "functions.js", "init.js", "tasks-watch.js", "tasks-html.js", "tasks-css.js", "tasks-js.js", "tasks-images.js", "tasks-markdown.js", "helpers.js"],
         "tasks": {
             "cssapp": ["normalize.css", "base.css", "styles.css", "helpers.css"],
             "csslibs": ["font-awesome-4.7.0/css/font-awesome.css"],
@@ -75,10 +76,6 @@
             "html": ["i*.html", "head/*.html", "body/*.html"],
             "img": ["img/**/*.{jpg,png,gif}"],
             "js": ["libs/**/*.js", "source/*.js", "source/modules/*.js"]
-        },
-        "gulp": {
-            "status": "./gulp/.gulpstatus",
-            "ports": "./gulp/.gulpports"
         },
         "index": "index.html"
     },
