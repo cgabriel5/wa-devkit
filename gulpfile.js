@@ -1,10 +1,13 @@
-var sequence = require("run-sequence");
-var clean = require("gulp-clean");
-var json = require("json-file");
-var prompt = require("prompt");
-var alphabetize = require("alphabetize-object-keys");
+var del = require("del");
 var pump = require("pump");
+var prompt = require("prompt");
+var json = require("json-file");
+var sequence = require("run-sequence");
+var alphabetize = require("alphabetize-object-keys");
+// -------------------------------------
+var clean = require("gulp-clean");
 var replace = require("gulp-replace");
+var rename = require("gulp-rename");
 // -------------------------------------
 var __type__; // application-type
 var __data__ = {}; // placeholder fillers
@@ -153,7 +156,7 @@ gulp.task("init", function(done) {
                     pkg.data = alphabetize(pkg.data);
                     pkg.write(function() {
                         // run initialization steps
-                        return sequence("init-1", "init-2", "init-3", "init-4", "init-5", function() {
+                        return sequence("init-1", "init-2", "init-3", "init-4", "init-5", "init-6", function() {
                             notify(`Project initialized (${__type__})`);
                             log("Project initialized ".bold.green + `(${__type__})`);
                             log("Run", "\"$ gulp\"".bold, "to build project files and start watching project for any file changes.");
@@ -210,7 +213,7 @@ gulp.task("init-4", function(done) {
 gulp.task("init-5", function(done) {
     // replace placeholder with real data
     pump([
-        gulp.src(["./README.md", "./LICENSE.txt", "./html/source/head/meta.html"], {
+        gulp.src(["./docs/readme_template.md", "./LICENSE.txt", "./html/source/head/meta.html"], {
             base: "./"
         }),
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
@@ -218,4 +221,19 @@ gulp.task("init-5", function(done) {
             return __data__[match] ? __data__[match] : match;
         }), gulp.dest("")
     ], done);
+});
+// initialization step
+gulp.task("init-6", function(done) {
+    // move ./docs/readme_template.md to ./README.md
+    pump([
+        gulp.src(["./docs/readme_template.md"], {
+            base: "./"
+        }),
+        rename("README.md"),
+        gulp.dest("./")
+    ], function() {
+        // delete the file
+        del(["./docs/readme_template.md"]);
+        done();
+    });
 });
