@@ -10,7 +10,7 @@
 $ gulp
 
 # Stops active Gulp instance. Only one instance can be run at a time.
-$ gulp --stop
+$ gulp -s/--stop
 ```
 
 ### Gulp-Helpers
