@@ -1,6 +1,6 @@
 <p align="center"><img src="/img/logo/leaf.png?raw=true" alt="wa-devkit logo-leaf" width="50" height="50">
 <br><br>
-<img src="/img/logo/text.png?raw=true" alt="wa-devkit logo-text" height="50">
+<img src="/img/logo/text-small.png?raw=true" alt="wa-devkit logo-text">
 <h1></h1>
 </p>
 
