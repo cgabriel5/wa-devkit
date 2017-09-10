@@ -74,7 +74,7 @@ gulp.task("task-build", ["task-clean-dist"], function(done) {
 // gulps default task is set to rum the build + watch + browser-sync
 gulp.task("default", function(done) {
     // run yargs
-    var _args = args.usage("Usage: $0 --stop [boolean]")
+    var _args = args.usage("Usage: $0 -s/--stop [boolean]")
         .option("stop", {
             alias: "s",
             demandOption: false,
