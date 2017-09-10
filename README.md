@@ -1,9 +1,9 @@
-<div align="center">
-<img src="/img/logo/leaf.png" alt="wa-devkit logo-leaf" width="50" height="50">
+<p align="center"><img src="/img/logo/leaf.png?raw=true" alt="wa-devkit logo-leaf" width="50" height="50">
+<br><br>
+<img src="/img/logo/text.png?raw=true" alt="wa-devkit logo-text">
+</p>
 
-<img src="/img/logo/text.png" alt="wa-devkit logo-text">
-</div>
-======
+<h1 align="center">boilerplate</h1>
 
 ### What is it?
 
