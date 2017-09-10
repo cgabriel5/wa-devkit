@@ -227,6 +227,7 @@ jsconfig.json
 *.tax2010
 *.vcf
 *.xml
+!browserconfig.xml
 
 ### Database ###
 *.accdb
