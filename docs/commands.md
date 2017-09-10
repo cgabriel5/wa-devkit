@@ -16,6 +16,11 @@ $ gulp -s/--stop
 ### Gulp-Helpers
 
 ```bash
+# When making changes to gulpfile.js it needs to be re-built.
+$ gulp helper-make-gulpfile
+```
+
+```bash
 # Checks whether Gulp is active or not.
 $ gulp helper-status
 ```

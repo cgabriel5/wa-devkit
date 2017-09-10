@@ -1,9 +1,5 @@
 # Setup
 
-### Before Use
-* Remove `.gitignore` file from `img/` directory before using. File is only a placeholder to include empty folder.
-* Boilerplate uses `NodeJS`, `Gulp`, and `Yarn`. *Make sure they are installed*.
-
 ### Yarn Setup
 Run the following commands in the following order:
 
@@ -27,3 +23,4 @@ $ gulp init --silent
 * **JS-App** &mdash; Modify `js/source/modules/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
 * **JS-Libs** &mdash; Add third-party libraries to `js/libs/`. Then make sure to update the `jslibs` `Gulp` task by adding the library path file to the `src` array. `Gulp` will handle file concatenation, minifying, and beautification.
 * **HTML** &mdash; Modify `html/source/**/*.html` files. `Gulp` will handle file concatenation, minifying, and beautification.
+* **Gulp** &mdash; Modify `gulp/source/*.js` files to make changes to Gulp file then run the `Gulp` command `helper-make-gulpfile` to build the new `gulpfile.js`.
