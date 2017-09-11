@@ -230,18 +230,20 @@ gulp.task("init-6", function(done) {
         gulp.dest(BASE)
     ], function() {
         // delete the file
-        del(["./docs/readme_template.md"]);
-        done();
+        del(["./docs/readme_template.md"])
+            .then(function() {
+                done();
+            });
     });
 });
-// >>> IMPORTANT
-// The debug tasks are used internally and should not be used for development purposes.
-// <<< IMPORTANT
 //
-// debug tasks will...
+// ***************************************************************** IMPORTANT
+// This task is only used for internal purposes and should not be used at all.
+// ***************************************************************** IMPORTANT
+//
 // 1. rename the current gulpfile.js to ___gulpfile.js
 // 2. copy the ./gulp/gulpfile.js to ./gulpfile.js
-gulp.task("debug-setup", function(done) {
+gulp.task("preswitch", function(done) {
     // rename the current gulpfile.js to ___gulpfile.js
     pump([
         gulp.src(["./gulpfile.js"], {
@@ -251,12 +253,13 @@ gulp.task("debug-setup", function(done) {
         gulp.dest(BASE)
     ], done);
 });
-gulp.task("debug-start", ["debug-setup"], function(done) {
+gulp.task("switch", ["preswitch"], function(done) {
     // copy the ./gulp/gulpfile.js to ./gulpfile.js
     pump([
         gulp.src(["./gulp/gulpfile.js"], {
             base: BASE
         }),
+        rename("gulpfile.js"),
         gulp.dest(BASE)
     ], done);
 });

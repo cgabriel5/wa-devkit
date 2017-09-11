@@ -244,6 +244,27 @@ gulp.task("default", function(done) {
         });
     }
 });
+//
+// ***************************************************************** IMPORTANT
+// This task is only used for internal purposes and should not be used at all.
+// ***************************************************************** IMPORTANT
+//
+// unswitch will undo what switch did...
+gulp.task("unswitch", function(done) {
+    // rename the ___gulpfile.js back to gulpfile.js
+    pump([
+        gulp.src(["./___gulpfile.js"], {
+            base: BASE
+        }),
+        rename("gulpfile.js"),
+        gulp.dest(BASE)
+    ], function() {
+        del(["./___gulpfile.js"])
+            .then(function() {
+                done();
+            });
+    });
+});
 // -------------------------------------
 // watch for files changes
 gulp.task("task-watch", function(done) {
@@ -788,29 +809,6 @@ gulp.task("helper-findmin", function(done) {
         gulpif(condition, print(function(filepath) {
             return "file: " + filepath;
         })),
-    ], done);
-});
-// -------------------------------------
-// >>> IMPORTANT
-// The debug tasks are used internally and should not be used for development purposes.
-// <<< IMPORTANT
-//
-// debug tasks will...
-// 1. delete the current ./gulpfile.js
-// 2. rename the ___gulpfile.js to gulpfile.js
-gulp.task("debug-setup", function(done) {
-    // delete the current ./gulpfile.js
-    del(["./gulpfile.js"]);
-    done();
-});
-gulp.task("debug-end", ["debug-setup"], function(done) {
-    // rename the ___gulpfile.js back to gulpfile.js
-    pump([
-        gulp.src(["./___gulpfile.js"], {
-            base: BASE
-        }),
-        rename("gulpfile.js"),
-        gulp.dest(BASE)
     ], done);
 });
 // -------------------------------------
