@@ -1,10 +1,10 @@
 // build app.js + minify + beautify
 gulp.task("task-jsapp", function(done) {
-    pump([gulp.src(paths.flavor.jsapp, {
+    pump([gulp.src(bundle_js.core, {
             cwd: "js/source/"
         }),
         concat("app.js"),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("js/"),
         uglify(),
         gulp.dest("dist/js/"),
@@ -14,10 +14,10 @@ gulp.task("task-jsapp", function(done) {
 // build lib/lib.js + lib/lib.min.js
 gulp.task("task-jslibsource", function(done) {
     // check if application is a library
-    var is_library = __type__ === "library";
+    var is_library = (APPTYPE === "library");
     if (!is_library) return done(); // return on apps of type "webapp"
     // remove test files from files
-    var files_array = paths.flavor.jsapp.filter(function(filename) {
+    var files_array = bundle_js.core.filter(function(filename) {
         return !(/^test/i)
             .test(filename);
     });
@@ -25,7 +25,7 @@ gulp.task("task-jslibsource", function(done) {
             cwd: "js/source/"
         }),
         concat("app.js"),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulpif(is_library, rename("lib.js")),
         gulpif(is_library, gulp.dest("lib/")),
         gulpif(is_library, gulp.dest("dist/lib/")), // <-- also add to dist/ directory
@@ -38,11 +38,11 @@ gulp.task("task-jslibsource", function(done) {
 });
 // build libs.js + minify + beautify
 gulp.task("task-jslibs", function(done) {
-    pump([gulp.src(paths.flavor.jslibs, {
+    pump([gulp.src(bundle_js.thirdparty, {
             cwd: "js/libs/"
         }),
         concat("libs.js"),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("js/"),
         uglify(),
         gulp.dest("dist/js/"),

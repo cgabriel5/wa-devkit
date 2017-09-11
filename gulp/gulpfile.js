@@ -14,6 +14,8 @@ var open = require("gulp-open");
 var imagemin = require("gulp-imagemin");
 var cache = require("gulp-cache");
 var insert = require("gulp-insert");
+var gulpif = require("gulp-if");
+var print = require("gulp-print");
 // -------------------------------------
 // // Non es-uglify
 // Remove the following two lines and uncomment the
@@ -34,25 +36,40 @@ var bs_autoclose = require("browser-sync-close-hook");
 var cleanup = require("node-cleanup");
 var git = require("git-state");
 var find_free_port = require("find-free-port");
-var gulpif = require("gulp-if");
-var print = require("gulp-print");
 var mds = require("markdown-styles");
 var sequence = require("run-sequence");
 var pump = require("pump");
 var args = require("yargs");
 // -------------------------------------
+// configuration information
 var config = require("./gulp/config.json");
-// internal Gulp config file
-var __config__ = json.read("./gulp/.gulpconfig.json");
-var paths = config.paths;
-var options = config.options;
-var beautify_options = options.beautify;
-var autoprefixer_options = options.autoprefixer;
-var regexp = config.regexp;
-var __type__ = config.__type__;
-var __path__ = __dirname;
-var branch_name;
+// internal Gulp configuration file
+var gulpconfig = json.read("./gulp/.gulpconfig.json");
 // -------------------------------------
+// paths/bundles
+var paths = config.paths;
+var bundles = paths.bundles;
+var bundle_html = bundles.html;
+var bundle_css = bundles.css;
+var bundle_js = bundles.js;
+var bundle_gulp = bundles.gulp;
+// gulp core/tasks/paths
+var gulp_core = bundle_gulp.core;
+var gulp_tasks = bundle_gulp.tasks;
+var gulp_watch = bundle_gulp.watch;
+// -------------------------------------
+// plugin options
+var options = config.options;
+var plugin_options = options.plugins;
+var options_beautify = plugin_options.beautify;
+var options_autoprefixer = plugin_options.autoprefixer;
+// -------------------------------------
+// config regexp
+var regexp = config.regexp;
+var regexp_html = config.regexp.html;
+var regexp_css = config.regexp.css;
+// -------------------------------------
+// project utils
 var utils = require("./gulp/utils.js");
 var log = utils.log;
 var time = utils.time;
@@ -61,11 +78,18 @@ var gulp = utils.gulp;
 var uri = utils.uri;
 var browser = utils.browser;
 // -------------------------------------
+var APPTYPE = config.apptype;
+var PATH = __dirname;
+var INDEX = config.index;
+var BASE = "./";
+// -------------------------------------
 var bs = browser_sync.create("localhost");
+// -------------------------------------
+var branch_name;
 // remove options
 var opts = {
     read: false,
-    cwd: "./"
+    cwd: BASE
 };
 // -------------------------------------
 /**
@@ -77,7 +101,7 @@ var opts = {
  */
 function open_file_in_browser(file, port, callback) {
     pump([gulp.src(file, {
-            cwd: "./",
+            cwd: BASE,
             dot: true
         }),
         open({
@@ -97,8 +121,8 @@ function open_file_in_browser(file, port, callback) {
 //
 // update the status of gulp to active
 gulp.task("task-start-gulp", function(done) {
-    __config__.set("pid", process.pid); // set the status
-    __config__.write(function() { // save changes to file
+    gulpconfig.set("pid", process.pid); // set the status
+    gulpconfig.write(function() { // save changes to file
         done();
     }, null, 4);
 });
@@ -109,10 +133,10 @@ gulp.task("task-start-gulp", function(done) {
 // the watch tasks and could perform gulp tasks when not necessarily wanted.
 // to resume gulp simply restart with the gulp command.
 gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
-    git.isGit(__path__, function(exists) {
+    git.isGit(PATH, function(exists) {
         // if no .git exists simply ignore and return done
         if (!exists) return done();
-        git.check(__path__, function(err, result) {
+        git.check(PATH, function(err, result) {
             if (err) throw err;
             // record branch name
             branch_name = result.branch;
@@ -120,10 +144,10 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
                 .yellow + " Gulp monitoring " + branch_name.green + " branch.");
             // set the gulp watcher as .git exists
             gulp.watch([".git/HEAD"], {
-                cwd: "./",
+                cwd: BASE,
                 dot: true
             }, function() {
-                var brn_current = git.checkSync(__path__)
+                var brn_current = git.checkSync(PATH)
                     .branch;
                 if (brn_current !== branch_name) {
                     // message + exit
@@ -137,9 +161,9 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
             // when gulp is closed do a quick cleanup
             cleanup(function(exit_code, signal) {
                 // clear gulp status and ports
-                __config__.set("pid", null);
-                __config__.set("ports", null);
-                __config__.writeSync(null, 4);
+                gulpconfig.set("pid", null);
+                gulpconfig.set("ports", null);
+                gulpconfig.writeSync(null, 4);
                 branch_name = undefined;
                 if (bs) bs.exit();
                 if (process) process.exit();
@@ -156,12 +180,13 @@ gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
 });
 // build the dist/ folder
 gulp.task("task-build", ["task-clean-dist"], function(done) {
-    var build_order = config.paths.order;
-    build_order.push(function() {
+    // add callback to the sequence
+    gulp_tasks.push(function() {
         notify("Build complete");
         done();
     });
-    return sequence.apply(this, build_order);
+    // apply the tasks and callback to sequence
+    return sequence.apply(this, gulp_tasks);
 });
 // gulps default task is set to rum the build + watch + browser-sync
 gulp.task("default", function(done) {
@@ -179,7 +204,7 @@ gulp.task("default", function(done) {
     var stop = _args.s || _args.stop;
     if (stop) { // end the running Gulp process
         // get pid, if any
-        var pid = __config__.get("pid");
+        var pid = gulpconfig.get("pid");
         if (pid) { // kill the open process
             log(("[success]")
                 .green + " Gulp process stopped.");
@@ -192,7 +217,7 @@ gulp.task("default", function(done) {
     } else { // start up Gulp like normal
         return find_free_port(3000, 3100, "127.0.0.1", 2, function(err, p1, p2) {
             // get pid, if any
-            var pid = __config__.get("pid");
+            var pid = gulpconfig.get("pid");
             // if there is a pid present it means a Gulp instance has already started.
             // therefore, prevent another from starting.
             if (pid) {
@@ -202,12 +227,12 @@ gulp.task("default", function(done) {
                 return done();
             }
             // store the ports
-            __config__.set("ports", {
+            gulpconfig.set("ports", {
                 "local": p1,
                 "ui": p2
             });
             // save ports
-            __config__.write(function() {
+            gulpconfig.write(function() {
                 // store ports on the browser-sync object itself
                 bs.__ports__ = [p1, p2]; // [app, ui]
                 // after getting the free ports, finally run the build task
@@ -233,7 +258,7 @@ gulp.task("task-watch", function(done) {
     // start browser-sync
     bs.init({
         browser: browser,
-        proxy: uri(paths.index), // uri("markdown/preview/README.html"),
+        proxy: uri(INDEX), // uri("markdown/preview/README.html"),
         port: bs.__ports__[0],
         ui: {
             port: bs.__ports__[1]
@@ -242,30 +267,28 @@ gulp.task("task-watch", function(done) {
         open: true
     }, function() {
         // the gulp watchers
-        // get the watch path
-        var path = paths.watch;
-        gulp.watch(path.html, {
+        gulp.watch(gulp_watch.html, {
             cwd: "html/source/"
         }, function() {
             return sequence("task-html");
         });
-        gulp.watch(path.css, {
+        gulp.watch(gulp_watch.css, {
             cwd: "css/"
         }, function() {
             return sequence("task-cssapp", "task-csslibs", "task-csslibsfolder");
         });
-        gulp.watch(path.js, {
+        gulp.watch(gulp_watch.js, {
             cwd: "js/"
         }, function() {
             return sequence("task-jsapp", "task-jslibsource", "task-jslibs", "task-jslibsfolder");
         });
-        gulp.watch(path.img, {
-            cwd: "./"
+        gulp.watch(gulp_watch.img, {
+            cwd: BASE
         }, function() {
             return sequence("task-img");
         });
         gulp.watch(["README.md"], {
-            cwd: "./"
+            cwd: BASE
         }, function() {
             return sequence("task-readme", function() {
                 bs.reload();
@@ -278,9 +301,8 @@ gulp.task("task-watch", function(done) {
 // init HTML files + minify
 gulp.task("task-html", function(done) {
     // regexp used for pre and post HTML variable injection
-    var r = regexp.html;
-    var r_pre = r.pre;
-    var r_post = r.post;
+    var r_pre = regexp_html.pre;
+    var r_post = regexp_html.post;
     var r_func = function(match) {
         var filename = "html/source/regexp/" + match.replace(/\$\:(pre|post)\{|\}$/g, "") + ".text";
         // check that file exists before opening/reading...
@@ -288,14 +310,14 @@ gulp.task("task-html", function(done) {
         return (!fe.sync(filename)) ? "undefined" : fs.readFileSync(filename)
             .toString();
     };
-    pump([gulp.src(paths.tasks.html, {
+    pump([gulp.src(bundle_html.core, {
             cwd: "html/source/"
         }),
         concat("index.html"),
         replace(new RegExp(r_pre.p, r_pre.f), r_func),
-        beautify(beautify_options),
+        beautify(options_beautify),
         replace(new RegExp(r_post.p, r_post.f), r_func),
-        gulp.dest("./"),
+        gulp.dest(BASE),
         minify_html(),
         gulp.dest("dist/"),
         bs.stream()
@@ -305,11 +327,10 @@ gulp.task("task-html", function(done) {
 // preform custom regexp replacements
 gulp.task("task-precssapp-clean-styles", function(done) {
     // regexp used for custom CSS code modifications
-    var r = regexp.css;
-    var pf = r.prefixes;
-    var lz = r.lead_zeros;
-    var ez = r.empty_zero;
-    var lh = r.lowercase_hex;
+    var pf = regexp_css.prefixes;
+    var lz = regexp_css.lead_zeros;
+    var ez = regexp_css.empty_zero;
+    var lh = regexp_css.lowercase_hex;
     pump([gulp.src(["styles.css"], {
             cwd: "css/source/"
         }),
@@ -326,13 +347,13 @@ gulp.task("task-precssapp-clean-styles", function(done) {
 });
 // build app.css + autoprefix + minify
 gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
-    pump([gulp.src(paths.tasks.cssapp, {
+    pump([gulp.src(bundle_css.core, {
             cwd: "css/source/"
         }),
         concat("app.css"),
-        autoprefixer(autoprefixer_options),
+        autoprefixer(options_autoprefixer),
         shorthand(),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("css/"),
         clean_css(),
         gulp.dest("dist/css/"),
@@ -341,13 +362,13 @@ gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
 });
 // build libs.css + minify + beautify
 gulp.task("task-csslibs", function(done) {
-    pump([gulp.src(paths.tasks.csslibs, {
+    pump([gulp.src(bundle_css.thirdparty, {
             cwd: "css/libs/"
         }),
         concat("libs.css"),
-        autoprefixer(autoprefixer_options),
+        autoprefixer(options_autoprefixer),
         shorthand(),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("css/"),
         clean_css(),
         gulp.dest("dist/css/"),
@@ -370,11 +391,11 @@ gulp.task("task-csslibsfolder", ["task-clean-csslibs"], function(done) {
 // -------------------------------------
 // build app.js + minify + beautify
 gulp.task("task-jsapp", function(done) {
-    pump([gulp.src(paths.flavor.jsapp, {
+    pump([gulp.src(bundle_js.core, {
             cwd: "js/source/"
         }),
         concat("app.js"),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("js/"),
         uglify(),
         gulp.dest("dist/js/"),
@@ -384,10 +405,10 @@ gulp.task("task-jsapp", function(done) {
 // build lib/lib.js + lib/lib.min.js
 gulp.task("task-jslibsource", function(done) {
     // check if application is a library
-    var is_library = __type__ === "library";
+    var is_library = (APPTYPE === "library");
     if (!is_library) return done(); // return on apps of type "webapp"
     // remove test files from files
-    var files_array = paths.flavor.jsapp.filter(function(filename) {
+    var files_array = bundle_js.core.filter(function(filename) {
         return !(/^test/i)
             .test(filename);
     });
@@ -395,7 +416,7 @@ gulp.task("task-jslibsource", function(done) {
             cwd: "js/source/"
         }),
         concat("app.js"),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulpif(is_library, rename("lib.js")),
         gulpif(is_library, gulp.dest("lib/")),
         gulpif(is_library, gulp.dest("dist/lib/")), // <-- also add to dist/ directory
@@ -408,11 +429,11 @@ gulp.task("task-jslibsource", function(done) {
 });
 // build libs.js + minify + beautify
 gulp.task("task-jslibs", function(done) {
-    pump([gulp.src(paths.flavor.jslibs, {
+    pump([gulp.src(bundle_js.thirdparty, {
             cwd: "js/libs/"
         }),
         concat("libs.js"),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("js/"),
         uglify(),
         gulp.dest("dist/js/"),
@@ -470,7 +491,7 @@ gulp.task("task-readme", function(done) {
         pump([gulp.src("README.html", {
                 cwd: "markdown/preview/"
             }),
-            beautify(beautify_options),
+            beautify(options_beautify),
             gulp.dest("./markdown/preview/"),
             bs.stream()
         ], done);
@@ -484,13 +505,13 @@ gulp.task("task-readme", function(done) {
 //
 // build gulpfile.js
 gulp.task("helper-make-gulpfile", function(done) {
-    pump([gulp.src(paths.build, {
+    pump([gulp.src(bundle_gulp.core, {
             cwd: "./gulp/source/"
         }),
         insert.append("// " + "-".repeat(37)),
         concat("gulpfile.js"),
-        beautify(beautify_options),
-        gulp.dest("./"),
+        beautify(options_beautify),
+        gulp.dest(BASE),
     ], done);
 });
 // check for any unused CSS
@@ -526,7 +547,7 @@ gulp.task("helper-purify", function(done) {
             rejected: true
         }),
         gulpif(!remove, rename("pure.css")),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("./css/" + (remove ? "source/" : ""))
     ], done);
 });
@@ -588,9 +609,9 @@ gulp.task("helper-tohtml", function(done) {
             var new_file_path = output + "/" + input_filename + ".html";
             // cleanup README.html
             pump([gulp.src(new_file_path, {
-                    cwd: "./"
+                    cwd: BASE
                 }),
-                beautify(beautify_options),
+                beautify(options_beautify),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
                 gulp.dest(output)
@@ -628,13 +649,13 @@ gulp.task("helper-clear", function(done) {
         // using the flag "w+" will create the file if it does not exists. if
         // it does exists it will truncate the current file. in effect clearing
         // if out. which is what is needed.
-        __config__.set(key, null);
+        gulpconfig.set(key, null);
         // reset name if needed
         if (key === "pid") key = "status";
         log(("[complete]")
             .green + " " + key.yellow + " cleared.");
     }
-    __config__.write(function() {
+    gulpconfig.write(function() {
         done();
     }, null, 4);
 });
@@ -664,7 +685,7 @@ gulp.task("helper-open", function(done) {
         open_file_in_browser(file, port, done);
     } else { // else get the used port, if any
         // get the ports
-        var ports = __config__.get("ports");
+        var ports = gulpconfig.get("ports");
         // no ports...
         if (!ports) {
             log(("[warning]")
@@ -678,14 +699,14 @@ gulp.task("helper-open", function(done) {
 // print the status of gulp (is it running or not?)
 gulp.task("helper-status", function(done) {
     log(("[status]")
-        .yellow + " Gulp is " + ((__config__.get("pid")) ? "running. " + (("(pid:" + process.pid + ")")
+        .yellow + " Gulp is " + ((gulpconfig.get("pid")) ? "running. " + (("(pid:" + process.pid + ")")
             .yellow) : "not running."));
     done();
 });
 // print the used ports for browser-sync
 gulp.task("helper-ports", function(done) {
     // get the ports
-    var ports = __config__.get("ports");
+    var ports = gulpconfig.get("ports");
     // if file is empty
     if (!ports) {
         log(("[warning]")
@@ -703,7 +724,7 @@ gulp.task("helper-ports", function(done) {
 gulp.task("helper-clean-files", function(done) {
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
-    var pid = __config__.get("pid");
+    var pid = gulpconfig.get("pid");
     // if file is empty gulp is not active
     if (pid) {
         log(("[warning]")
@@ -722,7 +743,7 @@ gulp.task("helper-clean-files", function(done) {
         // file ext must be of one of the following types
         if (!-~["html", "js", "css", "json"].indexOf(ext)) return false;
         // cannot be in the exclude array
-        if (-~exclude.indexOf(filepath.replace(__path__ + "/", ""))) return false;
+        if (-~exclude.indexOf(filepath.replace(PATH + "/", ""))) return false;
         // check if file is a min
         var path_parts = path.split("/");
         var last = path_parts[path_parts.length - 1].toLowerCase();
@@ -732,14 +753,14 @@ gulp.task("helper-clean-files", function(done) {
     };
     // get all files
     pump([gulp.src(["**/*.*", "!node_modules/**"], {
-            cwd: "./",
+            cwd: BASE,
             dot: true
         }),
         gulpif(condition, print(function(filepath) {
             return "file: " + filepath;
         })),
-        gulpif(condition, beautify(beautify_options)),
-        gulp.dest("./"),
+        gulpif(condition, beautify(options_beautify)),
+        gulp.dest(BASE),
     ], done);
 });
 // finds all the files that contain .min in the name and prints them
@@ -761,12 +782,35 @@ gulp.task("helper-findmin", function(done) {
     };
     // get all files
     pump([gulp.src(["**/*.*", "!node_modules/**"], {
-            cwd: "./",
+            cwd: BASE,
             dot: true
         }),
         gulpif(condition, print(function(filepath) {
             return "file: " + filepath;
         })),
+    ], done);
+});
+// -------------------------------------
+// >>> IMPORTANT
+// The debug tasks are used internally and should not be used for development purposes.
+// <<< IMPORTANT
+//
+// debug tasks will...
+// 1. delete the current ./gulpfile.js
+// 2. rename the ___gulpfile.js to gulpfile.js
+gulp.task("debug-setup", function(done) {
+    // delete the current ./gulpfile.js
+    del(["./gulpfile.js"]);
+    done();
+});
+gulp.task("debug-end", ["debug-setup"], function(done) {
+    // rename the ___gulpfile.js back to gulpfile.js
+    pump([
+        gulp.src(["./___gulpfile.js"], {
+            base: BASE
+        }),
+        rename("gulpfile.js"),
+        gulp.dest(BASE)
     ], done);
 });
 // -------------------------------------

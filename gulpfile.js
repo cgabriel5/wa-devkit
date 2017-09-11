@@ -6,11 +6,8 @@ var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");
 // -------------------------------------
 var clean = require("gulp-clean");
-var replace = require("gulp-replace");
 var rename = require("gulp-rename");
-// -------------------------------------
-var __type__; // application-type
-var __data__ = {}; // placeholder fillers
+var replace = require("gulp-replace");
 // -------------------------------------
 var utils = require("./gulp/utils.js");
 var log = utils.log;
@@ -18,6 +15,10 @@ var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
+// -------------------------------------
+var APPTYPE; // application-type
+var __data__ = {}; // placeholder fillers
+var BASE = "./";
 // -------------------------------------
 gulp.task("default", function(done) {
     // show the user the init message
@@ -94,21 +95,17 @@ gulp.task("init", function(done) {
             return prompt.stop();
         }
         // get the input
-        __type__ = result.type;
+        APPTYPE = result.type;
         // get the gulpconfig.json file
         var config = new json.File("./gulp/config.json");
         var pkg = new json.File("./package.json");
         config.read(function() {
             // set the application type
-            config.set("__type__", __type__);
-            // clean the flavor paths
-            // cache the paths
-            var paths = config.data.paths.flavor;
-            var jsapp_paths = paths.jsapp[__type__];
-            var jslibs_paths = paths.jslibs[__type__];
-            // reset the paths
-            config.data.paths.flavor.jsapp = jsapp_paths;
-            config.data.paths.flavor.jslibs = jslibs_paths;
+            config.set("apptype", APPTYPE);
+            // pick the js bundle structure based on the provided project type
+            var structure = config.data.paths.bundles.js[APPTYPE];
+            // reset the js bundle
+            config.data.paths.bundles.js = structure;
             // sort the keys
             config.data = alphabetize(config.data);
             // save file changes
@@ -157,8 +154,8 @@ gulp.task("init", function(done) {
                     pkg.write(function() {
                         // run initialization steps
                         return sequence("init-1", "init-2", "init-3", "init-4", "init-5", "init-6", function() {
-                            notify(`Project initialized (${__type__})`);
-                            log("Project initialized ".bold.green + `(${__type__})`);
+                            notify(`Project initialized (${APPTYPE})`);
+                            log("Project initialized ".bold.green + `(${APPTYPE})`);
                             log("Run", "\"$ gulp\"".bold, "to build project files and start watching project for any file changes.");
                             done();
                         });
@@ -171,12 +168,12 @@ gulp.task("init", function(done) {
 // initialization step
 gulp.task("init-1", function(done) {
     // pick the js/ directory to use
-    pump([gulp.src("js/options/" + __type__ + "/**/*.*", {
+    pump([gulp.src("js/options/" + APPTYPE + "/**/*.*", {
             dot: true,
-            cwd: "./"
+            cwd: BASE
         }),
         gulp.dest("./js/", {
-            cwd: "./"
+            cwd: BASE
         })
     ], done);
 });
@@ -185,7 +182,7 @@ gulp.task("init-2", function(done) {
     // remove the js/source/ files
     pump([gulp.src("js/options/", {
         read: false,
-        cwd: "./"
+        cwd: BASE
     }), clean()], done);
 });
 // initialization step
@@ -194,9 +191,9 @@ gulp.task("init-3", function(done) {
     pump([
         gulp.src("./gulp/gulpfile.js", {
             dot: true,
-            cwd: "./"
+            cwd: BASE
         }),
-        gulp.dest("./")
+        gulp.dest(BASE)
     ], done);
 });
 // initialization step
@@ -205,7 +202,7 @@ gulp.task("init-4", function(done) {
     pump([
         gulp.src("./gulp/gulpfile.js", {
             read: false,
-            cwd: "./"
+            cwd: BASE
         }), clean()
     ], done);
 });
@@ -214,7 +211,7 @@ gulp.task("init-5", function(done) {
     // replace placeholder with real data
     pump([
         gulp.src(["./docs/readme_template.md", "./LICENSE.txt", "./html/source/head/meta.html"], {
-            base: "./"
+            base: BASE
         }),
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
             match = match.replace(/^\{\{\#|\}\}$/g, "");
@@ -227,13 +224,39 @@ gulp.task("init-6", function(done) {
     // move ./docs/readme_template.md to ./README.md
     pump([
         gulp.src(["./docs/readme_template.md"], {
-            base: "./"
+            base: BASE
         }),
         rename("README.md"),
-        gulp.dest("./")
+        gulp.dest(BASE)
     ], function() {
         // delete the file
         del(["./docs/readme_template.md"]);
         done();
     });
+});
+// >>> IMPORTANT
+// The debug tasks are used internally and should not be used for development purposes.
+// <<< IMPORTANT
+//
+// debug tasks will...
+// 1. rename the current gulpfile.js to ___gulpfile.js
+// 2. copy the ./gulp/gulpfile.js to ./gulpfile.js
+gulp.task("debug-setup", function(done) {
+    // rename the current gulpfile.js to ___gulpfile.js
+    pump([
+        gulp.src(["./gulpfile.js"], {
+            base: BASE
+        }),
+        rename("___gulpfile.js"),
+        gulp.dest(BASE)
+    ], done);
+});
+gulp.task("debug-start", ["debug-setup"], function(done) {
+    // copy the ./gulp/gulpfile.js to ./gulpfile.js
+    pump([
+        gulp.src(["./gulp/gulpfile.js"], {
+            base: BASE
+        }),
+        gulp.dest(BASE)
+    ], done);
 });

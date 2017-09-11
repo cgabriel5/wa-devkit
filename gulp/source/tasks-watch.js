@@ -11,7 +11,7 @@ gulp.task("task-watch", function(done) {
     // start browser-sync
     bs.init({
         browser: browser,
-        proxy: uri(paths.index), // uri("markdown/preview/README.html"),
+        proxy: uri(INDEX), // uri("markdown/preview/README.html"),
         port: bs.__ports__[0],
         ui: {
             port: bs.__ports__[1]
@@ -20,30 +20,28 @@ gulp.task("task-watch", function(done) {
         open: true
     }, function() {
         // the gulp watchers
-        // get the watch path
-        var path = paths.watch;
-        gulp.watch(path.html, {
+        gulp.watch(gulp_watch.html, {
             cwd: "html/source/"
         }, function() {
             return sequence("task-html");
         });
-        gulp.watch(path.css, {
+        gulp.watch(gulp_watch.css, {
             cwd: "css/"
         }, function() {
             return sequence("task-cssapp", "task-csslibs", "task-csslibsfolder");
         });
-        gulp.watch(path.js, {
+        gulp.watch(gulp_watch.js, {
             cwd: "js/"
         }, function() {
             return sequence("task-jsapp", "task-jslibsource", "task-jslibs", "task-jslibsfolder");
         });
-        gulp.watch(path.img, {
-            cwd: "./"
+        gulp.watch(gulp_watch.img, {
+            cwd: BASE
         }, function() {
             return sequence("task-img");
         });
         gulp.watch(["README.md"], {
-            cwd: "./"
+            cwd: BASE
         }, function() {
             return sequence("task-readme", function() {
                 bs.reload();

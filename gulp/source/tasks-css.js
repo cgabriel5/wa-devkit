@@ -1,11 +1,10 @@
 // preform custom regexp replacements
 gulp.task("task-precssapp-clean-styles", function(done) {
     // regexp used for custom CSS code modifications
-    var r = regexp.css;
-    var pf = r.prefixes;
-    var lz = r.lead_zeros;
-    var ez = r.empty_zero;
-    var lh = r.lowercase_hex;
+    var pf = regexp_css.prefixes;
+    var lz = regexp_css.lead_zeros;
+    var ez = regexp_css.empty_zero;
+    var lh = regexp_css.lowercase_hex;
     pump([gulp.src(["styles.css"], {
             cwd: "css/source/"
         }),
@@ -22,13 +21,13 @@ gulp.task("task-precssapp-clean-styles", function(done) {
 });
 // build app.css + autoprefix + minify
 gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
-    pump([gulp.src(paths.tasks.cssapp, {
+    pump([gulp.src(bundle_css.core, {
             cwd: "css/source/"
         }),
         concat("app.css"),
-        autoprefixer(autoprefixer_options),
+        autoprefixer(options_autoprefixer),
         shorthand(),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("css/"),
         clean_css(),
         gulp.dest("dist/css/"),
@@ -37,13 +36,13 @@ gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
 });
 // build libs.css + minify + beautify
 gulp.task("task-csslibs", function(done) {
-    pump([gulp.src(paths.tasks.csslibs, {
+    pump([gulp.src(bundle_css.thirdparty, {
             cwd: "css/libs/"
         }),
         concat("libs.css"),
-        autoprefixer(autoprefixer_options),
+        autoprefixer(options_autoprefixer),
         shorthand(),
-        beautify(beautify_options),
+        beautify(options_beautify),
         gulp.dest("css/"),
         clean_css(),
         gulp.dest("dist/css/"),

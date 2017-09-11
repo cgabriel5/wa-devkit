@@ -7,7 +7,7 @@
  */
 function open_file_in_browser(file, port, callback) {
     pump([gulp.src(file, {
-            cwd: "./",
+            cwd: BASE,
             dot: true
         }),
         open({

@@ -5,8 +5,8 @@
 //
 // update the status of gulp to active
 gulp.task("task-start-gulp", function(done) {
-    __config__.set("pid", process.pid); // set the status
-    __config__.write(function() { // save changes to file
+    gulpconfig.set("pid", process.pid); // set the status
+    gulpconfig.write(function() { // save changes to file
         done();
     }, null, 4);
 });
@@ -17,10 +17,10 @@ gulp.task("task-start-gulp", function(done) {
 // the watch tasks and could perform gulp tasks when not necessarily wanted.
 // to resume gulp simply restart with the gulp command.
 gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
-    git.isGit(__path__, function(exists) {
+    git.isGit(PATH, function(exists) {
         // if no .git exists simply ignore and return done
         if (!exists) return done();
-        git.check(__path__, function(err, result) {
+        git.check(PATH, function(err, result) {
             if (err) throw err;
             // record branch name
             branch_name = result.branch;
@@ -28,10 +28,10 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
                 .yellow + " Gulp monitoring " + branch_name.green + " branch.");
             // set the gulp watcher as .git exists
             gulp.watch([".git/HEAD"], {
-                cwd: "./",
+                cwd: BASE,
                 dot: true
             }, function() {
-                var brn_current = git.checkSync(__path__)
+                var brn_current = git.checkSync(PATH)
                     .branch;
                 if (brn_current !== branch_name) {
                     // message + exit
@@ -45,9 +45,9 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
             // when gulp is closed do a quick cleanup
             cleanup(function(exit_code, signal) {
                 // clear gulp status and ports
-                __config__.set("pid", null);
-                __config__.set("ports", null);
-                __config__.writeSync(null, 4);
+                gulpconfig.set("pid", null);
+                gulpconfig.set("ports", null);
+                gulpconfig.writeSync(null, 4);
                 branch_name = undefined;
                 if (bs) bs.exit();
                 if (process) process.exit();
@@ -64,12 +64,13 @@ gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
 });
 // build the dist/ folder
 gulp.task("task-build", ["task-clean-dist"], function(done) {
-    var build_order = config.paths.order;
-    build_order.push(function() {
+    // add callback to the sequence
+    gulp_tasks.push(function() {
         notify("Build complete");
         done();
     });
-    return sequence.apply(this, build_order);
+    // apply the tasks and callback to sequence
+    return sequence.apply(this, gulp_tasks);
 });
 // gulps default task is set to rum the build + watch + browser-sync
 gulp.task("default", function(done) {
@@ -87,7 +88,7 @@ gulp.task("default", function(done) {
     var stop = _args.s || _args.stop;
     if (stop) { // end the running Gulp process
         // get pid, if any
-        var pid = __config__.get("pid");
+        var pid = gulpconfig.get("pid");
         if (pid) { // kill the open process
             log(("[success]")
                 .green + " Gulp process stopped.");
@@ -100,7 +101,7 @@ gulp.task("default", function(done) {
     } else { // start up Gulp like normal
         return find_free_port(3000, 3100, "127.0.0.1", 2, function(err, p1, p2) {
             // get pid, if any
-            var pid = __config__.get("pid");
+            var pid = gulpconfig.get("pid");
             // if there is a pid present it means a Gulp instance has already started.
             // therefore, prevent another from starting.
             if (pid) {
@@ -110,12 +111,12 @@ gulp.task("default", function(done) {
                 return done();
             }
             // store the ports
-            __config__.set("ports", {
+            gulpconfig.set("ports", {
                 "local": p1,
                 "ui": p2
             });
             // save ports
-            __config__.write(function() {
+            gulpconfig.write(function() {
                 // store ports on the browser-sync object itself
                 bs.__ports__ = [p1, p2]; // [app, ui]
                 // after getting the free ports, finally run the build task
@@ -126,4 +127,26 @@ gulp.task("default", function(done) {
             }, null, 4);
         });
     }
+});
+// >>> IMPORTANT
+// The debug tasks are used internally and should not be used for development purposes.
+// <<< IMPORTANT
+//
+// debug tasks will...
+// 1. delete the current ./gulpfile.js
+// 2. rename the ___gulpfile.js to gulpfile.js
+gulp.task("debug-setup", function(done) {
+    // delete the current ./gulpfile.js
+    del(["./gulpfile.js"]);
+    done();
+});
+gulp.task("debug-end", ["debug-setup"], function(done) {
+    // rename the ___gulpfile.js back to gulpfile.js
+    pump([
+        gulp.src(["./___gulpfile.js"], {
+            base: BASE
+        }),
+        rename("gulpfile.js"),
+        gulp.dest(BASE)
+    ], done);
 });

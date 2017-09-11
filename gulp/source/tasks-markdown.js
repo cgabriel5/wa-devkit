@@ -9,7 +9,7 @@ gulp.task("task-readme", function(done) {
         pump([gulp.src("README.html", {
                 cwd: "markdown/preview/"
             }),
-            beautify(beautify_options),
+            beautify(options_beautify),
             gulp.dest("./markdown/preview/"),
             bs.stream()
         ], done);
