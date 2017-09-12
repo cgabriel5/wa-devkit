@@ -1,6 +1,6 @@
 <p align="center"><img src="/img/logo/leaf.png?raw=true" alt="wa-devkit logo-leaf" width="8%"></p>
 <p align="center"><img src="/img/logo/text.png?raw=true" alt="wa-devkit logo-text" width="40%"></p>
-<p align="center">`wa-devkit` (WebApplication-DevelopmentKit) is a simple, easy-to-use, modular<br>boilerplate solution made for building web-applications or JavaScript libraries.</p>
+<p align="center"><code>wa-devkit</code> (WebApplication-DevelopmentKit) is a simple, easy-to-use, modular<br>boilerplate solution made for building web-applications or JavaScript libraries.</p>
 <h1></h1>
 
 ### Quick Start
