@@ -1,16 +1,16 @@
 // markdown to html (with github style/layout)
 gulp.task("task-readme", function(done) {
     mds.render(mds.resolveArgs({
-        input: path.normalize(process.cwd() + "/README.md"),
-        output: path.normalize(process.cwd() + "/markdown/preview"),
-        layout: path.normalize(process.cwd() + "/markdown/source")
+        input: path.join(__PATHS_CWD, __PATHS_README),
+        output: path.join(__PATHS_CWD, __PATHS_MARKDOWN_PREVIEW),
+        layout: path.join(__PATHS_CWD, __PATHS_MARKDOWN_SOURCE)
     }), function() {
         // cleanup README.html
-        pump([gulp.src("README.html", {
-                cwd: "markdown/preview/"
+        pump([gulp.src(__PATHS_README_HTML, {
+                cwd: __PATHS_MARKDOWN_PREVIEW
             }),
-            beautify(options_beautify),
-            gulp.dest("./markdown/preview/"),
+            beautify(opts_bt),
+            gulp.dest(__PATHS_MARKDOWN_PREVIEW),
             bs.stream()
         ], done);
     });

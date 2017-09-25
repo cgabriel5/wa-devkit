@@ -1,12 +1,12 @@
 // preform custom regexp replacements
-gulp.task("task-precssapp-clean-styles", function(done) {
-    // regexp used for custom CSS code modifications
+gulp.task("task-precssapp-cleanup", function(done) {
+    // RegExp used for custom CSS code modifications
     var pf = regexp_css.prefixes;
     var lz = regexp_css.lead_zeros;
     var ez = regexp_css.empty_zero;
     var lh = regexp_css.lowercase_hex;
-    pump([gulp.src(["styles.css"], {
-            cwd: "css/source/"
+    pump([gulp.src(__PATHS_USERS_CSS_FILE, {
+            cwd: __PATHS_CSS_SOURCE
         }),
         // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
         replace(new RegExp(pf.p, pf.f), pf.r),
@@ -15,50 +15,50 @@ gulp.task("task-precssapp-clean-styles", function(done) {
         replace(new RegExp(lh.p, lh.f), function(match) {
             return match.toLowerCase();
         }),
-        gulp.dest("css/source/"),
+        gulp.dest(__PATHS_CSS_SOURCE),
         bs.stream()
     ], done);
 });
 // build app.css + autoprefix + minify
-gulp.task("task-cssapp", ["task-precssapp-clean-styles"], function(done) {
-    pump([gulp.src(bundle_css.core, {
-            cwd: "css/source/"
+gulp.task("task-cssapp", ["task-precssapp-cleanup"], function(done) {
+    pump([gulp.src(bundle_css.source.files, {
+            cwd: __PATHS_CSS_SOURCE
         }),
-        concat("app.css"),
-        autoprefixer(options_autoprefixer),
+        concat(bundle_css.source.name),
+        autoprefixer(opts_ap),
         shorthand(),
-        beautify(options_beautify),
-        gulp.dest("css/"),
+        beautify(opts_bt),
+        gulp.dest(__PATHS_CSS_BUNDLES),
         clean_css(),
-        gulp.dest("dist/css/"),
+        gulp.dest(__PATHS_DIST_CSS),
         bs.stream()
     ], done);
 });
 // build libs.css + minify + beautify
 gulp.task("task-csslibs", function(done) {
-    pump([gulp.src(bundle_css.thirdparty, {
-            cwd: "css/libs/"
+    pump([gulp.src(bundle_css.thirdparty.files, {
+            cwd: __PATHS_CSS_THIRDPARTY
         }),
-        concat("libs.css"),
-        autoprefixer(options_autoprefixer),
+        concat(bundle_css.thirdparty.name),
+        autoprefixer(opts_ap),
         shorthand(),
-        beautify(options_beautify),
-        gulp.dest("css/"),
+        beautify(opts_bt),
+        gulp.dest(__PATHS_CSS_BUNDLES),
         clean_css(),
-        gulp.dest("dist/css/"),
+        gulp.dest(__PATHS_DIST_CSS),
         bs.stream()
     ], done);
 });
-// remove the css/libs/ folder
+// remove the dist/css/libs/ folder
 gulp.task("task-clean-csslibs", function(done) {
-    pump([gulp.src("dist/css/libs/", opts),
+    pump([gulp.src(__PATHS_DIST_CSS_LIBS, opts),
         clean()
     ], done);
 });
 // copy css libraries folder
 gulp.task("task-csslibsfolder", ["task-clean-csslibs"], function(done) {
-    pump([gulp.src(["css/libs/**"]),
-        gulp.dest("dist/css/libs/"),
+    pump([gulp.src(__PATHS_DIST_CSS_LIBS_FILE_SOURCE),
+        gulp.dest(__PATHS_DIST_CSS_LIBS),
         bs.stream()
     ], done);
 });

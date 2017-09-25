@@ -11,7 +11,11 @@ gulp.task("task-watch", function(done) {
     // start browser-sync
     bs.init({
         browser: browser,
-        proxy: uri(INDEX), // uri("markdown/preview/README.html"),
+        proxy: uri({
+            "appdir": APPDIR,
+            "filepath": INDEX,
+            "https": config_user.https
+        }), // "markdown/preview/README.html"
         port: bs.__ports__[0],
         ui: {
             port: bs.__ports__[1]
@@ -20,28 +24,46 @@ gulp.task("task-watch", function(done) {
         open: true
     }, function() {
         // the gulp watchers
-        gulp.watch(gulp_watch.html, {
-            cwd: "html/source/"
+        //
+        // watch for any changes to HTML files
+        gulp.watch(bundles.gulp.watch.html, {
+            cwd: __PATHS_HTML_SOURCE
         }, function() {
             return sequence("task-html");
         });
-        gulp.watch(gulp_watch.css, {
-            cwd: "css/"
+        // watch for any changes to CSS Source files
+        gulp.watch(bundles.gulp.watch.css.source, {
+            cwd: __PATHS_CSS_SOURCE
         }, function() {
-            return sequence("task-cssapp", "task-csslibs", "task-csslibsfolder");
+            return sequence("task-cssapp");
         });
-        gulp.watch(gulp_watch.js, {
-            cwd: "js/"
+        // watch for any changes to CSS Lib files
+        gulp.watch(bundles.gulp.watch.css.thirdparty, {
+            cwd: __PATHS_CSS_THIRDPARTY
         }, function() {
-            return sequence("task-jsapp", "task-jslibsource", "task-jslibs", "task-jslibsfolder");
+            return sequence("task-csslibs", "task-csslibsfolder");
         });
-        gulp.watch(gulp_watch.img, {
-            cwd: BASE
+        // watch for any changes to JS Source files
+        gulp.watch(bundles.gulp.watch.js.source, {
+            cwd: __PATHS_JS_SOURCE
+        }, function() {
+            return sequence("task-jsapp");
+        });
+        // watch for any changes to JS Lib files
+        gulp.watch(bundles.gulp.watch.js.thirdparty, {
+            cwd: __PATHS_JS_THIRDPARTY
+        }, function() {
+            return sequence("task-jslibsource", "task-jslibs", "task-jslibsfolder");
+        });
+        // watch for any changes to IMG files
+        gulp.watch(bundles.gulp.watch.img, {
+            cwd: __PATHS_IMG_SOURCE
         }, function() {
             return sequence("task-img");
         });
-        gulp.watch(["README.md"], {
-            cwd: BASE
+        // watch for any changes to README.md
+        gulp.watch([__PATHS_README], {
+            cwd: __PATHS_BASE
         }, function() {
             return sequence("task-readme", function() {
                 bs.reload();

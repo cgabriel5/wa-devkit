@@ -1,7 +1,7 @@
 var os = require("os");
 var path = require("path");
 // -------------------------------------
-var path_offset = "../";
+var path_offset = "../../../";
 var modules_path = path_offset + "node_modules/";
 // -------------------------------------
 var gulp = require(modules_path + "gulp");
@@ -9,6 +9,20 @@ var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
 var colors = require(modules_path + "colors");
 // -------------------------------------
+/**
+ * @description [Wrapper for colors. Will apply options to string using a function.]
+ * @return {String} [The modified string.]
+ */
+var color = function() {
+    var args = Array.prototype.slice.call(arguments);
+    // get the provided string
+    var string = args.shift();
+    // loop over options and apply
+    for (var i = 0, l = args.length; i < l; i++) {
+        string = string[args[i]];
+    }
+    return string;
+};
 /**
  * @description [Detects the default Google Chrome browser based on OS. Falls back to "firefox".]
  * @source [Lifted from https://github.com/stevelacy/gulp-open]
@@ -25,8 +39,7 @@ var browser = function() {
  */
 var time = function() {
     // return the formated/colored time
-    return "[" + format_date(new Date(), "HH:MM:ss")
-        .gray + "]";
+    return "[" + color(format_date(new Date(), "HH:MM:ss"), "gray") + "]";
 };
 /**
  * @description [Wrapper for console.log().]
@@ -61,7 +74,7 @@ var notify = function(message, error) {
     notifier.notify({
         title: "Gulp",
         message: message,
-        icon: path.join(__dirname, "./img/node-notifier/" + image),
+        icon: path.join(__dirname, "../img/node-notifier/" + image),
         sound: true
     });
 };
@@ -81,15 +94,16 @@ var current_task = function(gulp) {
     return gulp;
 };
 /**
- * @description [Builds the localhost URL dynamically.]
- * @param  {String} path [The gulpfile's file path.]
- * @return {String}      [The localhost URL.]
+ * @description [Builds the project localhost URL.]
+ * @param  {Object} params 	   [The parameters used to build the URL.]
+ * @return {String}       	   [The URL.]
  */
-var uri = function(filename, port) {
-    // remove everything until /htdocs/ + remove ending "/gulp"
-    // then append the provided filename
-    return ("http://" + __dirname.replace(/^.+\/htdocs\//, "localhost" + (port ? ":" + port : "") + "/")
-        .replace(/\/?gulp$/, "") + (filename ? "/" + filename : ""));
+var uri = function(params) {
+    var appdir = params.appdir;
+    var filepath = params.filepath;
+    var port = params.port;
+    var https = params.https;
+    return ("http" + (https ? "s" : "")) + "://" + appdir + filepath + (port ? (":" + port) : "");
 };
 /**
  * @description [Stream pipe error handler.]
@@ -121,6 +135,7 @@ function format(template, data) {
 }
 // export functions
 exports.browser = browser();
+exports.color = color;
 exports.time = time;
 exports.log = log;
 exports.notify = notify;

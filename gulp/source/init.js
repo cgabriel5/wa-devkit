@@ -3,12 +3,33 @@
 // *           The following tasks are the main application tasks.          *
 // **************************************************************************
 //
+// when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
+cleanup(function(exit_code, signal) {
+    // check for current Gulp process
+    var pid = config_internal.get("pid");
+    if (pid) { // Gulp instance exists so cleanup
+        // clear gulp internal configuration keys
+        config_internal.set("pid", null);
+        config_internal.set("ports", null);
+        config_internal.data = alphabetize(config_internal.data);
+        config_internal.writeSync(null, json_spaces);
+        // cleanup vars, process
+        branch_name = undefined;
+        if (bs) bs.exit();
+        if (process) {
+            process.exit();
+            if (signal) process.kill(pid, signal);
+        }
+        cleanup.uninstall(); // don't call cleanup handler again
+        return false;
+    }
+});
 // update the status of gulp to active
 gulp.task("task-start-gulp", function(done) {
-    gulpconfig.set("pid", process.pid); // set the status
-    gulpconfig.write(function() { // save changes to file
+    config_internal.set("pid", process.pid); // set the status
+    config_internal.write(function() { // save changes to file
         done();
-    }, null, 4);
+    }, null, json_spaces);
 });
 // watch for git branch changes:
 // branch name checks are done to check whether the branch was changed after
@@ -17,40 +38,29 @@ gulp.task("task-start-gulp", function(done) {
 // the watch tasks and could perform gulp tasks when not necessarily wanted.
 // to resume gulp simply restart with the gulp command.
 gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
-    git.isGit(PATH, function(exists) {
+    git.isGit(__PATHS_DIRNAME, function(exists) {
         // if no .git exists simply ignore and return done
         if (!exists) return done();
-        git.check(PATH, function(err, result) {
+        git.check(__PATHS_DIRNAME, function(err, result) {
             if (err) throw err;
             // record branch name
             branch_name = result.branch;
-            log(("(pid:" + process.pid + ")")
-                .yellow + " Gulp monitoring " + branch_name.green + " branch.");
             // set the gulp watcher as .git exists
-            gulp.watch([".git/HEAD"], {
-                cwd: BASE,
+            gulp.watch([__PATHS_GITHEAD], {
+                cwd: __PATHS_BASE,
                 dot: true
             }, function() {
-                var brn_current = git.checkSync(PATH)
+                var brn_current = git.checkSync(__PATHS_DIRNAME)
                     .branch;
+                if (branch_name) {
+                    log(color("(pid:" + process.pid + ")", "yellow"), "Gulp monitoring", color(branch_name, "green"), "branch.");
+                }
                 if (brn_current !== branch_name) {
                     // message + exit
-                    log(("[warning]")
-                        .yellow + " Gulp stopped due to branch switch. (" + branch_name.green + " => " + brn_current.yellow + ")");
-                    log(("[warning]")
-                        .yellow + " Restart Gulp to monitor " + brn_current.yellow + " branch.");
+                    log(color("[warning]", "yellow"), "Gulp stopped due to branch switch. (", color(branch_name, "green"), "=>", color(brn_current, "yellow"), ")");
+                    log(color("[warning]", "yellow"), "Restart Gulp to monitor", color(brn_current, "yellow"), "branch.");
                     process.exit();
                 }
-            });
-            // when gulp is closed do a quick cleanup
-            cleanup(function(exit_code, signal) {
-                // clear gulp status and ports
-                gulpconfig.set("pid", null);
-                gulpconfig.set("ports", null);
-                gulpconfig.writeSync(null, 4);
-                branch_name = undefined;
-                if (bs) bs.exit();
-                if (process) process.exit();
             });
             done();
         });
@@ -58,19 +68,21 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
 });
 // remove the dist/ folder
 gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
-    pump([gulp.src("dist/", opts),
+    pump([gulp.src(__PATHS_DIST_HOME, opts),
         clean()
     ], done);
 });
 // build the dist/ folder
 gulp.task("task-build", ["task-clean-dist"], function(done) {
+    // get the gulp build tasks
+    var tasks = bundle_gulp.tasks;
     // add callback to the sequence
-    gulp_tasks.push(function() {
+    tasks.push(function() {
         notify("Build complete");
         done();
     });
     // apply the tasks and callback to sequence
-    return sequence.apply(this, gulp_tasks);
+    return sequence.apply(this, tasks);
 });
 // gulps default task is set to rum the build + watch + browser-sync
 gulp.task("default", function(done) {
@@ -88,64 +100,40 @@ gulp.task("default", function(done) {
     var stop = _args.s || _args.stop;
     if (stop) { // end the running Gulp process
         // get pid, if any
-        var pid = gulpconfig.get("pid");
+        var pid = config_internal.get("pid");
         if (pid) { // kill the open process
-            log(("[success]")
-                .green + " Gulp process stopped.");
+            log(color("[success]", "green"), "Gulp process stopped.");
             process.kill(pid);
         } else { // no open process exists
-            log(("[warning]")
-                .yellow + " No Gulp process exists.");
+            log(color("[warning]", "yellow"), "No Gulp process exists.");
         }
         return done();
     } else { // start up Gulp like normal
-        return find_free_port(3000, 3100, "127.0.0.1", 2, function(err, p1, p2) {
+        return find_free_port(opts_ffp.port_range.start, opts_ffp.port_range.end, opts_ffp.ip, opts_ffp.port_count, function(err, p1, p2) {
             // get pid, if any
-            var pid = gulpconfig.get("pid");
+            var pid = config_internal.get("pid");
             // if there is a pid present it means a Gulp instance has already started.
             // therefore, prevent another from starting.
             if (pid) {
-                log(("[warning]")
-                    .yellow + " A Gulp instance is already running " + ("(pid:" + pid + ")")
-                    .yellow + ". Stop that instance before starting a new one.");
+                log(color("[warning]", "yellow"), "A Gulp instance is already running", color("(pid:" + pid + ")", "yellow") + ".", "Stop that instance before starting a new one.");
                 return done();
             }
             // store the ports
-            gulpconfig.set("ports", {
+            config_internal.set("ports", {
                 "local": p1,
                 "ui": p2
             });
             // save ports
-            gulpconfig.write(function() {
+            config_internal.write(function() {
                 // store ports on the browser-sync object itself
                 bs.__ports__ = [p1, p2]; // [app, ui]
                 // after getting the free ports, finally run the build task
+                // return sequence("helper-clean-files", "task-build", function() {
                 return sequence("task-build", function() {
                     sequence("task-watch");
                     done();
                 });
-            }, null, 4);
+            }, null, json_spaces);
         });
     }
-});
-//
-// ***************************************************************** IMPORTANT
-// This task is only used for internal purposes and should not be used at all.
-// ***************************************************************** IMPORTANT
-//
-// unswitch will undo what switch did...
-gulp.task("unswitch", function(done) {
-    // rename the ___gulpfile.js back to gulpfile.js
-    pump([
-        gulp.src(["./___gulpfile.js"], {
-            base: BASE
-        }),
-        rename("gulpfile.js"),
-        gulp.dest(BASE)
-    ], function() {
-        del(["./___gulpfile.js"])
-            .then(function() {
-                done();
-            });
-    });
 });

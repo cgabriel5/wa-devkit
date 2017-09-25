@@ -1,9 +1,7 @@
 /*! normalize.css v6.0.0 | MIT License | github.com/necolas/normalize.css */
 
-
 /* Document
    ========================================================================== */
-
 
 /**
  * 1. Correct the line height in all browsers.
@@ -20,10 +18,8 @@ html {
     /* 2 */
 }
 
-
 /* Sections
    ========================================================================== */
-
 
 /**
  * Add the correct display in IE 9-.
@@ -38,7 +34,6 @@ section {
     display: block;
 }
 
-
 /**
  * Correct the font size and margin on `h1` elements within `section` and
  * `article` contexts in Chrome, Firefox, and Safari.
@@ -49,10 +44,8 @@ h1 {
     margin: 0.67em 0;
 }
 
-
 /* Grouping content
    ========================================================================== */
-
 
 /**
  * Add the correct display in IE 9-.
@@ -66,7 +59,6 @@ main {
     display: block;
 }
 
-
 /**
 * Add the correct margin in IE 8.
 */
@@ -75,14 +67,12 @@ figure {
     margin: 1em 40px;
 }
 
-
 /**
 * 1. Add the correct box sizing in Firefox.
 * 2. Show the overflow in Edge and IE.
 */
 
 hr {
-    -webkit-box-sizing: content-box;
     box-sizing: content-box;
     /* 1 */
     height: 0;
@@ -90,7 +80,6 @@ hr {
     overflow: visible;
     /* 2 */
 }
-
 
 /**
 * 1. Correct the inheritance and scaling of font size in all browsers.
@@ -103,10 +92,8 @@ pre {
     /* 2 */
 }
 
-
 /* Text-level semantics
 ========================================================================== */
-
 
 /**
 * 1. Remove the gray background on active links in IE 10.
@@ -120,7 +107,6 @@ a {
     /* 2 */
 }
 
-
 /**
 * 1. Remove the bottom border in Chrome 57- and Firefox 39-.
 * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
@@ -131,10 +117,11 @@ abbr[title] {
     /* 1 */
     text-decoration: underline;
     /* 2 */
+    -webkit-text-decoration: underline dotted;
+    -moz-text-decoration: underline dotted;
     text-decoration: underline dotted;
     /* 2 */
 }
-
 
 /**
 * Prevent the duplicate application of `bolder` by the next rule in Safari 6.
@@ -145,7 +132,6 @@ strong {
     font-weight: inherit;
 }
 
-
 /**
 * Add the correct font weight in Chrome, Edge, and Safari.
 */
@@ -154,7 +140,6 @@ b,
 strong {
     font-weight: bolder;
 }
-
 
 /**
 * 1. Correct the inheritance and scaling of font size in all browsers.
@@ -169,7 +154,6 @@ samp {
     /* 2 */
 }
 
-
 /**
 * Add the correct font style in Android 4.3-.
 */
@@ -177,7 +161,6 @@ samp {
 dfn {
     font-style: italic;
 }
-
 
 /**
 * Add the correct background and color in IE 9-.
@@ -188,7 +171,6 @@ mark {
     color: #000;
 }
 
-
 /**
 * Add the correct font size in all browsers.
 */
@@ -196,7 +178,6 @@ mark {
 small {
     font-size: 80%;
 }
-
 
 /**
 * Prevent `sub` and `sup` elements from affecting the line height in
@@ -219,10 +200,8 @@ sup {
     top: -0.5em;
 }
 
-
 /* Embedded content
 ========================================================================== */
-
 
 /**
 * Add the correct display in IE 9-.
@@ -233,7 +212,6 @@ video {
     display: inline-block;
 }
 
-
 /**
 * Add the correct display in iOS 4-7.
 */
@@ -243,7 +221,6 @@ audio:not([controls]) {
     height: 0;
 }
 
-
 /**
 * Remove the border on images inside links in IE 10-.
 */
@@ -251,7 +228,6 @@ audio:not([controls]) {
 img {
     border-style: none;
 }
-
 
 /**
 * Hide the overflow in IE.
@@ -261,10 +237,8 @@ svg:not(:root) {
     overflow: hidden;
 }
 
-
 /* Forms
 ========================================================================== */
-
 
 /**
 * Remove the margin in Firefox and Safari.
@@ -278,7 +252,6 @@ textarea {
     margin: 0;
 }
 
-
 /**
 * Show the overflow in IE.
 * 1. Show the overflow in Edge.
@@ -290,7 +263,6 @@ input {
     overflow: visible;
 }
 
-
 /**
 * Remove the inheritance of text transform in Edge, Firefox, and IE.
 * 1. Remove the inheritance of text transform in Firefox.
@@ -301,7 +273,6 @@ select {
     /* 1 */
     text-transform: none;
 }
-
 
 /**
 * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
@@ -317,7 +288,6 @@ html [type="button"],
     /* 2 */
 }
 
-
 /**
 * Remove the inner border and padding in Firefox.
 */
@@ -330,7 +300,6 @@ button::-moz-focus-inner,
     padding: 0;
 }
 
-
 /**
 * Restore the focus styles unset by the previous rule.
 */
@@ -342,7 +311,6 @@ button:-moz-focusring,
     outline: 1px dotted ButtonText;
 }
 
-
 /**
 * 1. Correct the text wrapping in Edge and IE.
 * 2. Correct the color inheritance from `fieldset` elements in IE.
@@ -351,7 +319,6 @@ button:-moz-focusring,
 */
 
 legend {
-    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     /* 1 */
     color: inherit;
@@ -366,7 +333,6 @@ legend {
     /* 1 */
 }
 
-
 /**
 * 1. Add the correct display in IE 9-.
 * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.
@@ -379,7 +345,6 @@ progress {
     /* 2 */
 }
 
-
 /**
 * Remove the default vertical scrollbar in IE.
 */
@@ -388,7 +353,6 @@ textarea {
     overflow: auto;
 }
 
-
 /**
 * 1. Add the correct box sizing in IE 10-.
 * 2. Remove the padding in IE 10-.
@@ -396,13 +360,11 @@ textarea {
 
 [type="checkbox"],
 [type="radio"] {
-    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     /* 1 */
     padding: 0;
     /* 2 */
 }
-
 
 /**
 * Correct the cursor style of increment and decrement buttons in Chrome.
@@ -412,7 +374,6 @@ textarea {
 [type="number"]::-webkit-outer-spin-button {
     height: auto;
 }
-
 
 /**
 * 1. Correct the odd appearance in Chrome and Safari.
@@ -426,7 +387,6 @@ textarea {
     /* 2 */
 }
 
-
 /**
 * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.
 */
@@ -435,7 +395,6 @@ textarea {
 [type="search"]::-webkit-search-decoration {
     -webkit-appearance: none;
 }
-
 
 /**
 * 1. Correct the inability to style clickable types in iOS and Safari.
@@ -449,10 +408,8 @@ textarea {
     /* 2 */
 }
 
-
 /* Interactive
  ========================================================================== */
-
 
 /*
 * Add the correct display in IE 9-.
@@ -464,7 +421,6 @@ menu {
     display: block;
 }
 
-
 /*
 * Add the correct display in all browsers.
 */
@@ -473,10 +429,8 @@ summary {
     display: list-item;
 }
 
-
 /* Scripting
  ========================================================================== */
-
 
 /**
 * Add the correct display in IE 9-.
@@ -486,7 +440,6 @@ canvas {
     display: inline-block;
 }
 
-
 /**
 * Add the correct display in IE.
 */
@@ -495,10 +448,8 @@ template {
     display: none;
 }
 
-
 /* Hidden
  ========================================================================== */
-
 
 /**
 * Add the correct display in IE 10-.
@@ -508,9 +459,7 @@ template {
     display: none;
 }
 
-
 /*! (opinionated) base styles adapted from: sanitize.css v5.0.0, github.com/jonathantneal/sanitize.css */
-
 
 /**
  * 1. Remove repeating backgrounds in all browsers (opinionated).
@@ -522,11 +471,9 @@ template {
 ::after {
     background-repeat: no-repeat;
     /* 1 */
-    -webkit-box-sizing: inherit;
     box-sizing: inherit;
     /* 2 */
 }
-
 
 /**
  * 1. Add text decoration inheritance in all browsers (opinionated).
@@ -541,20 +488,17 @@ template {
     /* 2 */
 }
 
-
 /**
  * 1. Add border box sizing in all browsers (opinionated).
  * 2. Add the default cursor in all browsers (opinionated).
  */
 
 html {
-    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     /* 1 */
     cursor: default;
     /* 2 */
 }
-
 
 /**
  * 1. Remove the margin in all browsers (opinionated).
@@ -569,7 +513,6 @@ body {
     /* 2 */
 }
 
-
 /**
  * 1. Remove the default outline. Source [http://stackoverflow.com/questions/17324960/copy-chrome-default-inputs-outline-style] (opinionated).
  */
@@ -579,7 +522,6 @@ body {
     /* 1 */
 }
 
-
 /**
  * Remove the list style on navigation lists in all browsers (opinionated).
  */
@@ -588,7 +530,6 @@ nav ol,
 nav ul {
     list-style: none;
 }
-
 
 /*
  * Remove the text shadow on text selections (opinionated).
@@ -611,7 +552,6 @@ nav ul {
     text-shadow: none;
 }
 
-
 /*
  * Change the alignment on media elements in all browers (opinionated).
  */
@@ -625,7 +565,6 @@ video {
     vertical-align: middle;
 }
 
-
 /**
  * Change the fill color to match the text color in all browsers (opinionated).
  */
@@ -633,7 +572,6 @@ video {
 svg {
     fill: currentColor;
 }
-
 
 /**
  * Inherit styling in all browsers (opinionated).
@@ -649,7 +587,6 @@ textarea {
     line-height: inherit;
 }
 
-
 /**
  * 1. Remove the default vertical scrollbar in IE.
  * 2. Change the resize direction on textareas in all browsers (opinionated).
@@ -661,7 +598,6 @@ textarea {
     resize: vertical;
     /* 2 */
 }
-
 
 /*
  * Remove the tapping delay on clickable elements (opinionated).
@@ -682,7 +618,6 @@ textarea,
     touch-action: manipulation;
 }
 
-
 /**
  * Change the cursor on busy elements (opinionated).
  */
@@ -691,7 +626,6 @@ textarea,
     cursor: progress;
 }
 
-
 /*
  * Change the cursor on control elements (opinionated).
  */
@@ -699,7 +633,6 @@ textarea,
 [aria-controls] {
     cursor: pointer;
 }
-
 
 /*
  * Change the display on visually hidden accessible elements (opinionated).
@@ -711,7 +644,6 @@ textarea,
     position: absolute;
 }
 
-
 /*
  * Change the cursor on disabled, not-editable, or otherwise
  * inoperable elements (opinionated).
@@ -720,6 +652,5 @@ textarea,
 [aria-disabled] {
     cursor: default;
 }
-
 
 /* This is the only CSS file needed to be modified. Add your app styles here. */

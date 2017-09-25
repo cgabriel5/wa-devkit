@@ -1,6 +1,5 @@
 /*! (opinionated) base styles adapted from: sanitize.css v5.0.0, github.com/jonathantneal/sanitize.css */
 
-
 /**
  * 1. Remove repeating backgrounds in all browsers (opinionated).
  * 2. Add box sizing inheritence in all browsers (opinionated).
@@ -15,7 +14,6 @@
     /* 2 */
 }
 
-
 /**
  * 1. Add text decoration inheritance in all browsers (opinionated).
  * 2. Add vertical alignment inheritence in all browsers (opinionated).
@@ -29,7 +27,6 @@
     /* 2 */
 }
 
-
 /**
  * 1. Add border box sizing in all browsers (opinionated).
  * 2. Add the default cursor in all browsers (opinionated).
@@ -41,7 +38,6 @@ html {
     cursor: default;
     /* 2 */
 }
-
 
 /**
  * 1. Remove the margin in all browsers (opinionated).
@@ -56,7 +52,6 @@ body {
     /* 2 */
 }
 
-
 /**
  * 1. Remove the default outline. Source [http://stackoverflow.com/questions/17324960/copy-chrome-default-inputs-outline-style] (opinionated).
  */
@@ -66,7 +61,6 @@ body {
     /* 1 */
 }
 
-
 /**
  * Remove the list style on navigation lists in all browsers (opinionated).
  */
@@ -75,7 +69,6 @@ nav ol,
 nav ul {
     list-style: none;
 }
-
 
 /*
  * Remove the text shadow on text selections (opinionated).
@@ -98,7 +91,6 @@ nav ul {
     text-shadow: none;
 }
 
-
 /*
  * Change the alignment on media elements in all browers (opinionated).
  */
@@ -112,7 +104,6 @@ video {
     vertical-align: middle;
 }
 
-
 /**
  * Change the fill color to match the text color in all browsers (opinionated).
  */
@@ -120,7 +111,6 @@ video {
 svg {
     fill: currentColor;
 }
-
 
 /**
  * Inherit styling in all browsers (opinionated).
@@ -136,7 +126,6 @@ textarea {
     line-height: inherit;
 }
 
-
 /**
  * 1. Remove the default vertical scrollbar in IE.
  * 2. Change the resize direction on textareas in all browsers (opinionated).
@@ -148,7 +137,6 @@ textarea {
     resize: vertical;
     /* 2 */
 }
-
 
 /*
  * Remove the tapping delay on clickable elements (opinionated).
@@ -169,7 +157,6 @@ textarea,
     touch-action: manipulation;
 }
 
-
 /**
  * Change the cursor on busy elements (opinionated).
  */
@@ -178,7 +165,6 @@ textarea,
     cursor: progress;
 }
 
-
 /*
  * Change the cursor on control elements (opinionated).
  */
@@ -186,7 +172,6 @@ textarea,
 [aria-controls] {
     cursor: pointer;
 }
-
 
 /*
  * Change the display on visually hidden accessible elements (opinionated).
@@ -197,7 +182,6 @@ textarea,
     display: inherit;
     position: absolute;
 }
-
 
 /*
  * Change the cursor on disabled, not-editable, or otherwise

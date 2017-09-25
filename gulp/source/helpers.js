@@ -5,13 +5,13 @@
 //
 // build gulpfile.js
 gulp.task("helper-make-gulpfile", function(done) {
-    pump([gulp.src(bundle_gulp.core, {
-            cwd: "./gulp/source/"
+    pump([gulp.src(bundle_gulp.source.files, {
+            cwd: __PATHS_GULP_SOURCE
         }),
         insert.append("// " + "-".repeat(37)),
-        concat("gulpfile.js"),
-        beautify(options_beautify),
-        gulp.dest(BASE),
+        concat(bundle_gulp.source.name_setup),
+        beautify(opts_bt),
+        gulp.dest(__PATHS_BASE),
     ], done);
 });
 // check for any unused CSS
@@ -38,17 +38,19 @@ gulp.task("helper-purify", function(done) {
     var remove = _args.r || _args.remove;
     var delete_file = _args.D || _args.delete;
     // remove pure.css
-    if (remove || delete_file) del(["./css/pure.css"]);
+    if (remove || delete_file) del([__PATHS_PURE_FILE]);
     // don't run gulp just delete the file.
     if (delete_file) return done();
-    pump([gulp.src("./css/source/styles.css"),
-        purify(["./js/app.js", "./index.html"], {
+    pump([gulp.src(__PATHS_USERS_CSS_FILE, {
+            cwd: __PATHS_CSS_SOURCE
+        }),
+        purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
-        gulpif(!remove, rename("pure.css")),
-        beautify(options_beautify),
-        gulp.dest("./css/" + (remove ? "source/" : ""))
+        gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
+        beautify(opts_bt),
+        gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
     ], done);
 });
 // markdown to html (with github style/layout)
@@ -82,8 +84,7 @@ gulp.task("helper-tohtml", function(done) {
     // file has to exist
     fe(input, function(err, exists) {
         if (!exists) {
-            log(("[warning]")
-                .yellow + " File does not exist.");
+            log(color("[warning]", "yellow"), "File does not exist.");
             return done();
         }
         // continue...file exists
@@ -91,8 +92,7 @@ gulp.task("helper-tohtml", function(done) {
         var input_ext = path.extname(input);
         // file must be an .md file
         if (input_ext.toLowerCase() !== ".md") {
-            log(("[warning]")
-                .yellow + " Input file must be an .md file.");
+            log(color("[warning]", "yellow"), "Input file must be an .md file.");
             return done();
         }
         // get the input file name
@@ -100,18 +100,17 @@ gulp.task("helper-tohtml", function(done) {
         // get the new file name, default to input_filename when nothing is given
         new_name = (!new_name) ? undefined : path.basename(new_name, path.extname(new_name));
         // render Markdown to HTML
-        var cwd = process.cwd();
         mds.render(mds.resolveArgs({
-            input: path.join(cwd, input),
-            output: path.join(cwd, output),
-            layout: path.join(cwd, "/markdown/source")
+            input: path.join(__PATHS_CWD, input),
+            output: path.join(__PATHS_CWD, output),
+            layout: path.join(__PATHS_CWD, __PATHS_MARKDOWN_SOURCE)
         }), function() {
             var new_file_path = output + "/" + input_filename + ".html";
             // cleanup README.html
             pump([gulp.src(new_file_path, {
-                    cwd: BASE
+                    cwd: __PATHS_BASE
                 }),
-                beautify(options_beautify),
+                beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
                 gulp.dest(output)
@@ -123,7 +122,7 @@ gulp.task("helper-tohtml", function(done) {
         });
     });
 });
-// clear ./gulp/.gulpconfig.json keys
+// clear config/.hidden-internal.json keys
 gulp.task("helper-clear", function(done) {
     // run yargs
     var _args = args.usage("Usage: $0 --names [string]")
@@ -149,15 +148,14 @@ gulp.task("helper-clear", function(done) {
         // using the flag "w+" will create the file if it does not exists. if
         // it does exists it will truncate the current file. in effect clearing
         // if out. which is what is needed.
-        gulpconfig.set(key, null);
+        config_internal.set(key, null);
         // reset name if needed
         if (key === "pid") key = "status";
-        log(("[complete]")
-            .green + " " + key.yellow + " cleared.");
+        log(color("[complete]", "green"), color(key, "yellow"), "cleared.");
     }
-    gulpconfig.write(function() {
+    config_internal.write(function() {
         done();
-    }, null, 4);
+    }, null, json_format);
 });
 // open index.html in browser
 gulp.task("helper-open", function(done) {
@@ -185,11 +183,10 @@ gulp.task("helper-open", function(done) {
         open_file_in_browser(file, port, done);
     } else { // else get the used port, if any
         // get the ports
-        var ports = gulpconfig.get("ports");
+        var ports = config_internal.get("ports");
         // no ports...
         if (!ports) {
-            log(("[warning]")
-                .yellow + " No ports are in use.");
+            log(color("[warning]", "yellow"), "No ports are in use.");
             return done();
         }
         // open file in the browser
@@ -198,95 +195,60 @@ gulp.task("helper-open", function(done) {
 });
 // print the status of gulp (is it running or not?)
 gulp.task("helper-status", function(done) {
-    log(("[status]")
-        .yellow + " Gulp is " + ((gulpconfig.get("pid")) ? "running. " + (("(pid:" + process.pid + ")")
-            .yellow) : "not running."));
+    log(color("[status]", "yellow"), "Gulp is", ((config_internal.get("pid")) ? "running. " + color(("(pid:" + process.pid + ")"), "yellow") : "not running."));
     done();
 });
 // print the used ports for browser-sync
 gulp.task("helper-ports", function(done) {
     // get the ports
-    var ports = gulpconfig.get("ports");
+    var ports = config_internal.get("ports");
     // if file is empty
     if (!ports) {
-        log(("[warning]")
-            .yellow + " No ports are in use.");
+        log(color("[warning]", "yellow"), "No ports are in use.");
         return done();
     }
     // ports exist...
-    log(("(local)")
-        .green, ports.local);
-    log(("(ui)")
-        .green, ports.ui);
+    log(color("(local)", "green"), ports.local);
+    log(color("(ui)", "green"), ports.ui);
     done();
 });
-// run gulp-jsbeautifier on html, js, css, & json files to clean them
+// beautify html, js, css, & json files
 gulp.task("helper-clean-files", function(done) {
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
-    var pid = gulpconfig.get("pid");
-    // if file is empty gulp is not active
-    if (pid) {
-        log(("[warning]")
-            .yellow + " Files cannot be cleaned while Gulp is running. Close Gulp then try again.");
+    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
+        log(color("[warning]", "yellow"), "Files cannot be cleaned while Gulp is running. Close Gulp then try again.");
         return done();
     }
     var condition = function(file) {
-        var filepath = file.path;
-        var parts = filepath.split(".");
-        var ext = parts.pop()
-            .toLowerCase();
-        var path = parts.join(".");
-        // this array may be populated with files needed to be ignored
-        // just add the file's path to the array.
-        var exclude = [];
-        // file ext must be of one of the following types
-        if (!-~["html", "js", "css", "json"].indexOf(ext)) return false;
-        // cannot be in the exclude array
-        if (-~exclude.indexOf(filepath.replace(PATH + "/", ""))) return false;
-        // check if file is a min
-        var path_parts = path.split("/");
-        var last = path_parts[path_parts.length - 1].toLowerCase();
-        // cannot be a minimized file
-        if (-~last.indexOf(".min")) return false;
-        return true;
+        return (path.extname(file.path)
+            .toLowerCase() === ".json");
     };
-    // get all files
-    pump([gulp.src(["**/*.*", "!node_modules/**"], {
-            cwd: BASE,
-            dot: true
+    // get needed files
+    pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE, __PATHS_NOT_NODE_MODULES], {
+            dot: true,
+            cwd: __PATHS_BASE
         }),
-        gulpif(condition, print(function(filepath) {
+        print(function(filepath) {
             return "file: " + filepath;
+        }),
+        beautify(opts_bt),
+        gulpif(condition, json_sort({
+            "space": json_spaces
         })),
-        gulpif(condition, beautify(options_beautify)),
-        gulp.dest(BASE),
+        eol(),
+        gulp.dest(__PATHS_BASE),
     ], done);
 });
 // finds all the files that contain .min in the name and prints them
 gulp.task("helper-findmin", function(done) {
-    var condition = function(file) {
-        var filepath = file.path;
-        var parts = filepath.split(".");
-        var ext = parts.pop()
-            .toLowerCase();
-        var path = parts.join(".");
-        // file ext must be of one of the following types
-        if (!-~["html", "js", "css", "json"].indexOf(ext)) return false;
-        // check if file is a min
-        var path_parts = path.split("/");
-        var last = path_parts[path_parts.length - 1].toLowerCase();
-        // must be a minimized file
-        if (!-~last.indexOf(".min")) return false;
-        return true;
-    };
-    // get all files
-    pump([gulp.src(["**/*.*", "!node_modules/**"], {
-            cwd: BASE,
-            dot: true
+    // get min files
+    pump([gulp.src([__PATHS_FILES_MIN, __PATHS_NOT_NODE_MODULES], {
+            dot: true,
+            cwd: __PATHS_BASE
         }),
-        gulpif(condition, print(function(filepath) {
+        print(function(filepath) {
             return "file: " + filepath;
-        })),
+        })
     ], done);
 });

@@ -421,4 +421,4 @@ $RECYCLE.BIN/
 # Custom
 build/
 dist/
-gulp/.gulp*
+.hidden*

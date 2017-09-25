@@ -1,5 +1,11 @@
 {
-    "dependencies": {},
+    "author": "John Doe johndoe@example.com (https://github.com/johndoe_)",
+    "bugs": {
+        "url": "https://github.com/johndoe_/my-app/issues"
+    },
+    "dependencies": {
+    },
+    "description": "",
     "devDependencies": {
         "alphabetize-object-keys": "^1.0.4",
         "autoprefixer": "^7.0.1",
@@ -11,20 +17,26 @@
         "file-exists": "^4.0.0",
         "find-free-port": "^1.0.2",
         "git-state": "^4.0.0",
+        "glob": "^7.1.2",
         "gulp": "^3.9.1",
         "gulp-autoprefixer": "^4.0.0",
         "gulp-cache": "^0.4.6",
         "gulp-clean": "^0.3.2",
         "gulp-clean-css": "^3.2.0",
         "gulp-concat": "^2.6.1",
+        "gulp-eol": "^0.1.2",
+        "gulp-filter": "^5.0.1",
         "gulp-if": "^2.0.2",
         "gulp-imagemin": "^3.3.0",
         "gulp-insert": "^0.5.0",
         "gulp-jsbeautifier": "^2.1.0",
+        "gulp-json-sort": "^1.0.0",
         "gulp-minify-html": "^1.0.6",
         "gulp-open": "^2.0.0",
+        "gulp-order": "^1.1.1",
         "gulp-print": "^2.0.1",
         "gulp-purifycss": "^0.2.0",
+        "gulp-real-favicon": "^0.2.2",
         "gulp-rename": "^1.2.2",
         "gulp-replace": "^0.5.4",
         "gulp-shorthand": "^1.1.0",
@@ -36,6 +48,19 @@
         "prompt": "^1.0.0",
         "pump": "^1.0.2",
         "run-sequence": "^1.2.2",
+        "simple-git": "^1.77.0",
         "yargs": "^8.0.1"
-    }
+    },
+    "homepage": "https://github.com/johndoe_/my-app#readme",
+    "license": "MIT",
+    "name": "my-app",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/johndoe_/my-app.git"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "version": "0.0.1"
 }
