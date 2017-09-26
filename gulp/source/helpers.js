@@ -214,12 +214,7 @@ gulp.task("helper-ports", function(done) {
 });
 // beautify html, js, css, & json files
 gulp.task("helper-clean-files", function(done) {
-    // this task can only run when gulp is not running as gulps watchers
-    // can run too many times as many files are potentially being beautified
-    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
-        log(color("[warning]", "yellow"), "Files cannot be cleaned while Gulp is running. Close Gulp then try again.");
-        return done();
-    }
+    gulp_check(done); // check for Gulp instance
     var condition = function(file) {
         return (path.extname(file.path)
             .toLowerCase() === ".json");
@@ -229,6 +224,7 @@ gulp.task("helper-clean-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
+		// gulpif(config_internal.get("pid"), fail("")),
         print(function(filepath) {
             return "file: " + filepath;
         }),

@@ -6,6 +6,7 @@ var path = require("path");
 var eol = require("gulp-eol");
 var open = require("gulp-open");
 var gulpif = require("gulp-if");
+var fail = require("gulp-fail");
 var clean = require("gulp-clean");
 var cache = require("gulp-cache");
 var print = require("gulp-print");

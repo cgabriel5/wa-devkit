@@ -97,7 +97,8 @@ gulp.task("task-favicon-html", function(done) {
     ], done);
 });
 gulp.task("helper-favicon-build", function(done) {
-    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "helper-clean-files", function() {
+    gulp_check(done); // check for Gulp instance
+    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "task-html", "task-readme", "helper-clean-files", function() {
         log("Favicons generated.");
         done();
     });

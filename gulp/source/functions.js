@@ -53,3 +53,16 @@ function html_replace_fn(replacements) {
         }
     };
 }
+/**
+ * @description [Checks for active Gulp instance. If one exists the Gulp callback is called to end the task.]
+ * @param  {Function} callback 	[The Gulp provided task.]
+ * @return {Undefined} 			[Nothing is returned.]
+ */
+function gulp_check(callback) {
+    // this task can only run when gulp is not running as gulps watchers
+    // can run too many times as many files are potentially being beautified
+    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
+        log(color("[warning]", "yellow"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
+        callback();
+    }
+}
