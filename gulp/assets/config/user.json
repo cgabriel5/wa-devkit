@@ -31,7 +31,8 @@
                     "tasks-js.js",
                     "tasks-images.js",
                     "tasks-markdown.js",
-                    "helpers.js"
+                    "helpers.js",
+                    "favicon.js"
                 ],
                 "name": "gulpfile.js",
                 "name_setup": "gulpfile.unactive.js"
@@ -163,12 +164,7 @@
                 },
                 "html": {
                     "allowed_file_extensions": [
-                        "htm",
-                        "html",
-                        "xhtml",
-                        "shtml",
-                        "xml",
-                        "svg"
+                        "html"
                     ],
                     "brace_style": "collapse",
                     "end_with_newline": true,

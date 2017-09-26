@@ -1,14 +1,12 @@
-// File where the favicon markups are stored
-var FAVICON_DATA_FILE = "favicondata.json";
 // Generate the icons. This task takes a few seconds to complete.
 // You should run it at least once to create the icons. Then,
 // you should run it whenever RealFaviconGenerator updates its
 // package (see the check-for-favicon-update task below).
-gulp.task("generate-favicon", function(done) {
+gulp.task("task-favicon-generate", function(done) {
     real_favicon.generateFavicon({
-        masterPicture: "img/logo/leaf-900.png",
-        dest: "favicon/",
-        iconsPath: "favicon/",
+        masterPicture: __PATHS_FAVICON_MASTER_PIC,
+        dest: __PATHS_FAVICON_DEST,
+        iconsPath: __PATHS_FAVICON_DEST,
         design: {
             ios: {
                 pictureAspect: "backgroundAndMargin",
@@ -61,26 +59,55 @@ gulp.task("generate-favicon", function(done) {
             scalingAlgorithm: "Mitchell",
             errorOnImageTooSmall: false
         },
-        markupFile: FAVICON_DATA_FILE
+        markupFile: __PATHS_FAVICON_DATA_FILE
     }, function() {
         done();
     });
 });
-// Inject the favicon markups in your HTML pages. You should run
-// this task whenever you modify a page. You can keep this task
-// as is or refactor your existing HTML pipeline.
-gulp.task("inject-favicon-markups", function() {
-    return gulp.src(["./html/source/head/favicon.html"])
-        .pipe(real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(FAVICON_DATA_FILE))
-            .favicon.html_code))
-        .pipe(gulp.dest("./html/source/head"));
+// update manifest.json
+gulp.task("task-favicon-edit-manifest", function(done) {
+    var manifest = json.read(__PATHS_FAVICON_ROOT_MANIFEST);
+    manifest.set("name", "wa-devkit");
+    manifest.set("short_name", "WADK");
+    manifest.write(function() {
+        done();
+    }, null, json_spaces);
+});
+//
+// copy favicon.ico and apple-touch-icon.png to the root
+gulp.task("task-favicon-root", function(done) {
+    pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
+        gulp.dest(__PATHS_BASE),
+        bs.stream()
+    ], done);
+});
+// copy delete unneeded files
+gulp.task("task-favicon-delete", function(done) {
+    pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
+    	clean()
+    ], done);
+});
+// inject new favicon html:
+gulp.task("task-favicon-html", function(done) {
+    pump([gulp.src(__PATHS_FAVICON_HTML),
+        real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
+            .favicon.html_code),
+        gulp.dest(__PATHS_FAVICON_HTML_DEST),
+        bs.stream()
+    ], done);
+});
+gulp.task("helper-favicon-build", function(done) {
+    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "helper-clean-files", function() {
+        log("Favicons generated.");
+        done();
+    });
 });
 // Check for updates on RealFaviconGenerator (think: Apple has just
 // released a new Touch icon along with the latest version of iOS).
 // Run this task from time to time. Ideally, make it part of your
 // continuous integration system.
-gulp.task("check-for-favicon-update", function(done) {
-    var currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE))
+gulp.task("helper-favicon-updates", function(done) {
+    var currentVersion = JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
         .version;
     real_favicon.checkForUpdates(currentVersion, function(err) {
         if (err) {
