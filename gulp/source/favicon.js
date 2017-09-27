@@ -97,8 +97,13 @@ gulp.task("task-favicon-html", function(done) {
     ], done);
 });
 gulp.task("helper-favicon-build", function(done) {
-    gulp_check(done); // check for Gulp instance
-    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "task-html", "task-readme", "helper-clean-files", function() {
+    // this task can only run when gulp is not running as gulps watchers
+    // can run too many times as many files are potentially being beautified
+    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
+        gulp_check_warn();
+        return done();
+    }
+    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "task-html", "task-readme", "helper-clean-files", function(err) {
         log("Favicons generated.");
         done();
     });

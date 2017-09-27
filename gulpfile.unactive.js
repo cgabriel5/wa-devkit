@@ -241,17 +241,11 @@ function html_replace_fn(replacements) {
     };
 }
 /**
- * @description [Checks for active Gulp instance. If one exists the Gulp callback is called to end the task.]
- * @param  {Function} callback 	[The Gulp provided task.]
+ * @description [Print that an active Gulp instance exists.]
  * @return {Undefined} 			[Nothing is returned.]
  */
-function gulp_check(callback) {
-    // this task can only run when gulp is not running as gulps watchers
-    // can run too many times as many files are potentially being beautified
-    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
-        log(color("[warning]", "yellow"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
-        callback();
-    }
+function gulp_check_warn() {
+    log(color("[warning]", "yellow"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
 }
 // -------------------------------------
 //
@@ -877,7 +871,12 @@ gulp.task("helper-ports", function(done) {
 });
 // beautify html, js, css, & json files
 gulp.task("helper-clean-files", function(done) {
-    gulp_check(done); // check for Gulp instance
+    // this task can only run when gulp is not running as gulps watchers
+    // can run too many times as many files are potentially being beautified
+    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
+        gulp_check_warn();
+        return done();
+    }
     var condition = function(file) {
         return (path.extname(file.path)
             .toLowerCase() === ".json");
@@ -887,7 +886,6 @@ gulp.task("helper-clean-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-		// gulpif(config_internal.get("pid"), fail("")),
         print(function(filepath) {
             return "file: " + filepath;
         }),
@@ -1011,8 +1009,13 @@ gulp.task("task-favicon-html", function(done) {
     ], done);
 });
 gulp.task("helper-favicon-build", function(done) {
-    gulp_check(done); // check for Gulp instance
-    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "task-html", "task-readme", "helper-clean-files", function() {
+    // this task can only run when gulp is not running as gulps watchers
+    // can run too many times as many files are potentially being beautified
+    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
+        gulp_check_warn();
+        return done();
+    }
+    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "task-html", "task-readme", "helper-clean-files", function(err) {
         log("Favicons generated.");
         done();
     });
