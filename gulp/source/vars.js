@@ -26,6 +26,8 @@ var bundle_css = bundles.css;
 var bundle_js = bundles.js;
 var bundle_img = bundles.img;
 var bundle_gulp = bundles.gulp;
+var bundle_dist = bundles.dist;
+var bundle_lib = bundles.lib;
 // -------------------------------------
 // project utils
 var utils = require(__PATHS_GULP_UTILS);
@@ -37,7 +39,7 @@ var gulp = utils.gulp;
 var uri = utils.uri;
 var browser = utils.browser;
 // -------------------------------------
-var APPTYPE = config_user.apptype;
+var APPTYPE = config_internal.get("apptype");
 var INDEX = config_user.paths.index;
 var BASE = config_user.paths.base;
 var ROOTDIR = path.basename(path.resolve(__PATHS_DIRNAME)) + "/";
@@ -57,4 +59,14 @@ var html_injection_vars = {
     "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.thirdparty.name,
     "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.name,
     "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.thirdparty.name
+};
+var opts_sort = {
+    // sort based on dirname alphabetically
+    comparator: function(file1, file2) {
+        var dir1 = path.dirname(file1.path);
+        var dir2 = path.dirname(file2.path);
+        if (dir1 > dir2) return 1;
+        if (dir1 < dir2) return -1;
+        return 0;
+    }
 };

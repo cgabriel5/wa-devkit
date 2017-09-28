@@ -17,6 +17,39 @@
                 "name": "libs.css"
             }
         },
+        "dist": {
+            "source": {
+                "files": {
+                    "css": [
+                        "css/bundles/*.css"
+                    ],
+                    "favicon": [
+                        "favicon/**/*.{jpg,png,ico,svg}"
+                    ],
+                    "img": [
+                        "img/**/*.*"
+                    ],
+                    "js": [
+                        "js/bundles/*.js"
+                    ],
+                    "root": [
+                        "apple-touch-icon.png",
+                        "browserconfig.xml",
+                        "manifest.json",
+                        "favicon.ico",
+                        "index.html"
+                    ]
+                }
+            },
+            "tasks": [
+                "task-dist-clean",
+                "task-dist-favicon",
+                "task-dist-css",
+                "task-dist-img",
+                "task-dist-js",
+                "task-dist-root"
+            ]
+        },
         "gulp": {
             "source": {
                 "files": [
@@ -25,6 +58,8 @@
                     "vars.js",
                     "functions.js",
                     "init.js",
+                    "task-dist.js",
+                    "task-lib.js",
                     "tasks-watch.js",
                     "tasks-html.js",
                     "tasks-css.js",
@@ -38,13 +73,10 @@
                 "name_setup": "gulpfile.unactive.js"
             },
             "tasks": [
-                "task-cssapp",
-                "task-csslibs",
-                "task-csslibsfolder",
-                "task-jsapp",
-                "task-jslibsource",
-                "task-jslibs",
-                "task-jslibsfolder",
+                "task-css-app",
+                "task-css-libs",
+                "task-js-app",
+                "task-js-libs",
                 "task-img",
                 "task-html",
                 "task-readme"
@@ -125,6 +157,12 @@
                 ],
                 "name": "libs.js"
             }
+        },
+        "lib": {
+            "tasks": [
+                "task-lib-clean",
+                "task-lib-js"
+            ]
         }
     },
     "options": {

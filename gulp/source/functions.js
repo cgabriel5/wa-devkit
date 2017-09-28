@@ -3,13 +3,15 @@
  * @param  {String}   filepath  [The path of the file to open.]
  * @param  {Number}   port     	[The port to open on.]
  * @param  {Function} callback  [The Gulp task callback to run.]
+ * @param  {Object} task  		[The Gulp task.]
  * @return {Undefined}          [Nothing is returned.]
  */
-function open_file_in_browser(filepath, port, callback) {
+function open_file_in_browser(filepath, port, callback, task) {
     pump([gulp.src(filepath, {
             cwd: __PATHS_BASE,
             dot: true
         }),
+    	debug(task._wa_devkit.debug),
         open({
             app: browser,
             uri: uri({
@@ -18,7 +20,8 @@ function open_file_in_browser(filepath, port, callback) {
                 "port": port,
                 "https": config_user.https
             })
-        })
+        }),
+        size(task._wa_devkit.size)
     ], function() {
         notify("File opened!");
         callback();

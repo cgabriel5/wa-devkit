@@ -88,7 +88,20 @@ var current_task = function(gulp) {
     // [http://stackoverflow.com/a/27535245]
     gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
     gulp.Gulp.prototype._runTask = function(task) {
-        this.currentTask = task;
+        var title = " ".repeat(10) + "├──";
+        this._wa_devkit = {
+            "name": task.name,
+            "task_name_clean": task.name.replace(/^(helper|task)\-/, "") + ":",
+            "debug": {
+                "title": title,
+                "minimal": true,
+                "showFiles": true
+            },
+            "size": {
+                "title": title,
+                "showFiles": false
+            }
+        };
         this.__runTask(task);
     };
     return gulp;

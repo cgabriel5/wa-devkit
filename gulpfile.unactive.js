@@ -7,10 +7,13 @@ var eol = require("gulp-eol");
 var open = require("gulp-open");
 var gulpif = require("gulp-if");
 var fail = require("gulp-fail");
+var sort = require("gulp-sort");
+var size = require("gulp-size");
 var clean = require("gulp-clean");
 var cache = require("gulp-cache");
 var print = require("gulp-print");
 var order = require("gulp-order");
+var debug = require("gulp-debug");
 var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
@@ -53,21 +56,13 @@ var find_free_port = require("find-free-port");
 var bs_autoclose = require("browser-sync-close-hook");
 // -------------------------------------
 // paths::BASES
+var __PATHS_BASE_DOT = ".";
 var __PATHS_BASE = "./";
 var __PATHS_DIRNAME = __dirname;
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
-// paths:DISTRIBUTION
+// paths:DISTRIBUTION (only for apptype=webapp)
 var __PATHS_DIST_HOME = "dist/";
-var __PATHS_DIST_LIB = "dist/lib/";
-var __PATHS_DIST_HTML = "dist/html/";
-var __PATHS_DIST_CSS = "dist/css/";
-var __PATHS_DIST_CSS_LIBS = "dist/css/libs/";
-var __PATHS_DIST_CSS_LIBS_FILE_SOURCE = `${__PATHS_HOMEDIR}css/libs/**`;
-var __PATHS_DIST_JS = "dist/js/";
-var __PATHS_DIST_JS_LIBS = "dist/js/libs/";
-var __PATHS_DIST_JS_LIBS_FILE_SOURCE = `${__PATHS_HOMEDIR}js/libs/**`;
-var __PATHS_DIST_IMG = "dist/img/";
 // paths: library (only for apptype=library)
 var __PATHS_LIB_HOME = "lib/";
 // paths:HTML
@@ -152,6 +147,8 @@ var bundle_css = bundles.css;
 var bundle_js = bundles.js;
 var bundle_img = bundles.img;
 var bundle_gulp = bundles.gulp;
+var bundle_dist = bundles.dist;
+var bundle_lib = bundles.lib;
 // -------------------------------------
 // project utils
 var utils = require(__PATHS_GULP_UTILS);
@@ -163,7 +160,7 @@ var gulp = utils.gulp;
 var uri = utils.uri;
 var browser = utils.browser;
 // -------------------------------------
-var APPTYPE = config_user.apptype;
+var APPTYPE = config_internal.get("apptype");
 var INDEX = config_user.paths.index;
 var BASE = config_user.paths.base;
 var ROOTDIR = path.basename(path.resolve(__PATHS_DIRNAME)) + "/";
@@ -184,19 +181,31 @@ var html_injection_vars = {
     "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.name,
     "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.thirdparty.name
 };
+var opts_sort = {
+    // sort based on dirname alphabetically
+    comparator: function(file1, file2) {
+        var dir1 = path.dirname(file1.path);
+        var dir2 = path.dirname(file2.path);
+        if (dir1 > dir2) return 1;
+        if (dir1 < dir2) return -1;
+        return 0;
+    }
+};
 // -------------------------------------
 /**
  * @description [Opens the provided file in the user's browser.]
  * @param  {String}   filepath  [The path of the file to open.]
  * @param  {Number}   port     	[The port to open on.]
  * @param  {Function} callback  [The Gulp task callback to run.]
+ * @param  {Object} task  		[The Gulp task.]
  * @return {Undefined}          [Nothing is returned.]
  */
-function open_file_in_browser(filepath, port, callback) {
+function open_file_in_browser(filepath, port, callback, task) {
     pump([gulp.src(filepath, {
             cwd: __PATHS_BASE,
             dot: true
         }),
+    	debug(task._wa_devkit.debug),
         open({
             app: browser,
             uri: uri({
@@ -205,7 +214,8 @@ function open_file_in_browser(filepath, port, callback) {
                 "port": port,
                 "https": config_user.https
             })
-        })
+        }),
+        size(task._wa_devkit.size)
     ], function() {
         notify("File opened!");
         callback();
@@ -316,14 +326,9 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
         });
     });
 });
-// remove the dist/ folder
-gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
-    pump([gulp.src(__PATHS_DIST_HOME, opts),
-        clean()
-    ], done);
-});
 // build the dist/ folder
-gulp.task("task-build", ["task-clean-dist"], function(done) {
+gulp.task("task-build", ["task-git-branch"], function(done) {
+    var task = this;
     // get the gulp build tasks
     var tasks = bundle_gulp.tasks;
     // add callback to the sequence
@@ -332,7 +337,7 @@ gulp.task("task-build", ["task-clean-dist"], function(done) {
         done();
     });
     // apply the tasks and callback to sequence
-    return sequence.apply(this, tasks);
+    return sequence.apply(task, tasks);
 });
 // gulps default task is set to rum the build + watch + browser-sync
 gulp.task("default", function(done) {
@@ -388,6 +393,168 @@ gulp.task("default", function(done) {
     }
 });
 // -------------------------------------
+// remove old dist / folder
+gulp.task("task-dist-clean", function(done) {
+    var task = this;
+    pump([gulp.src(__PATHS_DIST_HOME, opts),
+    	debug(task._wa_devkit.debug),
+        clean(),
+    	size(task._wa_devkit.size)
+    ], done);
+});
+// copy new file/folders
+gulp.task("task-dist-favicon", function(done) {
+    var task = this;
+    pump([gulp.src(bundle_dist.source.files.favicon, {
+            dot: true,
+            cwd: __PATHS_HOMEDIR,
+            // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
+            base: __PATHS_BASE_DOT
+        }),
+    	debug(task._wa_devkit.debug),
+    	size(task._wa_devkit.size),
+    	gulp.dest(__PATHS_DIST_HOME)
+    ], done);
+});
+gulp.task("task-dist-css", function(done) {
+    var task = this;
+    pump([gulp.src(bundle_dist.source.files.css, {
+            dot: true,
+            cwd: __PATHS_HOMEDIR,
+            base: __PATHS_BASE_DOT
+        }),
+    	debug(task._wa_devkit.debug),
+		clean_css(),
+		size(task._wa_devkit.size),
+    	gulp.dest(__PATHS_DIST_HOME)
+    ], done);
+});
+gulp.task("task-dist-img", function(done) {
+    var task = this;
+    // need to copy hidden files/folders?
+    // [https://github.com/klaascuvelier/gulp-copy/issues/5]
+    pump([gulp.src(bundle_dist.source.files.img, {
+            dot: true,
+            cwd: __PATHS_HOMEDIR,
+            base: __PATHS_BASE_DOT
+        }),
+    	debug(task._wa_devkit.debug),
+		cache(imagemin([
+            imagemin.gifsicle({
+                interlaced: true
+            }),
+            imagemin.jpegtran({
+                progressive: true
+            }),
+            imagemin.optipng({
+                optimizationLevel: 5
+            }),
+            imagemin.svgo({
+                plugins: [{
+                    removeViewBox: true
+                }]
+            })
+        ])),
+        size(task._wa_devkit.size),
+    	gulp.dest(__PATHS_DIST_HOME)
+    ], done);
+});
+gulp.task("task-dist-js", function(done) {
+    var task = this;
+    pump([gulp.src(bundle_dist.source.files.js, {
+            dot: true,
+            cwd: __PATHS_HOMEDIR,
+            base: __PATHS_BASE_DOT
+        }),
+    	debug(task._wa_devkit.debug),
+		uglify(),
+		size(task._wa_devkit.size),
+    	gulp.dest(__PATHS_DIST_HOME)
+    ], done);
+});
+gulp.task("task-dist-root", function(done) {
+    var task = this;
+    var is_html = function(file) {
+        return (path.extname(file.path)
+            .toLowerCase() === ".html");
+    };
+    pump([gulp.src(bundle_dist.source.files.root, {
+            dot: true,
+            cwd: __PATHS_HOMEDIR,
+            base: __PATHS_BASE_DOT
+        }),
+    	debug(task._wa_devkit.debug),
+    	gulpif(is_html, minify_html()),
+    	size(task._wa_devkit.size),
+    	gulp.dest(__PATHS_DIST_HOME)
+    ], done);
+});
+// helper distribution make task
+gulp.task("helper-make-dist", function(done) {
+    var task = this;
+    if (APPTYPE !== "webapp") {
+        log("This helper task is only available for \"webapp\" projects.");
+        return done();
+    }
+    // get the gulp build tasks
+    var tasks = bundle_dist.tasks;
+    // add callback to the sequence
+    tasks.push(function() {
+        notify("Distribution folder complete.");
+        log("Distribution folder complete.");
+        done();
+    });
+    // apply the tasks and callback to sequence
+    return sequence.apply(task, tasks);
+});
+// -------------------------------------
+// remove old lib / folder
+gulp.task("task-lib-clean", function(done) {
+    var task = this;
+    pump([gulp.src(__PATHS_LIB_HOME, opts),
+    	debug(task._wa_devkit.debug),
+        clean(),
+        size(task._wa_devkit.size)
+    ], done);
+});
+gulp.task("task-lib-js", function(done) {
+    var task = this;
+    var files = bundle_js.source.files;
+    files.push(__PATHS_FILES_TEST); // ignore test files
+    pump([gulp.src(bundle_js.source.files, {
+            nocase: true,
+            cwd: __PATHS_JS_THIRDPARTY
+        }),
+    	debug(task._wa_devkit.debug),
+        concat(bundle_js.thirdparty.name),
+        beautify(opts_bt),
+        size(task._wa_devkit.size),
+        gulp.dest(__PATHS_LIB_HOME),
+        uglify(),
+        rename(bundle_js.thirdparty.minified_name),
+        size(task._wa_devkit.size),
+        gulp.dest(__PATHS_LIB_HOME),
+    ], done);
+});
+// helper library make task
+gulp.task("helper-make-lib", function(done) {
+    var task = this;
+    if (APPTYPE !== "library") {
+        log("This helper task is only available for \"library\" projects.");
+        return done();
+    }
+    // get the gulp build tasks
+    var tasks = bundle_lib.tasks;
+    // add callback to the sequence
+    tasks.push(function() {
+        notify("Library folder complete.");
+        log("Library folder complete.");
+        done();
+    });
+    // apply the tasks and callback to sequence
+    return sequence.apply(task, tasks);
+});
+// -------------------------------------
 // watch for files changes
 gulp.task("task-watch", function(done) {
     // add auto tab closing capability to browser-sync. this will
@@ -425,25 +592,25 @@ gulp.task("task-watch", function(done) {
         gulp.watch(bundles.gulp.watch.css.source, {
             cwd: __PATHS_CSS_SOURCE
         }, function() {
-            return sequence("task-cssapp");
+            return sequence("task-css-app");
         });
         // watch for any changes to CSS Lib files
         gulp.watch(bundles.gulp.watch.css.thirdparty, {
             cwd: __PATHS_CSS_THIRDPARTY
         }, function() {
-            return sequence("task-csslibs", "task-csslibsfolder");
+            return sequence("task-css-libs");
         });
         // watch for any changes to JS Source files
         gulp.watch(bundles.gulp.watch.js.source, {
             cwd: __PATHS_JS_SOURCE
         }, function() {
-            return sequence("task-jsapp");
+            return sequence("task-js-app");
         });
         // watch for any changes to JS Lib files
         gulp.watch(bundles.gulp.watch.js.thirdparty, {
             cwd: __PATHS_JS_THIRDPARTY
         }, function() {
-            return sequence("task-jslibsource", "task-jslibs", "task-jslibsfolder");
+            return sequence("task-js-libs");
         });
         // watch for any changes to IMG files
         gulp.watch(bundles.gulp.watch.img, {
@@ -465,25 +632,27 @@ gulp.task("task-watch", function(done) {
 // -------------------------------------
 // init HTML files + minify
 gulp.task("task-html", function(done) {
+    var task = this;
     // RegExp used for $:pre/post{filename/$var} HTML file-content/$variable injection
     var r_pre = regexp_html.pre;
     var r_post = regexp_html.post;
     pump([gulp.src(bundles.html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         concat(bundles.html.source.name),
         replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
         beautify(opts_bt),
         replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
-        minify_html(),
-        gulp.dest(__PATHS_DIST_HOME),
         bs.stream()
     ], done);
 });
 // -------------------------------------
 // preform custom regexp replacements
 gulp.task("task-precssapp-cleanup", function(done) {
+    var task = this;
     // RegExp used for custom CSS code modifications
     var pf = regexp_css.prefixes;
     var lz = regexp_css.lead_zeros;
@@ -492,6 +661,7 @@ gulp.task("task-precssapp-cleanup", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
         replace(new RegExp(pf.p, pf.f), pf.r),
         replace(new RegExp(lz.p, lz.f), lz.r),
@@ -499,146 +669,88 @@ gulp.task("task-precssapp-cleanup", function(done) {
         replace(new RegExp(lh.p, lh.f), function(match) {
             return match.toLowerCase();
         }),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_CSS_SOURCE),
         bs.stream()
     ], done);
 });
 // build app.css + autoprefix + minify
-gulp.task("task-cssapp", ["task-precssapp-cleanup"], function(done) {
+gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
+    var task = this;
     pump([gulp.src(bundle_css.source.files, {
             cwd: __PATHS_CSS_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         concat(bundle_css.source.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_CSS_BUNDLES),
-        clean_css(),
-        gulp.dest(__PATHS_DIST_CSS),
         bs.stream()
     ], done);
 });
 // build libs.css + minify + beautify
-gulp.task("task-csslibs", function(done) {
+gulp.task("task-css-libs", function(done) {
+    var task = this;
     pump([gulp.src(bundle_css.thirdparty.files, {
             cwd: __PATHS_CSS_THIRDPARTY
         }),
+    	debug(task._wa_devkit.debug),
         concat(bundle_css.thirdparty.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_CSS_BUNDLES),
-        clean_css(),
-        gulp.dest(__PATHS_DIST_CSS),
-        bs.stream()
-    ], done);
-});
-// remove the dist/css/libs/ folder
-gulp.task("task-clean-csslibs", function(done) {
-    pump([gulp.src(__PATHS_DIST_CSS_LIBS, opts),
-        clean()
-    ], done);
-});
-// copy css libraries folder
-gulp.task("task-csslibsfolder", ["task-clean-csslibs"], function(done) {
-    pump([gulp.src(__PATHS_DIST_CSS_LIBS_FILE_SOURCE),
-        gulp.dest(__PATHS_DIST_CSS_LIBS),
         bs.stream()
     ], done);
 });
 // -------------------------------------
 // build app.js + minify + beautify
-gulp.task("task-jsapp", function(done) {
+gulp.task("task-js-app", function(done) {
+    var task = this;
     pump([gulp.src(bundle_js.source.files, {
             cwd: __PATHS_JS_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         concat(bundle_js.source.name),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_JS_BUNDLES),
-        uglify(),
-        gulp.dest(__PATHS_DIST_JS),
-        bs.stream()
-    ], done);
-});
-// build lib/lib.js + lib/lib.min.js
-gulp.task("task-jslibsource", function(done) {
-    // check if application is a library
-    var is_library = (APPTYPE === "library");
-    if (!is_library) return done(); // return on apps of type "webapp"
-    // get the source files
-    var files = bundle_js.source.files;
-    files.push(__PATHS_FILES_TEST); // ignore test files
-    pump([gulp.src(bundle_js.source.files, {
-            cwd: __PATHS_JS_THIRDPARTY,
-            nocase: true
-        }),
-        concat(bundle_js.thirdparty.name),
-        beautify(opts_bt),
-        // gulpif(is_library, rename("lib.js")), ==> bundle_js.thirdparty.name
-        gulpif(is_library, gulp.dest(__PATHS_LIB_HOME)),
-        gulpif(is_library, gulp.dest(__PATHS_DIST_LIB)), // <-- also add to dist/ directory
-        uglify(),
-        gulpif(is_library, rename(bundle_js.thirdparty.minified_name)),
-        gulpif(is_library, gulp.dest(__PATHS_LIB_HOME)),
-        gulpif(is_library, gulp.dest(__PATHS_DIST_LIB)), // <-- also add to dist/ directory
         bs.stream()
     ], done);
 });
 // build libs.js + minify + beautify
-gulp.task("task-jslibs", function(done) {
+gulp.task("task-js-libs", function(done) {
+    var task = this;
     pump([gulp.src(bundle_js.thirdparty.files, {
             cwd: __PATHS_JS_THIRDPARTY
         }),
+    	debug(task._wa_devkit.debug),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_JS_BUNDLES),
-        uglify(),
-        gulp.dest(__PATHS_DIST_JS_LIBS),
-        bs.stream()
-    ], done);
-});
-// remove the dist/js/libs/ folder
-gulp.task("task-clean-jslibs", function(done) {
-    pump([gulp.src(__PATHS_DIST_JS_LIBS, opts),
-        clean()
-    ], done);
-});
-// copy js libraries folder
-gulp.task("task-jslibsfolder", ["task-clean-jslibs"], function(done) {
-    pump([gulp.src(__PATHS_DIST_JS_LIBS_FILE_SOURCE),
-        gulp.dest(__PATHS_DIST_JS_LIBS),
         bs.stream()
     ], done);
 });
 // -------------------------------------
-// copy img/ to dist/img/
+// just trigger a browser-sync stream
 gulp.task("task-img", function(done) {
+    var task = this;
     // need to copy hidden files/folders?
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(__PATHS_IMG_SOURCE),
-        gulp.dest(__PATHS_DIST_IMG),
-        cache(imagemin([
-            imagemin.gifsicle({
-                interlaced: true
-            }),
-            imagemin.jpegtran({
-                progressive: true
-            }),
-            imagemin.optipng({
-                optimizationLevel: 5
-            }),
-            imagemin.svgo({
-                plugins: [{
-                    removeViewBox: true
-                }]
-            })
-        ])),
+    	debug(task._wa_devkit.debug),
+    	size(task._wa_devkit.size),
         bs.stream()
     ], done);
 });
 // -------------------------------------
 // markdown to html (with github style/layout)
 gulp.task("task-readme", function(done) {
+    var task = this;
     mds.render(mds.resolveArgs({
         input: path.join(__PATHS_CWD, __PATHS_README),
         output: path.join(__PATHS_CWD, __PATHS_MARKDOWN_PREVIEW),
@@ -648,7 +760,9 @@ gulp.task("task-readme", function(done) {
         pump([gulp.src(__PATHS_README_HTML, {
                 cwd: __PATHS_MARKDOWN_PREVIEW
             }),
+        	debug(task._wa_devkit.debug),
             beautify(opts_bt),
+            size(task._wa_devkit.size),
             gulp.dest(__PATHS_MARKDOWN_PREVIEW),
             bs.stream()
         ], done);
@@ -662,17 +776,21 @@ gulp.task("task-readme", function(done) {
 //
 // build gulpfile.js
 gulp.task("helper-make-gulpfile", function(done) {
+    var task = this;
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         insert.append("// " + "-".repeat(37)),
         concat(bundle_gulp.source.name_setup),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
 // check for any unused CSS
 gulp.task("helper-purify", function(done) {
+    var task = this;
     // run yargs
     var _args = args.usage("Usage: $0 --remove [boolean]")
         .option("remove", {
@@ -701,17 +819,20 @@ gulp.task("helper-purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
     ], done);
 });
 // markdown to html (with github style/layout)
 gulp.task("helper-tohtml", function(done) {
+    var task = this;
     // run yargs
     var _args = args.usage("Usage: $0 --input [string] --output [string] --name [string]")
         .option("input", {
@@ -767,9 +888,11 @@ gulp.task("helper-tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
+            	debug(task._wa_devkit.debug),
                 beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
+                size(task._wa_devkit.size),
                 gulp.dest(output)
             ], function() {
                 // if a new name was provided delete the file with the old input file
@@ -816,6 +939,7 @@ gulp.task("helper-clear", function(done) {
 });
 // open index.html in browser
 gulp.task("helper-open", function(done) {
+    var task = this;
     // run yargs
     var _args = args.usage("Usage: $0 --file [string] --port [number]")
         .option("file", {
@@ -837,7 +961,7 @@ gulp.task("helper-open", function(done) {
     var port = _args.p || _args.port;
     // if port is provided use that
     if (port) {
-        open_file_in_browser(file, port, done);
+        open_file_in_browser(file, port, done, task);
     } else { // else get the used port, if any
         // get the ports
         var ports = config_internal.get("ports");
@@ -847,7 +971,7 @@ gulp.task("helper-open", function(done) {
             return done();
         }
         // open file in the browser
-        open_file_in_browser(file, ports.local, done);
+        open_file_in_browser(file, ports.local, done, task);
     }
 });
 // print the status of gulp (is it running or not?)
@@ -871,6 +995,7 @@ gulp.task("helper-ports", function(done) {
 });
 // beautify html, js, css, & json files
 gulp.task("helper-clean-files", function(done) {
+    var task = this;
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
     if (config_internal.get("pid")) { // Gulp instance exists so cleanup
@@ -886,27 +1011,28 @@ gulp.task("helper-clean-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-        print(function(filepath) {
-            return "file: " + filepath;
-        }),
+    	sort(opts_sort),
+    	debug(task._wa_devkit.debug),
         beautify(opts_bt),
         gulpif(condition, json_sort({
             "space": json_spaces
         })),
         eol(),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
 // finds all the files that contain .min in the name and prints them
 gulp.task("helper-findmin", function(done) {
+    var task = this;
     // get min files
     pump([gulp.src([__PATHS_FILES_MIN, __PATHS_NOT_NODE_MODULES], {
             dot: true,
             cwd: __PATHS_BASE
         }),
-        print(function(filepath) {
-            return "file: " + filepath;
-        })
+		sort(opts_sort),
+    	debug(task._wa_devkit.debug),
+    	size(task._wa_devkit.size)
     ], done);
 });
 // -------------------------------------
@@ -988,22 +1114,31 @@ gulp.task("task-favicon-edit-manifest", function(done) {
 //
 // copy favicon.ico and apple-touch-icon.png to the root
 gulp.task("task-favicon-root", function(done) {
+    var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
+    	debug(task._wa_devkit.debug),
+    	size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
         bs.stream()
     ], done);
 });
 // copy delete unneeded files
 gulp.task("task-favicon-delete", function(done) {
+    var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	clean()
+    	debug(task._wa_devkit.debug),
+    	clean(),
+    	size(task._wa_devkit.size)
     ], done);
 });
 // inject new favicon html:
 gulp.task("task-favicon-html", function(done) {
+    var task = this;
     pump([gulp.src(__PATHS_FAVICON_HTML),
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
             .favicon.html_code),
+        debug(task._wa_devkit.debug),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
         bs.stream()
     ], done);

@@ -1,19 +1,11 @@
 // paths::BASES
+var __PATHS_BASE_DOT = ".";
 var __PATHS_BASE = "./";
 var __PATHS_DIRNAME = __dirname;
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
-// paths:DISTRIBUTION
+// paths:DISTRIBUTION (only for apptype=webapp)
 var __PATHS_DIST_HOME = "dist/";
-var __PATHS_DIST_LIB = "dist/lib/";
-var __PATHS_DIST_HTML = "dist/html/";
-var __PATHS_DIST_CSS = "dist/css/";
-var __PATHS_DIST_CSS_LIBS = "dist/css/libs/";
-var __PATHS_DIST_CSS_LIBS_FILE_SOURCE = `${__PATHS_HOMEDIR}css/libs/**`;
-var __PATHS_DIST_JS = "dist/js/";
-var __PATHS_DIST_JS_LIBS = "dist/js/libs/";
-var __PATHS_DIST_JS_LIBS_FILE_SOURCE = `${__PATHS_HOMEDIR}js/libs/**`;
-var __PATHS_DIST_IMG = "dist/img/";
 // paths: library (only for apptype=library)
 var __PATHS_LIB_HOME = "lib/";
 // paths:HTML

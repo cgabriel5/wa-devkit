@@ -35,25 +35,25 @@ gulp.task("task-watch", function(done) {
         gulp.watch(bundles.gulp.watch.css.source, {
             cwd: __PATHS_CSS_SOURCE
         }, function() {
-            return sequence("task-cssapp");
+            return sequence("task-css-app");
         });
         // watch for any changes to CSS Lib files
         gulp.watch(bundles.gulp.watch.css.thirdparty, {
             cwd: __PATHS_CSS_THIRDPARTY
         }, function() {
-            return sequence("task-csslibs", "task-csslibsfolder");
+            return sequence("task-css-libs");
         });
         // watch for any changes to JS Source files
         gulp.watch(bundles.gulp.watch.js.source, {
             cwd: __PATHS_JS_SOURCE
         }, function() {
-            return sequence("task-jsapp");
+            return sequence("task-js-app");
         });
         // watch for any changes to JS Lib files
         gulp.watch(bundles.gulp.watch.js.thirdparty, {
             cwd: __PATHS_JS_THIRDPARTY
         }, function() {
-            return sequence("task-jslibsource", "task-jslibs", "task-jslibsfolder");
+            return sequence("task-js-libs");
         });
         // watch for any changes to IMG files
         gulp.watch(bundles.gulp.watch.img, {

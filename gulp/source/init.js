@@ -66,14 +66,9 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
         });
     });
 });
-// remove the dist/ folder
-gulp.task("task-clean-dist", ["task-git-branch"], function(done) {
-    pump([gulp.src(__PATHS_DIST_HOME, opts),
-        clean()
-    ], done);
-});
 // build the dist/ folder
-gulp.task("task-build", ["task-clean-dist"], function(done) {
+gulp.task("task-build", ["task-git-branch"], function(done) {
+    var task = this;
     // get the gulp build tasks
     var tasks = bundle_gulp.tasks;
     // add callback to the sequence
@@ -82,7 +77,7 @@ gulp.task("task-build", ["task-clean-dist"], function(done) {
         done();
     });
     // apply the tasks and callback to sequence
-    return sequence.apply(this, tasks);
+    return sequence.apply(task, tasks);
 });
 // gulps default task is set to rum the build + watch + browser-sync
 gulp.task("default", function(done) {

@@ -5,17 +5,21 @@
 //
 // build gulpfile.js
 gulp.task("helper-make-gulpfile", function(done) {
+    var task = this;
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         insert.append("// " + "-".repeat(37)),
         concat(bundle_gulp.source.name_setup),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
 // check for any unused CSS
 gulp.task("helper-purify", function(done) {
+    var task = this;
     // run yargs
     var _args = args.usage("Usage: $0 --remove [boolean]")
         .option("remove", {
@@ -44,17 +48,20 @@ gulp.task("helper-purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
+    	debug(task._wa_devkit.debug),
         purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
         beautify(opts_bt),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
     ], done);
 });
 // markdown to html (with github style/layout)
 gulp.task("helper-tohtml", function(done) {
+    var task = this;
     // run yargs
     var _args = args.usage("Usage: $0 --input [string] --output [string] --name [string]")
         .option("input", {
@@ -110,9 +117,11 @@ gulp.task("helper-tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
+            	debug(task._wa_devkit.debug),
                 beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
+                size(task._wa_devkit.size),
                 gulp.dest(output)
             ], function() {
                 // if a new name was provided delete the file with the old input file
@@ -159,6 +168,7 @@ gulp.task("helper-clear", function(done) {
 });
 // open index.html in browser
 gulp.task("helper-open", function(done) {
+    var task = this;
     // run yargs
     var _args = args.usage("Usage: $0 --file [string] --port [number]")
         .option("file", {
@@ -180,7 +190,7 @@ gulp.task("helper-open", function(done) {
     var port = _args.p || _args.port;
     // if port is provided use that
     if (port) {
-        open_file_in_browser(file, port, done);
+        open_file_in_browser(file, port, done, task);
     } else { // else get the used port, if any
         // get the ports
         var ports = config_internal.get("ports");
@@ -190,7 +200,7 @@ gulp.task("helper-open", function(done) {
             return done();
         }
         // open file in the browser
-        open_file_in_browser(file, ports.local, done);
+        open_file_in_browser(file, ports.local, done, task);
     }
 });
 // print the status of gulp (is it running or not?)
@@ -214,6 +224,7 @@ gulp.task("helper-ports", function(done) {
 });
 // beautify html, js, css, & json files
 gulp.task("helper-clean-files", function(done) {
+    var task = this;
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
     if (config_internal.get("pid")) { // Gulp instance exists so cleanup
@@ -229,26 +240,27 @@ gulp.task("helper-clean-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-        print(function(filepath) {
-            return "file: " + filepath;
-        }),
+    	sort(opts_sort),
+    	debug(task._wa_devkit.debug),
         beautify(opts_bt),
         gulpif(condition, json_sort({
             "space": json_spaces
         })),
         eol(),
+        size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
 // finds all the files that contain .min in the name and prints them
 gulp.task("helper-findmin", function(done) {
+    var task = this;
     // get min files
     pump([gulp.src([__PATHS_FILES_MIN, __PATHS_NOT_NODE_MODULES], {
             dot: true,
             cwd: __PATHS_BASE
         }),
-        print(function(filepath) {
-            return "file: " + filepath;
-        })
+		sort(opts_sort),
+    	debug(task._wa_devkit.debug),
+    	size(task._wa_devkit.size)
     ], done);
 });
