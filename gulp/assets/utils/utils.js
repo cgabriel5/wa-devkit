@@ -94,10 +94,17 @@ var current_task = function(gulp) {
             "task_name_clean": task.name.replace(/^(helper|task)\-/, "") + ":",
             "debug": {
                 "title": title,
-                "minimal": true,
                 "showFiles": true
             },
+            "debug_off": {
+                "title": title,
+                "showFiles": false
+            },
             "size": {
+                "title": title,
+                "showFiles": true
+            },
+            "size_off": {
                 "title": title,
                 "showFiles": false
             }

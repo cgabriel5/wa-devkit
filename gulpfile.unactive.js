@@ -493,7 +493,7 @@ gulp.task("task-dist-root", function(done) {
 gulp.task("helper-make-dist", function(done) {
     var task = this;
     if (APPTYPE !== "webapp") {
-        log("This helper task is only available for \"webapp\" projects.");
+        log(color("[warning]", "yellow"), "This helper task is only available for \"webapp\" projects.");
         return done();
     }
     // get the gulp build tasks
@@ -519,12 +519,12 @@ gulp.task("task-lib-clean", function(done) {
 });
 gulp.task("task-lib-js", function(done) {
     var task = this;
-    var files = bundle_js.source.files;
-    files.push(__PATHS_FILES_TEST); // ignore test files
     pump([gulp.src(bundle_js.source.files, {
             nocase: true,
-            cwd: __PATHS_JS_THIRDPARTY
+            cwd: __PATHS_JS_SOURCE
         }),
+    	// filter out all but test files (^test*/i)
+		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
     	debug(task._wa_devkit.debug),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
@@ -540,7 +540,7 @@ gulp.task("task-lib-js", function(done) {
 gulp.task("helper-make-lib", function(done) {
     var task = this;
     if (APPTYPE !== "library") {
-        log("This helper task is only available for \"library\" projects.");
+        log(color("[warning]", "yellow"), "This helper task is only available for \"library\" projects.");
         return done();
     }
     // get the gulp build tasks
@@ -742,7 +742,7 @@ gulp.task("task-img", function(done) {
     // need to copy hidden files/folders?
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(__PATHS_IMG_SOURCE),
-    	debug(task._wa_devkit.debug),
+    	debug(task._wa_devkit.debug_off),
     	size(task._wa_devkit.size),
         bs.stream()
     ], done);
@@ -777,12 +777,15 @@ gulp.task("task-readme", function(done) {
 // build gulpfile.js
 gulp.task("helper-make-gulpfile", function(done) {
     var task = this;
+    var setup_name = bundle_gulp.source.name_setup;
+    var name = bundle_gulp.source.name;
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+        debug(task._wa_devkit.debug),
         insert.append("// " + "-".repeat(37)),
-        concat(bundle_gulp.source.name_setup),
+        // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
+        gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
         size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
@@ -1018,7 +1021,7 @@ gulp.task("helper-clean-files", function(done) {
             "space": json_spaces
         })),
         eol(),
-        size(task._wa_devkit.size),
+        size(task._wa_devkit.size_off),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
@@ -1032,7 +1035,7 @@ gulp.task("helper-findmin", function(done) {
         }),
 		sort(opts_sort),
     	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size)
+    	size(task._wa_devkit.size_off)
     ], done);
 });
 // -------------------------------------
@@ -1117,7 +1120,7 @@ gulp.task("task-favicon-root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
     	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size),
+    	size(task._wa_devkit.size_off),
         gulp.dest(__PATHS_BASE),
         bs.stream()
     ], done);
@@ -1128,7 +1131,7 @@ gulp.task("task-favicon-delete", function(done) {
     pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
     	debug(task._wa_devkit.debug),
     	clean(),
-    	size(task._wa_devkit.size)
+    	size(task._wa_devkit.size_off)
     ], done);
 });
 // inject new favicon html:

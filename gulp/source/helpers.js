@@ -250,7 +250,7 @@ gulp.task("helper-clean-files", function(done) {
             "space": json_spaces
         })),
         eol(),
-        size(task._wa_devkit.size),
+        size(task._wa_devkit.size_off),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
@@ -264,6 +264,6 @@ gulp.task("helper-findmin", function(done) {
         }),
 		sort(opts_sort),
     	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size)
+    	size(task._wa_devkit.size_off)
     ], done);
 });

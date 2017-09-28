@@ -79,7 +79,7 @@ gulp.task("task-favicon-root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
     	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size),
+    	size(task._wa_devkit.size_off),
         gulp.dest(__PATHS_BASE),
         bs.stream()
     ], done);
@@ -90,7 +90,7 @@ gulp.task("task-favicon-delete", function(done) {
     pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
     	debug(task._wa_devkit.debug),
     	clean(),
-    	size(task._wa_devkit.size)
+    	size(task._wa_devkit.size_off)
     ], done);
 });
 // inject new favicon html:
