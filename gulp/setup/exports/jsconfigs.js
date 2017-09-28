@@ -47,5 +47,11 @@ exports.jsconfigs = {
                 ],
             "name": "libs.js"
         }
+    },
+    "lib": {
+        "tasks": [
+                "task-lib-clean",
+                "task-lib-js"
+            ]
     }
 };

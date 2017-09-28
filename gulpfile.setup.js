@@ -99,12 +99,21 @@ gulp.task("init", function(done) {
         }
         // get user input
         __data__ = result;
+        var type = __data__.apptype;
         // set the path for js option
-        __PATHS_JS_OPTIONS_DYNAMIC = `gulp/setup/js/options/${__data__.apptype}/**/*.*`;
+        __PATHS_JS_OPTIONS_DYNAMIC = `gulp/setup/js/options/${type}/**/*.*`;
         // set the application type
-        config_internal.set("apptype", __data__.apptype);
+        config_internal.set("apptype", type);
         // pick js bundle based on provided project type + reset the config js bundle
-        config_user.data.bundles.js = jsconfigs[__data__.apptype];
+        config_user.data.bundles.js = jsconfigs[type];
+        // remove distribution configuration if type is library
+        // as the project is defaulted for a webapp project.
+        if (type === "library") {
+            // remove the distribution configuration
+            delete config_user.data.bundles.dist;
+            // add the library configuration
+            config_user.data.bundles.lib = jsconfigs.lib;
+        } // else leave as-is for webapp project
         // set package.json properties
         pkg.set("name", __data__.name);
         pkg.set("version", __data__.version);
@@ -129,8 +138,8 @@ gulp.task("init", function(done) {
                 pkg.write(function() {
                     // run initialization steps
                     return sequence("init-pick-js-option", "init-fill-placeholders", "init-setup-readme", "init-rename-gulpfile", "init-remove-setup", "init-beautify-files", "init-git", function() {
-                        notify(`Project initialized (${__data__.apptype})`);
-                        log("Project initialized ".bold.green + `(${__data__.apptype})`);
+                        notify(`Project initialized (${type})`);
+                        log("Project initialized ".bold.green + `(${type})`);
                         log("Run", "\"$ gulp\"".bold, "to build project files and start watching project for any file changes.");
                         done();
                     });
