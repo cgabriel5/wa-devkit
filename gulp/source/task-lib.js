@@ -9,12 +9,12 @@ gulp.task("task-lib-clean", function(done) {
 });
 gulp.task("task-lib-js", function(done) {
     var task = this;
-    var files = bundle_js.source.files;
-    files.push(__PATHS_FILES_TEST); // ignore test files
     pump([gulp.src(bundle_js.source.files, {
             nocase: true,
-            cwd: __PATHS_JS_THIRDPARTY
+            cwd: __PATHS_JS_SOURCE
         }),
+    	// filter out all but test files (^test*/i)
+		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
     	debug(task._wa_devkit.debug),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
@@ -30,7 +30,7 @@ gulp.task("task-lib-js", function(done) {
 gulp.task("helper-make-lib", function(done) {
     var task = this;
     if (APPTYPE !== "library") {
-        log("This helper task is only available for \"library\" projects.");
+        log(color("[warning]", "yellow"), "This helper task is only available for \"library\" projects.");
         return done();
     }
     // get the gulp build tasks
