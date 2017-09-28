@@ -6,12 +6,15 @@
 // build gulpfile.js
 gulp.task("helper-make-gulpfile", function(done) {
     var task = this;
+    var setup_name = bundle_gulp.source.name_setup;
+    var name = bundle_gulp.source.name;
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+        debug(task._wa_devkit.debug),
         insert.append("// " + "-".repeat(37)),
-        concat(bundle_gulp.source.name_setup),
+        // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
+        gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
         size(task._wa_devkit.size),
         gulp.dest(__PATHS_BASE),
