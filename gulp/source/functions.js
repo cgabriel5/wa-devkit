@@ -60,5 +60,5 @@ function html_replace_fn(replacements) {
  * @return {Undefined} 			[Nothing is returned.]
  */
 function gulp_check_warn() {
-    log(color("[warning]", "yellow"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
+    log(chalk.yellow("[warning]"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
 }

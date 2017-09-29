@@ -10,9 +10,7 @@ var fail = require("gulp-fail");
 var sort = require("gulp-sort");
 var debug = require("gulp-debug");
 var clean = require("gulp-clean");
-var gutil = require("gulp-util");
 var cache = require("gulp-cache");
-var print = require("gulp-print");
 var order = require("gulp-order");
 var insert = require("gulp-insert");
 var concat = require("gulp-concat");
@@ -255,7 +253,7 @@ function html_replace_fn(replacements) {
  * @return {Undefined} 			[Nothing is returned.]
  */
 function gulp_check_warn() {
-    log(color("[warning]", "yellow"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
+    log(chalk.yellow("[warning]"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
 }
 // -------------------------------------
 //
@@ -313,12 +311,12 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
                 var brn_current = git.checkSync(__PATHS_DIRNAME)
                     .branch;
                 if (branch_name) {
-                    log(color("(pid:" + process.pid + ")", "yellow"), "Gulp monitoring", color(branch_name, "green"), "branch.");
+                    log(chalk.yellow("(pid:" + process.pid + ")"), "Gulp monitoring", chalk.green(branch_name), "branch.");
                 }
                 if (brn_current !== branch_name) {
                     // message + exit
-                    log(color("[warning]", "yellow"), "Gulp stopped due to branch switch. (", color(branch_name, "green"), "=>", color(brn_current, "yellow"), ")");
-                    log(color("[warning]", "yellow"), "Restart Gulp to monitor", color(brn_current, "yellow"), "branch.");
+                    log(chalk.yellow("[warning]"), "Gulp stopped due to branch switch. (", chalk.green(branch_name), "=>", chalk.yellow(brn_current), ")");
+                    log(chalk.yellow("[warning]"), "Restart Gulp to monitor", chalk.yellow(brn_current), "branch.");
                     process.exit();
                 }
             });
@@ -357,10 +355,10 @@ gulp.task("default", function(done) {
         // get pid, if any
         var pid = config_internal.get("pid");
         if (pid) { // kill the open process
-            log(color("[success]", "green"), "Gulp process stopped.");
+            log(chalk.green("[success]"), "Gulp process stopped.");
             process.kill(pid);
         } else { // no open process exists
-            log(color("[warning]", "yellow"), "No Gulp process exists.");
+            log(chalk.yellow("[warning]"), "No Gulp process exists.");
         }
         return done();
     } else { // start up Gulp like normal
@@ -370,7 +368,7 @@ gulp.task("default", function(done) {
             // if there is a pid present it means a Gulp instance has already started.
             // therefore, prevent another from starting.
             if (pid) {
-                log(color("[warning]", "yellow"), "A Gulp instance is already running", color("(pid:" + pid + ")", "yellow") + ".", "Stop that instance before starting a new one.");
+                log(chalk.yellow("[warning]"), "A Gulp instance is already running", chalk.yellow("(pid:" + pid + ")") + ".", "Stop that instance before starting a new one.");
                 return done();
             }
             // store the ports
@@ -487,7 +485,7 @@ gulp.task("task-dist-root", function(done) {
 gulp.task("helper-make-dist", function(done) {
     var task = this;
     if (APPTYPE !== "webapp") {
-        log(color("[warning]", "yellow"), "This helper task is only available for \"webapp\" projects.");
+        log(chalk.yellow("[warning]"), "This helper task is only available for", chalk.magenta("webapp"), "projects.");
         return done();
     }
     // get the gulp build tasks
@@ -533,7 +531,7 @@ gulp.task("task-lib-js", function(done) {
 gulp.task("helper-make-lib", function(done) {
     var task = this;
     if (APPTYPE !== "library") {
-        log(color("[warning]", "yellow"), "This helper task is only available for \"library\" projects.");
+        log(chalk.yellow("[warning]"), "This helper task is only available for", chalk.magenta("library"), "projects.");
         return done();
     }
     // get the gulp build tasks
@@ -855,7 +853,7 @@ gulp.task("helper-tohtml", function(done) {
     // file has to exist
     fe(input, function(err, exists) {
         if (!exists) {
-            log(color("[warning]", "yellow"), "File does not exist.");
+            log(chalk.yellow("[warning]"), "File does not exist.");
             return done();
         }
         // continue...file exists
@@ -863,7 +861,7 @@ gulp.task("helper-tohtml", function(done) {
         var input_ext = path.extname(input);
         // file must be an .md file
         if (input_ext.toLowerCase() !== ".md") {
-            log(color("[warning]", "yellow"), "Input file must be an .md file.");
+            log(chalk.yellow("[warning]"), "Input file must be an .md file.");
             return done();
         }
         // get the input file name
@@ -924,7 +922,7 @@ gulp.task("helper-clear", function(done) {
         config_internal.set(key, null);
         // reset name if needed
         if (key === "pid") key = "status";
-        log(color("[complete]", "green"), color(key, "yellow"), "cleared.");
+        log(chalk.green("[complete]"), chalk.yellow(key), "cleared.");
     }
     config_internal.write(function() {
         done();
@@ -960,7 +958,7 @@ gulp.task("helper-open", function(done) {
         var ports = config_internal.get("ports");
         // no ports...
         if (!ports) {
-            log(color("[warning]", "yellow"), "No ports are in use.");
+            log(chalk.yellow("[warning]"), "No ports are in use.");
             return done();
         }
         // open file in the browser
@@ -969,7 +967,7 @@ gulp.task("helper-open", function(done) {
 });
 // print the status of gulp (is it running or not?)
 gulp.task("helper-status", function(done) {
-    log(color("[status]", "yellow"), "Gulp is", ((config_internal.get("pid")) ? "running. " + color(("(pid:" + process.pid + ")"), "yellow") : "not running."));
+    log(chalk.yellow("[status]"), "Gulp is", ((config_internal.get("pid")) ? "running. " + chalk.yellow(("(pid:" + process.pid + ")")) : "not running."));
     done();
 });
 // print the used ports for browser-sync
@@ -978,12 +976,12 @@ gulp.task("helper-ports", function(done) {
     var ports = config_internal.get("ports");
     // if file is empty
     if (!ports) {
-        log(color("[warning]", "yellow"), "No ports are in use.");
+        log(chalk.yellow("[warning]"), "No ports are in use.");
         return done();
     }
     // ports exist...
-    log(color("(local)", "green"), ports.local);
-    log(color("(ui)", "green"), ports.ui);
+    log(chalk.green("(local)"), ports.local);
+    log(chalk.green("(ui)"), ports.ui);
     done();
 });
 // beautify html, js, css, & json files

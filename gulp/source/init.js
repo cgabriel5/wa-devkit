@@ -53,12 +53,12 @@ gulp.task("task-git-branch", ["task-start-gulp"], function(done) {
                 var brn_current = git.checkSync(__PATHS_DIRNAME)
                     .branch;
                 if (branch_name) {
-                    log(color("(pid:" + process.pid + ")", "yellow"), "Gulp monitoring", color(branch_name, "green"), "branch.");
+                    log(chalk.yellow("(pid:" + process.pid + ")"), "Gulp monitoring", chalk.green(branch_name), "branch.");
                 }
                 if (brn_current !== branch_name) {
                     // message + exit
-                    log(color("[warning]", "yellow"), "Gulp stopped due to branch switch. (", color(branch_name, "green"), "=>", color(brn_current, "yellow"), ")");
-                    log(color("[warning]", "yellow"), "Restart Gulp to monitor", color(brn_current, "yellow"), "branch.");
+                    log(chalk.yellow("[warning]"), "Gulp stopped due to branch switch. (", chalk.green(branch_name), "=>", chalk.yellow(brn_current), ")");
+                    log(chalk.yellow("[warning]"), "Restart Gulp to monitor", chalk.yellow(brn_current), "branch.");
                     process.exit();
                 }
             });
@@ -97,10 +97,10 @@ gulp.task("default", function(done) {
         // get pid, if any
         var pid = config_internal.get("pid");
         if (pid) { // kill the open process
-            log(color("[success]", "green"), "Gulp process stopped.");
+            log(chalk.green("[success]"), "Gulp process stopped.");
             process.kill(pid);
         } else { // no open process exists
-            log(color("[warning]", "yellow"), "No Gulp process exists.");
+            log(chalk.yellow("[warning]"), "No Gulp process exists.");
         }
         return done();
     } else { // start up Gulp like normal
@@ -110,7 +110,7 @@ gulp.task("default", function(done) {
             // if there is a pid present it means a Gulp instance has already started.
             // therefore, prevent another from starting.
             if (pid) {
-                log(color("[warning]", "yellow"), "A Gulp instance is already running", color("(pid:" + pid + ")", "yellow") + ".", "Stop that instance before starting a new one.");
+                log(chalk.yellow("[warning]"), "A Gulp instance is already running", chalk.yellow("(pid:" + pid + ")") + ".", "Stop that instance before starting a new one.");
                 return done();
             }
             // store the ports

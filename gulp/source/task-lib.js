@@ -29,7 +29,7 @@ gulp.task("task-lib-js", function(done) {
 gulp.task("helper-make-lib", function(done) {
     var task = this;
     if (APPTYPE !== "library") {
-        log(color("[warning]", "yellow"), "This helper task is only available for \"library\" projects.");
+        log(chalk.yellow("[warning]"), "This helper task is only available for", chalk.magenta("library"), "projects.");
         return done();
     }
     // get the gulp build tasks

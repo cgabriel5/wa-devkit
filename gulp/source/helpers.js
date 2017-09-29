@@ -94,7 +94,7 @@ gulp.task("helper-tohtml", function(done) {
     // file has to exist
     fe(input, function(err, exists) {
         if (!exists) {
-            log(color("[warning]", "yellow"), "File does not exist.");
+            log(chalk.yellow("[warning]"), "File does not exist.");
             return done();
         }
         // continue...file exists
@@ -102,7 +102,7 @@ gulp.task("helper-tohtml", function(done) {
         var input_ext = path.extname(input);
         // file must be an .md file
         if (input_ext.toLowerCase() !== ".md") {
-            log(color("[warning]", "yellow"), "Input file must be an .md file.");
+            log(chalk.yellow("[warning]"), "Input file must be an .md file.");
             return done();
         }
         // get the input file name
@@ -163,7 +163,7 @@ gulp.task("helper-clear", function(done) {
         config_internal.set(key, null);
         // reset name if needed
         if (key === "pid") key = "status";
-        log(color("[complete]", "green"), color(key, "yellow"), "cleared.");
+        log(chalk.green("[complete]"), chalk.yellow(key), "cleared.");
     }
     config_internal.write(function() {
         done();
@@ -199,7 +199,7 @@ gulp.task("helper-open", function(done) {
         var ports = config_internal.get("ports");
         // no ports...
         if (!ports) {
-            log(color("[warning]", "yellow"), "No ports are in use.");
+            log(chalk.yellow("[warning]"), "No ports are in use.");
             return done();
         }
         // open file in the browser
@@ -208,7 +208,7 @@ gulp.task("helper-open", function(done) {
 });
 // print the status of gulp (is it running or not?)
 gulp.task("helper-status", function(done) {
-    log(color("[status]", "yellow"), "Gulp is", ((config_internal.get("pid")) ? "running. " + color(("(pid:" + process.pid + ")"), "yellow") : "not running."));
+    log(chalk.yellow("[status]"), "Gulp is", ((config_internal.get("pid")) ? "running. " + chalk.yellow(("(pid:" + process.pid + ")")) : "not running."));
     done();
 });
 // print the used ports for browser-sync
@@ -217,12 +217,12 @@ gulp.task("helper-ports", function(done) {
     var ports = config_internal.get("ports");
     // if file is empty
     if (!ports) {
-        log(color("[warning]", "yellow"), "No ports are in use.");
+        log(chalk.yellow("[warning]"), "No ports are in use.");
         return done();
     }
     // ports exist...
-    log(color("(local)", "green"), ports.local);
-    log(color("(ui)", "green"), ports.ui);
+    log(chalk.green("(local)"), ports.local);
+    log(chalk.green("(ui)"), ports.ui);
     done();
 });
 // beautify html, js, css, & json files

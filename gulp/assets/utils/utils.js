@@ -7,23 +7,10 @@ var modules_path = path_offset + "node_modules/";
 var gulp = require(modules_path + "gulp");
 var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
-var colors = require(modules_path + "colors");
-var chalk = require(modules_path + "chalk");
+var gutil = require(modules_path + "gulp-util");
+var log = gutil.log;
+var chalk = gutil.colors;
 // -------------------------------------
-/**
- * @description [Wrapper for colors. Will apply options to string using a function.]
- * @return {String} [The modified string.]
- */
-var color = function() {
-    var args = Array.prototype.slice.call(arguments);
-    // get the provided string
-    var string = args.shift();
-    // loop over options and apply
-    for (var i = 0, l = args.length; i < l; i++) {
-        string = string[args[i]];
-    }
-    return string;
-};
 /**
  * @description [Detects the default Google Chrome browser based on OS. Falls back to "firefox".]
  * @source [Lifted from https://github.com/stevelacy/gulp-open]
@@ -40,27 +27,7 @@ var browser = function() {
  */
 var time = function() {
     // return the formated/colored time
-    return "[" + color(format_date(new Date(), "HH:MM:ss"), "gray") + "]";
-};
-/**
- * @description [Wrapper for console.log().]
- * @return {Undefined} [Nothing is returned.]
- */
-var log = function() {
-    // turn arguments into a true array
-    var args = Array.prototype.slice.call(arguments);
-    // check if line breaks needs adding
-    var add_line_break = false;
-    if (args[0] === true) {
-        add_line_break = true;
-        args.shift();
-    }
-    args.unshift(time()); // add time to log
-    if (add_line_break) {
-        console.log.call(console, "\n" + args.join(" "));
-    } else {
-        console.log.apply(console, args);
-    }
+    return "[" + chalk.gray(format_date(new Date(), "HH:MM:ss")) + "]";
 };
 /**
  * @description [Creates an OS notifcation.]
@@ -144,7 +111,6 @@ function format(template, data) {
 }
 // export functions
 exports.browser = browser();
-exports.color = color;
 exports.time = time;
 exports.log = log;
 exports.notify = notify;

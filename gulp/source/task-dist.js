@@ -92,7 +92,7 @@ gulp.task("task-dist-root", function(done) {
 gulp.task("helper-make-dist", function(done) {
     var task = this;
     if (APPTYPE !== "webapp") {
-        log(color("[warning]", "yellow"), "This helper task is only available for \"webapp\" projects.");
+        log(chalk.yellow("[warning]"), "This helper task is only available for", chalk.magenta("webapp"), "projects.");
         return done();
     }
     // get the gulp build tasks
