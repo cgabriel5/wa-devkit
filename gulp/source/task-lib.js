@@ -3,7 +3,7 @@ gulp.task("task-lib-clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts),
         clean(),
-        debug(task.__wadevkit.debug),
+        debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-lib-js", function(done) {
@@ -17,12 +17,12 @@ gulp.task("task-lib-js", function(done) {
 		debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_LIB_HOME),
+        debug(task.__wadevkit.debug),
         uglify(),
         rename(bundle_js.thirdparty.minified_name),
-        debug(task.__wadevkit.debug),
-		gulp.dest(__PATHS_LIB_HOME)
+		gulp.dest(__PATHS_LIB_HOME),
+        debug(task.__wadevkit.debug)
     ], done);
 });
 // helper library make task

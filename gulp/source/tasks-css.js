@@ -18,6 +18,7 @@ gulp.task("task-precssapp-cleanup", function(done) {
             return match.toLowerCase();
         }),
         gulp.dest(__PATHS_CSS_SOURCE),
+		debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -32,8 +33,8 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_CSS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -48,8 +49,8 @@ gulp.task("task-css-libs", function(done) {
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
 		gulp.dest(__PATHS_CSS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });

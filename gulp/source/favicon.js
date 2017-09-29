@@ -78,8 +78,8 @@ gulp.task("task-favicon-edit-manifest", function(done) {
 gulp.task("task-favicon-root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -97,8 +97,8 @@ gulp.task("task-favicon-html", function(done) {
     pump([gulp.src(__PATHS_FAVICON_HTML),
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
             .favicon.html_code),
-        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
+        debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });

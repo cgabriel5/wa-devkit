@@ -408,8 +408,8 @@ gulp.task("task-dist-favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-css", function(done) {
@@ -420,8 +420,8 @@ gulp.task("task-dist-css", function(done) {
             base: __PATHS_BASE_DOT
         }),
 		clean_css(),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+		debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-img", function(done) {
@@ -449,8 +449,8 @@ gulp.task("task-dist-img", function(done) {
                 }]
             })
         ])),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+		debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-js", function(done) {
@@ -461,8 +461,8 @@ gulp.task("task-dist-js", function(done) {
             base: __PATHS_BASE_DOT
         }),
 		uglify(),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+		debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-root", function(done) {
@@ -477,8 +477,8 @@ gulp.task("task-dist-root", function(done) {
             base: __PATHS_BASE_DOT
         }),
     	gulpif(is_html, minify_html()),
-    	debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 // helper distribution make task
@@ -505,7 +505,7 @@ gulp.task("task-lib-clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts),
         clean(),
-        debug(task.__wadevkit.debug),
+        debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-lib-js", function(done) {
@@ -519,12 +519,12 @@ gulp.task("task-lib-js", function(done) {
 		debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_LIB_HOME),
+        debug(task.__wadevkit.debug),
         uglify(),
         rename(bundle_js.thirdparty.minified_name),
-        debug(task.__wadevkit.debug),
-		gulp.dest(__PATHS_LIB_HOME)
+		gulp.dest(__PATHS_LIB_HOME),
+        debug(task.__wadevkit.debug)
     ], done);
 });
 // helper library make task
@@ -635,8 +635,8 @@ gulp.task("task-html", function(done) {
 		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
 		beautify(opts_bt),
 		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
-		debug(task.__wadevkit.debug),
 		gulp.dest(__PATHS_BASE),
+		debug(task.__wadevkit.debug),
 		bs.stream()
     ], done);
 });
@@ -661,6 +661,7 @@ gulp.task("task-precssapp-cleanup", function(done) {
             return match.toLowerCase();
         }),
         gulp.dest(__PATHS_CSS_SOURCE),
+		debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -675,8 +676,8 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_CSS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -691,8 +692,8 @@ gulp.task("task-css-libs", function(done) {
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
 		gulp.dest(__PATHS_CSS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -706,8 +707,8 @@ gulp.task("task-js-app", function(done) {
     	debug(),
         concat(bundle_js.source.name),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -720,8 +721,8 @@ gulp.task("task-js-libs", function(done) {
     	debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -749,9 +750,9 @@ gulp.task("task-readme", function(done) {
         pump([gulp.src(__PATHS_README_HTML, {
                 cwd: __PATHS_MARKDOWN_PREVIEW
             }),
-			debug(task.__wadevkit.debug),
             beautify(opts_bt),
             gulp.dest(__PATHS_MARKDOWN_PREVIEW),
+			debug(task.__wadevkit.debug),
             bs.stream()
         ], done);
     });
@@ -775,8 +776,8 @@ gulp.task("helper-make-gulpfile", function(done) {
         // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
         gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
-    	debug(),
         gulp.dest(__PATHS_BASE),
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 // check for any unused CSS
@@ -817,8 +818,8 @@ gulp.task("helper-purify", function(done) {
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
         beautify(opts_bt),
-        debug(task.__wadevkit.debug),
-        gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
+        gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
+        debug(task.__wadevkit.debug)
     ], done);
 });
 // markdown to html (with github style/layout)
@@ -879,12 +880,11 @@ gulp.task("helper-tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-            	debug(),
                 beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
-                debug(task.__wadevkit.debug),
-                gulp.dest(output)
+                gulp.dest(output),
+                debug(task.__wadevkit.debug)
             ], function() {
                 // if a new name was provided delete the file with the old input file
                 if (new_name) del([new_file_path]);
@@ -1002,14 +1002,14 @@ gulp.task("helper-clean-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-    	sort(opts_sort),
-        beautify(opts_bt),
-        gulpif(condition, json_sort({
+		sort(opts_sort),
+		beautify(opts_bt),
+		gulpif(condition, json_sort({
             "space": json_spaces
         })),
-        eol(),
-        debug(task.__wadevkit.debug),
-        gulp.dest(__PATHS_BASE),
+		eol(),
+		debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_BASE)
     ], done);
 });
 // finds all the files that contain .min in the name and prints them
@@ -1105,8 +1105,8 @@ gulp.task("task-favicon-edit-manifest", function(done) {
 gulp.task("task-favicon-root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -1124,8 +1124,8 @@ gulp.task("task-favicon-html", function(done) {
     pump([gulp.src(__PATHS_FAVICON_HTML),
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
             .favicon.html_code),
-        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
+        debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });

@@ -16,8 +16,8 @@ gulp.task("helper-make-gulpfile", function(done) {
         // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
         gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
-    	debug(),
         gulp.dest(__PATHS_BASE),
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 // check for any unused CSS
@@ -58,8 +58,8 @@ gulp.task("helper-purify", function(done) {
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
         beautify(opts_bt),
-        debug(task.__wadevkit.debug),
-        gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
+        gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
+        debug(task.__wadevkit.debug)
     ], done);
 });
 // markdown to html (with github style/layout)
@@ -120,12 +120,11 @@ gulp.task("helper-tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-            	debug(),
                 beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
-                debug(task.__wadevkit.debug),
-                gulp.dest(output)
+                gulp.dest(output),
+                debug(task.__wadevkit.debug)
             ], function() {
                 // if a new name was provided delete the file with the old input file
                 if (new_name) del([new_file_path]);
@@ -243,14 +242,14 @@ gulp.task("helper-clean-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-    	sort(opts_sort),
-        beautify(opts_bt),
-        gulpif(condition, json_sort({
+		sort(opts_sort),
+		beautify(opts_bt),
+		gulpif(condition, json_sort({
             "space": json_spaces
         })),
-        eol(),
-        debug(task.__wadevkit.debug),
-        gulp.dest(__PATHS_BASE),
+		eol(),
+		debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_BASE)
     ], done);
 });
 // finds all the files that contain .min in the name and prints them

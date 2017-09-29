@@ -10,9 +10,9 @@ gulp.task("task-readme", function(done) {
         pump([gulp.src(__PATHS_README_HTML, {
                 cwd: __PATHS_MARKDOWN_PREVIEW
             }),
-			debug(task.__wadevkit.debug),
             beautify(opts_bt),
             gulp.dest(__PATHS_MARKDOWN_PREVIEW),
+			debug(task.__wadevkit.debug),
             bs.stream()
         ], done);
     });

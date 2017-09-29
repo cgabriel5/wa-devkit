@@ -15,8 +15,8 @@ gulp.task("task-dist-favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-css", function(done) {
@@ -27,8 +27,8 @@ gulp.task("task-dist-css", function(done) {
             base: __PATHS_BASE_DOT
         }),
 		clean_css(),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+		debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-img", function(done) {
@@ -56,8 +56,8 @@ gulp.task("task-dist-img", function(done) {
                 }]
             })
         ])),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+		debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-js", function(done) {
@@ -68,8 +68,8 @@ gulp.task("task-dist-js", function(done) {
             base: __PATHS_BASE_DOT
         }),
 		uglify(),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+		debug(task.__wadevkit.debug)
     ], done);
 });
 gulp.task("task-dist-root", function(done) {
@@ -84,8 +84,8 @@ gulp.task("task-dist-root", function(done) {
             base: __PATHS_BASE_DOT
         }),
     	gulpif(is_html, minify_html()),
-    	debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 // helper distribution make task

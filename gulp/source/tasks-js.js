@@ -7,8 +7,8 @@ gulp.task("task-js-app", function(done) {
     	debug(),
         concat(bundle_js.source.name),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
@@ -21,8 +21,8 @@ gulp.task("task-js-libs", function(done) {
     	debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_BUNDLES),
+    	debug(task.__wadevkit.debug),
         bs.stream()
     ], done);
 });
