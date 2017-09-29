@@ -1186,8 +1186,8 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.3.18:
-  version "1.3.23"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.23.tgz#e6668ab18cb69afb8f577c8a9fc23d002788be74"
+  version "1.3.24"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.24.tgz#9b7b88bb05ceb9fa016a177833cc2dde388f21b6"
 
 emits@~3.0.0:
   version "3.0.0"
@@ -1958,7 +1958,7 @@ gulp-concat@^2.6.1:
 
 "gulp-debug@https://github.com/cgabriel5/gulp-debug/tarball/master":
   version "3.1.0"
-  resolved "https://github.com/cgabriel5/gulp-debug/tarball/master#daaa9865f31efb969d665fdd517577d34f0141a8"
+  resolved "https://github.com/cgabriel5/gulp-debug/tarball/master#7df66cbaaefcfdd82eab2a92e127d1f0c785d0d3"
   dependencies:
     chalk "^1.0.0"
     gulp-util "^3.0.0"
@@ -2077,13 +2077,6 @@ gulp-order@^1.1.1:
   dependencies:
     minimatch "~0.2.14"
     through "~2.3.4"
-
-gulp-print@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/gulp-print/-/gulp-print-2.0.1.tgz#1acee58eac8af2d3c4ad3329dbe465758393c414"
-  dependencies:
-    gulp-util "^3.0.6"
-    map-stream "~0.0.6"
 
 gulp-purifycss@^0.2.0:
   version "0.2.0"
@@ -3195,10 +3188,6 @@ map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
 
-map-stream@~0.0.6:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.0.7.tgz#8a1f07896d82b10926bd3744a2420009f88974a8"
-
 markdown-stream-utils@~1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/markdown-stream-utils/-/markdown-stream-utils-1.5.0.tgz#68e999bd7335ea505507b7bd2ef167858414aa6b"
@@ -3209,9 +3198,9 @@ markdown-stream-utils@~1.5.0:
     through2 "~0.6.3"
     xtend "^4.0.0"
 
-markdown-styles@^3.1.9:
+"markdown-styles@https://github.com/cgabriel5/markdown-styles/tarball/master":
   version "3.1.10"
-  resolved "https://registry.yarnpkg.com/markdown-styles/-/markdown-styles-3.1.10.tgz#e29e6f2c9fdbb66aa2b2b7ceceee46ee2f5721cc"
+  resolved "https://github.com/cgabriel5/markdown-styles/tarball/master#f6b105b10e930534b83a8ecea6b34eacf7118ad4"
   dependencies:
     handlebars "~4.0.10"
     markdown-stream-utils "~1.5.0"
