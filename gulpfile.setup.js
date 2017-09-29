@@ -35,15 +35,18 @@ var __PATHS_GIT = ".git/";
 var path = require("path");
 // -------------------------------------
 var pump = require("pump");
+var chalk = require("chalk");
 var prompt = require("prompt");
-var git = require("simple-git")();
 var json = require("json-file");
+var git = require("simple-git")();
 var mds = require("markdown-styles");
 var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");
 // -------------------------------------
-var gulpif = require("gulp-if");
 var eol = require("gulp-eol");
+var sort = require("gulp-sort");
+var gulpif = require("gulp-if");
+var debug = require("gulp-debug");
 var clean = require("gulp-clean");
 var rename = require("gulp-rename");
 var replace = require("gulp-replace");
@@ -82,19 +85,32 @@ var APPTYPE; // application-type
 var __data__ = {}; // placeholder fillers
 var INDEX = config_user.get("paths.index");
 // -------------------------------------
+var opts_sort = {
+    // sort based on dirname alphabetically
+    comparator: function(file1, file2) {
+        var dir1 = path.dirname(file1.path);
+        var dir2 = path.dirname(file2.path);
+        if (dir1 > dir2) return 1;
+        if (dir1 < dir2) return -1;
+        return 0;
+    }
+};
+// -------------------------------------
 gulp.task("default", function(done) {
+    var task = this;
     // show the user the init message
-    log("Run \"gulp init\" before running gulp's default command.".yellow);
+    log("Run", chalk.magenta("gulp init"), "before running gulp's default command.");
     done();
 });
 gulp.task("init", function(done) {
+    var task = this;
     prompt.start(); // start the prompt
     prompt.message = time();
     prompt.delimiter = " ";
     prompt.get(questions, function(err, result) {
         // kill prompt and show user error message
         if (err) {
-            log(true, (err.message === "canceled") ? "Setup canceled.".red : err);
+            log("\n", (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
             return prompt.stop();
         }
         // get user input
@@ -139,8 +155,8 @@ gulp.task("init", function(done) {
                     // run initialization steps
                     return sequence("init-pick-js-option", "init-fill-placeholders", "init-setup-readme", "init-rename-gulpfile", "init-remove-setup", "init-beautify-files", "init-git", function() {
                         notify(`Project initialized (${type})`);
-                        log("Project initialized ".bold.green + `(${type})`);
-                        log("Run", "\"$ gulp\"".bold, "to build project files and start watching project for any file changes.");
+                        log(`Project initialized (${type})`);
+                        log("Run \"$ gulp\" to build project files and start watching project for any file changes.");
                         done();
                     });
                 }, null, json_spaces);
@@ -150,11 +166,13 @@ gulp.task("init", function(done) {
 });
 // initialization step
 gulp.task("init-pick-js-option", function(done) {
+    var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
             dot: true,
             cwd: __PATHS_BASE
         }),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_HOME, {
             cwd: __PATHS_BASE
         })
@@ -162,6 +180,7 @@ gulp.task("init-pick-js-option", function(done) {
 });
 // initialization step
 gulp.task("init-fill-placeholders", function(done) {
+    var task = this;
     // replace placeholder with real data
     pump([
         gulp.src([__PATHS_DOCS_README_TEMPLATE, __PATHS_LICENSE, __PATHS_HTML_HEADMETA, INDEX], {
@@ -170,18 +189,23 @@ gulp.task("init-fill-placeholders", function(done) {
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
             match = match.replace(/^\{\{\#|\}\}$/g, "");
             return __data__[match] ? __data__[match] : match;
-        }), gulp.dest("")
+        }),
+		debug(task.__wadevkit.debug),
+        gulp.dest("")
     ], done);
 });
 // initialization step
 gulp.task("init-setup-readme", function(done) {
+    var task = this;
     // move ./docs/readme_template.md to ./README.md
     pump([
         gulp.src(__PATHS_DOCS_README_TEMPLATE, {
             base: __PATHS_BASE
         }),
+		debug(task.__wadevkit.debug),
         clean(),
         rename(__PATHS_README),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE)
     ], function() {
         // markdown to html (with github style/layout)
@@ -196,18 +220,22 @@ gulp.task("init-setup-readme", function(done) {
 });
 // initialization step
 gulp.task("init-rename-gulpfile", function(done) {
+    var task = this;
     // rename the gulpfile.unactive.js to gulpfile.js
     pump([
         gulp.src(__PATHS_GULP_FILE_UNACTIVE, {
             base: __PATHS_BASE
         }),
+    	debug(task.__wadevkit.debug),
         clean(), // remove the file
         rename(__PATHS_GULP_FILE_NAME),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE)
     ], done);
 });
 // initialization step
 gulp.task("init-remove-setup", function(done) {
+    var task = this;
     // remove the setup files/folders/old .git folder
     pump([
         gulp.src([__PATHS_GULP_FILE_SETUP, __PATHS_GULP_SETUP, __PATHS_GIT], {
@@ -215,11 +243,13 @@ gulp.task("init-remove-setup", function(done) {
             read: false,
             base: __PATHS_BASE
         }),
+    	debug(task.__wadevkit.debug),
         clean()
     ], done);
 });
 // initialization step
 gulp.task("init-beautify-files", function(done) {
+    var task = this;
     // beautify html, js, css, & json files
     var condition = function(file) {
         return (path.extname(file.path) === ".json");
@@ -229,16 +259,19 @@ gulp.task("init-beautify-files", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
+        sort(opts_sort),
         beautify(opts_bt),
         gulpif(condition, json_sort({
             "space": json_spaces
         })),
 		eol(),
+		debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
 // initialization step
 gulp.task("init-git", function(done) {
+    var task = this;
     // git init new project
     git.init("", function() {
             log(`Git initialized (${__data__.apptype})`);
