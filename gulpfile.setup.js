@@ -110,7 +110,7 @@ gulp.task("init", function(done) {
     prompt.get(questions, function(err, result) {
         // kill prompt and show user error message
         if (err) {
-            log("\n", (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
+            console.log("\n" + time(), (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
             return prompt.stop();
         }
         // get user input
