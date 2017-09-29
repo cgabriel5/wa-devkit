@@ -11,7 +11,6 @@ function open_file_in_browser(filepath, port, callback, task) {
             cwd: __PATHS_BASE,
             dot: true
         }),
-    	debug(task._wa_devkit.debug),
         open({
             app: browser,
             uri: uri({
@@ -21,7 +20,7 @@ function open_file_in_browser(filepath, port, callback, task) {
                 "https": config_user.https
             })
         }),
-        size(task._wa_devkit.size)
+		debug(task.__wadevkit.debug)
     ], function() {
         notify("File opened!");
         callback();

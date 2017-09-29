@@ -9,7 +9,7 @@ gulp.task("task-precssapp-cleanup", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
         replace(new RegExp(pf.p, pf.f), pf.r),
         replace(new RegExp(lz.p, lz.f), lz.r),
@@ -17,7 +17,6 @@ gulp.task("task-precssapp-cleanup", function(done) {
         replace(new RegExp(lh.p, lh.f), function(match) {
             return match.toLowerCase();
         }),
-        size(task._wa_devkit.size),
         gulp.dest(__PATHS_CSS_SOURCE),
         bs.stream()
     ], done);
@@ -28,12 +27,12 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
     pump([gulp.src(bundle_css.source.files, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         concat(bundle_css.source.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_CSS_BUNDLES),
         bs.stream()
     ], done);
@@ -44,13 +43,13 @@ gulp.task("task-css-libs", function(done) {
     pump([gulp.src(bundle_css.thirdparty.files, {
             cwd: __PATHS_CSS_THIRDPARTY
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         concat(bundle_css.thirdparty.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
-        gulp.dest(__PATHS_CSS_BUNDLES),
+    	debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_CSS_BUNDLES),
         bs.stream()
     ], done);
 });

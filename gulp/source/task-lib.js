@@ -2,9 +2,8 @@
 gulp.task("task-lib-clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts),
-    	debug(task._wa_devkit.debug),
         clean(),
-        size(task._wa_devkit.size)
+        debug(task.__wadevkit.debug),
     ], done);
 });
 gulp.task("task-lib-js", function(done) {
@@ -15,15 +14,15 @@ gulp.task("task-lib-js", function(done) {
         }),
     	// filter out all but test files (^test*/i)
 		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
-    	debug(task._wa_devkit.debug),
+		debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_LIB_HOME),
         uglify(),
         rename(bundle_js.thirdparty.minified_name),
-        size(task._wa_devkit.size),
-        gulp.dest(__PATHS_LIB_HOME),
+        debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_LIB_HOME)
     ], done);
 });
 // helper library make task

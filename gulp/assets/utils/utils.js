@@ -8,6 +8,7 @@ var gulp = require(modules_path + "gulp");
 var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
 var colors = require(modules_path + "colors");
+var chalk = require(modules_path + "chalk");
 // -------------------------------------
 /**
  * @description [Wrapper for colors. Will apply options to string using a function.]
@@ -88,25 +89,13 @@ var current_task = function(gulp) {
     // [http://stackoverflow.com/a/27535245]
     gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
     gulp.Gulp.prototype._runTask = function(task) {
-        var title = " ".repeat(10) + "├──";
-        this._wa_devkit = {
-            "name": task.name,
-            "task_name_clean": task.name.replace(/^(helper|task)\-/, "") + ":",
+        this.__wadevkit = {
             "debug": {
-                "title": title,
-                "showFiles": true
-            },
-            "debug_off": {
-                "title": title,
-                "showFiles": false
-            },
-            "size": {
-                "title": title,
-                "showFiles": true
-            },
-            "size_off": {
-                "title": title,
-                "showFiles": false
+                "suffix": chalk.yellow("✎"),
+                "names": {
+                    "full": task.name,
+                    "short": task.name.replace(/^(helper|task)\-/, "")
+                }
             }
         };
         this.__runTask(task);

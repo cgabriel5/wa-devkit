@@ -7,13 +7,13 @@ gulp.task("task-html", function(done) {
     pump([gulp.src(bundles.html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
-        concat(bundles.html.source.name),
-        replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
-        beautify(opts_bt),
-        replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
-        size(task._wa_devkit.size),
-        gulp.dest(__PATHS_BASE),
-        bs.stream()
+    	debug(),
+		concat(bundles.html.source.name),
+		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
+		beautify(opts_bt),
+		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
+		debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_BASE),
+		bs.stream()
     ], done);
 });

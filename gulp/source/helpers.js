@@ -11,12 +11,12 @@ gulp.task("helper-make-gulpfile", function(done) {
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
-        debug(task._wa_devkit.debug),
+    	debug(),
         insert.append("// " + "-".repeat(37)),
         // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
         gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+    	debug(),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
@@ -51,14 +51,14 @@ gulp.task("helper-purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
     ], done);
 });
@@ -120,11 +120,11 @@ gulp.task("helper-tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-            	debug(task._wa_devkit.debug),
+            	debug(),
                 beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
-                size(task._wa_devkit.size),
+                debug(task.__wadevkit.debug),
                 gulp.dest(output)
             ], function() {
                 // if a new name was provided delete the file with the old input file
@@ -244,13 +244,12 @@ gulp.task("helper-clean-files", function(done) {
             cwd: __PATHS_BASE
         }),
     	sort(opts_sort),
-    	debug(task._wa_devkit.debug),
         beautify(opts_bt),
         gulpif(condition, json_sort({
             "space": json_spaces
         })),
         eol(),
-        size(task._wa_devkit.size_off),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
@@ -263,7 +262,6 @@ gulp.task("helper-findmin", function(done) {
             cwd: __PATHS_BASE
         }),
 		sort(opts_sort),
-    	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size_off)
+		debug()
     ], done);
 });

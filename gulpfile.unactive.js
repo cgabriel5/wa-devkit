@@ -8,12 +8,12 @@ var open = require("gulp-open");
 var gulpif = require("gulp-if");
 var fail = require("gulp-fail");
 var sort = require("gulp-sort");
-var size = require("gulp-size");
+var debug = require("gulp-debug");
 var clean = require("gulp-clean");
+var gutil = require("gulp-util");
 var cache = require("gulp-cache");
 var print = require("gulp-print");
 var order = require("gulp-order");
-var debug = require("gulp-debug");
 var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
@@ -45,6 +45,7 @@ var del = require("del");
 var pump = require("pump");
 var glob = require("glob");
 var args = require("yargs");
+var chalk = require("chalk");
 var git = require("git-state");
 var fe = require("file-exists");
 var json = require("json-file");
@@ -205,7 +206,6 @@ function open_file_in_browser(filepath, port, callback, task) {
             cwd: __PATHS_BASE,
             dot: true
         }),
-    	debug(task._wa_devkit.debug),
         open({
             app: browser,
             uri: uri({
@@ -215,7 +215,7 @@ function open_file_in_browser(filepath, port, callback, task) {
                 "https": config_user.https
             })
         }),
-        size(task._wa_devkit.size)
+		debug(task.__wadevkit.debug)
     ], function() {
         notify("File opened!");
         callback();
@@ -397,9 +397,8 @@ gulp.task("default", function(done) {
 gulp.task("task-dist-clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_DIST_HOME, opts),
-    	debug(task._wa_devkit.debug),
         clean(),
-    	size(task._wa_devkit.size)
+        debug(task.__wadevkit.debug)
     ], done);
 });
 // copy new file/folders
@@ -411,8 +410,7 @@ gulp.task("task-dist-favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size),
+    	debug(task.__wadevkit.debug),
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
@@ -423,9 +421,8 @@ gulp.task("task-dist-css", function(done) {
             cwd: __PATHS_HOMEDIR,
             base: __PATHS_BASE_DOT
         }),
-    	debug(task._wa_devkit.debug),
 		clean_css(),
-		size(task._wa_devkit.size),
+		debug(task.__wadevkit.debug),
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
@@ -438,7 +435,6 @@ gulp.task("task-dist-img", function(done) {
             cwd: __PATHS_HOMEDIR,
             base: __PATHS_BASE_DOT
         }),
-    	debug(task._wa_devkit.debug),
 		cache(imagemin([
             imagemin.gifsicle({
                 interlaced: true
@@ -455,7 +451,7 @@ gulp.task("task-dist-img", function(done) {
                 }]
             })
         ])),
-        size(task._wa_devkit.size),
+		debug(task.__wadevkit.debug),
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
@@ -466,9 +462,8 @@ gulp.task("task-dist-js", function(done) {
             cwd: __PATHS_HOMEDIR,
             base: __PATHS_BASE_DOT
         }),
-    	debug(task._wa_devkit.debug),
 		uglify(),
-		size(task._wa_devkit.size),
+		debug(task.__wadevkit.debug),
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
@@ -483,9 +478,8 @@ gulp.task("task-dist-root", function(done) {
             cwd: __PATHS_HOMEDIR,
             base: __PATHS_BASE_DOT
         }),
-    	debug(task._wa_devkit.debug),
     	gulpif(is_html, minify_html()),
-    	size(task._wa_devkit.size),
+    	debug(task.__wadevkit.debug),
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
@@ -512,9 +506,8 @@ gulp.task("helper-make-dist", function(done) {
 gulp.task("task-lib-clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts),
-    	debug(task._wa_devkit.debug),
         clean(),
-        size(task._wa_devkit.size)
+        debug(task.__wadevkit.debug),
     ], done);
 });
 gulp.task("task-lib-js", function(done) {
@@ -525,15 +518,15 @@ gulp.task("task-lib-js", function(done) {
         }),
     	// filter out all but test files (^test*/i)
 		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
-    	debug(task._wa_devkit.debug),
+		debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_LIB_HOME),
         uglify(),
         rename(bundle_js.thirdparty.minified_name),
-        size(task._wa_devkit.size),
-        gulp.dest(__PATHS_LIB_HOME),
+        debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_LIB_HOME)
     ], done);
 });
 // helper library make task
@@ -639,14 +632,14 @@ gulp.task("task-html", function(done) {
     pump([gulp.src(bundles.html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
-        concat(bundles.html.source.name),
-        replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
-        beautify(opts_bt),
-        replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
-        size(task._wa_devkit.size),
-        gulp.dest(__PATHS_BASE),
-        bs.stream()
+    	debug(),
+		concat(bundles.html.source.name),
+		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
+		beautify(opts_bt),
+		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
+		debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_BASE),
+		bs.stream()
     ], done);
 });
 // -------------------------------------
@@ -661,7 +654,7 @@ gulp.task("task-precssapp-cleanup", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
         replace(new RegExp(pf.p, pf.f), pf.r),
         replace(new RegExp(lz.p, lz.f), lz.r),
@@ -669,7 +662,6 @@ gulp.task("task-precssapp-cleanup", function(done) {
         replace(new RegExp(lh.p, lh.f), function(match) {
             return match.toLowerCase();
         }),
-        size(task._wa_devkit.size),
         gulp.dest(__PATHS_CSS_SOURCE),
         bs.stream()
     ], done);
@@ -680,12 +672,12 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
     pump([gulp.src(bundle_css.source.files, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         concat(bundle_css.source.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_CSS_BUNDLES),
         bs.stream()
     ], done);
@@ -696,13 +688,13 @@ gulp.task("task-css-libs", function(done) {
     pump([gulp.src(bundle_css.thirdparty.files, {
             cwd: __PATHS_CSS_THIRDPARTY
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         concat(bundle_css.thirdparty.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
-        gulp.dest(__PATHS_CSS_BUNDLES),
+    	debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_CSS_BUNDLES),
         bs.stream()
     ], done);
 });
@@ -713,10 +705,10 @@ gulp.task("task-js-app", function(done) {
     pump([gulp.src(bundle_js.source.files, {
             cwd: __PATHS_JS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         concat(bundle_js.source.name),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_BUNDLES),
         bs.stream()
     ], done);
@@ -727,10 +719,10 @@ gulp.task("task-js-libs", function(done) {
     pump([gulp.src(bundle_js.thirdparty.files, {
             cwd: __PATHS_JS_THIRDPARTY
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_JS_BUNDLES),
         bs.stream()
     ], done);
@@ -742,8 +734,7 @@ gulp.task("task-img", function(done) {
     // need to copy hidden files/folders?
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(__PATHS_IMG_SOURCE),
-    	debug(task._wa_devkit.debug_off),
-    	size(task._wa_devkit.size),
+		debug(),
         bs.stream()
     ], done);
 });
@@ -760,9 +751,8 @@ gulp.task("task-readme", function(done) {
         pump([gulp.src(__PATHS_README_HTML, {
                 cwd: __PATHS_MARKDOWN_PREVIEW
             }),
-        	debug(task._wa_devkit.debug),
+			debug(task.__wadevkit.debug),
             beautify(opts_bt),
-            size(task._wa_devkit.size),
             gulp.dest(__PATHS_MARKDOWN_PREVIEW),
             bs.stream()
         ], done);
@@ -782,12 +772,12 @@ gulp.task("helper-make-gulpfile", function(done) {
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
-        debug(task._wa_devkit.debug),
+    	debug(),
         insert.append("// " + "-".repeat(37)),
         // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
         gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+    	debug(),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
@@ -822,14 +812,14 @@ gulp.task("helper-purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(task._wa_devkit.debug),
+    	debug(),
         purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
         beautify(opts_bt),
-        size(task._wa_devkit.size),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
     ], done);
 });
@@ -891,11 +881,11 @@ gulp.task("helper-tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-            	debug(task._wa_devkit.debug),
+            	debug(),
                 beautify(opts_bt),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
-                size(task._wa_devkit.size),
+                debug(task.__wadevkit.debug),
                 gulp.dest(output)
             ], function() {
                 // if a new name was provided delete the file with the old input file
@@ -1015,13 +1005,12 @@ gulp.task("helper-clean-files", function(done) {
             cwd: __PATHS_BASE
         }),
     	sort(opts_sort),
-    	debug(task._wa_devkit.debug),
         beautify(opts_bt),
         gulpif(condition, json_sort({
             "space": json_spaces
         })),
         eol(),
-        size(task._wa_devkit.size_off),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
     ], done);
 });
@@ -1034,8 +1023,7 @@ gulp.task("helper-findmin", function(done) {
             cwd: __PATHS_BASE
         }),
 		sort(opts_sort),
-    	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size_off)
+		debug()
     ], done);
 });
 // -------------------------------------
@@ -1119,8 +1107,7 @@ gulp.task("task-favicon-edit-manifest", function(done) {
 gulp.task("task-favicon-root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size_off),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
         bs.stream()
     ], done);
@@ -1129,9 +1116,8 @@ gulp.task("task-favicon-root", function(done) {
 gulp.task("task-favicon-delete", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	debug(task._wa_devkit.debug),
     	clean(),
-    	size(task._wa_devkit.size_off)
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 // inject new favicon html:
@@ -1140,8 +1126,7 @@ gulp.task("task-favicon-html", function(done) {
     pump([gulp.src(__PATHS_FAVICON_HTML),
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
             .favicon.html_code),
-        debug(task._wa_devkit.debug),
-        size(task._wa_devkit.size),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
         bs.stream()
     ], done);

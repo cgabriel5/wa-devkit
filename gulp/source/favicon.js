@@ -78,8 +78,7 @@ gulp.task("task-favicon-edit-manifest", function(done) {
 gulp.task("task-favicon-root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	debug(task._wa_devkit.debug),
-    	size(task._wa_devkit.size_off),
+    	debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_BASE),
         bs.stream()
     ], done);
@@ -88,9 +87,8 @@ gulp.task("task-favicon-root", function(done) {
 gulp.task("task-favicon-delete", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
-    	debug(task._wa_devkit.debug),
     	clean(),
-    	size(task._wa_devkit.size_off)
+    	debug(task.__wadevkit.debug)
     ], done);
 });
 // inject new favicon html:
@@ -99,8 +97,7 @@ gulp.task("task-favicon-html", function(done) {
     pump([gulp.src(__PATHS_FAVICON_HTML),
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
             .favicon.html_code),
-        debug(task._wa_devkit.debug),
-        size(task._wa_devkit.size),
+        debug(task.__wadevkit.debug),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
         bs.stream()
     ], done);
