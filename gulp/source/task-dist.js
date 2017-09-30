@@ -11,24 +11,28 @@ gulp.task("task-dist-favicon", function(done) {
     var task = this;
     pump([gulp.src(bundle_dist.source.files.favicon, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	gulp.dest(__PATHS_DIST_HOME),
-    	debug(task.__wadevkit.debug)
+    	debug(task.__wadevkit.debug),
+    	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
 gulp.task("task-dist-css", function(done) {
     var task = this;
+    var is_css = function(file) {
+        return (path.extname(file.path)
+            .toLowerCase() === ".css");
+    };
     pump([gulp.src(bundle_dist.source.files.css, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		clean_css(),
-    	gulp.dest(__PATHS_DIST_HOME),
-		debug(task.__wadevkit.debug)
+		gulpif(is_css, clean_css()),
+		debug(task.__wadevkit.debug),
+    	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
 gulp.task("task-dist-img", function(done) {
@@ -37,7 +41,7 @@ gulp.task("task-dist-img", function(done) {
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(bundle_dist.source.files.img, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
 		cache(imagemin([
@@ -62,12 +66,16 @@ gulp.task("task-dist-img", function(done) {
 });
 gulp.task("task-dist-js", function(done) {
     var task = this;
+    var is_js = function(file) {
+        return (path.extname(file.path)
+            .toLowerCase() === ".js");
+    };
     pump([gulp.src(bundle_dist.source.files.js, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		uglify(),
+    	gulpif(is_js, uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
 		debug(task.__wadevkit.debug)
     ], done);
@@ -80,7 +88,7 @@ gulp.task("task-dist-root", function(done) {
     };
     pump([gulp.src(bundle_dist.source.files.root, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
     	gulpif(is_html, minify_html()),

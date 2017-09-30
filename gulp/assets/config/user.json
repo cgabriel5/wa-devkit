@@ -12,7 +12,7 @@
             },
             "thirdparty": {
                 "files": [
-                    "font-awesome-4.7.0/css/font-awesome.css"
+                    "css/libs/font-awesome/css/font-awesome.css"
                 ],
                 "name": "libs.css"
             }
@@ -21,7 +21,9 @@
             "source": {
                 "files": {
                     "css": [
-                        "css/bundles/*.css"
+                        "css/bundles/**/*.*",
+                        "css/libs/**/*.*",
+                        "css/assets/**/*.*"
                     ],
                     "favicon": [
                         "favicon/**/*.{jpg,png,ico,svg}"
@@ -30,7 +32,9 @@
                         "img/**/*.*"
                     ],
                     "js": [
-                        "js/bundles/*.js"
+                        "js/bundles/**/*.*",
+                        "js/libs/**/*.*",
+                        "js/assets/**/*.*"
                     ],
                     "root": [
                         "apple-touch-icon.png",
@@ -153,7 +157,7 @@
             },
             "thirdparty": {
                 "files": [
-                    "fastclick.js"
+                    "js/libs/fastclick/lib/fastclick.js"
                 ],
                 "name": "libs.js"
             }

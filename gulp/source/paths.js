@@ -1,5 +1,6 @@
 // paths::BASES
 var __PATHS_BASE_DOT = ".";
+var __PATHS_DEL = "/";
 var __PATHS_BASE = "./";
 var __PATHS_DIRNAME = __dirname;
 var __PATHS_CWD = process.cwd();
@@ -14,6 +15,7 @@ var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
 var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/libs/`;
+var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/libs/**/*.*`;
 var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
 var __PATHS_USERS_CSS_FILE = "styles.css";
 // paths::PURIFY_CSS
@@ -25,6 +27,7 @@ var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
 // paths:JS
 var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
 var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/libs/`;
+var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/libs/**/*.*`;
 var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
 // paths:IMG
 var __PATHS_IMG_SOURCE = `${__PATHS_HOMEDIR}img/**/*`;
@@ -61,3 +64,5 @@ var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
 var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
+var __PATHS_NODE_MODULES_NAME = "node_modules/";
+var __PATHS_NODE_MODULES = "./node_modules/";

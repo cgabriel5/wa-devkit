@@ -46,6 +46,7 @@ var args = require("yargs");
 var chalk = require("chalk");
 var git = require("git-state");
 var fe = require("file-exists");
+var de = require("directory-exists");
 var json = require("json-file");
 var mds = require("markdown-styles");
 var cleanup = require("node-cleanup");

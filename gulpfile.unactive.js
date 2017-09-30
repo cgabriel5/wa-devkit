@@ -46,6 +46,7 @@ var args = require("yargs");
 var chalk = require("chalk");
 var git = require("git-state");
 var fe = require("file-exists");
+var de = require("directory-exists");
 var json = require("json-file");
 var mds = require("markdown-styles");
 var cleanup = require("node-cleanup");
@@ -56,6 +57,7 @@ var bs_autoclose = require("browser-sync-close-hook");
 // -------------------------------------
 // paths::BASES
 var __PATHS_BASE_DOT = ".";
+var __PATHS_DEL = "/";
 var __PATHS_BASE = "./";
 var __PATHS_DIRNAME = __dirname;
 var __PATHS_CWD = process.cwd();
@@ -70,6 +72,7 @@ var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
 var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/libs/`;
+var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/libs/**/*.*`;
 var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
 var __PATHS_USERS_CSS_FILE = "styles.css";
 // paths::PURIFY_CSS
@@ -81,6 +84,7 @@ var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
 // paths:JS
 var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
 var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/libs/`;
+var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/libs/**/*.*`;
 var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
 // paths:IMG
 var __PATHS_IMG_SOURCE = `${__PATHS_HOMEDIR}img/**/*`;
@@ -117,6 +121,8 @@ var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
 var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
+var __PATHS_NODE_MODULES_NAME = "node_modules/";
+var __PATHS_NODE_MODULES = "./node_modules/";
 // -------------------------------------
 // configuration information
 var config_user = require(__PATHS_CONFIG_USER);
@@ -404,24 +410,28 @@ gulp.task("task-dist-favicon", function(done) {
     var task = this;
     pump([gulp.src(bundle_dist.source.files.favicon, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	gulp.dest(__PATHS_DIST_HOME),
-    	debug(task.__wadevkit.debug)
+    	debug(task.__wadevkit.debug),
+    	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
 gulp.task("task-dist-css", function(done) {
     var task = this;
+    var is_css = function(file) {
+        return (path.extname(file.path)
+            .toLowerCase() === ".css");
+    };
     pump([gulp.src(bundle_dist.source.files.css, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		clean_css(),
-    	gulp.dest(__PATHS_DIST_HOME),
-		debug(task.__wadevkit.debug)
+		gulpif(is_css, clean_css()),
+		debug(task.__wadevkit.debug),
+    	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
 gulp.task("task-dist-img", function(done) {
@@ -430,7 +440,7 @@ gulp.task("task-dist-img", function(done) {
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(bundle_dist.source.files.img, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
 		cache(imagemin([
@@ -455,12 +465,16 @@ gulp.task("task-dist-img", function(done) {
 });
 gulp.task("task-dist-js", function(done) {
     var task = this;
+    var is_js = function(file) {
+        return (path.extname(file.path)
+            .toLowerCase() === ".js");
+    };
     pump([gulp.src(bundle_dist.source.files.js, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		uglify(),
+    	gulpif(is_js, uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
 		debug(task.__wadevkit.debug)
     ], done);
@@ -473,7 +487,7 @@ gulp.task("task-dist-root", function(done) {
     };
     pump([gulp.src(bundle_dist.source.files.root, {
             dot: true,
-            cwd: __PATHS_HOMEDIR,
+            cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
     	gulpif(is_html, minify_html()),
@@ -684,9 +698,10 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
 // build libs.css + minify + beautify
 gulp.task("task-css-libs", function(done) {
     var task = this;
-    pump([gulp.src(bundle_css.thirdparty.files, {
-            cwd: __PATHS_CSS_THIRDPARTY
-        }),
+    // NOTE: absolute thirdparty library file paths should be used.
+    // The paths should be supplied in gulp/assets/config/user.json
+    // within the bundles.css.thirdparty.files array.
+    pump([gulp.src(bundle_css.thirdparty.files),
     	debug(),
         concat(bundle_css.thirdparty.name),
         autoprefixer(opts_ap),
@@ -715,9 +730,10 @@ gulp.task("task-js-app", function(done) {
 // build libs.js + minify + beautify
 gulp.task("task-js-libs", function(done) {
     var task = this;
-    pump([gulp.src(bundle_js.thirdparty.files, {
-            cwd: __PATHS_JS_THIRDPARTY
-        }),
+    // NOTE: absolute thirdparty library file paths should be used.
+    // The paths should be supplied in gulp/assets/config/user.json
+    // within the bundles.js.thirdparty.files array.
+    pump([gulp.src(bundle_js.thirdparty.files),
     	debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
@@ -1023,6 +1039,80 @@ gulp.task("helper-findmin", function(done) {
 		sort(opts_sort),
 		debug()
     ], done);
+});
+// copy/remove js/css modules (dependencies)
+gulp.task("helper-dependency", function(done) {
+    var task = this;
+    // run yargs
+    var _args = args.usage("Usage: $0 --name [string] --type [string]")
+        .option("name", {
+            alias: "n",
+            demandOption: true,
+            describe: "The module name.",
+            type: "string"
+        })
+        .option("type", {
+            alias: "t",
+            demandOption: true,
+            describe: "js or css dependency?",
+            choices: ["js", "css"],
+            type: "string"
+        })
+        .option("action", {
+            alias: "a",
+            demandOption: true,
+            describe: "Add or remove dependency?",
+            choices: ["add", "remove"],
+            type: "string"
+        })
+        .example("$0 -n fastclick -t js -a add", "Copy fastclick to JS libs directory.")
+        .example("$0 -n fastclick -t js -a remove", "Remove fastclick from JS libs directory.")
+        .argv;
+    // get the command line arguments from yargs
+    var name = _args.n || _args.name;
+    var type = _args.t || _args.type;
+    var action = _args.a || _args.action;
+    // get needed paths
+    var dest = (type === "js") ? __PATHS_JS_THIRDPARTY : __PATHS_CSS_THIRDPARTY;
+    var delete_path = dest + name;
+    var module_path = __PATHS_NODE_MODULES + name;
+    // check that the module exists
+    if (action === "add" && !de.sync(module_path)) {
+        log(chalk.yellow("[warning]"), "The module", chalk.magenta(`${module_path}`), "does not exist.");
+        log(`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`);
+        return done();
+    } else if (action === "remove" && !de.sync(delete_path)) {
+        log(chalk.yellow("[warning]"), "The module", chalk.magenta(`${delete_path}`), "does not exist. Removal aborted.");
+        return done();
+    }
+    // delete the old module folder
+    del([delete_path])
+        .then(function(paths) {
+            var message = `Dependency (${name}) ` + (action === "add" ? "added" : "removed" + ".");
+            if (action === "add") {
+                // copy module to location
+                pump([gulp.src(name + __PATHS_DEL + __PATHS_ALLFILES, {
+                        dot: true,
+                        cwd: __PATHS_NODE_MODULES,
+                        base: __PATHS_BASE_DOT
+                    }),
+                    rename(function(path) {
+                        // [https://stackoverflow.com/a/36347297]
+                        // remove the node_modules/ parent folder
+                        var regexp = new RegExp("^" + __PATHS_NODE_MODULES_NAME);
+                        path.dirname = path.dirname.replace(regexp, "");
+                    }),
+					gulp.dest(dest),
+					debug(task.__wadevkit.debug)
+	    	], function() {
+                    log(message);
+                    done();
+                });
+            } else { // remove
+                log(message);
+                done();
+            }
+        });
 });
 // -------------------------------------
 // Generate the icons. This task takes a few seconds to complete.

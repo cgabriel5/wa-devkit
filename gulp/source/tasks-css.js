@@ -41,9 +41,10 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
 // build libs.css + minify + beautify
 gulp.task("task-css-libs", function(done) {
     var task = this;
-    pump([gulp.src(bundle_css.thirdparty.files, {
-            cwd: __PATHS_CSS_THIRDPARTY
-        }),
+    // NOTE: absolute thirdparty library file paths should be used.
+    // The paths should be supplied in gulp/assets/config/user.json
+    // within the bundles.css.thirdparty.files array.
+    pump([gulp.src(bundle_css.thirdparty.files),
     	debug(),
         concat(bundle_css.thirdparty.name),
         autoprefixer(opts_ap),

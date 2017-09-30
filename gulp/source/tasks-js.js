@@ -15,9 +15,10 @@ gulp.task("task-js-app", function(done) {
 // build libs.js + minify + beautify
 gulp.task("task-js-libs", function(done) {
     var task = this;
-    pump([gulp.src(bundle_js.thirdparty.files, {
-            cwd: __PATHS_JS_THIRDPARTY
-        }),
+    // NOTE: absolute thirdparty library file paths should be used.
+    // The paths should be supplied in gulp/assets/config/user.json
+    // within the bundles.js.thirdparty.files array.
+    pump([gulp.src(bundle_js.thirdparty.files),
     	debug(),
         concat(bundle_js.thirdparty.name),
         beautify(opts_bt),
