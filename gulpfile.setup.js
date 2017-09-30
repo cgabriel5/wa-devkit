@@ -139,7 +139,7 @@ gulp.task("default", function(done) {
 gulp.task("init", function(done) {
     var task = this;
     prompt.start(); // start the prompt
-    prompt.message = time();
+    prompt.message = chalk.green("[question]");
     prompt.delimiter = " ";
     prompt.get(questions, function(err, result) {
         // kill prompt and show user error message
