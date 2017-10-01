@@ -12,7 +12,7 @@ gulp.task("default", function(done) {
 gulp.task("init", function(done) {
     var task = this;
     prompt.start(); // start the prompt
-    prompt.message = time();
+    prompt.message = chalk.green("[question]");
     prompt.delimiter = " ";
     prompt.get(questions, function(err, result) {
         // kill prompt and show user error message
@@ -60,12 +60,23 @@ gulp.task("init", function(done) {
             config_internal.write(function() {
                 pkg.write(function() {
                     // run initialization steps
-                    return sequence("init-pick-js-option", "init-fill-placeholders", "init-setup-readme", "init-rename-gulpfile", "init-remove-setup", "init-beautify-files", "init-git", function() {
+                    var tasks = [
+						"init-clear-js",
+						"init-pick-js-option",
+						"init-fill-placeholders",
+						"init-setup-readme",
+						"init-rename-gulpfile",
+						"init-remove-setup",
+						"init-beautify-files",
+						"init-git"
+                    ];
+                    tasks.push(function() {
                         notify(`Project initialized (${type})`);
                         log(`Project initialized (${type})`);
-                        log("Run \"$ gulp\" to build project files and start watching project for any file changes.");
+                        log("Run \"$ gulp\" to start watching project for any file changes.");
                         done();
                     });
+                    return sequence.apply(task, tasks);
                 }, null, json_spaces);
             }, null, json_spaces);
         }, null, json_spaces);

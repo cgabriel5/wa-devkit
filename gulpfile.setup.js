@@ -187,18 +187,41 @@ gulp.task("init", function(done) {
             config_internal.write(function() {
                 pkg.write(function() {
                     // run initialization steps
-                    return sequence("init-pick-js-option", "init-fill-placeholders", "init-setup-readme", "init-rename-gulpfile", "init-remove-setup", "init-beautify-files", "init-git", function() {
+                    var tasks = [
+						"init-clear-js",
+						"init-pick-js-option",
+						"init-fill-placeholders",
+						"init-setup-readme",
+						"init-rename-gulpfile",
+						"init-remove-setup",
+						"init-beautify-files",
+						"init-git"
+                    ];
+                    tasks.push(function() {
                         notify(`Project initialized (${type})`);
                         log(`Project initialized (${type})`);
-                        log("Run \"$ gulp\" to build project files and start watching project for any file changes.");
+                        log("Run \"$ gulp\" to start watching project for any file changes.");
                         done();
                     });
+                    return sequence.apply(task, tasks);
                 }, null, json_spaces);
             }, null, json_spaces);
         }, null, json_spaces);
     });
 });
 // -------------------------------------
+// initialization step
+gulp.task("init-clear-js", function(done) {
+    var task = this;
+    // pick the js/ directory to use
+    pump([gulp.src(__PATHS_JS_HOME, {
+            dot: true,
+            cwd: __PATHS_BASE
+        }),
+    	clean(),
+    	debug(task.__wadevkit.debug)
+    ], done);
+});
 // initialization step
 gulp.task("init-pick-js-option", function(done) {
     var task = this;
@@ -207,9 +230,7 @@ gulp.task("init-pick-js-option", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-        gulp.dest(__PATHS_JS_HOME, {
-            cwd: __PATHS_BASE
-        }),
+        gulp.dest(__PATHS_JS_HOME),
     	debug(task.__wadevkit.debug)
     ], done);
 });
@@ -225,7 +246,7 @@ gulp.task("init-fill-placeholders", function(done) {
             match = match.replace(/^\{\{\#|\}\}$/g, "");
             return __data__[match] ? __data__[match] : match;
         }),
-        gulp.dest(""),
+        gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
     ], done);
 });

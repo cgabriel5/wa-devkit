@@ -1,4 +1,16 @@
 // initialization step
+gulp.task("init-clear-js", function(done) {
+    var task = this;
+    // pick the js/ directory to use
+    pump([gulp.src(__PATHS_JS_HOME, {
+            dot: true,
+            cwd: __PATHS_BASE
+        }),
+    	clean(),
+    	debug(task.__wadevkit.debug)
+    ], done);
+});
+// initialization step
 gulp.task("init-pick-js-option", function(done) {
     var task = this;
     // pick the js/ directory to use
@@ -6,9 +18,7 @@ gulp.task("init-pick-js-option", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-        gulp.dest(__PATHS_JS_HOME, {
-            cwd: __PATHS_BASE
-        }),
+        gulp.dest(__PATHS_JS_HOME),
     	debug(task.__wadevkit.debug)
     ], done);
 });
@@ -24,7 +34,7 @@ gulp.task("init-fill-placeholders", function(done) {
             match = match.replace(/^\{\{\#|\}\}$/g, "");
             return __data__[match] ? __data__[match] : match;
         }),
-        gulp.dest(""),
+        gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
     ], done);
 });
