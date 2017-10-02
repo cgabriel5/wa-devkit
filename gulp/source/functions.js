@@ -60,5 +60,51 @@ function html_replace_fn(replacements) {
  * @return {Undefined} 			[Nothing is returned.]
  */
 function gulp_check_warn() {
-    log(chalk.yellow("[warning]"), "Task cannot be performed while Gulp is running. Close Gulp then try again.");
+    log(chalk.red("Task cannot be performed while Gulp is running. Close Gulp then try again."));
+}
+/**
+ * @description [Render output from tasks.]
+ * @param {TaskList} tasks 			[The Gulp tasks.]
+ * @param {Boolean}  verbose=false  [Flag indicating whether to show hide tasks with the verbose flag.]
+ * @returns {String} [The text to print.]
+ * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
+ */
+function print_tasks(tasks, verbose, filter) {
+    tasks = tasks.filterHidden(verbose)
+        .sort();
+    var results = ["", chalk.underline.bold(filter ? "Filtered" : "Tasks"), ""];
+    var field_task_len = tasks.getLongestNameLength();
+    tasks.forEach(function(task) {
+        var comment = task.comment || {};
+        var lines = comment.lines || [];
+        results.push(format_column(task.name, field_task_len) + (lines[0] || ""));
+        // if (!verbose) results.push("\n");
+        // only print verbose documentation when flag is provided
+        if (verbose) {
+            for (var i = 1; i < lines.length; i++) {
+                // if (i === 1) results.push("\n");
+                results.push(format_column("", field_task_len) + "  " + lines[i]);
+                if (verbose && i === lines.length - 1) results.push("\n");
+            }
+        }
+    });
+    if (!verbose) results.push("\n");
+    return results.join("\n");
+}
+/**
+ * @description [Return a text surrounded by space.]
+ * @param {String} text
+ * @param {Number} width	   [Width Column width without offsets.]
+ * @param {Number} offset_left  [Space count before text.]
+ * @param {Number} offset_right [Space count after text.]
+ * @returns {String} [The formated text.]
+ * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
+ */
+function format_column(text, width, offset_left, offset_right) {
+    offset_left = undefined !== offset_left ? offset_left : 3;
+    offset_right = undefined !== offset_right ? offset_right : 3;
+    return new Array(offset_left + 1)
+        .join(" ") + chalk.magenta(text) + new Array(Math.max(width - text.length, 0) + 1)
+        .join(" ") + new Array(offset_right + 1)
+        .join(" ");
 }

@@ -1,5 +1,4 @@
 "use strict";
-// -------------------------------------
 var fs = require("fs");
 var path = require("path");
 // -------------------------------------
@@ -16,6 +15,7 @@ var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
 var filter = require("gulp-filter");
+var foreach = require("gulp-foreach");
 var replace = require("gulp-replace");
 var purify = require("gulp-purifycss");
 var imagemin = require("gulp-imagemin");
@@ -28,13 +28,14 @@ var autoprefixer = require("gulp-autoprefixer");
 var real_favicon = require("gulp-real-favicon");
 var alphabetize = require("alphabetize-object-keys");
 // -------------------------------------
-// // Non es-uglify
-// Remove the following two lines and uncomment the
-// following lines if uglify-es is needed.
+// @non_es_uglify
+// By default the non es-uglify is used as the default uglifier.
+// Remove this comment block, following two require lines, and
+// uncomment the @uglify_es comment block to use uglify-es instead.
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
 // -------------------------------------
-// // Uncomment for uglify-es
+// @uglify_es
 // var composer = require("gulp-uglify/composer");
 // var uglify = composer(require("uglify-es"), console);
 // var beautify = require("gulp-jsbeautifier");
@@ -42,12 +43,12 @@ var beautify = require("gulp-jsbeautifier");
 var del = require("del");
 var pump = require("pump");
 var glob = require("glob");
-var args = require("yargs");
+var yargs = require("yargs");
 var chalk = require("chalk");
 var git = require("git-state");
 var fe = require("file-exists");
-var de = require("directory-exists");
 var json = require("json-file");
+var de = require("directory-exists");
 var mds = require("markdown-styles");
 var cleanup = require("node-cleanup");
 var sequence = require("run-sequence");

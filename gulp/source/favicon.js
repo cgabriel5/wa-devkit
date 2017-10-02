@@ -2,7 +2,8 @@
 // You should run it at least once to create the icons. Then,
 // you should run it whenever RealFaviconGenerator updates its
 // package (see the check-for-favicon-update task below).
-gulp.task("task-favicon-generate", function(done) {
+// @internal
+gulp.task("favicon:generate", function(done) {
     real_favicon.generateFavicon({
         masterPicture: __PATHS_FAVICON_MASTER_PIC,
         dest: __PATHS_FAVICON_DEST,
@@ -65,7 +66,8 @@ gulp.task("task-favicon-generate", function(done) {
     });
 });
 // update manifest.json
-gulp.task("task-favicon-edit-manifest", function(done) {
+// @internal
+gulp.task("favicon:edit-manifest", function(done) {
     var manifest = json.read(__PATHS_FAVICON_ROOT_MANIFEST);
     manifest.set("name", "wa-devkit");
     manifest.set("short_name", "WADK");
@@ -75,7 +77,8 @@ gulp.task("task-favicon-edit-manifest", function(done) {
 });
 //
 // copy favicon.ico and apple-touch-icon.png to the root
-gulp.task("task-favicon-root", function(done) {
+// @internal
+gulp.task("favicon:root", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
         gulp.dest(__PATHS_BASE),
@@ -84,15 +87,17 @@ gulp.task("task-favicon-root", function(done) {
     ], done);
 });
 // copy delete unneeded files
-gulp.task("task-favicon-delete", function(done) {
+// @internal
+gulp.task("favicon:delete", function(done) {
     var task = this;
     pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
     	clean(),
     	debug(task.__wadevkit.debug)
     ], done);
 });
-// inject new favicon html:
-gulp.task("task-favicon-html", function(done) {
+// inject new favicon html
+// @internal
+gulp.task("favicon:html", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_FAVICON_HTML),
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
@@ -102,14 +107,21 @@ gulp.task("task-favicon-html", function(done) {
         bs.stream()
     ], done);
 });
-gulp.task("helper-favicon-build", function(done) {
+/**
+ * Re-build project favicons.
+ *
+ * Usage
+ *
+ * $ gulp favicon # Re-build favicons.
+ */
+gulp.task("favicon", function(done) {
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
     if (config_internal.get("pid")) { // Gulp instance exists so cleanup
         gulp_check_warn();
         return done();
     }
-    return sequence("task-favicon-generate", "task-favicon-edit-manifest", "task-favicon-root", "task-favicon-delete", "task-favicon-html", "task-html", "task-readme", "helper-clean-files", function(err) {
+    return sequence("favicon:generate", "favicon:edit-manifest", "favicon:root", "favicon:delete", "favicon:html", "html:main", "readme:main", "pretty", function(err) {
         log("Favicons generated.");
         done();
     });
@@ -118,7 +130,9 @@ gulp.task("helper-favicon-build", function(done) {
 // released a new Touch icon along with the latest version of iOS).
 // Run this task from time to time. Ideally, make it part of your
 // continuous integration system.
-gulp.task("helper-favicon-updates", function(done) {
+// Check for RealFaviconGenerator updates.
+// @internal
+gulp.task("favicon-updates", function(done) {
     var currentVersion = JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
         .version;
     real_favicon.checkForUpdates(currentVersion, function(err) {

@@ -46,12 +46,12 @@
                 }
             },
             "tasks": [
-                "task-dist-clean",
-                "task-dist-favicon",
-                "task-dist-css",
-                "task-dist-img",
-                "task-dist-js",
-                "task-dist-root"
+                "dist:clean",
+                "dist:favicon",
+                "dist:css",
+                "dist:img",
+                "dist:js",
+                "dist:root"
             ]
         },
         "gulp": {
@@ -77,13 +77,13 @@
                 "name_setup": "gulpfile.unactive.js"
             },
             "tasks": [
-                "task-css-app",
-                "task-css-libs",
-                "task-js-app",
-                "task-js-libs",
-                "task-img",
-                "task-html",
-                "task-readme"
+                "css:app",
+                "css:libs",
+                "js:app",
+                "js:libs",
+                "img:main",
+                "html:main",
+                "readme:main"
             ],
             "watch": {
                 "css": {

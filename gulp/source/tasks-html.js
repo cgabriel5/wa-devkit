@@ -1,5 +1,6 @@
 // init HTML files + minify
-gulp.task("task-html", function(done) {
+// @internal
+gulp.task("html:main", function(done) {
     var task = this;
     // RegExp used for $:pre/post{filename/$var} HTML file-content/$variable injection
     var r_pre = regexp_html.pre;

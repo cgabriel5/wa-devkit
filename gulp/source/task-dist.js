@@ -1,5 +1,6 @@
 // remove old dist / folder
-gulp.task("task-dist-clean", function(done) {
+// @internal
+gulp.task("dist:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_DIST_HOME, opts),
         clean(),
@@ -7,7 +8,8 @@ gulp.task("task-dist-clean", function(done) {
     ], done);
 });
 // copy new file/folders
-gulp.task("task-dist-favicon", function(done) {
+// @internal
+gulp.task("dist:favicon", function(done) {
     var task = this;
     pump([gulp.src(bundle_dist.source.files.favicon, {
             dot: true,
@@ -19,7 +21,8 @@ gulp.task("task-dist-favicon", function(done) {
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
-gulp.task("task-dist-css", function(done) {
+// @internal
+gulp.task("dist:css", function(done) {
     var task = this;
     var is_css = function(file) {
         return (path.extname(file.path)
@@ -35,7 +38,8 @@ gulp.task("task-dist-css", function(done) {
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
-gulp.task("task-dist-img", function(done) {
+// @internal
+gulp.task("dist:img", function(done) {
     var task = this;
     // need to copy hidden files/folders?
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
@@ -64,7 +68,8 @@ gulp.task("task-dist-img", function(done) {
 		debug(task.__wadevkit.debug)
     ], done);
 });
-gulp.task("task-dist-js", function(done) {
+// @internal
+gulp.task("dist:js", function(done) {
     var task = this;
     var is_js = function(file) {
         return (path.extname(file.path)
@@ -80,7 +85,8 @@ gulp.task("task-dist-js", function(done) {
 		debug(task.__wadevkit.debug)
     ], done);
 });
-gulp.task("task-dist-root", function(done) {
+// @internal
+gulp.task("dist:root", function(done) {
     var task = this;
     var is_html = function(file) {
         return (path.extname(file.path)
@@ -96,11 +102,17 @@ gulp.task("task-dist-root", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
-// helper distribution make task
-gulp.task("helper-make-dist", function(done) {
+/**
+ * Build the dist/ folder. (only for webapp projects).
+ *
+ * Usage
+ *
+ * $ gulp dist # Create dist/ folder.
+ */
+gulp.task("dist", function(done) {
     var task = this;
     if (APPTYPE !== "webapp") {
-        log(chalk.yellow("[warning]"), "This helper task is only available for", chalk.magenta("webapp"), "projects.");
+        log("This helper task is only available for webapp projects.");
         return done();
     }
     // get the gulp build tasks

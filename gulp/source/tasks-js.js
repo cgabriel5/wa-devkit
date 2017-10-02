@@ -1,5 +1,6 @@
 // build app.js + minify + beautify
-gulp.task("task-js-app", function(done) {
+// @internal
+gulp.task("js:app", function(done) {
     var task = this;
     pump([gulp.src(bundle_js.source.files, {
             cwd: __PATHS_JS_SOURCE
@@ -13,7 +14,8 @@ gulp.task("task-js-app", function(done) {
     ], done);
 });
 // build libs.js + minify + beautify
-gulp.task("task-js-libs", function(done) {
+// @internal
+gulp.task("js:libs", function(done) {
     var task = this;
     // NOTE: absolute thirdparty library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json

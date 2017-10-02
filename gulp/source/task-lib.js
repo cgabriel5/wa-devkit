@@ -1,12 +1,14 @@
-// remove old lib / folder
-gulp.task("task-lib-clean", function(done) {
+// remove old lib/ folder
+// @internal
+gulp.task("lib:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts),
         clean(),
         debug(task.__wadevkit.debug)
     ], done);
 });
-gulp.task("task-lib-js", function(done) {
+// @internal
+gulp.task("lib:js", function(done) {
     var task = this;
     pump([gulp.src(bundle_js.source.files, {
             nocase: true,
@@ -25,11 +27,17 @@ gulp.task("task-lib-js", function(done) {
         debug(task.__wadevkit.debug)
     ], done);
 });
-// helper library make task
-gulp.task("helper-make-lib", function(done) {
+/**
+ * Build the lib/ folder. (only for library projects).
+ *
+ * Usage
+ *
+ * $ gulp lib # Create lib/ folder.
+ */
+gulp.task("lib", function(done) {
     var task = this;
     if (APPTYPE !== "library") {
-        log(chalk.yellow("[warning]"), "This helper task is only available for", chalk.magenta("library"), "projects.");
+        log("This helper task is only available for library projects.");
         return done();
     }
     // get the gulp build tasks

@@ -1,5 +1,6 @@
 // markdown to html (with github style/layout)
-gulp.task("task-readme", function(done) {
+// @internal
+gulp.task("readme:main", function(done) {
     var task = this;
     mds.render(mds.resolveArgs({
         input: path.join(__PATHS_CWD, __PATHS_README),

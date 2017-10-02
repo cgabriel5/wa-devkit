@@ -4,7 +4,7 @@ var path = require("path");
 var path_offset = "../../../";
 var modules_path = path_offset + "node_modules/";
 // -------------------------------------
-var gulp = require(modules_path + "gulp");
+var gulp = require(modules_path + "gulp-task-doc");
 var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
 var gutil = require(modules_path + "gulp-util");

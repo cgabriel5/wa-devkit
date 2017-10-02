@@ -1,5 +1,6 @@
 // preform custom regexp replacements
-gulp.task("task-precssapp-cleanup", function(done) {
+// @internal
+gulp.task("css:preapp", function(done) {
     var task = this;
     // RegExp used for custom CSS code modifications
     var pf = regexp_css.prefixes;
@@ -23,7 +24,8 @@ gulp.task("task-precssapp-cleanup", function(done) {
     ], done);
 });
 // build app.css + autoprefix + minify
-gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
+// @internal
+gulp.task("css:app", ["css:preapp"], function(done) {
     var task = this;
     pump([gulp.src(bundle_css.source.files, {
             cwd: __PATHS_CSS_SOURCE
@@ -39,7 +41,8 @@ gulp.task("task-css-app", ["task-precssapp-cleanup"], function(done) {
     ], done);
 });
 // build libs.css + minify + beautify
-gulp.task("task-css-libs", function(done) {
+// @internal
+gulp.task("css:libs", function(done) {
     var task = this;
     // NOTE: absolute thirdparty library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
