@@ -16,10 +16,10 @@ exports.jsconfigs = {
                 ],
             "name": "app.js"
         },
-        "thirdparty": {
+        "vendor": {
             "files": [
-                "js/libs/fastclick/lib/fastclick.js",
-                "js/libs/libs.init.js"
+                "js/vendor/fastclick/lib/fastclick.js",
+                "js/vendor/libs.init.js"
                 ],
             "name": "libs.js",
             "minified_name": "lib.min.js"
@@ -41,17 +41,17 @@ exports.jsconfigs = {
                 ],
             "name": "app.js"
         },
-        "thirdparty": {
+        "vendor": {
             "files": [
-				"js/libs/fastclick/lib/fastclick.js"
+				"js/vendor/fastclick/lib/fastclick.js"
                 ],
             "name": "libs.js"
         }
     },
     "lib": {
         "tasks": [
-            "task-lib-clean",
-            "task-lib-js"
+            "lib:clean",
+            "lib:js"
 		]
     }
 };

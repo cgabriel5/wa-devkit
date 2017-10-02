@@ -14,8 +14,8 @@ var __PATHS_HTML_SOURCE = `${__PATHS_HOMEDIR}html/source/`;
 var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
-var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/libs/`;
-var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/libs/**/*.*`;
+var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/vendor/`;
+var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
 var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
 var __PATHS_USERS_CSS_FILE = "styles.css";
 // paths::PURIFY_CSS
@@ -26,8 +26,8 @@ var __PATHS_PURE_SOURCE = "source/";
 var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
 // paths:JS
 var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
-var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/libs/`;
-var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/libs/**/*.*`;
+var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/vendor/`;
+var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
 var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
 // paths:IMG
 var __PATHS_IMG_SOURCE = `${__PATHS_HOMEDIR}img/**/*`;

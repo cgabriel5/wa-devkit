@@ -44,12 +44,12 @@ gulp.task("css:app", ["css:preapp"], function(done) {
 // @internal
 gulp.task("css:libs", function(done) {
     var task = this;
-    // NOTE: absolute thirdparty library file paths should be used.
+    // NOTE: absolute vendor library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.css.thirdparty.files array.
-    pump([gulp.src(bundle_css.thirdparty.files),
+    // within the bundles.css.vendor.files array.
+    pump([gulp.src(bundle_css.vendor.files),
     	debug(),
-        concat(bundle_css.thirdparty.name),
+        concat(bundle_css.vendor.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),

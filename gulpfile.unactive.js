@@ -83,8 +83,8 @@ var __PATHS_HTML_SOURCE = `${__PATHS_HOMEDIR}html/source/`;
 var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
-var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/libs/`;
-var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/libs/**/*.*`;
+var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/vendor/`;
+var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
 var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
 var __PATHS_USERS_CSS_FILE = "styles.css";
 // paths::PURIFY_CSS
@@ -95,8 +95,8 @@ var __PATHS_PURE_SOURCE = "source/";
 var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
 // paths:JS
 var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
-var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/libs/`;
-var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/libs/**/*.*`;
+var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/vendor/`;
+var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
 var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
 // paths:IMG
 var __PATHS_IMG_SOURCE = `${__PATHS_HOMEDIR}img/**/*`;
@@ -201,9 +201,9 @@ var opts = {
 // -------------------------------------
 var html_injection_vars = {
     "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.name,
-    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.thirdparty.name,
+    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.name,
     "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.name,
-    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.thirdparty.name
+    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.name
 };
 var opts_sort = {
     // sort based on dirname alphabetically
@@ -697,12 +697,12 @@ gulp.task("lib:js", function(done) {
     	// filter out all but test files (^test*/i)
 		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
 		debug(),
-        concat(bundle_js.thirdparty.name),
+        concat(bundle_js.vendor.name),
         beautify(opts_bt),
         gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug),
         uglify(),
-        rename(bundle_js.thirdparty.minified_name),
+        rename(bundle_js.vendor.minified_name),
 		gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug)
     ], done);
@@ -780,7 +780,7 @@ gulp.task("watch:main", function(done) {
             return sequence("css:app");
         });
         // watch for any changes to CSS Lib files
-        gulp.watch(bundles.gulp.watch.css.thirdparty, {
+        gulp.watch(bundles.gulp.watch.css.vendor, {
             cwd: __PATHS_CSS_THIRDPARTY
         }, function() {
             return sequence("css:libs");
@@ -792,7 +792,7 @@ gulp.task("watch:main", function(done) {
             return sequence("js:app");
         });
         // watch for any changes to JS Lib files
-        gulp.watch(bundles.gulp.watch.js.thirdparty, {
+        gulp.watch(bundles.gulp.watch.js.vendor, {
             cwd: __PATHS_JS_THIRDPARTY
         }, function() {
             return sequence("js:libs");
@@ -896,12 +896,12 @@ gulp.task("css:app", ["css:preapp"], function(done) {
 // @internal
 gulp.task("css:libs", function(done) {
     var task = this;
-    // NOTE: absolute thirdparty library file paths should be used.
+    // NOTE: absolute vendor library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.css.thirdparty.files array.
-    pump([gulp.src(bundle_css.thirdparty.files),
+    // within the bundles.css.vendor.files array.
+    pump([gulp.src(bundle_css.vendor.files),
     	debug(),
-        concat(bundle_css.thirdparty.name),
+        concat(bundle_css.vendor.name),
         autoprefixer(opts_ap),
         shorthand(),
         beautify(opts_bt),
@@ -937,12 +937,12 @@ gulp.task("js:app", function(done) {
 // @internal
 gulp.task("js:libs", function(done) {
     var task = this;
-    // NOTE: absolute thirdparty library file paths should be used.
+    // NOTE: absolute vendor library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.js.thirdparty.files array.
-    pump([gulp.src(bundle_js.thirdparty.files),
+    // within the bundles.js.vendor.files array.
+    pump([gulp.src(bundle_js.vendor.files),
     	debug(),
-        concat(bundle_js.thirdparty.name),
+        concat(bundle_js.vendor.name),
         beautify(opts_bt),
         gulp.dest(__PATHS_JS_BUNDLES),
     	debug(task.__wadevkit.debug),

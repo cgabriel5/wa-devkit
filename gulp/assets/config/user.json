@@ -10,9 +10,9 @@
                 ],
                 "name": "app.css"
             },
-            "thirdparty": {
+            "vendor": {
                 "files": [
-                    "css/libs/font-awesome/css/font-awesome.css"
+                    "css/vendor/font-awesome/css/font-awesome.css"
                 ],
                 "name": "libs.css"
             }
@@ -22,7 +22,7 @@
                 "files": {
                     "css": [
                         "css/bundles/**/*.*",
-                        "css/libs/**/*.*",
+                        "css/vendor/**/*.*",
                         "css/assets/**/*.*"
                     ],
                     "favicon": [
@@ -33,7 +33,7 @@
                     ],
                     "js": [
                         "js/bundles/**/*.*",
-                        "js/libs/**/*.*",
+                        "js/vendor/**/*.*",
                         "js/assets/**/*.*"
                     ],
                     "root": [
@@ -90,7 +90,7 @@
                     "source": [
                         "source/*.css"
                     ],
-                    "thirdparty": [
+                    "vendor": [
                         "libs/**/*.css"
                     ]
                 },
@@ -107,7 +107,7 @@
                         "source/*.js",
                         "source/modules/*.js"
                     ],
-                    "thirdparty": [
+                    "vendor": [
                         "libs/**/*.js"
                     ]
                 }
@@ -155,9 +155,9 @@
                 ],
                 "name": "app.js"
             },
-            "thirdparty": {
+            "vendor": {
                 "files": [
-                    "js/libs/fastclick/lib/fastclick.js"
+                    "js/vendor/fastclick/lib/fastclick.js"
                 ],
                 "name": "libs.js"
             }

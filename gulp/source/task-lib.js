@@ -17,12 +17,12 @@ gulp.task("lib:js", function(done) {
     	// filter out all but test files (^test*/i)
 		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
 		debug(),
-        concat(bundle_js.thirdparty.name),
+        concat(bundle_js.vendor.name),
         beautify(opts_bt),
         gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug),
         uglify(),
-        rename(bundle_js.thirdparty.minified_name),
+        rename(bundle_js.vendor.minified_name),
 		gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug)
     ], done);

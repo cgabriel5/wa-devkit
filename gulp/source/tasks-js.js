@@ -17,12 +17,12 @@ gulp.task("js:app", function(done) {
 // @internal
 gulp.task("js:libs", function(done) {
     var task = this;
-    // NOTE: absolute thirdparty library file paths should be used.
+    // NOTE: absolute vendor library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.js.thirdparty.files array.
-    pump([gulp.src(bundle_js.thirdparty.files),
+    // within the bundles.js.vendor.files array.
+    pump([gulp.src(bundle_js.vendor.files),
     	debug(),
-        concat(bundle_js.thirdparty.name),
+        concat(bundle_js.vendor.name),
         beautify(opts_bt),
         gulp.dest(__PATHS_JS_BUNDLES),
     	debug(task.__wadevkit.debug),

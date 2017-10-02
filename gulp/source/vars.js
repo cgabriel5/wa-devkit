@@ -56,9 +56,9 @@ var opts = {
 // -------------------------------------
 var html_injection_vars = {
     "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.name,
-    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.thirdparty.name,
+    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.name,
     "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.name,
-    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.thirdparty.name
+    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.name
 };
 var opts_sort = {
     // sort based on dirname alphabetically
