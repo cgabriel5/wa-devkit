@@ -157,6 +157,8 @@
             },
             "vendor": {
                 "files": [
+                    "js/vendor/modernizr/modernizr.js",
+                    "js/vendor/jquery/dist/jquery.js",
                     "js/vendor/fastclick/lib/fastclick.js"
                 ],
                 "name": "libs.js"

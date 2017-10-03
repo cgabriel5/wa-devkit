@@ -1,4 +1,68 @@
 /**
+ * Provides Gulp task documentation.
+ *
+ * Options
+ *
+ * (no options) List tasks and their descriptions.
+ * -v, --verbose [boolean] Flag indicating whether to show all documentation.
+ * -n, --names   [string]  Names of tasks to show documentation for.
+ *
+ * Usage
+ *
+ * $ gulp help # Show list of tasks and their descriptions.
+ * $ gulp help --verbose # Show all documentation for all tasks.
+ * $ gulp help --name "open default dependency" # Show documentation for specific tasks.
+ */
+gulp.task("help", function() {
+    // run yargs
+    var _args = yargs.usage("Usage: $0 --name [string]")
+        .option("name", {
+            alias: "n",
+            default: false,
+            describe: "Name of task to show documentation for.",
+            type: "string"
+        })
+        .argv;
+    var task_name = (_args.n || _args.name);
+    // contain printer in a variable rather than an anonymous function
+    // to attach the provided task_name for later use. this is a bit hacky
+    // but its a workaround to provide the name.
+    var printer = function(tasks, verbose) { // custom print function
+        var task_name = this.task_name;
+        if (task_name) { // custom sort
+            // split into an array
+            var names = task_name.trim()
+                .split(/\s+/);
+            // set verbose to true to show all documentation
+            verbose = true;
+            // turn all but the provided task name to internal
+            // this will essentially "hide" them from being printed
+            tasks.tasks.forEach(function(item) {
+                // if (item.name !== task_name) {
+                if (!-~names.indexOf(item.name)) {
+                    item.comment.tags = [{
+                        "name": "internal",
+                        "value": true
+                }];
+                }
+            });
+        }
+        tasks = tasks.filterHidden(verbose)
+            .sort();
+        // filter will change the documentation header in the print_tasks function
+        var filter = (task_name ? true : false)
+        return print_tasks(tasks, verbose, filter);
+    };
+    // attach the task name to the printer function
+    printer.task_name = task_name;
+    // re-assign the printer as the "this" to have access to the task name
+    // within the function (printer) itself
+    printer = printer.bind(printer);
+    gulp.help({
+        "print": printer
+    })(this);
+});
+/**
  * Build gulpfile from source files. Useful after making changes to source files.
  *
  * Usage
@@ -21,10 +85,16 @@ gulp.task("gulpfile", function(done) {
             // @start ${filename}
             //\n`;
             var bottom = `\n//
-            // @end ${filename}
+            // @end   ${filename}
             // ${decor}
             //`;
-            return stream.pipe(insert.prepend(top))
+            var padding = " ".repeat(filename.length + 10);
+            var empty = `// ${padding} -- blank_file --`;
+            // empty check
+            var is_empty = file.contents.toString()
+                .trim() === "";
+            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
+                .pipe(insert.prepend(top))
                 .pipe(insert.append(bottom));
         }),
         // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
@@ -33,6 +103,27 @@ gulp.task("gulpfile", function(done) {
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
     ], done);
+});
+/**
+ * Build Modernizr file.
+ *
+ * Usage
+ *
+ * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
+ */
+gulp.task("modernizr", function(done) {
+    modernizr.build(config_modernizr.data, function(build) {
+        var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
+        // create missing folders
+        mkdirp(__PATHS_VENDOR_MODERNIZR, function(err) {
+            if (err) throw err;
+            // save the file to vendor
+            fs.writeFile(file_location, build, function() {
+                log(`Modernizr build complete. Placed in ${file_location}`);
+                done();
+            });
+        });
+    });
 });
 /**
  * Purge potentially unused CSS style definitions.

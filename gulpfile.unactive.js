@@ -49,9 +49,11 @@ var pump = require("pump");
 var glob = require("glob");
 var yargs = require("yargs");
 var chalk = require("chalk");
+var mkdirp = require("mkdirp");
 var git = require("git-state");
 var fe = require("file-exists");
 var json = require("json-file");
+var modernizr = require("modernizr");
 var de = require("directory-exists");
 var mds = require("markdown-styles");
 var cleanup = require("node-cleanup");
@@ -60,7 +62,7 @@ var browser_sync = require("browser-sync");
 var find_free_port = require("find-free-port");
 var bs_autoclose = require("browser-sync-close-hook");
 //
-// @end requires.js
+// @end   requires.js
 // --------------------------------------------------------------------------
 //
 //
@@ -112,6 +114,7 @@ var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
 // paths:CONFIG_FILES
 var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
+var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}modernizr.config.json`;
 // paths:FAVICONS
 // file where the favicon markups are stored
 var __PATHS_FAVICON_DATA_FILE = `./${__PATHS_HOMEDIR}gulp/assets/favicon/favicondata.json`;
@@ -135,8 +138,10 @@ var __PATHS_FILES_TEST = "!test*";
 var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
+var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
+var __PATHS_MODERNIZR_FILE = "modernizr.js";
 //
-// @end paths.js
+// @end   paths.js
 // --------------------------------------------------------------------------
 //
 //
@@ -147,6 +152,8 @@ var __PATHS_NODE_MODULES = "./node_modules/";
 var config_user = require(__PATHS_CONFIG_USER);
 // internal Gulp configuration file
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
+// modernizr configuration file
+var config_modernizr = json.read(__PATHS_CONFIG_MODERNIZR);
 // -------------------------------------
 // plugin options
 var opts = config_user.options;
@@ -216,7 +223,7 @@ var opts_sort = {
     }
 };
 //
-// @end vars.js
+// @end   vars.js
 // --------------------------------------------------------------------------
 //
 //
@@ -334,77 +341,13 @@ function format_column(text, width, offset_left, offset_right) {
         .join(" ");
 }
 //
-// @end functions.js
+// @end   functions.js
 // --------------------------------------------------------------------------
 //
 //
 // --------------------------------------------------------------------------
 // @start init.js
 //
-/**
- * Provides Gulp task documentation.
- *
- * Options
- *
- * (no options) List tasks and their descriptions.
- * -v, --verbose [boolean] Flag indicating whether to show all documentation.
- * -n, --names   [string]  Names of tasks to show documentation for.
- *
- * Usage
- *
- * $ gulp help # Show list of tasks and their descriptions.
- * $ gulp help --verbose # Show all documentation for all tasks.
- * $ gulp help --name "open default dependency" # Show documentation for specific tasks.
- */
-gulp.task("help", function() {
-    // run yargs
-    var _args = yargs.usage("Usage: $0 --name [string]")
-        .option("name", {
-            alias: "n",
-            default: false,
-            describe: "Name of task to show documentation for.",
-            type: "string"
-        })
-        .argv;
-    var task_name = (_args.n || _args.name);
-    // contain printer in a variable rather than an anonymous function
-    // to attach the provided task_name for later use. this is a bit hacky
-    // but its a workaround to provide the name.
-    var printer = function(tasks, verbose) { // custom print function
-        var task_name = this.task_name;
-        if (task_name) { // custom sort
-            // split into an array
-            var names = task_name.trim()
-                .split(/\s+/);
-            // set verbose to true to show all documentation
-            verbose = true;
-            // turn all but the provided task name to internal
-            // this will essentially "hide" them from being printed
-            tasks.tasks.forEach(function(item) {
-                // if (item.name !== task_name) {
-                if (!-~names.indexOf(item.name)) {
-                    item.comment.tags = [{
-                        "name": "internal",
-                        "value": true
-                }];
-                }
-            });
-        }
-        tasks = tasks.filterHidden(verbose)
-            .sort();
-        // filter will change the documentation header in the print_tasks function
-        var filter = (task_name ? true : false)
-        return print_tasks(tasks, verbose, filter);
-    };
-    // attach the task name to the printer function
-    printer.task_name = task_name;
-    // re-assign the printer as the "this" to have access to the task name
-    // within the function (printer) itself
-    printer = printer.bind(printer);
-    gulp.help({
-        "print": printer
-    })(this);
-});
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
 cleanup(function(exit_code, signal) {
     // check for current Gulp process
@@ -535,7 +478,7 @@ gulp.task("default", function(done) {
     }
 });
 //
-// @end init.js
+// @end   init.js
 // --------------------------------------------------------------------------
 //
 //
@@ -671,7 +614,7 @@ gulp.task("dist", function(done) {
     return sequence.apply(task, tasks);
 });
 //
-// @end task-dist.js
+// @end   task-dist.js
 // --------------------------------------------------------------------------
 //
 //
@@ -732,7 +675,7 @@ gulp.task("lib", function(done) {
     return sequence.apply(task, tasks);
 });
 //
-// @end task-lib.js
+// @end   task-lib.js
 // --------------------------------------------------------------------------
 //
 //
@@ -815,7 +758,7 @@ gulp.task("watch:main", function(done) {
     });
 });
 //
-// @end tasks-watch.js
+// @end   tasks-watch.js
 // --------------------------------------------------------------------------
 //
 //
@@ -843,7 +786,7 @@ gulp.task("html:main", function(done) {
     ], done);
 });
 //
-// @end tasks-html.js
+// @end   tasks-html.js
 // --------------------------------------------------------------------------
 //
 //
@@ -911,7 +854,7 @@ gulp.task("css:libs", function(done) {
     ], done);
 });
 //
-// @end tasks-css.js
+// @end   tasks-css.js
 // --------------------------------------------------------------------------
 //
 //
@@ -950,7 +893,7 @@ gulp.task("js:libs", function(done) {
     ], done);
 });
 //
-// @end tasks-js.js
+// @end   tasks-js.js
 // --------------------------------------------------------------------------
 //
 //
@@ -969,7 +912,7 @@ gulp.task("img:main", function(done) {
     ], done);
 });
 //
-// @end tasks-images.js
+// @end   tasks-images.js
 // --------------------------------------------------------------------------
 //
 //
@@ -997,13 +940,77 @@ gulp.task("readme:main", function(done) {
     });
 });
 //
-// @end tasks-markdown.js
+// @end   tasks-markdown.js
 // --------------------------------------------------------------------------
 //
 //
 // --------------------------------------------------------------------------
 // @start helpers.js
 //
+/**
+ * Provides Gulp task documentation.
+ *
+ * Options
+ *
+ * (no options) List tasks and their descriptions.
+ * -v, --verbose [boolean] Flag indicating whether to show all documentation.
+ * -n, --names   [string]  Names of tasks to show documentation for.
+ *
+ * Usage
+ *
+ * $ gulp help # Show list of tasks and their descriptions.
+ * $ gulp help --verbose # Show all documentation for all tasks.
+ * $ gulp help --name "open default dependency" # Show documentation for specific tasks.
+ */
+gulp.task("help", function() {
+    // run yargs
+    var _args = yargs.usage("Usage: $0 --name [string]")
+        .option("name", {
+            alias: "n",
+            default: false,
+            describe: "Name of task to show documentation for.",
+            type: "string"
+        })
+        .argv;
+    var task_name = (_args.n || _args.name);
+    // contain printer in a variable rather than an anonymous function
+    // to attach the provided task_name for later use. this is a bit hacky
+    // but its a workaround to provide the name.
+    var printer = function(tasks, verbose) { // custom print function
+        var task_name = this.task_name;
+        if (task_name) { // custom sort
+            // split into an array
+            var names = task_name.trim()
+                .split(/\s+/);
+            // set verbose to true to show all documentation
+            verbose = true;
+            // turn all but the provided task name to internal
+            // this will essentially "hide" them from being printed
+            tasks.tasks.forEach(function(item) {
+                // if (item.name !== task_name) {
+                if (!-~names.indexOf(item.name)) {
+                    item.comment.tags = [{
+                        "name": "internal",
+                        "value": true
+                }];
+                }
+            });
+        }
+        tasks = tasks.filterHidden(verbose)
+            .sort();
+        // filter will change the documentation header in the print_tasks function
+        var filter = (task_name ? true : false)
+        return print_tasks(tasks, verbose, filter);
+    };
+    // attach the task name to the printer function
+    printer.task_name = task_name;
+    // re-assign the printer as the "this" to have access to the task name
+    // within the function (printer) itself
+    printer = printer.bind(printer);
+    gulp.help({
+        "print": printer
+    })(this);
+});
 /**
  * Build gulpfile from source files. Useful after making changes to source files.
  *
@@ -1027,10 +1034,16 @@ gulp.task("gulpfile", function(done) {
             // @start ${filename}
             //\n`;
             var bottom = `\n//
-            // @end ${filename}
+            // @end   ${filename}
             // ${decor}
             //`;
-            return stream.pipe(insert.prepend(top))
+            var padding = " ".repeat(filename.length + 10);
+            var empty = `// ${padding} -- blank_file --`;
+            // empty check
+            var is_empty = file.contents.toString()
+                .trim() === "";
+            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
+                .pipe(insert.prepend(top))
                 .pipe(insert.append(bottom));
         }),
         // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
@@ -1039,6 +1052,27 @@ gulp.task("gulpfile", function(done) {
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
     ], done);
+});
+/**
+ * Build Modernizr file.
+ *
+ * Usage
+ *
+ * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
+ */
+gulp.task("modernizr", function(done) {
+    modernizr.build(config_modernizr.data, function(build) {
+        var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
+        // create missing folders
+        mkdirp(__PATHS_VENDOR_MODERNIZR, function(err) {
+            if (err) throw err;
+            // save the file to vendor
+            fs.writeFile(file_location, build, function() {
+                log(`Modernizr build complete. Placed in ${file_location}`);
+                done();
+            });
+        });
+    });
 });
 /**
  * Purge potentially unused CSS style definitions.
@@ -1428,7 +1462,7 @@ gulp.task("dependency", function(done) {
         });
 });
 //
-// @end helpers.js
+// @end   helpers.js
 // --------------------------------------------------------------------------
 //
 //
@@ -1579,6 +1613,6 @@ gulp.task("favicon-updates", function(done) {
     });
 });
 //
-// @end favicon.js
+// @end   favicon.js
 // --------------------------------------------------------------------------
 //

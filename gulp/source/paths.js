@@ -43,6 +43,7 @@ var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
 // paths:CONFIG_FILES
 var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
+var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}modernizr.config.json`;
 // paths:FAVICONS
 // file where the favicon markups are stored
 var __PATHS_FAVICON_DATA_FILE = `./${__PATHS_HOMEDIR}gulp/assets/favicon/favicondata.json`;
@@ -66,3 +67,5 @@ var __PATHS_FILES_TEST = "!test*";
 var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
+var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
+var __PATHS_MODERNIZR_FILE = "modernizr.js";

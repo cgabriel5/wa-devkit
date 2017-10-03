@@ -2,6 +2,8 @@
 var config_user = require(__PATHS_CONFIG_USER);
 // internal Gulp configuration file
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
+// modernizr configuration file
+var config_modernizr = json.read(__PATHS_CONFIG_MODERNIZR);
 // -------------------------------------
 // plugin options
 var opts = config_user.options;

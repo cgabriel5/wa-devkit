@@ -4,6 +4,9 @@
         "url": "https://github.com/johndoe_/my-app/issues"
     },
     "dependencies": {
+        "fastclick": "^1.0.6",
+        "jquery": "^3.2.1",
+        "modernizr": "^3.5.0"
     },
     "description": "",
     "devDependencies": {
@@ -16,7 +19,6 @@
         "dateformat": "^2.0.0",
         "del": "^2.2.2",
         "directory-exists": "^1.0.2",
-        "fastclick": "^1.0.6",
         "file-exists": "^4.0.0",
         "find-free-port": "^1.0.2",
         "font-awesome": "^4.7.0",
@@ -52,6 +54,7 @@
         "gulp-util": "^3.0.8",
         "json-file": "^0.1.0",
         "markdown-styles": "https://github.com/cgabriel5/markdown-styles/tarball/master",
+        "mkdirp": "^0.5.1",
         "node-cleanup": "^2.1.2",
         "node-notifier": "^5.1.2",
         "prompt": "^1.0.0",
