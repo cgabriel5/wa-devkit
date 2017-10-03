@@ -74,7 +74,7 @@
                     "favicon.js"
                 ],
                 "name": "gulpfile.js",
-                "name_setup": "gulpfile.unactive.js"
+                "name_setup": "gulpfile.main.js"
             },
             "tasks": [
                 "css:app",

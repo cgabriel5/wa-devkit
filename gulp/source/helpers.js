@@ -97,7 +97,7 @@ gulp.task("gulpfile", function(done) {
                 .pipe(insert.prepend(top))
                 .pipe(insert.append(bottom));
         }),
-        // if gulpfile.js exists use that name, else fallback to gulpfile.unactive.js
+        // if gulpfile.js exists use that name, else fallback to gulpfile.main.js
         gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
         beautify(opts_bt),
         gulp.dest(__PATHS_BASE),

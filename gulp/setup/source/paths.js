@@ -14,7 +14,7 @@ var __PATHS_GULP_SETUP_SOURCE = `./${__PATHS_HOMEDIR}gulp/setup/source/`;
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
-var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.unactive.js";
+var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.main.js";
 // paths:MARKDOWN
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;

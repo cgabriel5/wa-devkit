@@ -70,7 +70,7 @@ gulp.task("init:setup-readme", function(done) {
 // @internal
 gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
-    // rename the gulpfile.unactive.js to gulpfile.js
+    // rename the gulpfile.main.js to gulpfile.js
     pump([
         gulp.src(__PATHS_GULP_FILE_UNACTIVE, {
             base: __PATHS_BASE

@@ -54,7 +54,7 @@ var __PATHS_GULP_SETUP_SOURCE = `./${__PATHS_HOMEDIR}gulp/setup/source/`;
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
-var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.unactive.js";
+var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.main.js";
 // paths:MARKDOWN
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
@@ -330,7 +330,7 @@ gulp.task("init:setup-readme", function(done) {
 // @internal
 gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
-    // rename the gulpfile.unactive.js to gulpfile.js
+    // rename the gulpfile.main.js to gulpfile.js
     pump([
         gulp.src(__PATHS_GULP_FILE_UNACTIVE, {
             base: __PATHS_BASE
