@@ -1,3 +1,7 @@
+//
+// --------------------------------------------------------------------------
+// @start requires.js
+//
 "use strict";
 // -------------------------------------
 var path = require("path");
@@ -19,13 +23,21 @@ var clean = require("gulp-clean");
 var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
+var foreach = require("gulp-foreach");
 var replace = require("gulp-replace");
 var json_sort = require("gulp-json-sort")
     .default;
 // -------------------------------------
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
-// -------------------------------------
+//
+// @end   requires.js
+// --------------------------------------------------------------------------
+//
+//
+// --------------------------------------------------------------------------
+// @start paths.js
+//
 // paths::BASES
 var __PATHS_BASE = "./";
 var __PATHS_CWD = process.cwd();
@@ -59,7 +71,14 @@ var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
 var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
 var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
 var __PATHS_GIT = ".git/";
-// -------------------------------------
+//
+// @end   paths.js
+// --------------------------------------------------------------------------
+//
+//
+// --------------------------------------------------------------------------
+// @start vars.js
+//
 // configuration information
 var config_user = json.read(__PATHS_CONFIG_USER);
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
@@ -99,10 +118,26 @@ var opts_sort = {
         return 0;
     }
 };
-// -------------------------------------
-// -------------------------------------
+//
+// @end   vars.js
+// --------------------------------------------------------------------------
+//
+//
+// --------------------------------------------------------------------------
+// @start functions.js
+//
+//                        -- blank_file --
+//
+// @end   functions.js
+// --------------------------------------------------------------------------
+//
+//
+// --------------------------------------------------------------------------
+// @start helpers.js
+//
 // beautify html, js, css, & json files
-gulp.task("helper-clean-files", function(done) {
+// @internal
+gulp.task("pretty", function(done) {
     var task = this;
     // beautify html, js, css, & json files
     var condition = function(file) {
@@ -124,18 +159,23 @@ gulp.task("helper-clean-files", function(done) {
 		gulp.dest(__PATHS_BASE)
 	], done);
 });
-// -------------------------------------
 //
-// **************************************************************************
-// *           		  The following tasks are the setup tasks.          	*
-// **************************************************************************
+// @end   helpers.js
+// --------------------------------------------------------------------------
 //
+//
+// --------------------------------------------------------------------------
+// @start init.js
+//
+// @internal
 gulp.task("default", function(done) {
     var task = this;
     // show the user the init message
-    log("Run", chalk.magenta("gulp init"), "before running gulp's default command.");
+    log("Run \"$ gulp init\" before running Gulp's default command.");
     done();
 });
+// run the prompt to setup project
+// @internal
 gulp.task("init", function(done) {
     var task = this;
     prompt.start(); // start the prompt
@@ -188,18 +228,19 @@ gulp.task("init", function(done) {
                 pkg.write(function() {
                     // run initialization steps
                     var tasks = [
-						"init-clear-js",
-						"init-pick-js-option",
-						"init-fill-placeholders",
-						"init-setup-readme",
-						"init-rename-gulpfile",
-						"init-remove-setup",
-						"init-beautify-files",
-						"init-git"
+						"init:clear-js",
+						"init:pick-js-option",
+						"init:fill-placeholders",
+						"init:setup-readme",
+						"init:rename-gulpfile",
+						"init:remove-setup",
+						"init:pretty",
+						"init:git"
                     ];
                     tasks.push(function() {
-                        notify(`Project initialized (${type})`);
-                        log(`Project initialized (${type})`);
+                        var message = `Project initialized (${type})`;
+                        notify(message);
+                        log(message);
                         log("Run \"$ gulp\" to start watching project for any file changes.");
                         done();
                     });
@@ -209,9 +250,17 @@ gulp.task("init", function(done) {
         }, null, json_spaces);
     });
 });
-// -------------------------------------
+//
+// @end   init.js
+// --------------------------------------------------------------------------
+//
+//
+// --------------------------------------------------------------------------
+// @start steps.js
+//
 // initialization step
-gulp.task("init-clear-js", function(done) {
+// @internal
+gulp.task("init:clear-js", function(done) {
     var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_HOME, {
@@ -223,7 +272,8 @@ gulp.task("init-clear-js", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-pick-js-option", function(done) {
+// @internal
+gulp.task("init:pick-js-option", function(done) {
     var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
@@ -235,7 +285,8 @@ gulp.task("init-pick-js-option", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-fill-placeholders", function(done) {
+// @internal
+gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
     pump([
@@ -251,7 +302,8 @@ gulp.task("init-fill-placeholders", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-setup-readme", function(done) {
+// @internal
+gulp.task("init:setup-readme", function(done) {
     var task = this;
     // move ./docs/readme_template.md to ./README.md
     pump([
@@ -275,7 +327,8 @@ gulp.task("init-setup-readme", function(done) {
     });
 });
 // initialization step
-gulp.task("init-rename-gulpfile", function(done) {
+// @internal
+gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
     // rename the gulpfile.unactive.js to gulpfile.js
     pump([
@@ -290,7 +343,8 @@ gulp.task("init-rename-gulpfile", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-remove-setup", function(done) {
+// @internal
+gulp.task("init:remove-setup", function(done) {
     var task = this;
     // remove the setup files/folders/old .git folder
     pump([
@@ -304,9 +358,11 @@ gulp.task("init-remove-setup", function(done) {
     ], done);
 });
 // initialization step::alias
-gulp.task("init-beautify-files", ["helper-clean-files"]);
+// @internal
+gulp.task("init:pretty", ["pretty"]);
 // initialization step
-gulp.task("init-git", function(done) {
+// @internal
+gulp.task("init:git", function(done) {
     var task = this;
     // git init new project
     git.init("", function() {
@@ -317,9 +373,17 @@ gulp.task("init-git", function(done) {
         .add("./*")
         .commit("chore: Initial commit\n\nProject initialization.");
 });
-// -------------------------------------
+//
+// @end   steps.js
+// --------------------------------------------------------------------------
+//
+//
+// --------------------------------------------------------------------------
+// @start make.js
+//
 // build gulpfile.setup.js
-gulp.task("helper-make-gulpfile", function(done) {
+// @internal
+gulp.task("gulpfile", function(done) {
     var task = this;
     var files = [
         "requires.js",
@@ -335,11 +399,33 @@ gulp.task("helper-make-gulpfile", function(done) {
             cwd: __PATHS_GULP_SETUP_SOURCE
         }),
 		debug(),
-		insert.append("// " + "-".repeat(37)),
+		foreach(function(stream, file) {
+            var filename = path.basename(file.path);
+            var decor = "-".repeat(74);
+            var top = `//
+            // ${decor}
+            // @start ${filename}
+            //\n`;
+            var bottom = `\n//
+            // @end   ${filename}
+            // ${decor}
+            //`;
+            var padding = " ".repeat(filename.length + 10);
+            var empty = `// ${padding} -- blank_file --`;
+            // empty check
+            var is_empty = file.contents.toString()
+                .trim() === "";
+            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
+                .pipe(insert.prepend(top))
+                .pipe(insert.append(bottom));
+        }),
 		concat("gulpfile.setup.js"),
 		beautify(opts_bt),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
 	], done);
 });
-// -------------------------------------
+//
+// @end   make.js
+// --------------------------------------------------------------------------
+//

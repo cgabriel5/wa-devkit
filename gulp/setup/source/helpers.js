@@ -1,5 +1,6 @@
 // beautify html, js, css, & json files
-gulp.task("helper-clean-files", function(done) {
+// @internal
+gulp.task("pretty", function(done) {
     var task = this;
     // beautify html, js, css, & json files
     var condition = function(file) {

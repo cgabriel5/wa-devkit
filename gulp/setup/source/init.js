@@ -1,14 +1,12 @@
-//
-// **************************************************************************
-// *           		  The following tasks are the setup tasks.          	*
-// **************************************************************************
-//
+// @internal
 gulp.task("default", function(done) {
     var task = this;
     // show the user the init message
-    log("Run", chalk.magenta("gulp init"), "before running gulp's default command.");
+    log("Run \"$ gulp init\" before running Gulp's default command.");
     done();
 });
+// run the prompt to setup project
+// @internal
 gulp.task("init", function(done) {
     var task = this;
     prompt.start(); // start the prompt
@@ -61,18 +59,19 @@ gulp.task("init", function(done) {
                 pkg.write(function() {
                     // run initialization steps
                     var tasks = [
-						"init-clear-js",
-						"init-pick-js-option",
-						"init-fill-placeholders",
-						"init-setup-readme",
-						"init-rename-gulpfile",
-						"init-remove-setup",
-						"init-beautify-files",
-						"init-git"
+						"init:clear-js",
+						"init:pick-js-option",
+						"init:fill-placeholders",
+						"init:setup-readme",
+						"init:rename-gulpfile",
+						"init:remove-setup",
+						"init:pretty",
+						"init:git"
                     ];
                     tasks.push(function() {
-                        notify(`Project initialized (${type})`);
-                        log(`Project initialized (${type})`);
+                        var message = `Project initialized (${type})`;
+                        notify(message);
+                        log(message);
                         log("Run \"$ gulp\" to start watching project for any file changes.");
                         done();
                     });

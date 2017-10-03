@@ -19,6 +19,7 @@ var clean = require("gulp-clean");
 var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
+var foreach = require("gulp-foreach");
 var replace = require("gulp-replace");
 var json_sort = require("gulp-json-sort")
     .default;

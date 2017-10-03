@@ -1,5 +1,6 @@
 // initialization step
-gulp.task("init-clear-js", function(done) {
+// @internal
+gulp.task("init:clear-js", function(done) {
     var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_HOME, {
@@ -11,7 +12,8 @@ gulp.task("init-clear-js", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-pick-js-option", function(done) {
+// @internal
+gulp.task("init:pick-js-option", function(done) {
     var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
@@ -23,7 +25,8 @@ gulp.task("init-pick-js-option", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-fill-placeholders", function(done) {
+// @internal
+gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
     pump([
@@ -39,7 +42,8 @@ gulp.task("init-fill-placeholders", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-setup-readme", function(done) {
+// @internal
+gulp.task("init:setup-readme", function(done) {
     var task = this;
     // move ./docs/readme_template.md to ./README.md
     pump([
@@ -63,7 +67,8 @@ gulp.task("init-setup-readme", function(done) {
     });
 });
 // initialization step
-gulp.task("init-rename-gulpfile", function(done) {
+// @internal
+gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
     // rename the gulpfile.unactive.js to gulpfile.js
     pump([
@@ -78,7 +83,8 @@ gulp.task("init-rename-gulpfile", function(done) {
     ], done);
 });
 // initialization step
-gulp.task("init-remove-setup", function(done) {
+// @internal
+gulp.task("init:remove-setup", function(done) {
     var task = this;
     // remove the setup files/folders/old .git folder
     pump([
@@ -92,9 +98,11 @@ gulp.task("init-remove-setup", function(done) {
     ], done);
 });
 // initialization step::alias
-gulp.task("init-beautify-files", ["helper-clean-files"]);
+// @internal
+gulp.task("init:pretty", ["pretty"]);
 // initialization step
-gulp.task("init-git", function(done) {
+// @internal
+gulp.task("init:git", function(done) {
     var task = this;
     // git init new project
     git.init("", function() {

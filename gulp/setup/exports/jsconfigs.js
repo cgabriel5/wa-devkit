@@ -18,8 +18,10 @@ exports.jsconfigs = {
         },
         "vendor": {
             "files": [
+            	"js/vendor/modernizr/modernizr.js",
+            	"js/vendor/jquery/dist/jquery.js",
                 "js/vendor/fastclick/lib/fastclick.js",
-                "js/vendor/libs.init.js"
+                "js/vendor/__init__.js"
                 ],
             "name": "libs.js",
             "minified_name": "lib.min.js"
@@ -43,6 +45,8 @@ exports.jsconfigs = {
         },
         "vendor": {
             "files": [
+				"js/vendor/modernizr/modernizr.js",
+				"js/vendor/jquery/dist/jquery.js",
 				"js/vendor/fastclick/lib/fastclick.js"
                 ],
             "name": "libs.js"
