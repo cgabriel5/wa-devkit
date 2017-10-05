@@ -1,4 +1,5 @@
 // =============================== Library Class
+
 var Library = class__({
     // class constructor
     constructor__: function() {

@@ -1,8 +1,11 @@
 // IIFE start
 (function(window) {
     "use strict";
+
     var library = (function() {
+
         // =============================== Helper Functions
+
         /**
          * @description [Generates a simple ID containing letters and numbers.]
          * @param  {Number} length [The length the ID should be. Max length is 22 characters]
@@ -14,6 +17,7 @@
                 .toString(36)
                 .substr(2, length);
         }
+
         /**
          * @description [Returns index of given value in provided array.]
          * @param  {Array}    array [The array to check against.]
@@ -23,6 +27,7 @@
         function index(array, value) {
             return array.indexOf(value);
         }
+
         /**
          * @description [Checks if the given value is in provided array or string.]
          * @param  {Array|String}   iterable [The array or string to check against.]
@@ -35,6 +40,7 @@
         function includes(iterable, value) {
             return -~index(iterable, value);
         }
+
         /**
          * @description [Checks if the provided index exists.]
          * @param  {Number} index [The index (number) to check.]
@@ -43,6 +49,7 @@
         function indexed(index) {
             return -~index ? true : false;
         }
+
         /**
          * @description [Makes an Array from an array like object (ALO). ALO must have a length property
          *               for it to work.]
@@ -56,6 +63,7 @@
             for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
             return true_array;
         }
+
         /**
          * @description [Returns the data type of the provided object.]
          * @param  {Any} object [The object to check.]
@@ -67,6 +75,7 @@
                 .replace(/(\[object |\])/g, "")
                 .toLowerCase();
         };
+
         /**
          * @description [Check if the provided object is of the provided data types.]
          * @param  {Any} object [The object to check.]
@@ -83,6 +92,7 @@
             // check if the object's type is in the list
             return Boolean(-~types.indexOf("|" + type + "|"));
         };
+
         /**
          * @description [Check if the provided object is not of the provided data types.]
          * @param  {Any} object [The object to check.]
@@ -94,6 +104,7 @@
             // return the inverse of the is method
             return !this.is(object, types);
         };
+
         /**
          * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
          *               If class needs to extend another, provide it under the extend__ property.]
@@ -125,8 +136,11 @@
             }
             return constructor;
         }
+
         // =============================== Core Library Functions
+
         // =============================== Library Class
+
         var Library = class__({
             // class constructor
             constructor__: function() {
@@ -141,11 +155,15 @@
             // class to extend
             extend__: false
         });
+
         // return library to add to global scope later...
         return Library;
     })();
+
     // =============================== Global Library Functions/Methods/Vars
+
     // =============================== Attach Library To Global Scope
+
     // add to global scope for ease of use
     // use global app var or create it if not present
     var app = window.app || (window.app = {});
@@ -154,13 +172,17 @@
     var libs = app.libs || (app.libs = {});
     // add the library to the libs object
     libs.YOUR_LIB_NAME = library;
+
     // IIFE end
 })(window);
+
 // https://developer.mozilla.org/en-US/docs/Web/Events/readystatechange
 // the readystatechange event is fired when the readyState attribute of a
 // document has changed
 document.onreadystatechange = function() {
+
     "use strict";
+
     /* [functions.utils] */
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
     // loading === document still loading
@@ -177,11 +199,15 @@ document.onreadystatechange = function() {
     if (document.readyState == "interactive") {
         // app logic...
     }
+
     // or...
+
     // all resources have loaded (document + subresources)
     if (document.readyState == "complete") {
         // app logic...
     }
+
     // good explanation with images:
     // https://varvy.com/performance/document-ready-state.html
+
 };

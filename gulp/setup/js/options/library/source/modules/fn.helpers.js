@@ -1,4 +1,5 @@
 // =============================== Helper Functions
+
 /**
  * @description [Generates a simple ID containing letters and numbers.]
  * @param  {Number} length [The length the ID should be. Max length is 22 characters]
@@ -10,6 +11,7 @@ function id(length) {
         .toString(36)
         .substr(2, length);
 }
+
 /**
  * @description [Returns index of given value in provided array.]
  * @param  {Array}    array [The array to check against.]
@@ -19,6 +21,7 @@ function id(length) {
 function index(array, value) {
     return array.indexOf(value);
 }
+
 /**
  * @description [Checks if the given value is in provided array or string.]
  * @param  {Array|String}   iterable [The array or string to check against.]
@@ -31,6 +34,7 @@ function index(array, value) {
 function includes(iterable, value) {
     return -~index(iterable, value);
 }
+
 /**
  * @description [Checks if the provided index exists.]
  * @param  {Number} index [The index (number) to check.]
@@ -39,6 +43,7 @@ function includes(iterable, value) {
 function indexed(index) {
     return -~index ? true : false;
 }
+
 /**
  * @description [Makes an Array from an array like object (ALO). ALO must have a length property
  *               for it to work.]
@@ -52,6 +57,7 @@ function to_array(alo) {
     for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
     return true_array;
 }
+
 /**
  * @description [Returns the data type of the provided object.]
  * @param  {Any} object [The object to check.]
@@ -63,6 +69,7 @@ var dtype = function(object) {
         .replace(/(\[object |\])/g, "")
         .toLowerCase();
 };
+
 /**
  * @description [Check if the provided object is of the provided data types.]
  * @param  {Any} object [The object to check.]
@@ -79,6 +86,7 @@ dtype.is = function(object, types) {
     // check if the object's type is in the list
     return Boolean(-~types.indexOf("|" + type + "|"));
 };
+
 /**
  * @description [Check if the provided object is not of the provided data types.]
  * @param  {Any} object [The object to check.]
@@ -90,6 +98,7 @@ dtype.isnot = function(object, types) {
     // return the inverse of the is method
     return !this.is(object, types);
 };
+
 /**
  * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
  *               If class needs to extend another, provide it under the extend__ property.]

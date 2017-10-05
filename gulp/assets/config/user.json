@@ -3,15 +3,14 @@
         "css": {
             "source": {
                 "files": [
-                    "normalize.css",
-                    "base.css",
-                    "styles.css",
-                    "helpers.css"
+                    "helpers.css",
+                    "styles.css"
                 ],
                 "name": "app.css"
             },
             "vendor": {
                 "files": [
+                    "css/vendor/normalize.css/normalize.css",
                     "css/vendor/font-awesome/css/font-awesome.css"
                 ],
                 "name": "libs.css"

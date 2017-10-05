@@ -6,7 +6,9 @@
     "dependencies": {
         "fastclick": "^1.0.6",
         "jquery": "^3.2.1",
-        "modernizr": "^3.5.0"
+        "modernizr": "^3.5.0",
+        "normalize.css": "^7.0.0",
+        "sanitize.css": "^5.0.0"
     },
     "description": "",
     "devDependencies": {
