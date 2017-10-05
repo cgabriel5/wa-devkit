@@ -13,13 +13,16 @@ gulp.task("js:app", function(done) {
         bs.stream()
     ], done);
 });
+
 // build libs.js + minify + beautify
 // @internal
 gulp.task("js:libs", function(done) {
     var task = this;
+
     // NOTE: absolute vendor library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
     // within the bundles.js.vendor.files array.
+
     pump([gulp.src(bundle_js.vendor.files),
     	debug(),
         concat(bundle_js.vendor.name),

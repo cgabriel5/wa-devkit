@@ -23,6 +23,7 @@ gulp.task("css:preapp", function(done) {
         bs.stream()
     ], done);
 });
+
 // build app.css + autoprefix + minify
 // @internal
 gulp.task("css:app", ["css:preapp"], function(done) {
@@ -40,13 +41,16 @@ gulp.task("css:app", ["css:preapp"], function(done) {
         bs.stream()
     ], done);
 });
+
 // build libs.css + minify + beautify
 // @internal
 gulp.task("css:libs", function(done) {
     var task = this;
+
     // NOTE: absolute vendor library file paths should be used.
     // The paths should be supplied in gulp/assets/config/user.json
     // within the bundles.css.vendor.files array.
+
     pump([gulp.src(bundle_css.vendor.files),
     	debug(),
         concat(bundle_css.vendor.name),

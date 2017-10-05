@@ -26,6 +26,7 @@ function open_file_in_browser(filepath, port, callback, task) {
         callback();
     });
 }
+
 /**
  * @description [Returns a function that handles HTML $:pre/post{file-content/$variable}
  *               injection.]
@@ -55,6 +56,7 @@ function html_replace_fn(replacements) {
         }
     };
 }
+
 /**
  * @description [Print that an active Gulp instance exists.]
  * @return {Undefined} 			[Nothing is returned.]
@@ -62,6 +64,7 @@ function html_replace_fn(replacements) {
 function gulp_check_warn() {
     log(chalk.red("Task cannot be performed while Gulp is running. Close Gulp then try again."));
 }
+
 /**
  * @description [Render output from tasks.]
  * @param {TaskList} tasks 			[The Gulp tasks.]
@@ -70,27 +73,44 @@ function gulp_check_warn() {
  * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
  */
 function print_tasks(tasks, verbose, filter) {
+
     tasks = tasks.filterHidden(verbose)
         .sort();
-    var results = ["", chalk.underline.bold(filter ? "Filtered" : "Tasks"), ""];
+
+    // determine the header
+    var header = (filter ? "Filtered" : "Tasks");
+    var results = ["", chalk.underline.bold(header), ""];
+    var help_doc = ["", chalk.underline.bold("Help")];
+
     var field_task_len = tasks.getLongestNameLength();
+
     tasks.forEach(function(task) {
+
+        // help task will always be placed before all other tasks
+        // to always have its documentation present.
+        var is_help_task = (task.name === "help");
+        // determine the correct array to reference
+        var array_ref = (is_help_task ? help_doc : results);
+
         var comment = task.comment || {};
         var lines = comment.lines || [];
-        results.push(format_column(task.name, field_task_len) + (lines[0] || ""));
-        // if (!verbose) results.push("\n");
+
+        array_ref.push(format_column(task.name, field_task_len) + (lines[0] || ""));
         // only print verbose documentation when flag is provided
-        if (verbose) {
+        if (verbose || is_help_task) {
             for (var i = 1; i < lines.length; i++) {
-                // if (i === 1) results.push("\n");
-                results.push(format_column("", field_task_len) + "  " + lines[i]);
-                if (verbose && i === lines.length - 1) results.push("\n");
+                array_ref.push(format_column("", field_task_len) + "  " + lines[i]);
+                if (verbose && i === lines.length - 1) array_ref.push("\n");
             }
         }
     });
+
     if (!verbose) results.push("\n");
-    return results.join("\n");
+
+    return help_doc.concat(results)
+        .join("\n");
 }
+
 /**
  * @description [Return a text surrounded by space.]
  * @param {String} text

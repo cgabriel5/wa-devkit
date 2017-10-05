@@ -1,16 +1,16 @@
 var os = require("os");
 var path = require("path");
-// -------------------------------------
+
 var path_offset = "../../../";
 var modules_path = path_offset + "node_modules/";
-// -------------------------------------
+
 var gulp = require(modules_path + "gulp-task-doc");
 var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
 var gutil = require(modules_path + "gulp-util");
 var log = gutil.log;
 var chalk = gutil.colors;
-// -------------------------------------
+
 /**
  * @description [Detects the default Google Chrome browser based on OS. Falls back to "firefox".]
  * @source [Lifted from https://github.com/stevelacy/gulp-open]
@@ -21,6 +21,7 @@ var browser = function() {
     // linux (else) darwin (else) windows (else) firefox
     return ((platform === "linux") ? "google-chrome" : (platform === "darwin" ? "google chrome" : (platform === "win32" ? "chrome" : "firefox")));
 };
+
 /**
  * @description [Creates a Gulp like time formated, colored string.]
  * @return {String} [The time formated, colored, Gulp like string.]
@@ -29,6 +30,7 @@ var time = function() {
     // return the formated/colored time
     return "[" + chalk.gray(format_date(new Date(), "HH:MM:ss")) + "]";
 };
+
 /**
  * @description [Creates an OS notifcation.]
  * @param  {String} message [The notifcation message to display.]
@@ -46,6 +48,7 @@ var notify = function(message, error) {
         sound: true
     });
 };
+
 /**
  * @description [Modifies Gulp by adding a currentTask.name property. To access in a task.]
  * @param  {Object} gulp [Gulp itself.]
@@ -69,6 +72,7 @@ var current_task = function(gulp) {
     };
     return gulp;
 };
+
 /**
  * @description [Builds the project localhost URL.]
  * @param  {Object} params 	   [The parameters used to build the URL.]
@@ -81,22 +85,7 @@ var uri = function(params) {
     var https = params.https;
     return ("http" + (https ? "s" : "")) + "://" + appdir + filepath + (port ? (":" + port) : "");
 };
-/**
- * @description [Stream pipe error handler.]
- * @return {Undefined}       [Nothing is returned.]
- */
-// var pipe_error = function() {
-//     notify("Error with `" + this.currentTask.name + "` task.", true);
-//     this.emit("end");
-// };
-/**
- * @description [Custom Gulp pipe error wrapper for pipe_error function.]
- * @param  {Object} error [Gulp task object.]
- * @return {Function}       [Returns new pipe_error function with property thsis bound to it.]
- */
-// var error = function(task) {
-//     return pipe_error.bind(task);
-// };
+
 /**
  * @description [Formats template with provided data object.]
  * @param  {String} template [The template to use.]
@@ -109,6 +98,25 @@ function format(template, data) {
         return data[match] ? data[match] : match;
     });
 }
+
+/**
+ * @description [Stream pipe error handler.]
+ * @return {Undefined}       [Nothing is returned.]
+ */
+// var pipe_error = function() {
+//     notify("Error with `" + this.currentTask.name + "` task.", true);
+//     this.emit("end");
+// };
+
+/**
+ * @description [Custom Gulp pipe error wrapper for pipe_error function.]
+ * @param  {Object} error [Gulp task object.]
+ * @return {Function}       [Returns new pipe_error function with property thsis bound to it.]
+ */
+// var error = function(task) {
+//     return pipe_error.bind(task);
+// };
+
 // export functions
 exports.browser = browser();
 exports.time = time;

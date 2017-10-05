@@ -7,6 +7,7 @@ gulp.task("dist:clean", function(done) {
         debug(task.__wadevkit.debug)
     ], done);
 });
+
 // copy new file/folders
 // @internal
 gulp.task("dist:favicon", function(done) {
@@ -21,6 +22,7 @@ gulp.task("dist:favicon", function(done) {
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
+
 // @internal
 gulp.task("dist:css", function(done) {
     var task = this;
@@ -38,6 +40,7 @@ gulp.task("dist:css", function(done) {
     	gulp.dest(__PATHS_DIST_HOME)
     ], done);
 });
+
 // @internal
 gulp.task("dist:img", function(done) {
     var task = this;
@@ -68,6 +71,7 @@ gulp.task("dist:img", function(done) {
 		debug(task.__wadevkit.debug)
     ], done);
 });
+
 // @internal
 gulp.task("dist:js", function(done) {
     var task = this;
@@ -85,6 +89,7 @@ gulp.task("dist:js", function(done) {
 		debug(task.__wadevkit.debug)
     ], done);
 });
+
 // @internal
 gulp.task("dist:root", function(done) {
     var task = this;
@@ -102,6 +107,7 @@ gulp.task("dist:root", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 /**
  * Build the dist/ folder. (only for webapp projects).
  *

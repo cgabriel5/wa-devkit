@@ -1,110 +1,4 @@
 /**
- * Provides Gulp task documentation.
- *
- * Options
- *
- * (no options) List tasks and their descriptions.
- * -v, --verbose [boolean] Flag indicating whether to show all documentation.
- * -n, --names   [string]  Names of tasks to show documentation for.
- *
- * Usage
- *
- * $ gulp help # Show list of tasks and their descriptions.
- * $ gulp help --verbose # Show all documentation for all tasks.
- * $ gulp help --name "open default dependency" # Show documentation for specific tasks.
- */
-gulp.task("help", function() {
-    // run yargs
-    var _args = yargs.usage("Usage: $0 --name [string]")
-        .option("name", {
-            alias: "n",
-            default: false,
-            describe: "Name of task to show documentation for.",
-            type: "string"
-        })
-        .argv;
-    var task_name = (_args.n || _args.name);
-    // contain printer in a variable rather than an anonymous function
-    // to attach the provided task_name for later use. this is a bit hacky
-    // but its a workaround to provide the name.
-    var printer = function(tasks, verbose) { // custom print function
-        var task_name = this.task_name;
-        if (task_name) { // custom sort
-            // split into an array
-            var names = task_name.trim()
-                .split(/\s+/);
-            // set verbose to true to show all documentation
-            verbose = true;
-            // turn all but the provided task name to internal
-            // this will essentially "hide" them from being printed
-            tasks.tasks.forEach(function(item) {
-                // if (item.name !== task_name) {
-                if (!-~names.indexOf(item.name)) {
-                    item.comment.tags = [{
-                        "name": "internal",
-                        "value": true
-                }];
-                }
-            });
-        }
-        tasks = tasks.filterHidden(verbose)
-            .sort();
-        // filter will change the documentation header in the print_tasks function
-        var filter = (task_name ? true : false)
-        return print_tasks(tasks, verbose, filter);
-    };
-    // attach the task name to the printer function
-    printer.task_name = task_name;
-    // re-assign the printer as the "this" to have access to the task name
-    // within the function (printer) itself
-    printer = printer.bind(printer);
-    gulp.help({
-        "print": printer
-    })(this);
-});
-/**
- * Build gulpfile from source files. Useful after making changes to source files.
- *
- * Usage
- *
- * $ gulp gulpfile # Re-build gulpfile
- */
-gulp.task("gulpfile", function(done) {
-    var task = this;
-    var setup_name = bundle_gulp.source.name_setup;
-    var name = bundle_gulp.source.name;
-    pump([gulp.src(bundle_gulp.source.files, {
-            cwd: __PATHS_GULP_SOURCE
-        }),
-    	debug(),
-		foreach(function(stream, file) {
-            var filename = path.basename(file.path);
-            var decor = "-".repeat(74);
-            var top = `//
-            // ${decor}
-            // @start ${filename}
-            //\n`;
-            var bottom = `\n//
-            // @end   ${filename}
-            // ${decor}
-            //`;
-            var padding = " ".repeat(filename.length + 10);
-            var empty = `// ${padding} -- blank_file --`;
-            // empty check
-            var is_empty = file.contents.toString()
-                .trim() === "";
-            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
-                .pipe(insert.prepend(top))
-                .pipe(insert.append(bottom));
-        }),
-        // if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-        gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
-        beautify(opts_bt),
-        gulp.dest(__PATHS_BASE),
-    	debug(task.__wadevkit.debug)
-    ], done);
-});
-/**
  * Build Modernizr file.
  *
  * Usage
@@ -125,14 +19,15 @@ gulp.task("modernizr", function(done) {
         });
     });
 });
+
 /**
  * Purge potentially unused CSS style definitions.
  *
  * Options
  *
- * (no options) Creates pure.css which contains only used styles.
- * -r, --remove [boolean] Deletes pure.css and removes unused CSS.
- * -D, --delete [boolean] Deletes pure.css.
+ * (no options)  ---------  Creates pure.css which contains only used styles.
+ * -r, --remove  [boolean]  Deletes pure.css and removes unused CSS.
+ * -D, --delete  [boolean]  Deletes pure.css.
  *
  * Usage
  *
@@ -178,14 +73,15 @@ gulp.task("purify", function(done) {
         debug(task.__wadevkit.debug)
     ], done);
 });
+
 /**
  * Converts MarkDown (.md) file to its HTML counterpart (with GitHub style/layout).
  *
  * Options
  *
- * -i, --input  <string> Path of file to convert (Markdown => HTML).
- * -o, --output <string> Path where converted HTML file should be placed.
- * -n, --name   <string> New name of converted file.
+ * -i, --input   <string>  Path of file to convert (Markdown => HTML).
+ * -o, --output  <string>  Path where converted HTML file should be placed.
+ * -n, --name    <string>  New name of converted file.
  *
  * Usage
  *
@@ -261,48 +157,14 @@ gulp.task("tohtml", function(done) {
         });
     });
 });
-// // Clear internal configuration keys.
-// gulp.task("clear", function(done) {
-//     // run yargs
-//     var _args = yargs.usage("Usage: $0 --names [string]")
-//         .option("names", {
-//             alias: "n",
-//             demandOption: true,
-//             describe: "Name(s) of files to clear.",
-//             type: "string"
-//         })
-//         .coerce("names", function(value) {
-//             return value.replace("gulpstatus", "gulppid")
-//                 .split(" ");
-//         })
-//         .example("$0 --names=\"gulpstatus gulpports\"", "Clear pid and ports keys.")
-//         .example("$0 --names=\"gulpstatus\"", "Clear pid key.")
-//         .example("$0 --names gulpports", "Clear ports key.")
-//         .argv;
-//     // get provided parameters
-//     var names = _args.n || _args.names;
-//     // loop over provided arguments array
-//     for (var i = 0, l = names.length; i < l; i++) {
-//         var key = names[i].replace("gulp", "");
-//         // using the flag "w+" will create the file if it does not exists. if
-//         // it does exists it will truncate the current file. in effect clearing
-//         // if out. which is what is needed.
-//         config_internal.set(key, null);
-//         // reset name if needed
-//         if (key === "pid") key = "status";
-//         log(key, "cleared.");
-//     }
-//     config_internal.write(function() {
-//         done();
-//     }, null, json_format);
-// });
+
 /**
  * Opens provided file in browser.
  *
  * Options
  *
- * -f, --file <file> The path of the file to open.
- * -p, --port <number> The port to open in. Defaults to browser-sync port.
+ * -f, --file  <file>    The path of the file to open.
+ * -p, --port  [number]  The port to open in. (Defaults to browser-sync port)
  *
  * Usage
  *
@@ -343,6 +205,7 @@ gulp.task("open", function(done) {
         open_file_in_browser(file, ports.local, done, task);
     }
 });
+
 /**
  * Print whether there is an active Gulp instance.
  *
@@ -354,6 +217,7 @@ gulp.task("status", function(done) {
     log("Gulp is", ((config_internal.get("pid")) ? "running. " + chalk.yellow(("(pid:" + process.pid + ")")) : "not running."));
     done();
 });
+
 /**
  * Print the currently used ports for browser-sync.
  *
@@ -374,6 +238,7 @@ gulp.task("ports", function(done) {
     log(chalk.green("(ui)"), ports.ui);
     done();
 });
+
 /**
  * Beautify all HTML, JS, CSS, and JSON project files. Excludes ./node_modules/.
  *
@@ -408,32 +273,117 @@ gulp.task("pretty", function(done) {
 		gulp.dest(__PATHS_BASE)
     ], done);
 });
+
 /**
- * Find and print all min (.min.) files in project.
+ * List project files.
+ *
+ * Options
+ *
+ * -t, --types    [string]  The optional extensions of files to list.
+ * -m, --min      [string]  Flag indicating whether to show .min. files.
+ * -w, --whereis  [string]  File name of file to look for. (Uses fuzzy search, Excludes ./node_modules/)
  *
  * Usage
  *
- * $ gulp findmin # Find all .min. files.
+ * $ gulp files # Default will show all files excluding ./node_modules/ and .git/ folders and files.
+ * $ gulp files --type "js html" # Only list HTML and JS files.
+ * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in the file basename.
+ * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in its basename.
  */
-gulp.task("findmin", function(done) {
-    var task = this;
-    // get min files
-    pump([gulp.src([__PATHS_FILES_MIN, __PATHS_NOT_NODE_MODULES], {
-            dot: true,
-            cwd: __PATHS_BASE
-        }),
-		sort(opts_sort),
-		debug()
-    ], done);
+gulp.task("files", function(done) {
+    // run yargs
+    var _args = yargs.usage("Usage: $0 --type [string]")
+        .option("type", {
+            alias: "t",
+            demandOption: false,
+            type: "string"
+        })
+        .option("min", {
+            alias: "m",
+            demandOption: false,
+            type: "boolean"
+        })
+        .option("whereis", {
+            alias: "w",
+            demandOption: false,
+            type: "string"
+        })
+        .argv;
+
+    // get the command line arguments from yargs
+    var types = (_args.t || _args.type);
+    var min = (_args.m || _args.min);
+    var whereis = (_args.w || _args.whereis);
+    // turn to an array when present
+    if (types) types = types.split(/\s+/);
+
+    // where files will be contained
+    var files = [];
+
+    // get all project files
+    dir.files(__dirname, function(err, paths) {
+        if (err) throw err;
+
+        loop1: for (var i = 0, l = paths.length; i < l; i++) {
+            var filepath = paths[i];
+
+            // skip .git/, node_modules/
+            var ignores = [__PATHS_NODE_MODULES_NAME, __PATHS_GIT];
+            for (var j = 0, ll = ignores.length; j < ll; j++) {
+                var ignore = ignores[j];
+                if (-~filepath.indexOf(ignore)) continue loop1;
+            }
+            // add to files array
+            files.push(filepath);
+        }
+
+        // filter the files based on their file extensions
+        // when the type argument is provided
+        if (types) {
+            files = files.filter(function(filepath) {
+                return (-~types.indexOf(path.extname(filepath)
+                    .toLowerCase()
+                    .slice(1)));
+            });
+        }
+
+        // filter the files based on their whether its a minified (.min.) file
+        if (min) {
+            files = files.filter(function(filepath) {
+                return (-~path.basename(filepath)
+                    .indexOf(".min."));
+            });
+        }
+
+        // if whereis parameter is provided run a fuzzy search on files
+        if (whereis) {
+            var fuzzy_results = fuzzy.filter(whereis, files, {});
+            // turn into an array
+            var results = [];
+            fuzzy_results.forEach(function(result) {
+                results.push(result.string);
+            });
+            // reset var
+            files = results;
+        }
+
+        // log files
+        pump([gulp.src(files),
+			sort(opts_sort),
+			debug()
+	    ], done);
+
+    });
 });
+
 /**
  * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS library folder.
  *
  * Options
  *
- * -n, --name   <string> The module name.
- * -t, --type   <string> Dependency type (js/css).
- * -a, --action <string> Action to take (add/remove).
+ * -n, --name    <string>  The module name.
+ * -t, --type    <string>  Dependency type (js/css).
+ * -a, --action  <string>  Action to take (add/remove).
  *
  * Usage
  *
@@ -512,3 +462,39 @@ gulp.task("dependency", function(done) {
             }
         });
 });
+
+// // Clear internal configuration keys.
+// gulp.task("clear", function(done) {
+//     // run yargs
+//     var _args = yargs.usage("Usage: $0 --names [string]")
+//         .option("names", {
+//             alias: "n",
+//             demandOption: true,
+//             describe: "Name(s) of files to clear.",
+//             type: "string"
+//         })
+//         .coerce("names", function(value) {
+//             return value.replace("gulpstatus", "gulppid")
+//                 .split(" ");
+//         })
+//         .example("$0 --names=\"gulpstatus gulpports\"", "Clear pid and ports keys.")
+//         .example("$0 --names=\"gulpstatus\"", "Clear pid key.")
+//         .example("$0 --names gulpports", "Clear ports key.")
+//         .argv;
+//     // get provided parameters
+//     var names = _args.n || _args.names;
+//     // loop over provided arguments array
+//     for (var i = 0, l = names.length; i < l; i++) {
+//         var key = names[i].replace("gulp", "");
+//         // using the flag "w+" will create the file if it does not exists. if
+//         // it does exists it will truncate the current file. in effect clearing
+//         // if out. which is what is needed.
+//         config_internal.set(key, null);
+//         // reset name if needed
+//         if (key === "pid") key = "status";
+//         log(key, "cleared.");
+//     }
+//     config_internal.write(function() {
+//         done();
+//     }, null, json_format);
+// });

@@ -19,6 +19,7 @@ cleanup(function(exit_code, signal) {
         return false;
     }
 });
+
 // update the status of gulp to active. this will write the current gulp
 // process id to the internal gulp configuration file. this is done to
 // prevent another Gulp instance from being opened.
@@ -29,6 +30,7 @@ gulp.task("init:save-pid", function(done) {
         done();
     }, null, json_spaces);
 });
+
 // watch for git branch changes:
 // branch name checks are done to check whether the branch was changed after
 // the gulp command was used. this is done as when switching branches files
@@ -63,6 +65,7 @@ gulp.task("init:watch-git-branch", function(done) {
         });
     });
 });
+
 // build app files
 // @internal
 gulp.task("init:build", function(done) {
@@ -77,15 +80,17 @@ gulp.task("init:build", function(done) {
     // apply the tasks and callback to sequence
     return sequence.apply(task, tasks);
 });
+
 /**
- * Runs Gulp, builds project files, watches files, and starts browser-sync.
+ * Runs Gulp. (builds project files, watches files, & runs browser-sync)
  *
  * Options
  *
- * -s, --stop [boolean] Flag indicating to stop Gulp.
+ * -s, --stop  [boolean]  Flag indicating to stop Gulp.
  *
  * Usage
  *
+ * $ gulp # Run Gulp.
  * $ gulp --stop # Stops active Gulp process, if running.
  */
 gulp.task("default", function(done) {

@@ -7,6 +7,7 @@ gulp.task("lib:clean", function(done) {
         debug(task.__wadevkit.debug)
     ], done);
 });
+
 // @internal
 gulp.task("lib:js", function(done) {
     var task = this;
@@ -27,6 +28,7 @@ gulp.task("lib:js", function(done) {
         debug(task.__wadevkit.debug)
     ], done);
 });
+
 /**
  * Build the lib/ folder. (only for library projects).
  *

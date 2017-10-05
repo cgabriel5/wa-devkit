@@ -65,6 +65,7 @@ gulp.task("favicon:generate", function(done) {
         done();
     });
 });
+
 // update manifest.json
 // @internal
 gulp.task("favicon:edit-manifest", function(done) {
@@ -75,7 +76,7 @@ gulp.task("favicon:edit-manifest", function(done) {
         done();
     }, null, json_spaces);
 });
-//
+
 // copy favicon.ico and apple-touch-icon.png to the root
 // @internal
 gulp.task("favicon:root", function(done) {
@@ -86,6 +87,7 @@ gulp.task("favicon:root", function(done) {
         bs.stream()
     ], done);
 });
+
 // copy delete unneeded files
 // @internal
 gulp.task("favicon:delete", function(done) {
@@ -95,6 +97,7 @@ gulp.task("favicon:delete", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // inject new favicon html
 // @internal
 gulp.task("favicon:html", function(done) {
@@ -107,6 +110,7 @@ gulp.task("favicon:html", function(done) {
         bs.stream()
     ], done);
 });
+
 /**
  * Re-build project favicons.
  *
@@ -126,6 +130,7 @@ gulp.task("favicon", function(done) {
         done();
     });
 });
+
 // Check for updates on RealFaviconGenerator (think: Apple has just
 // released a new Touch icon along with the latest version of iOS).
 // Run this task from time to time. Ideally, make it part of your

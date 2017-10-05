@@ -1,7 +1,8 @@
 "use strict";
+
 var fs = require("fs");
 var path = require("path");
-// -------------------------------------
+
 var eol = require("gulp-eol");
 var open = require("gulp-open");
 var gulpif = require("gulp-if");
@@ -27,24 +28,26 @@ var minify_html = require("gulp-minify-html");
 var autoprefixer = require("gulp-autoprefixer");
 var real_favicon = require("gulp-real-favicon");
 var alphabetize = require("alphabetize-object-keys");
-// -------------------------------------
+
 // @non_es_uglify
 // By default the non es-uglify is used as the default uglifier.
 // Remove this comment block, following two require lines, and
 // uncomment the @uglify_es comment block to use uglify-es instead.
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
-// -------------------------------------
+
 // @uglify_es
 // var composer = require("gulp-uglify/composer");
 // var uglify = composer(require("uglify-es"), console);
 // var beautify = require("gulp-jsbeautifier");
-// -------------------------------------
+
 var del = require("del");
 var pump = require("pump");
 var glob = require("glob");
+var fuzzy = require("fuzzy");
 var yargs = require("yargs");
 var chalk = require("chalk");
+var dir = require("node-dir");
 var mkdirp = require("mkdirp");
 var git = require("git-state");
 var fe = require("file-exists");
