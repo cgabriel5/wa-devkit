@@ -1,11 +1,9 @@
-//
-// --------------------------------------------------------------------------
-// @start requires.js
-//
+// @start requires.js ---------------------------------------------------------|
+
 "use strict";
-// -------------------------------------
+
 var path = require("path");
-// -------------------------------------
+
 var pump = require("pump");
 var chalk = require("chalk");
 var prompt = require("prompt");
@@ -14,7 +12,7 @@ var git = require("simple-git")();
 var mds = require("markdown-styles");
 var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");
-// -------------------------------------
+
 var eol = require("gulp-eol");
 var sort = require("gulp-sort");
 var gulpif = require("gulp-if");
@@ -27,24 +25,23 @@ var foreach = require("gulp-foreach");
 var replace = require("gulp-replace");
 var json_sort = require("gulp-json-sort")
     .default;
-// -------------------------------------
+
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
-//
-// @end   requires.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start paths.js
-//
+
+// @end   requires.js ---------------------------------------------------------|
+
+// @start paths.js ------------------------------------------------------------|
+
 // paths::BASES
 var __PATHS_BASE = "./";
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
+
 // paths:JS
 var __PATHS_JS_HOME = "js/";
 var __PATHS_JS_OPTIONS_DYNAMIC;
+
 // paths:GULP
 var __PATHS_GULP_UTILS = `./${__PATHS_HOMEDIR}gulp/assets/utils/utils.js`;
 var __PATHS_GULP_SETUP_QUESTIONS = `./${__PATHS_HOMEDIR}gulp/setup/exports/questions.js`;
@@ -55,13 +52,16 @@ var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
 var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.main.js";
+
 // paths:MARKDOWN
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
+
 // paths:CONFIG_FILES
 var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
 var __PATHS_PKG = `./${__PATHS_HOMEDIR}package.json`;
+
 // paths:OTHER
 var __PATHS_DOCS_README_TEMPLATE = "docs/readme_template.md";
 var __PATHS_README = "README.md";
@@ -71,26 +71,23 @@ var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
 var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
 var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
 var __PATHS_GIT = ".git/";
-//
-// @end   paths.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start vars.js
-//
+
+// @end   paths.js ------------------------------------------------------------|
+
+// @start vars.js -------------------------------------------------------------|
+
 // configuration information
 var config_user = json.read(__PATHS_CONFIG_USER);
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 var pkg = json.read(__PATHS_PKG);
-// -------------------------------------
+
 // plugin options
 var opts = config_user.get("options");
 var opts_plugins = opts.plugins;
 var opts_bt = opts_plugins.beautify;
 var json_format = opts_plugins.json_format;
 var json_spaces = json_format.indent_size;
-// -------------------------------------
+
 var questions = require(__PATHS_GULP_SETUP_QUESTIONS)
     .questions;
 var templates = require(__PATHS_GULP_SETUP_TEMPLATES)
@@ -103,11 +100,11 @@ var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
-// -------------------------------------
+
 var APPTYPE; // application-type
 var __data__ = {}; // placeholder fillers
 var INDEX = config_user.get("paths.index");
-// -------------------------------------
+
 var opts_sort = {
     // sort based on dirname alphabetically
     comparator: function(file1, file2) {
@@ -118,23 +115,17 @@ var opts_sort = {
         return 0;
     }
 };
-//
-// @end   vars.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start functions.js
-//
-//                        -- blank_file --
-//
-// @end   functions.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start helpers.js
-//
+
+// @end   vars.js -------------------------------------------------------------|
+
+// @start functions.js --------------------------------------------------------|
+
+// file is empty...
+
+// @end   functions.js --------------------------------------------------------|
+
+// @start helpers.js ----------------------------------------------------------|
+
 // beautify html, js, css, & json files
 // @internal
 gulp.task("pretty", function(done) {
@@ -159,14 +150,11 @@ gulp.task("pretty", function(done) {
 		gulp.dest(__PATHS_BASE)
 	], done);
 });
-//
-// @end   helpers.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start init.js
-//
+
+// @end   helpers.js ----------------------------------------------------------|
+
+// @start init.js -------------------------------------------------------------|
+
 // @internal
 gulp.task("default", function(done) {
     var task = this;
@@ -174,28 +162,36 @@ gulp.task("default", function(done) {
     log("Run \"$ gulp init\" before running Gulp's default command.");
     done();
 });
+
 // run the prompt to setup project
 // @internal
 gulp.task("init", function(done) {
     var task = this;
+
     prompt.start(); // start the prompt
     prompt.message = chalk.green("[question]");
     prompt.delimiter = " ";
+
     prompt.get(questions, function(err, result) {
+
         // kill prompt and show user error message
         if (err) {
             console.log("\n" + time(), (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
             return prompt.stop();
         }
+
         // get user input
         __data__ = result;
         var type = __data__.apptype;
+
         // set the path for js option
         __PATHS_JS_OPTIONS_DYNAMIC = `gulp/setup/js/options/${type}/**/*.*`;
+
         // set the application type
         config_internal.set("apptype", type);
         // pick js bundle based on provided project type + reset the config js bundle
         config_user.data.bundles.js = jsconfigs[type];
+
         // remove distribution configuration if type is library
         // as the project is defaulted for a webapp project.
         if (type === "library") {
@@ -204,6 +200,7 @@ gulp.task("init", function(done) {
             // add the library configuration
             config_user.data.bundles.lib = jsconfigs.lib;
         } // else leave as-is for webapp project
+
         // set package.json properties
         pkg.set("name", __data__.name);
         pkg.set("version", __data__.version);
@@ -218,10 +215,12 @@ gulp.task("init", function(done) {
         });
         pkg.set("homepage", format(templates.homepage, __data__));
         pkg.set("private", __data__.private);
+
         // sort keys
         config_user.data = alphabetize(config_user.data);
         config_internal.data = alphabetize(config_internal.data);
         pkg.data = alphabetize(pkg.data);
+
         // saves changes to files
         config_user.write(function() {
             config_internal.write(function() {
@@ -248,16 +247,14 @@ gulp.task("init", function(done) {
                 }, null, json_spaces);
             }, null, json_spaces);
         }, null, json_spaces);
+
     });
 });
-//
-// @end   init.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start steps.js
-//
+
+// @end   init.js -------------------------------------------------------------|
+
+// @start steps.js ------------------------------------------------------------|
+
 // initialization step
 // @internal
 gulp.task("init:clear-js", function(done) {
@@ -271,6 +268,7 @@ gulp.task("init:clear-js", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:pick-js-option", function(done) {
@@ -284,6 +282,7 @@ gulp.task("init:pick-js-option", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:fill-placeholders", function(done) {
@@ -301,6 +300,7 @@ gulp.task("init:fill-placeholders", function(done) {
 		debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:setup-readme", function(done) {
@@ -326,6 +326,7 @@ gulp.task("init:setup-readme", function(done) {
         });
     });
 });
+
 // initialization step
 // @internal
 gulp.task("init:rename-gulpfile", function(done) {
@@ -342,6 +343,7 @@ gulp.task("init:rename-gulpfile", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:remove-setup", function(done) {
@@ -357,9 +359,11 @@ gulp.task("init:remove-setup", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step::alias
 // @internal
 gulp.task("init:pretty", ["pretty"]);
+
 // initialization step
 // @internal
 gulp.task("init:git", function(done) {
@@ -373,17 +377,14 @@ gulp.task("init:git", function(done) {
         .add("./*")
         .commit("chore: Initial commit\n\nProject initialization.");
 });
-//
-// @end   steps.js
-// --------------------------------------------------------------------------
-//
-//
-// --------------------------------------------------------------------------
-// @start make.js
-//
+
+// @end   steps.js ------------------------------------------------------------|
+
+// @start make.js -------------------------------------------------------------|
+
 // build gulpfile.setup.js
 // @internal
-gulp.task("gulpfile", function(done) {
+gulp.task("make", function(done) {
     var task = this;
     var files = [
         "requires.js",
@@ -401,17 +402,11 @@ gulp.task("gulpfile", function(done) {
 		debug(),
 		foreach(function(stream, file) {
             var filename = path.basename(file.path);
-            var decor = "-".repeat(74);
-            var top = `//
-            // ${decor}
-            // @start ${filename}
-            //\n`;
-            var bottom = `\n//
-            // @end   ${filename}
-            // ${decor}
-            //`;
-            var padding = " ".repeat(filename.length + 10);
-            var empty = `// ${padding} -- blank_file --`;
+            var filename_length = filename.length;
+            var decor = "-".repeat(79 - 11 - filename_length) + "|";
+            var top = `// @start ${filename} ${decor}\n\n`;
+            var bottom = `\n// @end   ${filename} ${decor}\n`;
+            var empty = "// file is empty..."; // file does not contain code
             // empty check
             var is_empty = file.contents.toString()
                 .trim() === "";
@@ -419,13 +414,11 @@ gulp.task("gulpfile", function(done) {
                 .pipe(insert.prepend(top))
                 .pipe(insert.append(bottom));
         }),
-		concat("gulpfile.setup.js"),
+		concat(__PATHS_GULP_FILE_SETUP),
 		beautify(opts_bt),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
 	], done);
 });
-//
-// @end   make.js
-// --------------------------------------------------------------------------
-//
+
+// @end   make.js -------------------------------------------------------------|

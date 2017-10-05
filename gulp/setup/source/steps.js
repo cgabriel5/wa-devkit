@@ -11,6 +11,7 @@ gulp.task("init:clear-js", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:pick-js-option", function(done) {
@@ -24,6 +25,7 @@ gulp.task("init:pick-js-option", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:fill-placeholders", function(done) {
@@ -41,6 +43,7 @@ gulp.task("init:fill-placeholders", function(done) {
 		debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:setup-readme", function(done) {
@@ -66,6 +69,7 @@ gulp.task("init:setup-readme", function(done) {
         });
     });
 });
+
 // initialization step
 // @internal
 gulp.task("init:rename-gulpfile", function(done) {
@@ -82,6 +86,7 @@ gulp.task("init:rename-gulpfile", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step
 // @internal
 gulp.task("init:remove-setup", function(done) {
@@ -97,9 +102,11 @@ gulp.task("init:remove-setup", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
+
 // initialization step::alias
 // @internal
 gulp.task("init:pretty", ["pretty"]);
+
 // initialization step
 // @internal
 gulp.task("init:git", function(done) {

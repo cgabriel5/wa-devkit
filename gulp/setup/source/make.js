@@ -1,6 +1,6 @@
 // build gulpfile.setup.js
 // @internal
-gulp.task("gulpfile", function(done) {
+gulp.task("make", function(done) {
     var task = this;
     var files = [
         "requires.js",
@@ -18,17 +18,11 @@ gulp.task("gulpfile", function(done) {
 		debug(),
 		foreach(function(stream, file) {
             var filename = path.basename(file.path);
-            var decor = "-".repeat(74);
-            var top = `//
-            // ${decor}
-            // @start ${filename}
-            //\n`;
-            var bottom = `\n//
-            // @end   ${filename}
-            // ${decor}
-            //`;
-            var padding = " ".repeat(filename.length + 10);
-            var empty = `// ${padding} -- blank_file --`;
+            var filename_length = filename.length;
+            var decor = "-".repeat(79 - 11 - filename_length) + "|";
+            var top = `// @start ${filename} ${decor}\n\n`;
+            var bottom = `\n// @end   ${filename} ${decor}\n`;
+            var empty = "// file is empty..."; // file does not contain code
             // empty check
             var is_empty = file.contents.toString()
                 .trim() === "";
@@ -36,7 +30,7 @@ gulp.task("gulpfile", function(done) {
                 .pipe(insert.prepend(top))
                 .pipe(insert.append(bottom));
         }),
-		concat("gulpfile.setup.js"),
+		concat(__PATHS_GULP_FILE_SETUP),
 		beautify(opts_bt),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
