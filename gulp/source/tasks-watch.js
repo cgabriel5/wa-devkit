@@ -47,7 +47,7 @@ gulp.task("watch:main", function(done) {
 
         // watch for any changes to CSS Lib files
         gulp.watch(bundles.gulp.watch.css.vendor, {
-            cwd: __PATHS_CSS_THIRDPARTY
+            cwd: __PATHS_CSS_VENDOR
         }, function() {
             return sequence("css:libs");
         });
@@ -61,7 +61,7 @@ gulp.task("watch:main", function(done) {
 
         // watch for any changes to JS Lib files
         gulp.watch(bundles.gulp.watch.js.vendor, {
-            cwd: __PATHS_JS_THIRDPARTY
+            cwd: __PATHS_JS_VENDOR
         }, function() {
             return sequence("js:libs");
         });

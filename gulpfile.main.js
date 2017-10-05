@@ -87,8 +87,8 @@ var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
 
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
-var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/vendor/`;
-var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
+var __PATHS_CSS_VENDOR = `${__PATHS_HOMEDIR}css/vendor/`;
+var __PATHS_NOT_CSS_VENDOR = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
 var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
 var __PATHS_USERS_CSS_FILE = "styles.css";
 
@@ -101,8 +101,8 @@ var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
 
 // paths:JS
 var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
-var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/vendor/`;
-var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
+var __PATHS_JS_VENDOR = `${__PATHS_HOMEDIR}js/vendor/`;
+var __PATHS_NOT_JS_VENDOR = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
 var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
 
 // paths:IMG
@@ -143,10 +143,10 @@ var __PATHS_README = "README.md";
 var __PATHS_README_HTML = "README.html";
 var __PATHS_ALLFILES = "**/*.*";
 var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
-var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
+var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
-var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
+var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**`;
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
@@ -366,6 +366,24 @@ function format_column(text, width, offset_left, offset_right) {
         .join(" ") + chalk.magenta(text) + new Array(Math.max(width - text.length, 0) + 1)
         .join(" ") + new Array(offset_right + 1)
         .join(" ");
+}
+
+/**
+ * @description [Add a bang to the start of the string.]
+ * @param  {String} string [The string to add the bang to.]
+ * @return {String}        [The new string with bang added.]
+ */
+function bangify(string) {
+    return "!" + (string || "");
+}
+
+/**
+ * @description [Appends the ** pattern to string.]
+ * @param  {String} string [The string to add pattern to.]
+ * @return {String}        [The new string with added pattern.]
+ */
+function globall(string) {
+    return (string || "") + "**";
 }
 
 // @end   functions.js --------------------------------------------------------|
@@ -759,7 +777,7 @@ gulp.task("watch:main", function(done) {
 
         // watch for any changes to CSS Lib files
         gulp.watch(bundles.gulp.watch.css.vendor, {
-            cwd: __PATHS_CSS_THIRDPARTY
+            cwd: __PATHS_CSS_VENDOR
         }, function() {
             return sequence("css:libs");
         });
@@ -773,7 +791,7 @@ gulp.task("watch:main", function(done) {
 
         // watch for any changes to JS Lib files
         gulp.watch(bundles.gulp.watch.js.vendor, {
-            cwd: __PATHS_JS_THIRDPARTY
+            cwd: __PATHS_JS_VENDOR
         }, function() {
             return sequence("js:libs");
         });
@@ -1238,7 +1256,7 @@ gulp.task("pretty", function(done) {
             .toLowerCase() === ".json");
     };
     // get needed files
-    pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE, __PATHS_NOT_NODE_MODULES], {
+    pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN, bangify(globall(__PATHS_NODE_MODULES_NAME)), bangify(globall(__PATHS_GIT)), __PATHS_NOT_VENDOR], {
             dot: true,
             cwd: __PATHS_BASE
         }),
@@ -1400,7 +1418,7 @@ gulp.task("dependency", function(done) {
     var type = _args.t || _args.type;
     var action = _args.a || _args.action;
     // get needed paths
-    var dest = (type === "js") ? __PATHS_JS_THIRDPARTY : __PATHS_CSS_THIRDPARTY;
+    var dest = (type === "js") ? __PATHS_JS_VENDOR : __PATHS_CSS_VENDOR;
     var delete_path = dest + name;
     var module_path = __PATHS_NODE_MODULES + name;
     // check that the module exists

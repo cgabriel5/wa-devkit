@@ -18,8 +18,8 @@ var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
 
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
-var __PATHS_CSS_THIRDPARTY = `${__PATHS_HOMEDIR}css/vendor/`;
-var __PATHS_NOT_CSS_THIRDPARTY = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
+var __PATHS_CSS_VENDOR = `${__PATHS_HOMEDIR}css/vendor/`;
+var __PATHS_NOT_CSS_VENDOR = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
 var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
 var __PATHS_USERS_CSS_FILE = "styles.css";
 
@@ -32,8 +32,8 @@ var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
 
 // paths:JS
 var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
-var __PATHS_JS_THIRDPARTY = `${__PATHS_HOMEDIR}js/vendor/`;
-var __PATHS_NOT_JS_THIRDPARTY = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
+var __PATHS_JS_VENDOR = `${__PATHS_HOMEDIR}js/vendor/`;
+var __PATHS_NOT_JS_VENDOR = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
 var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
 
 // paths:IMG
@@ -74,10 +74,10 @@ var __PATHS_README = "README.md";
 var __PATHS_README_HTML = "README.html";
 var __PATHS_ALLFILES = "**/*.*";
 var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
-var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
+var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
-var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
+var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**`;
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
