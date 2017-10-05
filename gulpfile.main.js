@@ -1503,7 +1503,7 @@ gulp.task("make", function(done) {
             var decor = "-".repeat(79 - 11 - filename_length) + "|";
             var top = `// @start ${filename} ${decor}\n\n`;
             var bottom = `\n// @end   ${filename} ${decor}\n`;
-            var empty = "// file is empty...\n"; // file does not contain code
+            var empty = "// file is empty..."; // file does not contain code
             // empty check
             var is_empty = file.contents.toString()
                 .trim() === "";
