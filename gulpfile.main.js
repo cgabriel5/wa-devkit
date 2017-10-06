@@ -319,7 +319,7 @@ function print_tasks(tasks, verbose, filter) {
     // determine the header
     var header = (filter ? "Filtered" : "Tasks");
     var results = ["", chalk.underline.bold(header), ""];
-    var help_doc = ["", chalk.underline.bold("Help")];
+    var help_doc = ["", chalk.underline.bold("Help"), ""];
 
     var field_task_len = tasks.getLongestNameLength();
 
@@ -1078,7 +1078,7 @@ gulp.task("purify", function(done) {
  *
  * -i, --input   <string>  Path of file to convert (Markdown => HTML).
  * -o, --output  <string>  Path where converted HTML file should be placed.
- * -n, --name    <string>  New name of converted file.
+ * -n, --name    [string]  New name of converted file.
  *
  * Usage
  *
@@ -1163,6 +1163,12 @@ gulp.task("tohtml", function(done) {
  * -f, --file  <file>    The path of the file to open.
  * -p, --port  [number]  The port to open in. (Defaults to browser-sync port)
  *
+ * Note: New tabs should be opened via the terminal using `open`. Doing so will
+ * ensure the generated tab will auto-close when Gulp is closed/existed. Opening
+ * tabs by typing/copy-pasting the project URL into the browser address bar will
+ * not auto-close the tab(s) due to security issues as noted here:
+ * [https://stackoverflow.com/q/19761241].
+ *
  * Usage
  *
  * $ gulp open --file index.html --port 3000 # Open index.html in port 3000.
@@ -1237,7 +1243,7 @@ gulp.task("ports", function(done) {
 });
 
 /**
- * Beautify all HTML, JS, CSS, and JSON project files. Excludes ./node_modules/.
+ * Beautify all HTML, JS, CSS, and JSON project files. Ignores ./node_modules/.
  *
  * Usage
  *
@@ -1278,14 +1284,14 @@ gulp.task("pretty", function(done) {
  *
  * -t, --types    [string]  The optional extensions of files to list.
  * -m, --min      [string]  Flag indicating whether to show .min. files.
- * -w, --whereis  [string]  File name of file to look for. (Uses fuzzy search, Excludes ./node_modules/)
+ * -w, --whereis  [string]  File to look for. (Uses fuzzy search, Ignores ./node_modules/)
  *
  * Usage
  *
- * $ gulp files # Default will show all files excluding ./node_modules/ and .git/ folders and files.
+ * $ gulp files # Default shows all files excluding files in ./node_modules/ & .git/.
  * $ gulp files --type "js html" # Only list HTML and JS files.
- * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in the file basename.
- * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in its basename.
+ * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in basename.
+ * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
  */
 gulp.task("files", function(done) {
     // run yargs

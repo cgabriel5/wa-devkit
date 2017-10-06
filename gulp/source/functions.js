@@ -80,7 +80,7 @@ function print_tasks(tasks, verbose, filter) {
     // determine the header
     var header = (filter ? "Filtered" : "Tasks");
     var results = ["", chalk.underline.bold(header), ""];
-    var help_doc = ["", chalk.underline.bold("Help")];
+    var help_doc = ["", chalk.underline.bold("Help"), ""];
 
     var field_task_len = tasks.getLongestNameLength();
 
