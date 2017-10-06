@@ -32,7 +32,7 @@ gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
     pump([
-        gulp.src([__PATHS_DOCS_README_TEMPLATE, __PATHS_LICENSE, __PATHS_HTML_HEADMETA, INDEX], {
+        gulp.src([__PATHS_GULP_SETUP_README_TEMPLATE, __PATHS_GULP_SETUP_LICENSE_TEMPLATE, __PATHS_HTML_HEADMETA, INDEX], {
             base: __PATHS_BASE
         }),
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
@@ -48,14 +48,10 @@ gulp.task("init:fill-placeholders", function(done) {
 // @internal
 gulp.task("init:setup-readme", function(done) {
     var task = this;
-    // move ./docs/readme_template.md to ./README.md
+    // move readme template to ./README.md
     pump([
-        gulp.src(__PATHS_DOCS_README_TEMPLATE, {
-            base: __PATHS_BASE
-        }),
+        gulp.src(__PATHS_GULP_SETUP_README_TEMPLATE),
 		debug(),
-        clean(),
-        rename(__PATHS_README),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
     ], function() {

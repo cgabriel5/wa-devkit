@@ -48,6 +48,8 @@ var __PATHS_GULP_SETUP_QUESTIONS = `./${__PATHS_HOMEDIR}gulp/setup/exports/quest
 var __PATHS_GULP_SETUP_TEMPLATES = `./${__PATHS_HOMEDIR}gulp/setup/exports/templates.js`;
 var __PATHS_GULP_SETUP_JSCONFIGS = `./${__PATHS_HOMEDIR}gulp/setup/exports/jsconfigs.js`;
 var __PATHS_GULP_SETUP_SOURCE = `./${__PATHS_HOMEDIR}gulp/setup/source/`;
+var __PATHS_GULP_SETUP_README_TEMPLATE = `./${__PATHS_HOMEDIR}gulp/setup/templates/README.md`;
+var __PATHS_GULP_SETUP_LICENSE_TEMPLATE = `./${__PATHS_HOMEDIR}gulp/setup/templates/LICENSE.txt`;
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
@@ -63,7 +65,6 @@ var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-in
 var __PATHS_PKG = `./${__PATHS_HOMEDIR}package.json`;
 
 // paths:OTHER
-var __PATHS_DOCS_README_TEMPLATE = "docs/readme_template.md";
 var __PATHS_README = "README.md";
 var __PATHS_LICENSE = "LICENSE.txt";
 var __PATHS_HTML_HEADMETA = "html/source/head/meta.html";
@@ -289,7 +290,7 @@ gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
     pump([
-        gulp.src([__PATHS_DOCS_README_TEMPLATE, __PATHS_LICENSE, __PATHS_HTML_HEADMETA, INDEX], {
+        gulp.src([__PATHS_GULP_SETUP_README_TEMPLATE, __PATHS_GULP_SETUP_LICENSE_TEMPLATE, __PATHS_HTML_HEADMETA, INDEX], {
             base: __PATHS_BASE
         }),
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
@@ -305,14 +306,10 @@ gulp.task("init:fill-placeholders", function(done) {
 // @internal
 gulp.task("init:setup-readme", function(done) {
     var task = this;
-    // move ./docs/readme_template.md to ./README.md
+    // move readme template to ./README.md
     pump([
-        gulp.src(__PATHS_DOCS_README_TEMPLATE, {
-            base: __PATHS_BASE
-        }),
+        gulp.src(__PATHS_GULP_SETUP_README_TEMPLATE),
 		debug(),
-        clean(),
-        rename(__PATHS_README),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
     ], function() {

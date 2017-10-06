@@ -13,6 +13,8 @@ var __PATHS_GULP_SETUP_QUESTIONS = `./${__PATHS_HOMEDIR}gulp/setup/exports/quest
 var __PATHS_GULP_SETUP_TEMPLATES = `./${__PATHS_HOMEDIR}gulp/setup/exports/templates.js`;
 var __PATHS_GULP_SETUP_JSCONFIGS = `./${__PATHS_HOMEDIR}gulp/setup/exports/jsconfigs.js`;
 var __PATHS_GULP_SETUP_SOURCE = `./${__PATHS_HOMEDIR}gulp/setup/source/`;
+var __PATHS_GULP_SETUP_README_TEMPLATE = `./${__PATHS_HOMEDIR}gulp/setup/templates/README.md`;
+var __PATHS_GULP_SETUP_LICENSE_TEMPLATE = `./${__PATHS_HOMEDIR}gulp/setup/templates/LICENSE.txt`;
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
@@ -28,7 +30,6 @@ var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-in
 var __PATHS_PKG = `./${__PATHS_HOMEDIR}package.json`;
 
 // paths:OTHER
-var __PATHS_DOCS_README_TEMPLATE = "docs/readme_template.md";
 var __PATHS_README = "README.md";
 var __PATHS_LICENSE = "LICENSE.txt";
 var __PATHS_HTML_HEADMETA = "html/source/head/meta.html";
