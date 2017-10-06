@@ -1,78 +1,168 @@
 # Commands
 
-### Gulp
+The same documentation can be accessed by running `$ gulp help --verbose` from the terminal. More information on the `help` command can be found below.
 
 ```bash
-# Runs the default task which runs the build and watch tasks. 
-# This creates the needed folders/files, starts browser-sync servers, 
-# & watches project for file changes. Only one Gulp instance can be run
-# at a time.
-$ gulp
+Help
 
-# Stops active Gulp instance. Only one instance can be run at a time.
-$ gulp -s/--stop
-```
+   help         Provides Gulp task documentation (this documentation).
+                  
+                  Options
+                  
+                  (no options) List tasks and their descriptions.
+                  -v, --verbose  [boolean]  Flag indicating whether to show all documentation.
+                  -n, --name     [string]   Names of tasks to show documentation for.
+                  
+                  Usage
+                  
+                  $ gulp help # Show list of tasks and their descriptions.
+                  $ gulp help --verbose # Show all documentation for all tasks.
+                  $ gulp help --name "open default dependency" # Show documentation for specific tasks.
 
-### Gulp-Helpers
+Tasks
 
-```bash
-# When making changes to gulpfile.js it needs to be re-built.
-$ gulp helper-make-gulpfile
-```
+   default      Runs Gulp. (builds project files, watches files, & runs browser-sync)
+                  
+                  Options
+                  
+                  -s, --stop  [boolean]  Flag indicating to stop Gulp.
+                  
+                  Usage
+                  
+                  $ gulp # Run Gulp.
+                  $ gulp --stop # Stops active Gulp process, if running.
 
-```bash
-# Checks whether Gulp is active or not.
-$ gulp helper-status
-```
 
-```bash
-# Checks the ports being used by the Gulp.
-$ gulp helper-ports
-```
+   dependency   Add/remove front-end dependencies from ./node_modules/ to its JS/CSS library folder.
+                  
+                  Options
+                  
+                  -n, --name    <string>  The module name.
+                  -t, --type    <string>  Dependency type (js/css).
+                  -a, --action  <string>  Action to take (add/remove).
+                  
+                  Usage
+                  
+                  $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS libs directory.
+                  $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS libs directory.
+                  $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS libs directory.
 
-**Note**: New tabs should be opened via the terminal using `helper-open`. Doing so will ensure the generated tab will auto-close when Gulp is closed/existed. Opening tabs by typing/copy-pasting the project URL into the browser address bar will not auto-close the tab(s) [due to security issues](https://stackoverflow.com/questions/19761241/window-close-and-self-close-do-not-close-the-window-in-chrome).
 
-```bash
-# Will open the given file at the given port in browser.
-$ gulp helper-open -p/--port [optional:num] -f/--file [req:str]
+   dist         Build the dist/ folder. (only for webapp projects).
+                  
+                  Usage
+                  
+                  $ gulp dist # Create dist/ folder.
 
-# When a port is not provided and Gulp is running the currently used port by Gulp will be used.
-$ gulp helper-open --file markdown/preview/README.html
-$ gulp helper-open --file index.html --port 3000 # Open index.html in port 3000.
-```
 
-```bash
-# Check project for any unused CSS.
-$ gulp helper-purify -D/--delete [optional:boolean] -r/--remove [optional:boolean]
+   favicon      Re-build project favicons.
+                  
+                  Usage
+                  
+                  $ gulp favicon # Re-build favicons.
 
-$ gulp helper-purify # Create pure.css containing any unused CSS.
-$ gulp helper-purify --delete # Delete pure.css file.
-$ gulp helper-purify --remove # Delete pure.css and remove unused CSS from /css/source/styles.css.
-```
 
-```bash
-# Convert a MarkDown (.md) file to its HTML equivalent.
-$ gulp helper-tohtml -i/--input [req:string] -o/--output [req:string] -n/--name [optional:string]
+   files        List project files.
+                  
+                  Options
+                  
+                  -t, --types    [string]  The optional extensions of files to list.
+                  -m, --min      [string]  Flag indicating whether to show .min. files.
+                  -w, --whereis  [string]  File to look for. (Uses fuzzy search, Ignores ./node_modules/)
+                  
+                  Usage
+                  
+                  $ gulp files # Default shows all files excluding files in ./node_modules/ & .git/.
+                  $ gulp files --type "js html" # Only list HTML and JS files.
+                  $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in basename.
+                  $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
 
-# Convert README.md to Converted.html and place in /markdown/preview.
-$ gulp helper-tohtml --input README.md --output /markdown/preview --name Converted.html
-```
 
-```bash
-# Clear ./gulp/.gulpconfig.json keys if needed.
-$ gulp helper-clear -n/--names [req:string]
+   lib          Build the lib/ folder. (only for library projects).
+                  
+                  Usage
+                  
+                  $ gulp lib # Create lib/ folder.
 
-$ gulp helper-clear --names="gulpstatus gulpports" # Clear pid and ports keys.
-$ gulp helper-clear --names="gulpstatus" # Clear pid key.
-$ gulp helper-clear --names gulpports # Clear ports key.
-```
 
-```bash
-# Will run js-beautify on HTML, JS, CSS, & JSON project files.
-$ gulp helper-clean-files 
-```
+   make         Build gulpfile from source files. Useful after making changes to source files.
+                  
+                  Usage
+                  
+                  $ gulp make # Re-build gulpfile
 
-```bash
-# Console logs all minified files in project.
-$ gulp helper-findmin 
+
+   modernizr    Build Modernizr file.
+                  
+                  Usage
+                  
+                  $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
+
+
+   open         Opens provided file in browser.
+                  
+                  Options
+                  
+                  -f, --file  <file>    The path of the file to open.
+                  -p, --port  [number]  The port to open in. (Defaults to browser-sync port)
+                  
+                  Note: New tabs should be opened via the terminal using `open`. Doing so will
+                  ensure the generated tab will auto-close when Gulp is closed/existed. Opening
+                  tabs by typing/copy-pasting the project URL into the browser address bar will
+                  not auto-close the tab(s) due to security issues as noted here:
+                  [https://stackoverflow.com/q/19761241].
+                  
+                  Usage
+                  
+                  $ gulp open --file index.html --port 3000 # Open index.html in port 3000.
+
+
+   ports        Print the currently used ports for browser-sync.
+                  
+                  Usage
+                  
+                  $ gulp ports # Print uses ports.
+
+
+   pretty       Beautify all HTML, JS, CSS, and JSON project files. Ignores ./node_modules/.
+                  
+                  Usage
+                  
+                  $ gulp pretty # Prettify files.
+
+
+   purify       Purge potentially unused CSS style definitions.
+                  
+                  Options
+                  
+                  (no options)  ---------  Creates pure.css which contains only used styles.
+                  -r, --remove  [boolean]  Deletes pure.css and removes unused CSS.
+                  -D, --delete  [boolean]  Deletes pure.css.
+                  
+                  Usage
+                  
+                  $ gulp purify # Creates pure.css which contains only used styles.
+                  $ gulp purify --remove # Deletes pure.css and removes unused CSS.
+                  $ gulp purify --delete # Deletes pure.css.
+
+
+   status       Print whether there is an active Gulp instance.
+                  
+                  Usage
+                  
+                  $ gulp status # Print Gulp status.
+
+
+   tohtml       Converts MarkDown (.md) file to its HTML counterpart (with GitHub style/layout).
+                  
+                  Options
+                  
+                  -i, --input   <string>  Path of file to convert (Markdown => HTML).
+                  -o, --output  <string>  Path where converted HTML file should be placed.
+                  -n, --name    [string]  New name of converted file.
+                  
+                  Usage
+                  
+                  $ gulp tohtml --input README.md --output /markdown/preview --name Converted.html.
+                  # Convert README.md to Converted.html and place in /markdown/preview.
 ```

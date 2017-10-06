@@ -1,26 +1,22 @@
 # Setup
 
-### Yarn Setup
-Run the following commands in the following order:
+Run the following commands to setup the project.
 
 ```bash
-$ yarn init # Create a package.json file. Update package.json as needed.
-$ yarn install # Installs needed package.json modules.
+# one after another...
+
+$ yarn install # Install node modules.
+$ gulp --silent --gulpfile gulpfile.setup.js init # Follow on-screen prompt questions.
+
+# or as one line...
+
+$ yarn install && gulp --silent --gulpfile gulpfile.setup.js init
 ```
 
-### Gulp Setup
+`$ gulp --silent --gulpfile gulpfile.setup.js init` will ready project files _and_ create the initial project commit. Once complete run `$ gulp` to watch project files for any changes. Available project Gulp commands and their documentation can be found [here](/docs/commands.md).
 
-Make sure to initialize project before running `gulp`! Follow the on-screen prompt by entering project information.
-
-**Note**: Provided information will be used to auto-fill `README.md`, `LICENSE.txt`, and `package.json`.
-
-```bash
-$ gulp init --silent
-```
-
-### Files To Modify
-* **CSS** &mdash; Modify `css/source/styles.css`. `Gulp` will handle auto-prefixing, minifying, and concatenation.
-* **JS-App** &mdash; Modify `js/source/modules/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
-* **JS-Libs** &mdash; Add third-party libraries to `js/libs/`. Then make sure to update the `jslibs` `Gulp` task by adding the library path file to the `src` array. `Gulp` will handle file concatenation, minifying, and beautification.
-* **HTML** &mdash; Modify `html/source/**/*.html` files. `Gulp` will handle file concatenation, minifying, and beautification.
-* **Gulp** &mdash; Modify `gulp/source/*.js` files to make changes to Gulp file then run the `Gulp` command `helper-make-gulpfile` to build the new `gulpfile.js`.
+**Note**: Provided replies will be used to auto-fill the following files:
+- [`gulp/setup/templates/README.md`](/gulp/setup/templates/README.md)
+- [`gulp/setup/templates/LICENSE.txt`](/gulp/setup/templates/LICENSE.txt)
+- [`package.json`](/package.json)
+- [`html/source/head/meta.html`](/html/source/head/meta.html)
