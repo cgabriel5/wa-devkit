@@ -1281,7 +1281,13 @@ gulp.task("pretty", function(done) {
             .toLowerCase() === ".json");
     };
     // get needed files
-    pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN, bangify(globall(__PATHS_NODE_MODULES_NAME)), bangify(globall(__PATHS_GIT)), __PATHS_NOT_VENDOR], {
+    pump([gulp.src([
+	    	__PATHS_FILES_BEAUTIFY,
+	    	__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
+	    	bangify(globall(__PATHS_NODE_MODULES_NAME)),
+	    	bangify(globall(__PATHS_GIT)),
+    		__PATHS_NOT_VENDOR
+    	], {
             dot: true
         }),
 		sort(opts_sort),
@@ -1722,7 +1728,12 @@ gulp.task("favicon:edit-manifest", function(done) {
 // @internal
 gulp.task("favicon:root", function(done) {
     var task = this;
-    pump([gulp.src([__PATHS_FAVICON_ROOT_ICO, __PATHS_FAVICON_ROOT_PNG, __PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
+    pump([gulp.src([
+	    	__PATHS_FAVICON_ROOT_ICO,
+	    	__PATHS_FAVICON_ROOT_PNG,
+	    	__PATHS_FAVICON_ROOT_CONFIG,
+	    	__PATHS_FAVICON_ROOT_MANIFEST
+    	]),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -1733,7 +1744,10 @@ gulp.task("favicon:root", function(done) {
 // @internal
 gulp.task("favicon:delete", function(done) {
     var task = this;
-    pump([gulp.src([__PATHS_FAVICON_ROOT_CONFIG, __PATHS_FAVICON_ROOT_MANIFEST]),
+    pump([gulp.src([
+    		__PATHS_FAVICON_ROOT_CONFIG,
+    		__PATHS_FAVICON_ROOT_MANIFEST
+    	]),
     	clean(),
     	debug(task.__wadevkit.debug)
     ], done);
@@ -1760,16 +1774,28 @@ gulp.task("favicon:html", function(done) {
  * $ gulp favicon # Re-build favicons.
  */
 gulp.task("favicon", function(done) {
+    var task = this;
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
     if (config_internal.get("pid")) { // Gulp instance exists so cleanup
         gulp_check_warn();
         return done();
     }
-    return sequence("favicon:generate", "favicon:edit-manifest", "favicon:root", "favicon:delete", "favicon:html", "html:main", "readme:main", "pretty", function(err) {
+    var tasks = [
+    	"favicon:generate",
+    	"favicon:edit-manifest",
+    	"favicon:root",
+    	"favicon:delete",
+    	"favicon:html",
+    	"html:main",
+    	"readme:main",
+    	"pretty"
+    ];
+    tasks.push(function(err) {
         log("Favicons generated.");
         done();
     });
+    return sequence.apply(task, tasks);
 });
 
 // Check for updates on RealFaviconGenerator (think: Apple has just

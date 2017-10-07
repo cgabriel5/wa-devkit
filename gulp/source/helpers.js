@@ -265,7 +265,13 @@ gulp.task("pretty", function(done) {
             .toLowerCase() === ".json");
     };
     // get needed files
-    pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN, bangify(globall(__PATHS_NODE_MODULES_NAME)), bangify(globall(__PATHS_GIT)), __PATHS_NOT_VENDOR], {
+    pump([gulp.src([
+	    	__PATHS_FILES_BEAUTIFY,
+	    	__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
+	    	bangify(globall(__PATHS_NODE_MODULES_NAME)),
+	    	bangify(globall(__PATHS_GIT)),
+    		__PATHS_NOT_VENDOR
+    	], {
             dot: true
         }),
 		sort(opts_sort),
