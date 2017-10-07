@@ -153,7 +153,8 @@ var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
 var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
-var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**.*`;
+// exclude all vendor files from any directory
+var __PATHS_NOT_VENDOR = `!**/vendor/**`;
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
@@ -1281,8 +1282,7 @@ gulp.task("pretty", function(done) {
     };
     // get needed files
     pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN, bangify(globall(__PATHS_NODE_MODULES_NAME)), bangify(globall(__PATHS_GIT)), __PATHS_NOT_VENDOR], {
-            dot: true,
-            cwd: __PATHS_BASE
+            dot: true
         }),
 		sort(opts_sort),
 		beautify(config_jsbeautify),
