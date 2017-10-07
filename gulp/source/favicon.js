@@ -60,7 +60,7 @@ gulp.task("favicon:generate", function(done) {
             scalingAlgorithm: "Mitchell",
             errorOnImageTooSmall: false
         },
-        markupFile: __PATHS_FAVICON_DATA_FILE
+        markupFile: __PATHS_CONFIG_FAVICONDATA
     }, function() {
         done();
     });
@@ -111,7 +111,7 @@ gulp.task("favicon:delete", function(done) {
 gulp.task("favicon:html", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_FAVICON_HTML),
-        real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
+        real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
             .favicon.html_code),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
         debug(task.__wadevkit.debug),
@@ -158,7 +158,7 @@ gulp.task("favicon", function(done) {
 // Check for RealFaviconGenerator updates.
 // @internal
 gulp.task("favicon-updates", function(done) {
-    var currentVersion = JSON.parse(fs.readFileSync(__PATHS_FAVICON_DATA_FILE))
+    var currentVersion = JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
         .version;
     real_favicon.checkForUpdates(currentVersion, function(err) {
         if (err) {
