@@ -27,8 +27,8 @@
 	- [`modernizr.js`](https://modernizr.com/) (built-in support for building a custom build)
 	- [`fastclick.js`](https://labs.ft.com/fastclick/)
 	- [`jquery.js`](https://jquery.com/)
-- Don't need a pre-installed library? Simply [remove](/docs/library.remove.md) what you don't need.
-- Need to add something else? [Add](/docs/library.add.md) what you do need.
+- Don't need a pre-installed library? Simply [remove](/docs/vendor/remove.md) what you don't need.
+- Need to add something else? [Add](/docs/vendor/add.md) what you do need.
 
 ### Dependencies
 
