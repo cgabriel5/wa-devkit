@@ -11,7 +11,7 @@ gulp.task("readme:main", function(done) {
         pump([gulp.src(__PATHS_README_HTML, {
                 cwd: __PATHS_MARKDOWN_PREVIEW
             }),
-            beautify(opts_bt),
+            beautify(config_jsbeautify),
             gulp.dest(__PATHS_MARKDOWN_PREVIEW),
 			debug(task.__wadevkit.debug),
             bs.stream()

@@ -1,0 +1,38 @@
+{
+    "css": {
+        "empty_zero": {
+            "__comment": "0px => 0 (empty_zeros) & 0.0 => 0",
+            "f": "gi",
+            "p": "(\\b0(cm|em|ex|in|mm|pc|pt|px|vh|vw|vmin)|0\\.0[^\\d])",
+            "r": "0"
+        },
+        "lead_zeros": {
+            "__comment": ".23 => 0.23",
+            "f": "g",
+            "p": "([ |,|:])(\\.\\d+)",
+            "r": "$10$2"
+        },
+        "lowercase_hex": {
+            "__comment": "css color lowercase check /#[A-Fa-f0-9]{3,6}/",
+            "f": "gi",
+            "p": "#[a-f0-9]{3,6}"
+        },
+        "prefixes": {
+            "f": "gi",
+            "p": "(\\s+)?\\-(moz|o|webkit|ms|khtml)\\-(?!font-smoothing|osx|print|backface).+?;",
+            "r": ""
+        }
+    },
+    "html": {
+        "post": {
+            "f": "gi",
+            "p": "\\$:post\\{\\$?[\\w\\d-_]+\\}",
+            "r": ""
+        },
+        "pre": {
+            "f": "gi",
+            "p": "\\$:pre\\{\\$?[\\w\\d-_]+\\}",
+            "r": ""
+        }
+    }
+}

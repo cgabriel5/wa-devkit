@@ -18,7 +18,7 @@ gulp.task("watch:main", function(done) {
         proxy: uri({
             "appdir": APPDIR,
             "filepath": INDEX,
-            "https": config_user.https
+            "https": config_gulp_plugins.open.https
         }), // "markdown/preview/README.html"
         port: bs.__ports__[0],
         ui: {

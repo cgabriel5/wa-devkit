@@ -1,0 +1,179 @@
+{
+    "css": {
+        "source": {
+            "files": [
+                "helpers.css",
+                "styles.css"
+            ],
+            "names": {
+                "main": "app.css"
+            }
+        },
+        "vendor": {
+            "files": [
+                "css/vendor/normalize.css/normalize.css",
+                "css/vendor/font-awesome/css/font-awesome.css"
+            ],
+            "names": {
+                "main": "vendor.css"
+            }
+        }
+    },
+    "dist": {
+        "source": {
+            "files": {
+                "css": [
+                    "css/bundles/**/*.*",
+                    "css/vendor/**/*.*",
+                    "css/assets/**/*.*"
+                ],
+                "favicon": [
+                    "favicon/**/*.{jpg,png,ico,svg}"
+                ],
+                "img": [
+                    "img/**/*.*"
+                ],
+                "js": [
+                    "js/bundles/**/*.*",
+                    "js/vendor/**/*.*",
+                    "js/assets/**/*.*"
+                ],
+                "root": [
+                    "apple-touch-icon.png",
+                    "browserconfig.xml",
+                    "manifest.json",
+                    "favicon.ico",
+                    "index.html"
+                ]
+            }
+        },
+        "tasks": [
+            "dist:clean",
+            "dist:favicon",
+            "dist:css",
+            "dist:img",
+            "dist:js",
+            "dist:root"
+        ]
+    },
+    "gulp": {
+        "source": {
+            "files": [
+                "requires.js",
+                "paths.js",
+                "vars.js",
+                "functions.js",
+                "init.js",
+                "task-dist.js",
+                "task-lib.js",
+                "tasks-watch.js",
+                "tasks-html.js",
+                "tasks-css.js",
+                "tasks-js.js",
+                "tasks-images.js",
+                "tasks-markdown.js",
+                "helpers.js",
+                "make.js",
+                "help.js",
+                "favicon.js"
+            ],
+            "names": {
+                "main": "gulpfile.js",
+                "setup": "gulpfile.main.js"
+            }
+        },
+        "tasks": [
+            "css:app",
+            "css:libs",
+            "js:app",
+            "js:libs",
+            "img:main",
+            "html:main",
+            "readme:main"
+        ],
+        "watch": {
+            "css": {
+                "source": [
+                    "source/*.css"
+                ],
+                "vendor": [
+                    "libs/**/*.css"
+                ]
+            },
+            "html": [
+                "i*.html",
+                "head/*.html",
+                "body/*.html"
+            ],
+            "img": [
+                "img/**/*.*"
+            ],
+            "js": {
+                "source": [
+                    "source/*.js",
+                    "source/modules/*.js"
+                ],
+                "vendor": [
+                    "libs/**/*.js"
+                ]
+            }
+        }
+    },
+    "html": {
+        "source": {
+            "files": [
+                "index/top.html",
+                "head/start.html",
+                "head/meta.html",
+                "head/favicon.html",
+                "head/css.html",
+                "head/js.html",
+                "head/end.html",
+                "body/start.html",
+                "body/content.html",
+                "body/js.html",
+                "body/end.html",
+                "index/end.html"
+            ],
+            "names": {
+                "main": "index.html"
+            }
+        }
+    },
+    "img": {
+        "source": {
+            "files": [
+                "**/*.*"
+            ]
+        }
+    },
+    "js": {
+        "source": {
+            "files": [
+                "app/iife/top.js",
+                "app/__init__.js",
+                "modules/libs.js",
+                "modules/globals.js",
+                "modules/utils.js",
+                "modules/$$.js",
+                "modules/core.js",
+                "modules/events.js",
+                "modules/main.js",
+                "app/iife/end.js"
+            ],
+            "names": {
+                "main": "app.js"
+            }
+        },
+        "vendor": {
+            "files": [
+                "js/vendor/modernizr/modernizr.js",
+                "js/vendor/jquery/dist/jquery.js",
+                "js/vendor/fastclick/lib/fastclick.js"
+            ],
+            "names": {
+                "main": "vendor.js"
+            }
+        }
+    }
+}

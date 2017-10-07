@@ -7,8 +7,10 @@
  */
 gulp.task("make", function(done) {
     var task = this;
-    var setup_name = bundle_gulp.source.name_setup;
-    var name = bundle_gulp.source.name;
+    // get concat file names to use
+    var names = bundle_gulp.source.names;
+    var setup_name = names.setup;
+    var main_name = names.main;
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
@@ -28,8 +30,8 @@ gulp.task("make", function(done) {
                 .pipe(insert.append(bottom));
         }),
 		// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-		gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
-		beautify(opts_bt),
+		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
+		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
 	], done);

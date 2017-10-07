@@ -17,7 +17,7 @@ function open_file_in_browser(filepath, port, callback, task) {
                 "appdir": APPDIR,
                 "filepath": filepath,
                 "port": port,
-                "https": config_user.https
+                "https": config_gulp_plugins.open.https
             })
         }),
 		debug(task.__wadevkit.debug)

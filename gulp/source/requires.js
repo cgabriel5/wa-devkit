@@ -52,6 +52,7 @@ var mkdirp = require("mkdirp");
 var git = require("git-state");
 var fe = require("file-exists");
 var json = require("json-file");
+var jsonc = require("comment-json");
 var modernizr = require("modernizr");
 var de = require("directory-exists");
 var mds = require("markdown-styles");

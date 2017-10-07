@@ -32,10 +32,10 @@ gulp.task("css:app", ["css:preapp"], function(done) {
             cwd: __PATHS_CSS_SOURCE
         }),
     	debug(),
-        concat(bundle_css.source.name),
+        concat(bundle_css.source.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(opts_bt),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_CSS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -53,10 +53,10 @@ gulp.task("css:libs", function(done) {
 
     pump([gulp.src(bundle_css.vendor.files),
     	debug(),
-        concat(bundle_css.vendor.name),
+        concat(bundle_css.vendor.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(opts_bt),
+        beautify(config_jsbeautify),
 		gulp.dest(__PATHS_CSS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()

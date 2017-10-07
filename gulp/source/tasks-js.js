@@ -6,8 +6,8 @@ gulp.task("js:app", function(done) {
             cwd: __PATHS_JS_SOURCE
         }),
     	debug(),
-        concat(bundle_js.source.name),
-        beautify(opts_bt),
+        concat(bundle_js.source.names.main),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -25,8 +25,8 @@ gulp.task("js:libs", function(done) {
 
     pump([gulp.src(bundle_js.vendor.files),
     	debug(),
-        concat(bundle_js.vendor.name),
-        beautify(opts_bt),
+        concat(bundle_js.vendor.names.main),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()

@@ -2,7 +2,7 @@
 // @internal
 gulp.task("lib:clean", function(done) {
     var task = this;
-    pump([gulp.src(__PATHS_LIB_HOME, opts),
+    pump([gulp.src(__PATHS_LIB_HOME, opts_remove),
         clean(),
         debug(task.__wadevkit.debug)
     ], done);
@@ -18,12 +18,12 @@ gulp.task("lib:js", function(done) {
     	// filter out all but test files (^test*/i)
 		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
 		debug(),
-        concat(bundle_js.vendor.name),
-        beautify(opts_bt),
+        concat(bundle_js.vendor.names.main),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug),
         uglify(),
-        rename(bundle_js.vendor.minified_name),
+        rename(bundle_js.vendor.names.min),
 		gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug)
     ], done);

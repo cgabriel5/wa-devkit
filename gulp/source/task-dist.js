@@ -2,7 +2,7 @@
 // @internal
 gulp.task("dist:clean", function(done) {
     var task = this;
-    pump([gulp.src(__PATHS_DIST_HOME, opts),
+    pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
         clean(),
         debug(task.__wadevkit.debug)
     ], done);

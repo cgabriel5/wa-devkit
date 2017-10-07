@@ -1,7 +1,7 @@
 // paths::BASES
-var __PATHS_BASE_DOT = ".";
 var __PATHS_DEL = "/";
 var __PATHS_BASE = "./";
+var __PATHS_BASE_DOT = ".";
 var __PATHS_DIRNAME = __dirname;
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
@@ -51,9 +51,15 @@ var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
 
 // paths:CONFIG_FILES
-var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
-var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}modernizr.config.json`;
+// var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
+var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
+var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
+var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
+var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
+var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
+var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
+var __PATHS_CONFIG_REGEXP = `./${__PATHS_HOMEDIR}configs/regexp.json`;
+var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS
 // file where the favicon markups are stored
@@ -77,7 +83,7 @@ var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
 var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
-var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**`;
+var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**.*`;
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;

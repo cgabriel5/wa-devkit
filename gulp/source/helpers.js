@@ -6,7 +6,7 @@
  * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
  */
 gulp.task("modernizr", function(done) {
-    modernizr.build(config_modernizr.data, function(build) {
+    modernizr.build(config_modernizr, function(build) {
         var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
         // create missing folders
         mkdirp(__PATHS_VENDOR_MODERNIZR, function(err) {
@@ -68,7 +68,7 @@ gulp.task("purify", function(done) {
             rejected: true
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
-        beautify(opts_bt),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
         debug(task.__wadevkit.debug)
     ], done);
@@ -144,7 +144,7 @@ gulp.task("tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-                beautify(opts_bt),
+                beautify(config_jsbeautify),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
                 gulp.dest(output),
@@ -270,7 +270,7 @@ gulp.task("pretty", function(done) {
             cwd: __PATHS_BASE
         }),
 		sort(opts_sort),
-		beautify(opts_bt),
+		beautify(config_jsbeautify),
 		gulpif(condition, json_sort({
             "space": json_spaces
         })),

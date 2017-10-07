@@ -54,6 +54,7 @@ var mkdirp = require("mkdirp");
 var git = require("git-state");
 var fe = require("file-exists");
 var json = require("json-file");
+var jsonc = require("comment-json");
 var modernizr = require("modernizr");
 var de = require("directory-exists");
 var mds = require("markdown-styles");
@@ -68,9 +69,9 @@ var bs_autoclose = require("browser-sync-close-hook");
 // @start paths.js ------------------------------------------------------------|
 
 // paths::BASES
-var __PATHS_BASE_DOT = ".";
 var __PATHS_DEL = "/";
 var __PATHS_BASE = "./";
+var __PATHS_BASE_DOT = ".";
 var __PATHS_DIRNAME = __dirname;
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
@@ -120,9 +121,15 @@ var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
 
 // paths:CONFIG_FILES
-var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
-var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}modernizr.config.json`;
+// var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
+var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
+var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
+var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
+var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
+var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
+var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
+var __PATHS_CONFIG_REGEXP = `./${__PATHS_HOMEDIR}configs/regexp.json`;
+var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS
 // file where the favicon markups are stored
@@ -146,7 +153,7 @@ var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
 var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!test*";
-var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**`;
+var __PATHS_NOT_VENDOR = `!${__PATHS_HOMEDIR}*/vendor/**.*`;
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
@@ -156,38 +163,51 @@ var __PATHS_MODERNIZR_FILE = "modernizr.js";
 
 // @start vars.js -------------------------------------------------------------|
 
-// configuration information
-var config_user = require(__PATHS_CONFIG_USER);
-// internal Gulp configuration file
+// dynamic configuration files (load via json-file to modify later)
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
-// modernizr configuration file
-var config_modernizr = json.read(__PATHS_CONFIG_MODERNIZR);
+
+// static configuration files (just need to read file)
+var config_gulp_bundles = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES)
+    .toString());
+var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
+    .toString());
+var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
+    .toString());
+var config_modernizr = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_MODERNIZR)
+    .toString());
+var config_regexp = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_REGEXP)
+    .toString());
+var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
+    .toString());
 
 // plugin options
-var opts = config_user.options;
-var opts_plugins = opts.plugins;
-var opts_bt = opts_plugins.beautify;
-var opts_ap = opts_plugins.autoprefixer;
-var opts_bs = opts_plugins.browsersync;
-var opts_ffp = opts_plugins.find_free_port;
-var json_format = opts_plugins.json_format;
+var opts_ap = config_gulp_plugins.autoprefixer;
+var opts_bs = config_gulp_plugins.browsersync;
+var opts_ffp = config_gulp_plugins.find_free_port;
+var json_format = config_gulp_plugins.json_format;
 var json_spaces = json_format.indent_size;
 
-// config regexp
-var regexp = config_user.regexp;
-var regexp_html = config_user.regexp.html;
-var regexp_css = config_user.regexp.css;
+// HTML/CSS regexp
+var regexp_html = config_regexp.html;
+var regexp_css = config_regexp.css;
 
-// paths/bundles
-var paths = config_user.paths;
-var bundles = config_user.bundles;
-var bundle_html = bundles.html;
-var bundle_css = bundles.css;
-var bundle_js = bundles.js;
-var bundle_img = bundles.img;
-var bundle_gulp = bundles.gulp;
-var bundle_dist = bundles.dist;
-var bundle_lib = bundles.lib;
+// bundles
+var bundle_html = config_gulp_bundles.html;
+var bundle_css = config_gulp_bundles.css;
+var bundle_js = config_gulp_bundles.js;
+var bundle_img = config_gulp_bundles.img;
+var bundle_gulp = config_gulp_bundles.gulp;
+var bundle_dist = config_gulp_bundles.dist;
+var bundle_lib = config_gulp_bundles.lib;
+
+// app directory information
+var INDEX = config_app.index;
+var BASE = config_app.base;
+var ROOTDIR = path.basename(path.resolve(__PATHS_DIRNAME)) + "/";
+var APPDIR = BASE + ROOTDIR;
+
+// internal information
+var APPTYPE = config_internal.get("apptype");
 
 // project utils
 var utils = require(__PATHS_GULP_UTILS);
@@ -199,29 +219,27 @@ var gulp = utils.gulp;
 var uri = utils.uri;
 var browser = utils.browser;
 
-var APPTYPE = config_internal.get("apptype");
-var INDEX = config_user.paths.index;
-var BASE = config_user.paths.base;
-var ROOTDIR = path.basename(path.resolve(__PATHS_DIRNAME)) + "/";
-var APPDIR = BASE + ROOTDIR;
-
 // create browsersync server
 var bs = browser_sync.create(opts_bs.server_name);
 
+// get current branch name
 var branch_name;
+
 // remove options
-var opts = {
+var opts_remove = {
     read: false,
     cwd: __PATHS_BASE
 };
 
-var html_injection_vars = {
-    "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.name,
-    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.name,
-    "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.name,
-    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.name
+// HTML injection bundle paths
+var html_injection_bundle_paths = {
+    "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
+    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
+    "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
+    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
 };
 
+// gulp-sort custom sort function
 var opts_sort = {
     // sort based on dirname alphabetically
     comparator: function(file1, file2) {
@@ -256,7 +274,7 @@ function open_file_in_browser(filepath, port, callback, task) {
                 "appdir": APPDIR,
                 "filepath": filepath,
                 "port": port,
-                "https": config_user.https
+                "https": config_gulp_plugins.open.https
             })
         }),
 		debug(task.__wadevkit.debug)
@@ -533,7 +551,7 @@ gulp.task("default", function(done) {
 // @internal
 gulp.task("dist:clean", function(done) {
     var task = this;
-    pump([gulp.src(__PATHS_DIST_HOME, opts),
+    pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
         clean(),
         debug(task.__wadevkit.debug)
     ], done);
@@ -672,7 +690,7 @@ gulp.task("dist", function(done) {
 // @internal
 gulp.task("lib:clean", function(done) {
     var task = this;
-    pump([gulp.src(__PATHS_LIB_HOME, opts),
+    pump([gulp.src(__PATHS_LIB_HOME, opts_remove),
         clean(),
         debug(task.__wadevkit.debug)
     ], done);
@@ -688,12 +706,12 @@ gulp.task("lib:js", function(done) {
     	// filter out all but test files (^test*/i)
 		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
 		debug(),
-        concat(bundle_js.vendor.name),
-        beautify(opts_bt),
+        concat(bundle_js.vendor.names.main),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug),
         uglify(),
-        rename(bundle_js.vendor.minified_name),
+        rename(bundle_js.vendor.names.min),
 		gulp.dest(__PATHS_LIB_HOME),
         debug(task.__wadevkit.debug)
     ], done);
@@ -748,7 +766,7 @@ gulp.task("watch:main", function(done) {
         proxy: uri({
             "appdir": APPDIR,
             "filepath": INDEX,
-            "https": config_user.https
+            "https": config_gulp_plugins.open.https
         }), // "markdown/preview/README.html"
         port: bs.__ports__[0],
         ui: {
@@ -832,10 +850,10 @@ gulp.task("html:main", function(done) {
             cwd: __PATHS_HTML_SOURCE
         }),
     	debug(),
-		concat(bundles.html.source.name),
-		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_vars)),
-		beautify(opts_bt),
-		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_vars)),
+		concat(bundles.html.source.names.main),
+		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_bundle_paths)),
+		beautify(config_jsbeautify),
+		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_bundle_paths)),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug),
 		bs.stream()
@@ -880,10 +898,10 @@ gulp.task("css:app", ["css:preapp"], function(done) {
             cwd: __PATHS_CSS_SOURCE
         }),
     	debug(),
-        concat(bundle_css.source.name),
+        concat(bundle_css.source.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(opts_bt),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_CSS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -901,10 +919,10 @@ gulp.task("css:libs", function(done) {
 
     pump([gulp.src(bundle_css.vendor.files),
     	debug(),
-        concat(bundle_css.vendor.name),
+        concat(bundle_css.vendor.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(opts_bt),
+        beautify(config_jsbeautify),
 		gulp.dest(__PATHS_CSS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -923,8 +941,8 @@ gulp.task("js:app", function(done) {
             cwd: __PATHS_JS_SOURCE
         }),
     	debug(),
-        concat(bundle_js.source.name),
-        beautify(opts_bt),
+        concat(bundle_js.source.names.main),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -942,8 +960,8 @@ gulp.task("js:libs", function(done) {
 
     pump([gulp.src(bundle_js.vendor.files),
     	debug(),
-        concat(bundle_js.vendor.name),
-        beautify(opts_bt),
+        concat(bundle_js.vendor.names.main),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
     	debug(task.__wadevkit.debug),
         bs.stream()
@@ -983,7 +1001,7 @@ gulp.task("readme:main", function(done) {
         pump([gulp.src(__PATHS_README_HTML, {
                 cwd: __PATHS_MARKDOWN_PREVIEW
             }),
-            beautify(opts_bt),
+            beautify(config_jsbeautify),
             gulp.dest(__PATHS_MARKDOWN_PREVIEW),
 			debug(task.__wadevkit.debug),
             bs.stream()
@@ -1003,7 +1021,7 @@ gulp.task("readme:main", function(done) {
  * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
  */
 gulp.task("modernizr", function(done) {
-    modernizr.build(config_modernizr.data, function(build) {
+    modernizr.build(config_modernizr, function(build) {
         var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
         // create missing folders
         mkdirp(__PATHS_VENDOR_MODERNIZR, function(err) {
@@ -1065,7 +1083,7 @@ gulp.task("purify", function(done) {
             rejected: true
         }),
         gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
-        beautify(opts_bt),
+        beautify(config_jsbeautify),
         gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
         debug(task.__wadevkit.debug)
     ], done);
@@ -1141,7 +1159,7 @@ gulp.task("tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-                beautify(opts_bt),
+                beautify(config_jsbeautify),
                 // if a new name was provided, rename the file
                 gulpif(new_name !== undefined, rename(new_name + ".html")),
                 gulp.dest(output),
@@ -1267,7 +1285,7 @@ gulp.task("pretty", function(done) {
             cwd: __PATHS_BASE
         }),
 		sort(opts_sort),
-		beautify(opts_bt),
+		beautify(config_jsbeautify),
 		gulpif(condition, json_sort({
             "space": json_spaces
         })),
@@ -1515,8 +1533,10 @@ gulp.task("dependency", function(done) {
  */
 gulp.task("make", function(done) {
     var task = this;
-    var setup_name = bundle_gulp.source.name_setup;
-    var name = bundle_gulp.source.name;
+    // get concat file names to use
+    var names = bundle_gulp.source.names;
+    var setup_name = names.setup;
+    var main_name = names.main;
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
@@ -1536,8 +1556,8 @@ gulp.task("make", function(done) {
                 .pipe(insert.append(bottom));
         }),
 		// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-		gulpif((fe.sync(__PATHS_BASE + name)), concat(name), concat(setup_name)),
-		beautify(opts_bt),
+		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
+		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
 	], done);
