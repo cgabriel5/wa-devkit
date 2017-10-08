@@ -548,7 +548,7 @@ gulp.task("default", function(done) {
 
 // @end   init.js -------------------------------------------------------------|
 
-// @start task-dist.js --------------------------------------------------------|
+// @start dist.js -------------------------------------------------------------|
 
 // remove old dist / folder
 // @internal
@@ -685,9 +685,9 @@ gulp.task("dist", function(done) {
     return sequence.apply(task, tasks);
 });
 
-// @end   task-dist.js --------------------------------------------------------|
+// @end   dist.js -------------------------------------------------------------|
 
-// @start task-lib.js ---------------------------------------------------------|
+// @start lib.js --------------------------------------------------------------|
 
 // remove old lib/ folder
 // @internal
@@ -745,9 +745,9 @@ gulp.task("lib", function(done) {
     return sequence.apply(task, tasks);
 });
 
-// @end   task-lib.js ---------------------------------------------------------|
+// @end   lib.js --------------------------------------------------------------|
 
-// @start tasks-watch.js ------------------------------------------------------|
+// @start watch.js ------------------------------------------------------------|
 
 // watch for files changes
 // @internal
@@ -839,9 +839,9 @@ gulp.task("watch:main", function(done) {
     });
 });
 
-// @end   tasks-watch.js ------------------------------------------------------|
+// @end   watch.js ------------------------------------------------------------|
 
-// @start tasks-html.js -------------------------------------------------------|
+// @start html.js -------------------------------------------------------------|
 
 // init HTML files + minify
 // @internal
@@ -864,9 +864,9 @@ gulp.task("html:main", function(done) {
     ], done);
 });
 
-// @end   tasks-html.js -------------------------------------------------------|
+// @end   html.js -------------------------------------------------------------|
 
-// @start tasks-css.js --------------------------------------------------------|
+// @start css.js --------------------------------------------------------------|
 
 // preform custom regexp replacements
 // @internal
@@ -933,9 +933,9 @@ gulp.task("css:vendor", function(done) {
     ], done);
 });
 
-// @end   tasks-css.js --------------------------------------------------------|
+// @end   css.js --------------------------------------------------------------|
 
-// @start tasks-js.js ---------------------------------------------------------|
+// @start js.js ---------------------------------------------------------------|
 
 // build app.js + minify + beautify
 // @internal
@@ -972,9 +972,9 @@ gulp.task("js:vendor", function(done) {
     ], done);
 });
 
-// @end   tasks-js.js ---------------------------------------------------------|
+// @end   js.js ---------------------------------------------------------------|
 
-// @start tasks-images.js -----------------------------------------------------|
+// @start images.js -----------------------------------------------------------|
 
 // just trigger a browser-sync stream
 // @internal
@@ -988,9 +988,9 @@ gulp.task("img:main", function(done) {
     ], done);
 });
 
-// @end   tasks-images.js -----------------------------------------------------|
+// @end   images.js -----------------------------------------------------------|
 
-// @start tasks-markdown.js ---------------------------------------------------|
+// @start markdown.js ---------------------------------------------------------|
 
 // markdown to html (with github style/layout)
 // @internal
@@ -1013,9 +1013,9 @@ gulp.task("readme:main", function(done) {
     });
 });
 
-// @end   tasks-markdown.js ---------------------------------------------------|
+// @end   markdown.js ---------------------------------------------------------|
 
-// @start helpers.js ----------------------------------------------------------|
+// @start modernizr.js --------------------------------------------------------|
 
 /**
  * Build Modernizr file.
@@ -1038,6 +1038,10 @@ gulp.task("modernizr", function(done) {
         });
     });
 });
+
+// @end   modernizr.js --------------------------------------------------------|
+
+// @start purify.js -----------------------------------------------------------|
 
 /**
  * Purge potentially unused CSS style definitions.
@@ -1081,17 +1085,21 @@ gulp.task("purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(),
-        purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
+		debug(),
+		purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
-        gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
-        beautify(config_jsbeautify),
-        gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
-        debug(task.__wadevkit.debug)
-    ], done);
+		gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
+		beautify(config_jsbeautify),
+		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
+		debug(task.__wadevkit.debug)
+	], done);
 });
+
+// @end   purify.js -----------------------------------------------------------|
+
+// @start tohtml.js -----------------------------------------------------------|
 
 /**
  * Converts MarkDown (.md) file to its HTML counterpart (with GitHub style/layout).
@@ -1163,12 +1171,12 @@ gulp.task("tohtml", function(done) {
             pump([gulp.src(new_file_path, {
                     cwd: __PATHS_BASE
                 }),
-                beautify(config_jsbeautify),
-                // if a new name was provided, rename the file
-                gulpif(new_name !== undefined, rename(new_name + ".html")),
-                gulp.dest(output),
-                debug(task.__wadevkit.debug)
-            ], function() {
+				beautify(config_jsbeautify),
+				// if a new name was provided, rename the file
+				gulpif(new_name !== undefined, rename(new_name + ".html")),
+				gulp.dest(output),
+				debug(task.__wadevkit.debug)
+			], function() {
                 // if a new name was provided delete the file with the old input file
                 if (new_name) del([new_file_path]);
                 done();
@@ -1176,6 +1184,10 @@ gulp.task("tohtml", function(done) {
         });
     });
 });
+
+// @end   tohtml.js -----------------------------------------------------------|
+
+// @start open.js -------------------------------------------------------------|
 
 /**
  * Opens provided file in browser.
@@ -1231,6 +1243,10 @@ gulp.task("open", function(done) {
     }
 });
 
+// @end   open.js -------------------------------------------------------------|
+
+// @start instance.js ---------------------------------------------------------|
+
 /**
  * Print whether there is an active Gulp instance.
  *
@@ -1263,6 +1279,10 @@ gulp.task("ports", function(done) {
     log(chalk.green("(ui)"), ports.ui);
     done();
 });
+
+// @end   instance.js ---------------------------------------------------------|
+
+// @start pretty.js -----------------------------------------------------------|
 
 /**
  * Beautify all HTML, JS, CSS, and JSON project files. Ignores ./node_modules/.
@@ -1303,6 +1323,10 @@ gulp.task("pretty", function(done) {
 		gulp.dest(__PATHS_BASE)
     ], done);
 });
+
+// @end   pretty.js -----------------------------------------------------------|
+
+// @start files.js ------------------------------------------------------------|
 
 /**
  * List project files.
@@ -1406,6 +1430,10 @@ gulp.task("files", function(done) {
     });
 });
 
+// @end   files.js ------------------------------------------------------------|
+
+// @start dependency.js -------------------------------------------------------|
+
 /**
  * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS vendor folder.
  *
@@ -1493,43 +1521,7 @@ gulp.task("dependency", function(done) {
         });
 });
 
-// // Clear internal configuration keys.
-// gulp.task("clear", function(done) {
-//     // run yargs
-//     var _args = yargs.usage("Usage: $0 --names [string]")
-//         .option("names", {
-//             alias: "n",
-//             demandOption: true,
-//             describe: "Name(s) of files to clear.",
-//             type: "string"
-//         })
-//         .coerce("names", function(value) {
-//             return value.replace("gulpstatus", "gulppid")
-//                 .split(" ");
-//         })
-//         .example("$0 --names=\"gulpstatus gulpports\"", "Clear pid and ports keys.")
-//         .example("$0 --names=\"gulpstatus\"", "Clear pid key.")
-//         .example("$0 --names gulpports", "Clear ports key.")
-//         .argv;
-//     // get provided parameters
-//     var names = _args.n || _args.names;
-//     // loop over provided arguments array
-//     for (var i = 0, l = names.length; i < l; i++) {
-//         var key = names[i].replace("gulp", "");
-//         // using the flag "w+" will create the file if it does not exists. if
-//         // it does exists it will truncate the current file. in effect clearing
-//         // if out. which is what is needed.
-//         config_internal.set(key, null);
-//         // reset name if needed
-//         if (key === "pid") key = "status";
-//         log(key, "cleared.");
-//     }
-//     config_internal.write(function() {
-//         done();
-//     }, null, json_format);
-// });
-
-// @end   helpers.js ----------------------------------------------------------|
+// @end   dependency.js -------------------------------------------------------|
 
 // @start make.js -------------------------------------------------------------|
 
