@@ -85,9 +85,9 @@
         },
         "tasks": [
             "css:app",
-            "css:libs",
+            "css:vendor",
             "js:app",
-            "js:libs",
+            "js:vendor",
             "img:main",
             "html:main",
             "readme:main"

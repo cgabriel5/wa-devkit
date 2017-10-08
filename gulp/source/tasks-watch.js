@@ -29,45 +29,46 @@ gulp.task("watch:main", function(done) {
 
     }, function() {
 
-        // the gulp watchers
+        // gulp watcher paths
+        var watch_paths = bundle_gulp.watch;
 
         // watch for any changes to HTML files
-        gulp.watch(bundles.gulp.watch.html, {
+        gulp.watch(watch_paths.html, {
             cwd: __PATHS_HTML_SOURCE
         }, function() {
             return sequence("html:main");
         });
 
         // watch for any changes to CSS Source files
-        gulp.watch(bundles.gulp.watch.css.source, {
+        gulp.watch(watch_paths.css.source, {
             cwd: __PATHS_CSS_SOURCE
         }, function() {
             return sequence("css:app");
         });
 
         // watch for any changes to CSS Lib files
-        gulp.watch(bundles.gulp.watch.css.vendor, {
+        gulp.watch(watch_paths.css.vendor, {
             cwd: __PATHS_CSS_VENDOR
         }, function() {
-            return sequence("css:libs");
+            return sequence("css:vendor");
         });
 
         // watch for any changes to JS Source files
-        gulp.watch(bundles.gulp.watch.js.source, {
+        gulp.watch(watch_paths.js.source, {
             cwd: __PATHS_JS_SOURCE
         }, function() {
             return sequence("js:app");
         });
 
         // watch for any changes to JS Lib files
-        gulp.watch(bundles.gulp.watch.js.vendor, {
+        gulp.watch(watch_paths.js.vendor, {
             cwd: __PATHS_JS_VENDOR
         }, function() {
-            return sequence("js:libs");
+            return sequence("js:vendor");
         });
 
         // watch for any changes to IMG files
-        gulp.watch(bundles.gulp.watch.img, {
+        gulp.watch(watch_paths.img, {
             cwd: __PATHS_IMG_SOURCE
         }, function() {
             return sequence("img:main");

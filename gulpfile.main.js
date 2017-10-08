@@ -248,10 +248,10 @@ var opts_sort = {
 
 // HTML injection variable object
 var html_injection = {
-    "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
-    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
-    "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
-    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
+    "css_bundle_app": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
+    "css_bundle_vendor": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
+    "js_bundle_app": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
+    "js_bundle_vendor": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
 };
 
 // @end   injection.js --------------------------------------------------------|
@@ -780,45 +780,46 @@ gulp.task("watch:main", function(done) {
 
     }, function() {
 
-        // the gulp watchers
+        // gulp watcher paths
+        var watch_paths = bundle_gulp.watch;
 
         // watch for any changes to HTML files
-        gulp.watch(bundles.gulp.watch.html, {
+        gulp.watch(watch_paths.html, {
             cwd: __PATHS_HTML_SOURCE
         }, function() {
             return sequence("html:main");
         });
 
         // watch for any changes to CSS Source files
-        gulp.watch(bundles.gulp.watch.css.source, {
+        gulp.watch(watch_paths.css.source, {
             cwd: __PATHS_CSS_SOURCE
         }, function() {
             return sequence("css:app");
         });
 
         // watch for any changes to CSS Lib files
-        gulp.watch(bundles.gulp.watch.css.vendor, {
+        gulp.watch(watch_paths.css.vendor, {
             cwd: __PATHS_CSS_VENDOR
         }, function() {
-            return sequence("css:libs");
+            return sequence("css:vendor");
         });
 
         // watch for any changes to JS Source files
-        gulp.watch(bundles.gulp.watch.js.source, {
+        gulp.watch(watch_paths.js.source, {
             cwd: __PATHS_JS_SOURCE
         }, function() {
             return sequence("js:app");
         });
 
         // watch for any changes to JS Lib files
-        gulp.watch(bundles.gulp.watch.js.vendor, {
+        gulp.watch(watch_paths.js.vendor, {
             cwd: __PATHS_JS_VENDOR
         }, function() {
-            return sequence("js:libs");
+            return sequence("js:vendor");
         });
 
         // watch for any changes to IMG files
-        gulp.watch(bundles.gulp.watch.img, {
+        gulp.watch(watch_paths.img, {
             cwd: __PATHS_IMG_SOURCE
         }, function() {
             return sequence("img:main");
@@ -849,11 +850,11 @@ gulp.task("html:main", function(done) {
     // RegExp used for $:pre/post{filename/$var} HTML file-content/$variable injection
     var r_pre = regexp_html.pre;
     var r_post = regexp_html.post;
-    pump([gulp.src(bundles.html.source.files, {
+    pump([gulp.src(bundle_html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
     	debug(),
-		concat(bundles.html.source.names.main),
+		concat(bundle_html.source.names.main),
 		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection)),
 		beautify(config_jsbeautify),
 		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection)),
@@ -911,14 +912,14 @@ gulp.task("css:app", ["css:preapp"], function(done) {
     ], done);
 });
 
-// build libs.css + minify + beautify
+// build vendor bundle + minify + beautify
 // @internal
-gulp.task("css:libs", function(done) {
+gulp.task("css:vendor", function(done) {
     var task = this;
 
     // NOTE: absolute vendor library file paths should be used.
-    // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.css.vendor.files array.
+    // The paths should be supplied in ./configs/bundles.json
+    // within the css.vendor.files array.
 
     pump([gulp.src(bundle_css.vendor.files),
     	debug(),
@@ -952,14 +953,14 @@ gulp.task("js:app", function(done) {
     ], done);
 });
 
-// build libs.js + minify + beautify
+// build vendor bundle + minify + beautify
 // @internal
-gulp.task("js:libs", function(done) {
+gulp.task("js:vendor", function(done) {
     var task = this;
 
     // NOTE: absolute vendor library file paths should be used.
-    // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.js.vendor.files array.
+    // The paths should be supplied in ./configs/bundles.json
+    // within the js.vendor.files array.
 
     pump([gulp.src(bundle_js.vendor.files),
     	debug(),
@@ -1406,7 +1407,7 @@ gulp.task("files", function(done) {
 });
 
 /**
- * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS library folder.
+ * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS vendor folder.
  *
  * Options
  *
@@ -1416,9 +1417,9 @@ gulp.task("files", function(done) {
  *
  * Usage
  *
- * $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS libs directory.
- * $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS libs directory.
- * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS libs directory.
+ * $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS vendor directory.
+ * $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS vendor directory.
+ * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS vendor directory.
  */
 gulp.task("dependency", function(done) {
     var task = this;

@@ -388,7 +388,7 @@ gulp.task("files", function(done) {
 });
 
 /**
- * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS library folder.
+ * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS vendor folder.
  *
  * Options
  *
@@ -398,9 +398,9 @@ gulp.task("files", function(done) {
  *
  * Usage
  *
- * $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS libs directory.
- * $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS libs directory.
- * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS libs directory.
+ * $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS vendor directory.
+ * $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS vendor directory.
+ * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS vendor directory.
  */
 gulp.task("dependency", function(done) {
     var task = this;

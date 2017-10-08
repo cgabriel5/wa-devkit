@@ -42,14 +42,14 @@ gulp.task("css:app", ["css:preapp"], function(done) {
     ], done);
 });
 
-// build libs.css + minify + beautify
+// build vendor bundle + minify + beautify
 // @internal
-gulp.task("css:libs", function(done) {
+gulp.task("css:vendor", function(done) {
     var task = this;
 
     // NOTE: absolute vendor library file paths should be used.
-    // The paths should be supplied in gulp/assets/config/user.json
-    // within the bundles.css.vendor.files array.
+    // The paths should be supplied in ./configs/bundles.json
+    // within the css.vendor.files array.
 
     pump([gulp.src(bundle_css.vendor.files),
     	debug(),
