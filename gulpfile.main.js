@@ -230,14 +230,6 @@ var opts_remove = {
     cwd: __PATHS_BASE
 };
 
-// HTML injection bundle paths
-var html_injection_bundle_paths = {
-    "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
-    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
-    "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
-    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
-};
-
 // gulp-sort custom sort function
 var opts_sort = {
     // sort based on dirname alphabetically
@@ -251,6 +243,18 @@ var opts_sort = {
 };
 
 // @end   vars.js -------------------------------------------------------------|
+
+// @start injection.js --------------------------------------------------------|
+
+// HTML injection variable object
+var html_injection = {
+    "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
+    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
+    "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
+    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
+};
+
+// @end   injection.js --------------------------------------------------------|
 
 // @start functions.js --------------------------------------------------------|
 
@@ -850,9 +854,9 @@ gulp.task("html:main", function(done) {
         }),
     	debug(),
 		concat(bundles.html.source.names.main),
-		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_bundle_paths)),
+		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection)),
 		beautify(config_jsbeautify),
-		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_bundle_paths)),
+		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection)),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug),
 		bs.stream()

@@ -10,9 +10,9 @@ gulp.task("html:main", function(done) {
         }),
     	debug(),
 		concat(bundles.html.source.names.main),
-		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection_bundle_paths)),
+		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection)),
 		beautify(config_jsbeautify),
-		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection_bundle_paths)),
+		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection)),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug),
 		bs.stream()

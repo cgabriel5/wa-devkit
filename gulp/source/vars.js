@@ -66,14 +66,6 @@ var opts_remove = {
     cwd: __PATHS_BASE
 };
 
-// HTML injection bundle paths
-var html_injection_bundle_paths = {
-    "css_app_bundle": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
-    "css_libs_bundle": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
-    "js_app_bundle": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
-    "js_libs_bundle": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
-};
-
 // gulp-sort custom sort function
 var opts_sort = {
     // sort based on dirname alphabetically

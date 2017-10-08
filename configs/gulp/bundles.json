@@ -62,6 +62,7 @@
                 "requires.js",
                 "paths.js",
                 "vars.js",
+                "injection.js",
                 "functions.js",
                 "init.js",
                 "task-dist.js",
