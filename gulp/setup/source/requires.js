@@ -1,5 +1,6 @@
 "use strict";
 
+var fs = require("fs");
 var path = require("path");
 
 var pump = require("pump");
@@ -7,6 +8,7 @@ var chalk = require("chalk");
 var prompt = require("prompt");
 var json = require("json-file");
 var git = require("simple-git")();
+var jsonc = require("comment-json");
 var mds = require("markdown-styles");
 var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");

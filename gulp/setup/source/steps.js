@@ -1,9 +1,20 @@
 // initialization step
 // @internal
 gulp.task("init:clear-js", function(done) {
+
+    // no need to change any as the project
+    // is defaulted to this type anyway. just
+    // complete the task.
+    if (__data__.apptype === "webapp") return done();
+
+    // only when apptype is library:
+    // replace ./js/source/
+    // add ./js/vendor/__init__.js
+    // ./js/bundles/ will get replaced on setup
+
     var task = this;
     // pick the js/ directory to use
-    pump([gulp.src(__PATHS_JS_HOME, {
+    pump([gulp.src(__PATHS_JS_SOURCE, {
             dot: true,
             cwd: __PATHS_BASE
         }),
@@ -15,11 +26,17 @@ gulp.task("init:clear-js", function(done) {
 // initialization step
 // @internal
 gulp.task("init:pick-js-option", function(done) {
+
+    // no need to change any as the project
+    // is defaulted to this type anyway. just
+    // complete the task.
+    if (__data__.apptype === "webapp") return done();
+
     var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
             dot: true,
-            cwd: __PATHS_BASE
+            cwd: __PATHS_BASE_DOT
         }),
         gulp.dest(__PATHS_JS_HOME),
     	debug(task.__wadevkit.debug)

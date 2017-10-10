@@ -1,10 +1,12 @@
 // paths::BASES
 var __PATHS_BASE = "./";
+var __PATHS_BASE_DOT = ".";
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
 
 // paths:JS
-var __PATHS_JS_HOME = "js/";
+var __PATHS_JS_HOME = `./${__PATHS_HOMEDIR}js/`;
+var __PATHS_JS_SOURCE = `./${__PATHS_HOMEDIR}js/source/`;
 var __PATHS_JS_OPTIONS_DYNAMIC;
 
 // paths:GULP
@@ -25,9 +27,12 @@ var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
 
 // paths:CONFIG_FILES
-var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
-var __PATHS_PKG = `./${__PATHS_HOMEDIR}package.json`;
+var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
+var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
+var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
+var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
+var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
+var __PATHS_CONFIG_PKG = `./${__PATHS_HOMEDIR}package.json`;
 
 // paths:OTHER
 var __PATHS_README = "README.md";

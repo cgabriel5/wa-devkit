@@ -2,6 +2,7 @@
 
 "use strict";
 
+var fs = require("fs");
 var path = require("path");
 
 var pump = require("pump");
@@ -9,6 +10,7 @@ var chalk = require("chalk");
 var prompt = require("prompt");
 var json = require("json-file");
 var git = require("simple-git")();
+var jsonc = require("comment-json");
 var mds = require("markdown-styles");
 var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");
@@ -35,11 +37,13 @@ var beautify = require("gulp-jsbeautifier");
 
 // paths::BASES
 var __PATHS_BASE = "./";
+var __PATHS_BASE_DOT = ".";
 var __PATHS_CWD = process.cwd();
 var __PATHS_HOMEDIR = ""; // "assets/";
 
 // paths:JS
-var __PATHS_JS_HOME = "js/";
+var __PATHS_JS_HOME = `./${__PATHS_HOMEDIR}js/`;
+var __PATHS_JS_SOURCE = `./${__PATHS_HOMEDIR}js/source/`;
 var __PATHS_JS_OPTIONS_DYNAMIC;
 
 // paths:GULP
@@ -60,9 +64,12 @@ var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
 var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
 
 // paths:CONFIG_FILES
-var __PATHS_CONFIG_USER = `./${__PATHS_HOMEDIR}gulp/assets/config/user.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}gulp/assets/config/.hidden-internal.json`;
-var __PATHS_PKG = `./${__PATHS_HOMEDIR}package.json`;
+var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
+var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
+var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
+var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
+var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
+var __PATHS_CONFIG_PKG = `./${__PATHS_HOMEDIR}package.json`;
 
 // paths:OTHER
 var __PATHS_README = "README.md";
@@ -77,17 +84,21 @@ var __PATHS_GIT = ".git/";
 
 // @start vars.js -------------------------------------------------------------|
 
-// configuration information
-var config_user = json.read(__PATHS_CONFIG_USER);
+// dynamic configuration files (load via json-file to modify later)
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
-var pkg = json.read(__PATHS_PKG);
+var config_pkg = json.read(__PATHS_CONFIG_PKG);
+var config_gulp_bundles = json.read(__PATHS_CONFIG_GULP_BUNDLES);
+
+// static configuration files (just need to read file)
+var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
+    .toString());
+var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
+    .toString());
+var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
+    .toString());
 
 // plugin options
-var opts = config_user.get("options");
-var opts_plugins = opts.plugins;
-var opts_bt = opts_plugins.beautify;
-var json_format = opts_plugins.json_format;
-var json_spaces = json_format.indent_size;
+var json_spaces = config_gulp_plugins.json_format.indent_size;
 
 var questions = require(__PATHS_GULP_SETUP_QUESTIONS)
     .questions;
@@ -102,9 +113,8 @@ var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
 
-var APPTYPE; // application-type
 var __data__ = {}; // placeholder fillers
-var INDEX = config_user.get("paths.index");
+var INDEX = config_app.index;
 
 var opts_sort = {
     // sort based on dirname alphabetically
@@ -142,7 +152,7 @@ gulp.task("pretty", function(done) {
             cwd: __PATHS_BASE
         }),
 		sort(opts_sort),
-		beautify(opts_bt),
+		beautify(config_jsbeautify),
 		gulpif(condition, json_sort({
             "space": json_spaces
         })),
@@ -191,51 +201,51 @@ gulp.task("init", function(done) {
         // set the application type
         config_internal.set("apptype", type);
         // pick js bundle based on provided project type + reset the config js bundle
-        config_user.data.bundles.js = jsconfigs[type];
+        config_gulp_bundles.data.js = jsconfigs[type];
 
         // remove distribution configuration if type is library
         // as the project is defaulted for a webapp project.
         if (type === "library") {
             // remove the distribution configuration
-            delete config_user.data.bundles.dist;
+            delete config_gulp_bundles.data.dist;
             // add the library configuration
-            config_user.data.bundles.lib = jsconfigs.lib;
+            config_gulp_bundles.data.lib = jsconfigs.lib;
         } // else leave as-is for webapp project
 
         // set package.json properties
-        pkg.set("name", __data__.name);
-        pkg.set("version", __data__.version);
-        pkg.set("description", __data__.description);
-        pkg.set("author", format(templates.author, __data__));
-        pkg.set("repository", {
+        config_pkg.set("name", __data__.name);
+        config_pkg.set("version", __data__.version);
+        config_pkg.set("description", __data__.description);
+        config_pkg.set("author", format(templates.author, __data__));
+        config_pkg.set("repository", {
             type: "git",
             url: format(templates["repository.url"], __data__)
         });
-        pkg.set("bugs", {
+        config_pkg.set("bugs", {
             url: format(templates["bugs.url"], __data__)
         });
-        pkg.set("homepage", format(templates.homepage, __data__));
-        pkg.set("private", __data__.private);
+        config_pkg.set("homepage", format(templates.homepage, __data__));
+        config_pkg.set("private", __data__.private);
 
         // sort keys
-        config_user.data = alphabetize(config_user.data);
+        config_gulp_bundles.data = alphabetize(config_gulp_bundles.data);
         config_internal.data = alphabetize(config_internal.data);
-        pkg.data = alphabetize(pkg.data);
+        config_pkg.data = alphabetize(config_pkg.data);
 
         // saves changes to files
-        config_user.write(function() {
+        config_gulp_bundles.write(function() {
             config_internal.write(function() {
-                pkg.write(function() {
+                config_pkg.write(function() {
                     // run initialization steps
                     var tasks = [
-						"init:clear-js",
-						"init:pick-js-option",
-						"init:fill-placeholders",
-						"init:setup-readme",
-						"init:rename-gulpfile",
-						"init:remove-setup",
-						"init:pretty",
-						"init:git"
+					"init:clear-js",
+					"init:pick-js-option",
+					"init:fill-placeholders",
+					"init:setup-readme",
+					"init:rename-gulpfile",
+					"init:remove-setup",
+					"init:pretty",
+					"init:git"
                     ];
                     tasks.push(function() {
                         var message = `Project initialized (${type})`;
@@ -259,9 +269,20 @@ gulp.task("init", function(done) {
 // initialization step
 // @internal
 gulp.task("init:clear-js", function(done) {
+
+    // no need to change any as the project
+    // is defaulted to this type anyway. just
+    // complete the task.
+    if (__data__.apptype === "webapp") return done();
+
+    // only when apptype is library:
+    // replace ./js/source/
+    // add ./js/vendor/__init__.js
+    // ./js/bundles/ will get replaced on setup
+
     var task = this;
     // pick the js/ directory to use
-    pump([gulp.src(__PATHS_JS_HOME, {
+    pump([gulp.src(__PATHS_JS_SOURCE, {
             dot: true,
             cwd: __PATHS_BASE
         }),
@@ -273,11 +294,17 @@ gulp.task("init:clear-js", function(done) {
 // initialization step
 // @internal
 gulp.task("init:pick-js-option", function(done) {
+
+    // no need to change any as the project
+    // is defaulted to this type anyway. just
+    // complete the task.
+    if (__data__.apptype === "webapp") return done();
+
     var task = this;
     // pick the js/ directory to use
     pump([gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
             dot: true,
-            cwd: __PATHS_BASE
+            cwd: __PATHS_BASE_DOT
         }),
         gulp.dest(__PATHS_JS_HOME),
     	debug(task.__wadevkit.debug)
@@ -412,7 +439,7 @@ gulp.task("make", function(done) {
                 .pipe(insert.append(bottom));
         }),
 		concat(__PATHS_GULP_FILE_SETUP),
-		beautify(opts_bt),
+		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
 	], done);

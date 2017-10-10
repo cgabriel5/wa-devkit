@@ -13,7 +13,7 @@ gulp.task("pretty", function(done) {
             cwd: __PATHS_BASE
         }),
 		sort(opts_sort),
-		beautify(opts_bt),
+		beautify(config_jsbeautify),
 		gulpif(condition, json_sort({
             "space": json_spaces
         })),

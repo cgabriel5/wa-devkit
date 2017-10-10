@@ -1,14 +1,18 @@
-// configuration information
-var config_user = json.read(__PATHS_CONFIG_USER);
+// dynamic configuration files (load via json-file to modify later)
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
-var pkg = json.read(__PATHS_PKG);
+var config_pkg = json.read(__PATHS_CONFIG_PKG);
+var config_gulp_bundles = json.read(__PATHS_CONFIG_GULP_BUNDLES);
+
+// static configuration files (just need to read file)
+var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
+    .toString());
+var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
+    .toString());
+var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
+    .toString());
 
 // plugin options
-var opts = config_user.get("options");
-var opts_plugins = opts.plugins;
-var opts_bt = opts_plugins.beautify;
-var json_format = opts_plugins.json_format;
-var json_spaces = json_format.indent_size;
+var json_spaces = config_gulp_plugins.json_format.indent_size;
 
 var questions = require(__PATHS_GULP_SETUP_QUESTIONS)
     .questions;
@@ -23,9 +27,8 @@ var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
 
-var APPTYPE; // application-type
 var __data__ = {}; // placeholder fillers
-var INDEX = config_user.get("paths.index");
+var INDEX = config_app.index;
 
 var opts_sort = {
     // sort based on dirname alphabetically

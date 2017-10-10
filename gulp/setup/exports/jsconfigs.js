@@ -4,20 +4,24 @@ exports.jsconfigs = {
     "library": {
         "source": {
             "files": [
-	                "lib/iife.top.js",
-	                "lib/library.top.js",
+	                "lib/iife/top.js",
+	                "lib/library/top.js",
 	                "modules/fn.helpers.js",
 	                "modules/fn.source.js",
 	                "modules/fn.core.js",
 	                "modules/constructor.js",
-	                "lib/library.end.js",
+	                "lib/library/end.js",
 	                "modules/globals.js",
 	                "modules/bottom.js",
-	                "lib/iife.end.js",
+	                "lib/iife/end.js",
 	                "test/main.js"
                 ],
             "names": {
-                "main": "app.js"
+                "main": "app.js",
+                "libs": {
+                    "main": "libs.js",
+                    "min": "lib.min.js"
+                }
             }
         },
         "vendor": {
@@ -28,8 +32,7 @@ exports.jsconfigs = {
 	                "js/vendor/__init__.js"
                 ],
             "names": {
-                "main": "libs.js",
-                "min": "lib.min.js"
+                "main": "vendor.js"
             }
         }
     },
