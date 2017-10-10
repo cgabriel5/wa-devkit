@@ -80,9 +80,10 @@ var __PATHS_ALLFILES = "**/*.*";
 var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
 var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 var __PATHS_FILES_MIN = "**/*.min.*";
-var __PATHS_FILES_TEST = "!test*";
+// exclude all test files from any directory
+var __PATHS_FILES_TEST = "!**/test/**";
 // exclude all vendor files from any directory
-var __PATHS_NOT_VENDOR = `!**/vendor/**`;
+var __PATHS_NOT_VENDOR = "!**/vendor/**";
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
