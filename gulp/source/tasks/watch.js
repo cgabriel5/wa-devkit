@@ -78,7 +78,7 @@ gulp.task("watch:main", function(done) {
         gulp.watch([__PATHS_README], {
             cwd: __PATHS_BASE
         }, function() {
-            return sequence("readme:main", function() {
+            return sequence("tohtml", function() {
                 bs.reload();
             });
         });

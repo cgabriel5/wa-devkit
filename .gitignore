@@ -422,3 +422,4 @@ $RECYCLE.BIN/
 build/
 dist/
 .hidden*
+markdown/previews/

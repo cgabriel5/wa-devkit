@@ -47,8 +47,7 @@ var __PATHS_GULP_UTILS = `./${__PATHS_HOMEDIR}gulp/assets/utils/utils.js`;
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 
 // paths:MARKDOWN
-var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
-var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
+var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
 
 // paths:CONFIG_FILES
 var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;

@@ -72,7 +72,6 @@
                 "tasks/css.js",
                 "tasks/js.js",
                 "tasks/images.js",
-                "tasks/markdown.js",
                 "helpers/modernizr.js",
                 "helpers/purify.js",
                 "helpers/tohtml.js",
@@ -97,7 +96,7 @@
             "js:vendor",
             "img:main",
             "html:main",
-            "readme:main"
+            "tohtml"
         ],
         "watch": {
             "css": {

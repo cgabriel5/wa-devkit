@@ -141,7 +141,7 @@ gulp.task("favicon", function(done) {
     	"favicon:delete",
     	"favicon:html",
     	"html:main",
-    	"readme:main",
+    	"tohtml",
     	"pretty"
     ];
     tasks.push(function(err) {

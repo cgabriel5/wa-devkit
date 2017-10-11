@@ -18,8 +18,10 @@ var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
 var filter = require("gulp-filter");
+var modify = require("gulp-modify");
 var foreach = require("gulp-foreach");
 var replace = require("gulp-replace");
+var marked = require("gulp-markdown");
 var purify = require("gulp-purifycss");
 var imagemin = require("gulp-imagemin");
 var shorthand = require("gulp-shorthand");
@@ -52,12 +54,12 @@ var chalk = require("chalk");
 var dir = require("node-dir");
 var mkdirp = require("mkdirp");
 var git = require("git-state");
+var prism = require("prismjs");
 var fe = require("file-exists");
 var json = require("json-file");
 var jsonc = require("comment-json");
 var modernizr = require("modernizr");
 var de = require("directory-exists");
-var mds = require("markdown-styles");
 var cleanup = require("node-cleanup");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
@@ -117,8 +119,7 @@ var __PATHS_GULP_UTILS = `./${__PATHS_HOMEDIR}gulp/assets/utils/utils.js`;
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 
 // paths:MARKDOWN
-var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
-var __PATHS_MARKDOWN_SOURCE = `${__PATHS_HOMEDIR}markdown/source/`;
+var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
 
 // paths:CONFIG_FILES
 var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
@@ -830,7 +831,7 @@ gulp.task("watch:main", function(done) {
         gulp.watch([__PATHS_README], {
             cwd: __PATHS_BASE
         }, function() {
-            return sequence("readme:main", function() {
+            return sequence("tohtml", function() {
                 bs.reload();
             });
         });
@@ -991,31 +992,6 @@ gulp.task("img:main", function(done) {
 
 // @end   images.js -----------------------------------------------------------|
 
-// @start markdown.js ---------------------------------------------------------|
-
-// markdown to html (with github style/layout)
-// @internal
-gulp.task("readme:main", function(done) {
-    var task = this;
-    mds.render(mds.resolveArgs({
-        input: path.join(__PATHS_CWD, __PATHS_README),
-        output: path.join(__PATHS_CWD, __PATHS_MARKDOWN_PREVIEW),
-        layout: path.join(__PATHS_CWD, __PATHS_MARKDOWN_SOURCE)
-    }), function() {
-        // cleanup README.html
-        pump([gulp.src(__PATHS_README_HTML, {
-                cwd: __PATHS_MARKDOWN_PREVIEW
-            }),
-            beautify(config_jsbeautify),
-            gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-			debug(task.__wadevkit.debug),
-            bs.stream()
-        ], done);
-    });
-});
-
-// @end   markdown.js ---------------------------------------------------------|
-
 // @start modernizr.js --------------------------------------------------------|
 
 /**
@@ -1107,83 +1083,87 @@ gulp.task("purify", function(done) {
  *
  * Options
  *
- * -i, --input   <string>  Path of file to convert (Markdown => HTML).
- * -o, --output  <string>  Path where converted HTML file should be placed.
- * -n, --name    [string]  New name of converted file.
+ * -f, --file   [string]  Path of file to convert. Defaults to ./README.md
+ * Note: Files will get placed in ./markdown/previews/
  *
  * Usage
  *
- * $ gulp tohtml --input README.md --output /markdown/preview --name Converted.html.
- * # Convert README.md to Converted.html and place in /markdown/preview.
+ * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
 gulp.task("tohtml", function(done) {
     var task = this;
+
     // run yargs
-    var _args = yargs.usage("Usage: $0 --input [string] --output [string] --name [string]")
-        .option("input", {
-            alias: "i",
-            demandOption: true,
-            describe: "Path of file to convert (Markdown => HTML).",
-            type: "string"
-        })
-        .option("output", {
-            alias: "o",
-            demandOption: true,
-            describe: "Path where converted HTML file should be placed.",
-            type: "string"
-        })
-        .option("name", {
-            alias: "n",
-            demandOption: false,
-            describe: "New name of converted file.",
+    var _args = yargs.usage("Usage: $0 --file [boolean]")
+        .option("file", {
+            alias: "f",
+            default: "./README.md",
+            describe: "The file to convert.",
             type: "string"
         })
         .argv;
-    // get provided parameters
-    var input = _args.i || _args.input;
-    var output = _args.o || _args.output;
-    var new_name = _args.n || _args.name;
-    // file has to exist
-    fe(input, function(err, exists) {
-        if (!exists) {
-            log("File does not exist.");
-            return done();
+    // get the command line arguments from yargs
+    var file_name = _args.f || _args.file;
+
+    // get file markdown file contents
+    // convert contents into HTML via marked
+    // inject HTML fragment into HTML markdown template
+    // save file in markdown/previews/
+
+    // [https://github.com/krasimir/techy/issues/30]
+    // make marked use prism for syntax highlighting
+    marked.marked.setOptions({
+        highlight: function(code, language) {
+            return prism.highlight(code, prism.languages[language]);
         }
-        // continue...file exists
-        // check for an .md file
-        var input_ext = path.extname(input);
-        // file must be an .md file
-        if (input_ext.toLowerCase() !== ".md") {
-            log("Input file must be an .md file.");
-            return done();
-        }
-        // get the input file name
-        var input_filename = path.basename(input, input_ext);
-        // get the new file name, default to input_filename when nothing is given
-        new_name = (!new_name) ? undefined : path.basename(new_name, path.extname(new_name));
-        // render Markdown to HTML
-        mds.render(mds.resolveArgs({
-            input: path.join(__PATHS_CWD, input),
-            output: path.join(__PATHS_CWD, output),
-            layout: path.join(__PATHS_CWD, __PATHS_MARKDOWN_SOURCE)
-        }), function() {
-            var new_file_path = output + "/" + input_filename + ".html";
-            // cleanup README.html
-            pump([gulp.src(new_file_path, {
-                    cwd: __PATHS_BASE
-                }),
-				beautify(config_jsbeautify),
-				// if a new name was provided, rename the file
-				gulpif(new_name !== undefined, rename(new_name + ".html")),
-				gulp.dest(output),
-				debug(task.__wadevkit.debug)
-			], function() {
-                // if a new name was provided delete the file with the old input file
-                if (new_name) del([new_file_path]);
-                done();
-            });
-        });
     });
+
+    // run gulp process
+    pump([gulp.src(file_name),
+    	debug(task.__wadevkit.debug),
+		marked(),
+		modify({
+            fileModifier: function(file, contents) {
+
+                // path offsets
+                var fpath_offset = "../../";
+                var css_path = "../assets/css/";
+                // get file name
+                var file_name = path.basename(file.path);
+
+                // return filled in template
+                return `
+<!doctype html>
+<html lang="en">
+<head>
+    <title>${file_name}</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Markdown to HTML preview.">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="180x180" href="${fpath_offset}favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="${fpath_offset}favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="${fpath_offset}favicon/favicon-16x16.png">
+    <link rel="manifest" href="${fpath_offset}favicon/manifest.json">
+    <link rel="mask-icon" href="${fpath_offset}favicon/safari-pinned-tab.svg" color="#699935">
+    <link rel="shortcut icon" href="${fpath_offset}favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#00a300">
+    <meta name="msapplication-TileImage" content="${fpath_offset}favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="${fpath_offset}favicon/browserconfig.xml">
+    <meta name="theme-color" content="#f6f5dd">
+    <!-- https://github.com/sindresorhus/github-markdown-css -->
+	<link rel="stylesheet" href="${css_path}github-markdown.css">
+	<link rel="stylesheet" href="${css_path}prism-github.css">
+</head>
+    <body class="markdown-body">${contents}</body>
+</html>`;
+            }
+        }),
+        beautify(config_jsbeautify),
+		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
+		debug(task.__wadevkit.debug),
+		bs.stream()
+        ], done);
 });
 
 // @end   tohtml.js -----------------------------------------------------------|
@@ -1784,7 +1764,7 @@ gulp.task("favicon", function(done) {
     	"favicon:delete",
     	"favicon:html",
     	"html:main",
-    	"readme:main",
+    	"tohtml",
     	"pretty"
     ];
     tasks.push(function(err) {
