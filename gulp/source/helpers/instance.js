@@ -26,7 +26,6 @@ gulp.task("ports", function(done) {
         return done();
     }
     // ports exist...
-    log(chalk.green("(local)"), ports.local);
-    log(chalk.green("(ui)"), ports.ui);
+    log(chalk.green("(local, ui)"), chalk.magenta("(" + ports.local + ", " + ports.ui + ")"));
     done();
 });

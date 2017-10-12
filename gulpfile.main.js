@@ -417,7 +417,11 @@ function globall(string) {
 cleanup(function(exit_code, signal) {
     // check for current Gulp process
     var pid = config_internal.get("pid");
-    if (pid) { // Gulp instance exists so cleanup
+
+    // only perform this cleanup when the Gulp instance is closed.
+    // when any other task is run the cleanup should not be done.
+
+    if (pid && signal) { // Gulp instance exists so cleanup
         // clear gulp internal configuration keys
         config_internal.set("pid", null);
         config_internal.set("ports", null);
@@ -1256,8 +1260,7 @@ gulp.task("ports", function(done) {
         return done();
     }
     // ports exist...
-    log(chalk.green("(local)"), ports.local);
-    log(chalk.green("(ui)"), ports.ui);
+    log(chalk.green("(local, ui)"), chalk.magenta("(" + ports.local + ", " + ports.ui + ")"));
     done();
 });
 

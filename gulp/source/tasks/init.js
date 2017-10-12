@@ -2,7 +2,11 @@
 cleanup(function(exit_code, signal) {
     // check for current Gulp process
     var pid = config_internal.get("pid");
-    if (pid) { // Gulp instance exists so cleanup
+
+    // only perform this cleanup when the Gulp instance is closed.
+    // when any other task is run the cleanup should not be done.
+
+    if (pid && signal) { // Gulp instance exists so cleanup
         // clear gulp internal configuration keys
         config_internal.set("pid", null);
         config_internal.set("ports", null);
