@@ -70,14 +70,14 @@ gulp.task("init", function(done) {
                 config_pkg.write(function() {
                     // run initialization steps
                     var tasks = [
-					"init:clear-js",
-					"init:pick-js-option",
-					"init:fill-placeholders",
-					"init:setup-readme",
-					"init:rename-gulpfile",
-					"init:remove-setup",
-					"init:pretty",
-					"init:git"
+							"init:clear-js",
+							"init:pick-js-option",
+							"init:fill-placeholders",
+							"init:setup-readme",
+							"init:rename-gulpfile",
+							"init:remove-setup",
+							"init:pretty",
+							"init:git"
                     ];
                     tasks.push(function() {
                         var message = `Project initialized (${type})`;

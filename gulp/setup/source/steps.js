@@ -49,7 +49,12 @@ gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
     pump([
-        gulp.src([__PATHS_GULP_SETUP_README_TEMPLATE, __PATHS_GULP_SETUP_LICENSE_TEMPLATE, __PATHS_HTML_HEADMETA, INDEX], {
+        gulp.src([
+        	__PATHS_GULP_SETUP_README_TEMPLATE,
+        	__PATHS_GULP_SETUP_LICENSE_TEMPLATE,
+        	__PATHS_HTML_HEADMETA,
+        	INDEX
+        ], {
             base: __PATHS_BASE
         }),
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
@@ -71,16 +76,7 @@ gulp.task("init:setup-readme", function(done) {
 		debug(),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
-    ], function() {
-        // markdown to html (with github style/layout)
-        mds.render(mds.resolveArgs({
-            input: path.join(__PATHS_CWD, __PATHS_README),
-            output: path.join(__PATHS_CWD, __PATHS_MARKDOWN_PREVIEW),
-            layout: path.join(__PATHS_CWD, __PATHS_MARKDOWN_SOURCE)
-        }), function() {
-            done();
-        });
-    });
+    ], done);
 });
 
 // initialization step
@@ -89,7 +85,7 @@ gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
     // rename the gulpfile.main.js to gulpfile.js
     pump([
-        gulp.src(__PATHS_GULP_FILE_UNACTIVE, {
+        gulp.src(__PATHS_GULP_FILE_MAIN, {
             base: __PATHS_BASE
         }),
     	debug(),
@@ -106,7 +102,11 @@ gulp.task("init:remove-setup", function(done) {
     var task = this;
     // remove the setup files/folders/old .git folder
     pump([
-        gulp.src([__PATHS_GULP_FILE_SETUP, __PATHS_GULP_SETUP, __PATHS_GIT], {
+        gulp.src([
+        	__PATHS_GULP_FILE_SETUP,
+        	__PATHS_GULP_SETUP,
+        	__PATHS_GIT
+        ], {
             dot: true,
             read: false,
             base: __PATHS_BASE
@@ -115,10 +115,6 @@ gulp.task("init:remove-setup", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
-
-// initialization step::alias
-// @internal
-gulp.task("init:pretty", ["pretty"]);
 
 // initialization step
 // @internal

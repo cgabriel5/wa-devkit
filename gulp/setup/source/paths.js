@@ -20,7 +20,7 @@ var __PATHS_GULP_SETUP_LICENSE_TEMPLATE = `./${__PATHS_HOMEDIR}gulp/setup/templa
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
-var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.main.js";
+var __PATHS_GULP_FILE_MAIN = "gulpfile.main.js";
 
 // paths:MARKDOWN
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
@@ -35,10 +35,12 @@ var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 var __PATHS_CONFIG_PKG = `./${__PATHS_HOMEDIR}package.json`;
 
 // paths:OTHER
+var __PATHS_GIT = ".git/";
 var __PATHS_README = "README.md";
 var __PATHS_LICENSE = "LICENSE.txt";
 var __PATHS_HTML_HEADMETA = "html/source/head/meta.html";
 var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
-var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
-var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
-var __PATHS_GIT = ".git/";
+var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
+// exclude all vendor files from any directory
+var __PATHS_NOT_VENDOR = "!**/vendor/**";
+var __PATHS_NODE_MODULES_NAME = "node_modules/";

@@ -8,10 +8,11 @@ var path = require("path");
 var pump = require("pump");
 var chalk = require("chalk");
 var prompt = require("prompt");
+var marked = require("marked");
+var prism = require("prismjs");
 var json = require("json-file");
 var git = require("simple-git")();
 var jsonc = require("comment-json");
-var mds = require("markdown-styles");
 var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");
 
@@ -20,6 +21,7 @@ var sort = require("gulp-sort");
 var gulpif = require("gulp-if");
 var debug = require("gulp-debug");
 var clean = require("gulp-clean");
+var modify = require("gulp-modify");
 var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
@@ -57,7 +59,7 @@ var __PATHS_GULP_SETUP_LICENSE_TEMPLATE = `./${__PATHS_HOMEDIR}gulp/setup/templa
 var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_GULP_FILE_SETUP = "gulpfile.setup.js";
 var __PATHS_GULP_SETUP = `./${__PATHS_HOMEDIR}gulp/setup/`;
-var __PATHS_GULP_FILE_UNACTIVE = "gulpfile.main.js";
+var __PATHS_GULP_FILE_MAIN = "gulpfile.main.js";
 
 // paths:MARKDOWN
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/preview/`;
@@ -72,13 +74,15 @@ var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 var __PATHS_CONFIG_PKG = `./${__PATHS_HOMEDIR}package.json`;
 
 // paths:OTHER
+var __PATHS_GIT = ".git/";
 var __PATHS_README = "README.md";
 var __PATHS_LICENSE = "LICENSE.txt";
 var __PATHS_HTML_HEADMETA = "html/source/head/meta.html";
 var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
-var __PATHS_FILES_BEAUTIFY_EXCLUDE = "!**/*.min.*";
-var __PATHS_NOT_NODE_MODULES = "!node_modules/**";
-var __PATHS_GIT = ".git/";
+var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
+// exclude all vendor files from any directory
+var __PATHS_NOT_VENDOR = "!**/vendor/**";
+var __PATHS_NODE_MODULES_NAME = "node_modules/";
 
 // @end   paths.js ------------------------------------------------------------|
 
@@ -131,7 +135,23 @@ var opts_sort = {
 
 // @start functions.js --------------------------------------------------------|
 
-// file is empty...
+/**
+ * @description [Add a bang to the start of the string.]
+ * @param  {String} string [The string to add the bang to.]
+ * @return {String}        [The new string with bang added.]
+ */
+function bangify(string) {
+    return "!" + (string || "");
+}
+
+/**
+ * @description [Appends the ** pattern to string.]
+ * @param  {String} string [The string to add pattern to.]
+ * @return {String}        [The new string with added pattern.]
+ */
+function globall(string) {
+    return (string || "") + "**";
+}
 
 // @end   functions.js --------------------------------------------------------|
 
@@ -141,15 +161,19 @@ var opts_sort = {
 // @internal
 gulp.task("pretty", function(done) {
     var task = this;
-    // beautify html, js, css, & json files
     var condition = function(file) {
         return (path.extname(file.path)
             .toLowerCase() === ".json");
     };
     // get needed files
-    pump([gulp.src([__PATHS_FILES_BEAUTIFY, __PATHS_FILES_BEAUTIFY_EXCLUDE, __PATHS_NOT_NODE_MODULES], {
-            dot: true,
-            cwd: __PATHS_BASE
+    pump([gulp.src([
+			__PATHS_FILES_BEAUTIFY,
+			__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
+			bangify(globall(__PATHS_NODE_MODULES_NAME)),
+			bangify(globall(__PATHS_GIT)),
+			__PATHS_NOT_VENDOR
+    	], {
+            dot: true
         }),
 		sort(opts_sort),
 		beautify(config_jsbeautify),
@@ -161,6 +185,10 @@ gulp.task("pretty", function(done) {
 		gulp.dest(__PATHS_BASE)
 	], done);
 });
+
+// initialization step::alias
+// @internal
+gulp.task("init:pretty", ["pretty"]);
 
 // @end   helpers.js ----------------------------------------------------------|
 
@@ -238,14 +266,14 @@ gulp.task("init", function(done) {
                 config_pkg.write(function() {
                     // run initialization steps
                     var tasks = [
-					"init:clear-js",
-					"init:pick-js-option",
-					"init:fill-placeholders",
-					"init:setup-readme",
-					"init:rename-gulpfile",
-					"init:remove-setup",
-					"init:pretty",
-					"init:git"
+							"init:clear-js",
+							"init:pick-js-option",
+							"init:fill-placeholders",
+							"init:setup-readme",
+							"init:rename-gulpfile",
+							"init:remove-setup",
+							"init:pretty",
+							"init:git"
                     ];
                     tasks.push(function() {
                         var message = `Project initialized (${type})`;
@@ -317,7 +345,12 @@ gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
     pump([
-        gulp.src([__PATHS_GULP_SETUP_README_TEMPLATE, __PATHS_GULP_SETUP_LICENSE_TEMPLATE, __PATHS_HTML_HEADMETA, INDEX], {
+        gulp.src([
+        	__PATHS_GULP_SETUP_README_TEMPLATE,
+        	__PATHS_GULP_SETUP_LICENSE_TEMPLATE,
+        	__PATHS_HTML_HEADMETA,
+        	INDEX
+        ], {
             base: __PATHS_BASE
         }),
         replace(/\{\{\#(.*?)\}\}/g, function(match) {
@@ -339,16 +372,7 @@ gulp.task("init:setup-readme", function(done) {
 		debug(),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
-    ], function() {
-        // markdown to html (with github style/layout)
-        mds.render(mds.resolveArgs({
-            input: path.join(__PATHS_CWD, __PATHS_README),
-            output: path.join(__PATHS_CWD, __PATHS_MARKDOWN_PREVIEW),
-            layout: path.join(__PATHS_CWD, __PATHS_MARKDOWN_SOURCE)
-        }), function() {
-            done();
-        });
-    });
+    ], done);
 });
 
 // initialization step
@@ -357,7 +381,7 @@ gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
     // rename the gulpfile.main.js to gulpfile.js
     pump([
-        gulp.src(__PATHS_GULP_FILE_UNACTIVE, {
+        gulp.src(__PATHS_GULP_FILE_MAIN, {
             base: __PATHS_BASE
         }),
     	debug(),
@@ -374,7 +398,11 @@ gulp.task("init:remove-setup", function(done) {
     var task = this;
     // remove the setup files/folders/old .git folder
     pump([
-        gulp.src([__PATHS_GULP_FILE_SETUP, __PATHS_GULP_SETUP, __PATHS_GIT], {
+        gulp.src([
+        	__PATHS_GULP_FILE_SETUP,
+        	__PATHS_GULP_SETUP,
+        	__PATHS_GIT
+        ], {
             dot: true,
             read: false,
             base: __PATHS_BASE
@@ -383,10 +411,6 @@ gulp.task("init:remove-setup", function(done) {
     	debug(task.__wadevkit.debug)
     ], done);
 });
-
-// initialization step::alias
-// @internal
-gulp.task("init:pretty", ["pretty"]);
 
 // initialization step
 // @internal
