@@ -420,6 +420,7 @@ cleanup(function(exit_code, signal) {
 
     // only perform this cleanup when the Gulp instance is closed.
     // when any other task is run the cleanup should not be done.
+    // [https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html]
 
     if (pid && signal) { // Gulp instance exists so cleanup
         // clear gulp internal configuration keys
