@@ -6,6 +6,7 @@ var path = require("path");
 var path_offset = "../../../";
 var modules_path = path_offset + "node_modules/";
 
+var url = require(modules_path + "url-parse");
 var gulp = require(modules_path + "gulp-task-doc");
 var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
@@ -76,16 +77,24 @@ var current_task = function(gulp) {
 };
 
 /**
- * @description [Builds the project localhost URL.]
+ * @description [Builds the project "localhost" URL.]
  * @param  {Object} params 	   [The parameters used to build the URL.]
  * @return {String}       	   [The URL.]
  */
 var uri = function(params) {
+    // get provided arguments
     var appdir = params.appdir;
     var filepath = params.filepath;
     var port = params.port;
     var https = params.https;
-    return ("http" + (https ? "s" : "")) + "://" + appdir + filepath + (port ? (":" + port) : "");
+
+    // build url to open on
+    var scheme = "http" + (https ? "s" : "") + "://";
+    var parsed = new url(scheme + appdir);
+    parsed.set("port", port);
+    parsed.set("pathname", path.join(parsed.pathname, filepath));
+
+    return parsed.href;
 };
 
 /**
