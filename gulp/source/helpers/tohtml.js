@@ -35,7 +35,10 @@ gulp.task("tohtml:prepcss", function(done) {
  * Options
  *
  * -f, --file   [string]  Path of file to convert. Defaults to ./README.md
- * Note: Files will get placed in ./markdown/previews/
+ *
+ * Notes
+ *
+ * - Files will get placed in ./markdown/previews/
  *
  * Usage
  *

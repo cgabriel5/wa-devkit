@@ -1120,7 +1120,10 @@ gulp.task("tohtml:prepcss", function(done) {
  * Options
  *
  * -f, --file   [string]  Path of file to convert. Defaults to ./README.md
- * Note: Files will get placed in ./markdown/previews/
+ *
+ * Notes
+ *
+ * - Files will get placed in ./markdown/previews/
  *
  * Usage
  *
@@ -1212,7 +1215,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  * -f, --file  <file>    The path of the file to open.
  * -p, --port  [number]  The port to open in. (Defaults to browser-sync port)
  *
- * Note: New tabs should be opened via the terminal using `open`. Doing so will
+ * Note
+ *
+ * - New tabs should be opened via the terminal using `open`. Doing so will
  * ensure the generated tab will auto-close when Gulp is closed/existed. Opening
  * tabs by typing/copy-pasting the project URL into the browser address bar will
  * not auto-close the tab(s) due to security issues as noted here:
@@ -1224,8 +1229,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  */
 gulp.task("open", function(done) {
     var task = this;
+
     // run yargs
-    var _args = yargs.usage("Usage: $0 --file [string] --port [number]")
+    var _args = yargs
         .option("file", {
             alias: "f",
             demandOption: true,
@@ -1239,23 +1245,24 @@ gulp.task("open", function(done) {
             type: "number"
         })
         .argv;
+
     // get the command line arguments from yargs
     var file = _args.f || _args.file;
-    var port = _args.p || _args.port;
-    // if port is provided use that
-    if (port) {
-        open_file_in_browser(file, port, done, task);
-    } else { // else get the used port, if any
-        // get the ports
-        var ports = config_internal.get("ports");
-        // no ports...
-        if (!ports) {
-            log("No ports are in use.");
-            return done();
-        }
-        // open file in the browser
-        open_file_in_browser(file, ports.local, done, task);
+    // check for explicitly provided port...if none is provided
+    // check the internally fetched free ports and get the local port
+    var port = _args.p || _args.port || (config_internal.get("ports") || {
+            "local": null
+        })
+        .local;
+
+    // no ports...
+    if (!port) {
+        log("No ports are in use.");
+        return done();
     }
+
+    // else a port was found...use it
+    return open_file_in_browser(file, port, done, task);
 });
 
 // @end   open.js -------------------------------------------------------------|
