@@ -1,3 +1,34 @@
+// get the CSS markdown + prismjs styles
+// @internal
+var __markdown_styles__;
+gulp.task("tohtml:prepcss", function(done) {
+    var task = this;
+
+    var __PATHS_MARKDOWN_STYLES_GITHUB = "github-markdown.css";
+    var __PATHS_MARKDOWN_STYLES_PRISMJS = "prism-github.css";
+    var __PATHS_MARKDOWN_ASSETS = "./markdown/assets/css/";
+    var __PATHS_MARKDOWN_CONCAT_NAME = "markdown.css";
+
+    // run gulp process
+    pump([
+    	gulp.src([
+    		__PATHS_MARKDOWN_STYLES_GITHUB,
+    		__PATHS_MARKDOWN_STYLES_PRISMJS
+    	], {
+            cwd: __PATHS_MARKDOWN_ASSETS
+        }),
+        concat(__PATHS_MARKDOWN_CONCAT_NAME),
+		modify({
+            fileModifier: function(file, contents) {
+                // store the contents in variable
+                __markdown_styles__ = contents;
+                return contents;
+            }
+        }),
+    	debug(task.__wadevkit.debug)
+        ], done);
+});
+
 /**
  * Converts MarkDown (.md) file to its HTML counterpart (with GitHub style/layout).
  *
@@ -10,7 +41,7 @@
  *
  * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
-gulp.task("tohtml", function(done) {
+gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     var task = this;
 
     // run yargs
@@ -46,8 +77,7 @@ gulp.task("tohtml", function(done) {
             fileModifier: function(file, contents) {
 
                 // path offsets
-                var fpath_offset = "../../";
-                var css_path = "../assets/css/";
+                var fpath = "../../favicon/";
                 // get file name
                 var file_name = path.basename(file.path);
 
@@ -61,19 +91,18 @@ gulp.task("tohtml", function(done) {
     <meta name="description" content="Markdown to HTML preview.">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="180x180" href="${fpath_offset}favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="${fpath_offset}favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="${fpath_offset}favicon/favicon-16x16.png">
-    <link rel="manifest" href="${fpath_offset}favicon/manifest.json">
-    <link rel="mask-icon" href="${fpath_offset}favicon/safari-pinned-tab.svg" color="#699935">
-    <link rel="shortcut icon" href="${fpath_offset}favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="${fpath}/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="${fpath}/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="${fpath}/favicon-16x16.png">
+    <link rel="manifest" href="${fpath}/manifest.json">
+    <link rel="mask-icon" href="${fpath}/safari-pinned-tab.svg" color="#699935">
+    <link rel="shortcut icon" href="${fpath}/favicon.ico">
     <meta name="msapplication-TileColor" content="#00a300">
-    <meta name="msapplication-TileImage" content="${fpath_offset}favicon/mstile-144x144.png">
-    <meta name="msapplication-config" content="${fpath_offset}favicon/browserconfig.xml">
+    <meta name="msapplication-TileImage" content="${fpath}/mstile-144x144.png">
+    <meta name="msapplication-config" content="${fpath}/browserconfig.xml">
     <meta name="theme-color" content="#f6f5dd">
     <!-- https://github.com/sindresorhus/github-markdown-css -->
-	<link rel="stylesheet" href="${css_path}github-markdown.css">
-	<link rel="stylesheet" href="${css_path}prism-github.css">
+	<style>${__markdown_styles__}</style>
 </head>
     <body class="markdown-body">${contents}</body>
 </html>`;
