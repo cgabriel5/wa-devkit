@@ -1140,7 +1140,8 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     // make marked use prism for syntax highlighting
     marked.marked.setOptions({
         highlight: function(code, language) {
-            return prism.highlight(code, prism.languages[language]);
+            // default to markup when language is undefined
+            return prism.highlight(code, prism.languages[language || "markup"]);
         }
     });
 
