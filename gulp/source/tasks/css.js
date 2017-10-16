@@ -2,11 +2,6 @@
 // @internal
 gulp.task("css:preapp", function(done) {
     var task = this;
-    // RegExp used for custom CSS code modifications
-    var lead_zeros = regexp_css.lead_zeros;
-    var empty_zero = regexp_css.empty_zero;
-    var lowercase_hex = regexp_css.lowercase_hex;
-    var prefixes = regexp_css.prefixes;
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
@@ -14,16 +9,18 @@ gulp.task("css:preapp", function(done) {
 		beautify(config_jsbeautify),
 		// replacements...regexp pattern will match all declarations and their values
 		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
+            var pattern;
             // modifications...
 
             // complete floats (i.e. .23 => 0.23)
-            match = match.replace(new RegExp(lead_zeros.p, lead_zeros.f), lead_zeros.r);
+            match = match.replace(new RegExp("([^\\d])(\\.\\d+)", "g"), "$10$2");
 
             // remove empty zeros (i.e. 0px => 0 and 0.0 => 0, 0.0em, -0 => 0)
-            match = match.replace(new RegExp(empty_zero.p, empty_zero.f), empty_zero.r);
+            pattern = "(\\-?\\b(0|0\\.0)(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax)|\\-?\\b0\\.0\\b)";
+            match = match.replace(new RegExp(pattern, "gi"), "0");
 
             // lowercase hex colors (i.e. #FFFFFF => #ffffff, or #abc => #aabbcc)
-            match = match.replace(new RegExp(lowercase_hex.p, lowercase_hex.f), function(hexcolor) {
+            match = match.replace(new RegExp("#[a-f0-9]{3,6}", "gi"), function(hexcolor) {
                 // expand the color if needed...
                 if (hexcolor.length === 4) {
                     // remove the hash-sign
@@ -42,7 +39,8 @@ gulp.task("css:preapp", function(done) {
 
             // remove prefixes all together
             // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
-            match = match.replace(new RegExp(prefixes.p, prefixes.f), prefixes.r);
+            pattern = "(\\s+)?\\-(moz|o|webkit|ms|khtml)\\-(?!font-smoothing|osx|print|backface).+?;";
+            match = match.replace(new RegExp(pattern, "gi"), "");
 
             return match;
         }),
