@@ -41,6 +41,7 @@
         "gulp-foreach": "^0.1.0",
         "gulp-if": "^2.0.2",
         "gulp-imagemin": "^3.3.0",
+        "gulp-inject-content": "https://github.com/cgabriel5/gulp-inject-content/tarball/master",
         "gulp-insert": "^0.5.0",
         "gulp-jsbeautifier": "^2.1.0",
         "gulp-json-sort": "^1.0.0",

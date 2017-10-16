@@ -29,6 +29,7 @@ var clean_css = require("gulp-clean-css");
 var json_sort = require("gulp-json-sort")
     .default;
 var minify_html = require("gulp-minify-html");
+var injection = require("gulp-inject-content");
 var autoprefixer = require("gulp-autoprefixer");
 var real_favicon = require("gulp-real-favicon");
 var alphabetize = require("alphabetize-object-keys");
@@ -86,7 +87,7 @@ var __PATHS_LIB_HOME = "lib/";
 
 // paths:HTML
 var __PATHS_HTML_SOURCE = `${__PATHS_HOMEDIR}html/source/`;
-var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
+var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/injection/`;
 
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
@@ -128,7 +129,6 @@ var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
 var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
 var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-var __PATHS_CONFIG_REGEXP = `./${__PATHS_HOMEDIR}configs/regexp.json`;
 var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS
@@ -176,8 +176,6 @@ var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
     .toString());
 var config_modernizr = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_MODERNIZR)
     .toString());
-var config_regexp = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_REGEXP)
-    .toString());
 var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
     .toString());
 
@@ -187,10 +185,6 @@ var opts_bs = config_gulp_plugins.browsersync;
 var opts_ffp = config_gulp_plugins.find_free_port;
 var json_format = config_gulp_plugins.json_format;
 var json_spaces = json_format.indent_size;
-
-// HTML/CSS regexp
-var regexp_html = config_regexp.html;
-var regexp_css = config_regexp.css;
 
 // bundles
 var bundle_html = config_gulp_bundles.html;
@@ -287,36 +281,6 @@ function open_file_in_browser(filepath, port, callback, task) {
         notify("File opened!");
         callback();
     });
-}
-
-/**
- * @description [Returns a function that handles HTML $:pre/post{file-content/$variable}
- *               injection.]
- * @param {Object} [Replacements object.]
- * @return {Function} [Replacement function.]
- */
-function html_replace_fn(replacements) {
-    return function(match) {
-        var injection_name = match.replace(/\$\:(pre|post)\{|\}$/g, "");
-        // check whether doing a file or variable injection
-        if (injection_name.charAt(0) !== "$") { // file content-injection
-            injection_name = __PATHS_HTML_REGEXP_SOURCE + match.replace(/\$\:(pre|post)\{|\}$/g, "");
-            var extentions = ".{text,txt}";
-            var filename = glob.sync(injection_name + extentions)[0];
-            // if glob does not return a match then the file does not exists.
-            // therefore, just return undefined.
-            if (!filename) return undefined;
-            // check that file exists before opening/reading...
-            // return undefined when file does not exist...else return its contents
-            return (!fe.sync(filename)) ? undefined : fs.readFileSync(filename)
-                .toString()
-                .trim();
-        } else { //variable injection
-            injection_name = injection_name.replace(/^\$/, "");
-            // lookup its replacement
-            return replacements[injection_name] || undefined;
-        }
-    };
 }
 
 /**
@@ -854,17 +818,14 @@ gulp.task("watch:main", function(done) {
 // @internal
 gulp.task("html:main", function(done) {
     var task = this;
-    // RegExp used for $:pre/post{filename/$var} HTML file-content/$variable injection
-    var r_pre = regexp_html.pre;
-    var r_post = regexp_html.post;
     pump([gulp.src(bundle_html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
     	debug(),
 		concat(bundle_html.source.names.main),
-		replace(new RegExp(r_pre.p, r_pre.f), html_replace_fn(html_injection)),
+		injection.pre(html_injection),
 		beautify(config_jsbeautify),
-		replace(new RegExp(r_post.p, r_post.f), html_replace_fn(html_injection)),
+		injection.post(html_injection),
 		gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug),
 		bs.stream()
@@ -879,11 +840,6 @@ gulp.task("html:main", function(done) {
 // @internal
 gulp.task("css:preapp", function(done) {
     var task = this;
-    // RegExp used for custom CSS code modifications
-    var lead_zeros = regexp_css.lead_zeros;
-    var empty_zero = regexp_css.empty_zero;
-    var lowercase_hex = regexp_css.lowercase_hex;
-    var prefixes = regexp_css.prefixes;
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
@@ -891,16 +847,18 @@ gulp.task("css:preapp", function(done) {
 		beautify(config_jsbeautify),
 		// replacements...regexp pattern will match all declarations and their values
 		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
+            var pattern;
             // modifications...
 
             // complete floats (i.e. .23 => 0.23)
-            match = match.replace(new RegExp(lead_zeros.p, lead_zeros.f), lead_zeros.r);
+            match = match.replace(new RegExp("([^\\d])(\\.\\d+)", "g"), "$10$2");
 
             // remove empty zeros (i.e. 0px => 0 and 0.0 => 0, 0.0em, -0 => 0)
-            match = match.replace(new RegExp(empty_zero.p, empty_zero.f), empty_zero.r);
+            pattern = "(\\-?\\b(0|0\\.0)(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax)|\\-?\\b0\\.0\\b)";
+            match = match.replace(new RegExp(pattern, "gi"), "0");
 
             // lowercase hex colors (i.e. #FFFFFF => #ffffff, or #abc => #aabbcc)
-            match = match.replace(new RegExp(lowercase_hex.p, lowercase_hex.f), function(hexcolor) {
+            match = match.replace(new RegExp("#[a-f0-9]{3,6}", "gi"), function(hexcolor) {
                 // expand the color if needed...
                 if (hexcolor.length === 4) {
                     // remove the hash-sign
@@ -919,7 +877,8 @@ gulp.task("css:preapp", function(done) {
 
             // remove prefixes all together
             // [https://www.mikestreety.co.uk/blog/find-and-remove-vendor-prefixes-in-your-css-using-regex]
-            match = match.replace(new RegExp(prefixes.p, prefixes.f), prefixes.r);
+            pattern = "(\\s+)?\\-(moz|o|webkit|ms|khtml)\\-(?!font-smoothing|osx|print|backface).+?;";
+            match = match.replace(new RegExp(pattern, "gi"), "");
 
             return match;
         }),

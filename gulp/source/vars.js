@@ -10,8 +10,6 @@ var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
     .toString());
 var config_modernizr = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_MODERNIZR)
     .toString());
-var config_regexp = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_REGEXP)
-    .toString());
 var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
     .toString());
 
@@ -21,10 +19,6 @@ var opts_bs = config_gulp_plugins.browsersync;
 var opts_ffp = config_gulp_plugins.find_free_port;
 var json_format = config_gulp_plugins.json_format;
 var json_spaces = json_format.indent_size;
-
-// HTML/CSS regexp
-var regexp_html = config_regexp.html;
-var regexp_css = config_regexp.css;
 
 // bundles
 var bundle_html = config_gulp_bundles.html;

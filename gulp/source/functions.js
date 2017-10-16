@@ -28,36 +28,6 @@ function open_file_in_browser(filepath, port, callback, task) {
 }
 
 /**
- * @description [Returns a function that handles HTML $:pre/post{file-content/$variable}
- *               injection.]
- * @param {Object} [Replacements object.]
- * @return {Function} [Replacement function.]
- */
-function html_replace_fn(replacements) {
-    return function(match) {
-        var injection_name = match.replace(/\$\:(pre|post)\{|\}$/g, "");
-        // check whether doing a file or variable injection
-        if (injection_name.charAt(0) !== "$") { // file content-injection
-            injection_name = __PATHS_HTML_REGEXP_SOURCE + match.replace(/\$\:(pre|post)\{|\}$/g, "");
-            var extentions = ".{text,txt}";
-            var filename = glob.sync(injection_name + extentions)[0];
-            // if glob does not return a match then the file does not exists.
-            // therefore, just return undefined.
-            if (!filename) return undefined;
-            // check that file exists before opening/reading...
-            // return undefined when file does not exist...else return its contents
-            return (!fe.sync(filename)) ? undefined : fs.readFileSync(filename)
-                .toString()
-                .trim();
-        } else { //variable injection
-            injection_name = injection_name.replace(/^\$/, "");
-            // lookup its replacement
-            return replacements[injection_name] || undefined;
-        }
-    };
-}
-
-/**
  * @description [Print that an active Gulp instance exists.]
  * @return {Undefined} 			[Nothing is returned.]
  */

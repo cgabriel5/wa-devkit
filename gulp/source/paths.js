@@ -14,7 +14,7 @@ var __PATHS_LIB_HOME = "lib/";
 
 // paths:HTML
 var __PATHS_HTML_SOURCE = `${__PATHS_HOMEDIR}html/source/`;
-var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/source/regexp/`;
+var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/injection/`;
 
 // paths:CSS
 var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
@@ -56,7 +56,6 @@ var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
 var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
 var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-var __PATHS_CONFIG_REGEXP = `./${__PATHS_HOMEDIR}configs/regexp.json`;
 var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS

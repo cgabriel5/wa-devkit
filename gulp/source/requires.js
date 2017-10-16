@@ -27,6 +27,7 @@ var clean_css = require("gulp-clean-css");
 var json_sort = require("gulp-json-sort")
     .default;
 var minify_html = require("gulp-minify-html");
+var injection = require("gulp-inject-content");
 var autoprefixer = require("gulp-autoprefixer");
 var real_favicon = require("gulp-real-favicon");
 var alphabetize = require("alphabetize-object-keys");
