@@ -28,23 +28,20 @@ var shorthand = require("gulp-shorthand");
 var clean_css = require("gulp-clean-css");
 var json_sort = require("gulp-json-sort")
     .default;
+var beautify = require("gulp-jsbeautifier");
 var minify_html = require("gulp-minify-html");
 var injection = require("gulp-inject-content");
 var autoprefixer = require("gulp-autoprefixer");
 var real_favicon = require("gulp-real-favicon");
-var alphabetize = require("alphabetize-object-keys");
 
 // @non_es_uglify
 // By default the non es-uglify is used as the default uglifier.
-// Remove this comment block, following two require lines, and
-// uncomment the @uglify_es comment block to use uglify-es instead.
+// Uncomment the @uglify_es comment block to use uglify-es instead.
 var uglify = require("gulp-uglify");
-var beautify = require("gulp-jsbeautifier");
 
-// @uglify_es
+// // @uglify_es
 // var composer = require("gulp-uglify/composer");
 // var uglify = composer(require("uglify-es"), console);
-// var beautify = require("gulp-jsbeautifier");
 
 var del = require("del");
 var pump = require("pump");
@@ -65,6 +62,7 @@ var cleanup = require("node-cleanup");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var find_free_port = require("find-free-port");
+var alphabetize = require("alphabetize-object-keys");
 var bs_autoclose = require("browser-sync-close-hook");
 
 // @end   requires.js ---------------------------------------------------------|
