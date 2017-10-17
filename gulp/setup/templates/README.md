@@ -1,14 +1,14 @@
-# {{#repo_name}}
+# ${$repo_name}
 
-{{#description}}
+${$description}
 
 ### Purpose
 
-The purpose of {{#repo_name}} is to...
+The purpose of ${$repo_name} is to...
 
 ### Live Demo
 
-Live demo can be accessed [here](https://{{#git_id}}.github.io/{{#repo_name}}/).
+Live demo can be accessed [here](https://${$git_id}.github.io/${$repo_name}/).
 
 ### How It Works
 
@@ -26,7 +26,7 @@ Take a look at...
 
 Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)
 
-See how to contribute [here](https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/CONTRIBUTING.md).
+See how to contribute [here](https://github.com/${$git_id}/${$repo_name}/blob/master/CONTRIBUTING.md).
 
 ### TODO
 
@@ -34,4 +34,4 @@ See how to contribute [here](https://github.com/{{#git_id}}/{{#repo_name}}/blob/
 
 ### License
 
-This project uses the [MIT License](https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/LICENSE.txt).
+This project uses the [MIT License](https://github.com/${$git_id}/${$repo_name}/blob/master/LICENSE.txt).
