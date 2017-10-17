@@ -57,10 +57,7 @@ gulp.task("init:fill-placeholders", function(done) {
         ], {
             base: __PATHS_BASE
         }),
-        replace(/\{\{\#(.*?)\}\}/g, function(match) {
-            match = match.replace(/^\{\{\#|\}\}$/g, "");
-            return __data__[match] ? __data__[match] : match;
-        }),
+        injection(__data__),
         gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
     ], done);
@@ -70,9 +67,12 @@ gulp.task("init:fill-placeholders", function(done) {
 // @internal
 gulp.task("init:setup-readme", function(done) {
     var task = this;
-    // move readme template to ./README.md
+    // move templates to new locations
     pump([
-        gulp.src(__PATHS_GULP_SETUP_README_TEMPLATE),
+        gulp.src([
+        	__PATHS_GULP_SETUP_README_TEMPLATE,
+        	__PATHS_GULP_SETUP_LICENSE_TEMPLATE
+        ]),
 		debug(),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)

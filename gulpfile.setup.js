@@ -26,12 +26,12 @@ var insert = require("gulp-insert");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
 var foreach = require("gulp-foreach");
-var replace = require("gulp-replace");
 var json_sort = require("gulp-json-sort")
     .default;
 
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
+var injection = require("gulp-inject-content");
 
 // @end   requires.js ---------------------------------------------------------|
 
@@ -353,10 +353,7 @@ gulp.task("init:fill-placeholders", function(done) {
         ], {
             base: __PATHS_BASE
         }),
-        replace(/\{\{\#(.*?)\}\}/g, function(match) {
-            match = match.replace(/^\{\{\#|\}\}$/g, "");
-            return __data__[match] ? __data__[match] : match;
-        }),
+        injection(__data__),
         gulp.dest(__PATHS_BASE),
 		debug(task.__wadevkit.debug)
     ], done);
@@ -366,9 +363,12 @@ gulp.task("init:fill-placeholders", function(done) {
 // @internal
 gulp.task("init:setup-readme", function(done) {
     var task = this;
-    // move readme template to ./README.md
+    // move templates to new locations
     pump([
-        gulp.src(__PATHS_GULP_SETUP_README_TEMPLATE),
+        gulp.src([
+        	__PATHS_GULP_SETUP_README_TEMPLATE,
+        	__PATHS_GULP_SETUP_LICENSE_TEMPLATE
+        ]),
 		debug(),
         gulp.dest(__PATHS_BASE),
     	debug(task.__wadevkit.debug)
