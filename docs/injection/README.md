@@ -17,6 +17,9 @@ $:pre{$<variable_name>}  <!-- pre variable-injection -->
 
 $:post{<file_name>}      <!-- post file-content injection -->
 $:post{$<variable_name>} <!-- post variable-injection -->
+
+${<file_name>}      	 <!-- any time file-content injection -->
+${$<variable_name>} 	 <!-- any time variable-injection -->
 ```
 
 <a name="file-injection"></a>
@@ -86,8 +89,8 @@ Say we need to dynamically make paths for an `HTML` file. This can also be handl
 `my_html_file.html`
 
 ```html
-<script src="$:pre{$js_bundle_vendor}"></script>
-<script src="$:pre{$js_bundle_app}"></script>
+<script src="$:post{$js_bundle_vendor}"></script>
+<script src="$:post{$js_bundle_app}"></script>
 ``` 
 
 `gulpfile.js`
