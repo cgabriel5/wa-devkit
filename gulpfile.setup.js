@@ -162,43 +162,6 @@ function globall(string) {
 
 // @end   functions.js --------------------------------------------------------|
 
-// @start helpers.js ----------------------------------------------------------|
-
-// beautify html, js, css, & json files
-// @internal
-gulp.task("pretty", function(done) {
-    var task = this;
-    var condition = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".json");
-    };
-    // get needed files
-    pump([gulp.src([
-			__PATHS_FILES_BEAUTIFY,
-			__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
-			bangify(globall(__PATHS_NODE_MODULES_NAME)),
-			bangify(globall(__PATHS_GIT)),
-			__PATHS_NOT_VENDOR
-    	], {
-            dot: true
-        }),
-		sort(opts_sort),
-		beautify(config_jsbeautify),
-		gulpif(condition, json_sort({
-            "space": json_spaces
-        })),
-		eol(),
-		debug(task.__wadevkit.debug),
-		gulp.dest(__PATHS_BASE)
-	], done);
-});
-
-// initialization step::alias
-// @internal
-gulp.task("init:pretty", ["pretty"]);
-
-// @end   helpers.js ----------------------------------------------------------|
-
 // @start init.js -------------------------------------------------------------|
 
 // @internal
@@ -435,6 +398,43 @@ gulp.task("init:git", function(done) {
 
 // @end   steps.js ------------------------------------------------------------|
 
+// @start pretty.js -----------------------------------------------------------|
+
+// beautify html, js, css, & json files
+// @internal
+gulp.task("pretty", function(done) {
+    var task = this;
+    var condition = function(file) {
+        return (path.extname(file.path)
+            .toLowerCase() === ".json");
+    };
+    // get needed files
+    pump([gulp.src([
+			__PATHS_FILES_BEAUTIFY,
+			__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
+			bangify(globall(__PATHS_NODE_MODULES_NAME)),
+			bangify(globall(__PATHS_GIT)),
+			__PATHS_NOT_VENDOR
+    	], {
+            dot: true
+        }),
+		sort(opts_sort),
+		beautify(config_jsbeautify),
+		gulpif(condition, json_sort({
+            "space": json_spaces
+        })),
+		eol(),
+		debug(task.__wadevkit.debug),
+		gulp.dest(__PATHS_BASE)
+	], done);
+});
+
+// initialization step::alias
+// @internal
+gulp.task("init:pretty", ["pretty"]);
+
+// @end   pretty.js -----------------------------------------------------------|
+
 // @start make.js -------------------------------------------------------------|
 
 // build gulpfile.setup.js
@@ -446,10 +446,10 @@ gulp.task("make", function(done) {
         "paths.js",
         "vars.js",
         "functions.js",
-        "helpers.js",
-        "init.js",
-        "steps.js",
-        "make.js"
+        "tasks/init.js",
+        "tasks/steps.js",
+        "helpers/pretty.js",
+        "helpers/make.js"
     ];
     pump([gulp.src(files, {
             cwd: __PATHS_GULP_SETUP_SOURCE

@@ -7,10 +7,10 @@ gulp.task("make", function(done) {
         "paths.js",
         "vars.js",
         "functions.js",
-        "helpers.js",
-        "init.js",
-        "steps.js",
-        "make.js"
+        "tasks/init.js",
+        "tasks/steps.js",
+        "helpers/pretty.js",
+        "helpers/make.js"
     ];
     pump([gulp.src(files, {
             cwd: __PATHS_GULP_SETUP_SOURCE
