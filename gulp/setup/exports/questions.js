@@ -24,7 +24,7 @@ exports.questions = {
         description: {
             description: "Application description",
             type: "string",
-            default: ""
+            default: "The next big thing."
         },
         fullname: {
             description: "Fullname",
