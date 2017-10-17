@@ -28,10 +28,17 @@ var rename = require("gulp-rename");
 var foreach = require("gulp-foreach");
 var json_sort = require("gulp-json-sort")
     .default;
-
-var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
 var injection = require("gulp-inject-content");
+
+// @non_es_uglify
+// By default the non es-uglify is used as the default uglifier.
+// Uncomment the @uglify_es comment block to use uglify-es instead.
+var uglify = require("gulp-uglify");
+
+// // @uglify_es
+// var composer = require("gulp-uglify/composer");
+// var uglify = composer(require("uglify-es"), console);
 
 // @end   requires.js ---------------------------------------------------------|
 
