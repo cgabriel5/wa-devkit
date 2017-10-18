@@ -13,10 +13,8 @@ $ gulp --silent --gulpfile gulpfile.setup.js init # Follow on-screen prompt ques
 $ yarn install && gulp --silent --gulpfile gulpfile.setup.js init
 ```
 
-`$ gulp --silent --gulpfile gulpfile.setup.js init` will ready project files _and_ create the initial project commit. Once complete run `$ gulp` to watch project files for any changes. Available project Gulp commands and their documentation can be found [here](/docs/commands.md).
+**Note**: `$ gulp --silent --gulpfile gulpfile.setup.js init` fill the template placeholders with the provided answers, ready project files, create initial project commit, _and_ do other things like remove the setup files.
 
-**Note**: Provided replies will be used to auto-fill the following files:
-- [`gulp/setup/templates/README.md`](/gulp/setup/templates/README.md)
-- [`gulp/setup/templates/LICENSE.txt`](/gulp/setup/templates/LICENSE.txt)
-- [`package.json`](/package.json)
-- [`html/source/head/meta.html`](/html/source/head/meta.html)
+Once complete run `$ gulp` to watch project files for any changes. 
+
+Available project Gulp commands and their documentation can be found [here](/docs/commands.md).
