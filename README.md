@@ -1,5 +1,5 @@
-<p align="center"><img src="/img/logo/leaf.png?raw=true" alt="wa-devkit logo-leaf" width="8%"></p>
-<p align="center"><img src="/img/logo/text.png?raw=true" alt="wa-devkit logo-text" width="40%"></p>
+<p align="center"><img src="/docs/brand/img/leaf-216.png?raw=true" alt="wa-devkit logo-leaf" width="8%"></p>
+<p align="center"><img src="/docs/brand/img/text.png?raw=true" alt="wa-devkit logo-text" width="40%"></p>
 <p align="center"><code>wa-devkit</code> (WebApplication-DevelopmentKit) is a simple, easy-to-use, modular<br>boilerplate solution made for building web-applications or JavaScript libraries.</p>
 <h1></h1>
 
@@ -12,13 +12,12 @@
 
 ### Features
 
-- Boilerplate provides the structure to get up and running quickly.
+- Boilerplate provides the project structure to get up and running.
 	- Modify project as needed.
 - Fleshed out `gulpfile.js` file. For example, contains tasks that handle:
 	- File concatenation, minification, beautification.
-	- Image optimization.
 	- File reload via [`BrowserSync`](https://www.browsersync.io/).
-		- Auto-detects for free ports to use.
+		- Auto-detects free ports to use.
 		- Auto-closes opened tabs when `Gulp` process ends.
 - Out of convenience, comes with the following front-end libraries:
 	- [`font-awesome`](http://fontawesome.io/)
