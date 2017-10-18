@@ -1,6 +1,6 @@
+var __markdown_styles__;
 // get the CSS markdown + prismjs styles
 // @internal
-var __markdown_styles__;
 gulp.task("tohtml:prepcss", function(done) {
     var task = this;
 
