@@ -59,6 +59,7 @@ var de = require("directory-exists");
 var cleanup = require("node-cleanup");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
+var prism_langs = require("prism-languages");
 var find_free_port = require("find-free-port");
 var alphabetize = require("alphabetize-object-keys");
 var bs_autoclose = require("browser-sync-close-hook");

@@ -64,6 +64,7 @@
         "node-cleanup": "^2.1.2",
         "node-dir": "^0.1.17",
         "node-notifier": "^5.1.2",
+        "prism-languages": "^0.3.3",
         "prismjs": "^1.8.1",
         "prompt": "^1.0.0",
         "pump": "^1.0.2",

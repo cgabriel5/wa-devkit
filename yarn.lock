@@ -3986,6 +3986,10 @@ pretty-hrtime@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
 
+prism-languages@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/prism-languages/-/prism-languages-0.3.3.tgz#79c395b4e25d4c4b12b9687beee7cbfa2373e1e4"
+
 prismjs@^1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.8.1.tgz#bd0cdc32e9a561c1c8c3c9733765a7f1ec3b54ee"
