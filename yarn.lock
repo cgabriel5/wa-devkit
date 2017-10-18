@@ -2104,7 +2104,7 @@ gulp-imagemin@^3.3.0:
 
 "gulp-inject-content@https://github.com/cgabriel5/gulp-inject-content/tarball/master":
   version "0.0.1"
-  resolved "https://github.com/cgabriel5/gulp-inject-content/tarball/master#ccc0207b6847357d9ca5e41b1ed572d90771df82"
+  resolved "https://github.com/cgabriel5/gulp-inject-content/tarball/master#6238c3b4334ca33e1e0aca3758c0b62cbfc84ac9"
 
 gulp-insert@^0.5.0:
   version "0.5.0"
