@@ -157,7 +157,7 @@
     "js": {
         "source": {
             "files": [
-                "app/iife/top.js",
+                "app/iife/open.js",
                 "app/__init__.js",
                 "modules/libs.js",
                 "modules/globals.js",
@@ -166,7 +166,7 @@
                 "modules/core.js",
                 "modules/events.js",
                 "modules/main.js",
-                "app/iife/end.js"
+                "app/iife/close.js"
             ],
             "names": {
                 "main": "app.js"

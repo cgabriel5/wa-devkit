@@ -4,16 +4,16 @@ exports.jsconfigs = {
     "library": {
         "source": {
             "files": [
-	                "lib/iife/top.js",
-	                "lib/library/top.js",
+	                "lib/iife/open.js",
+	                "lib/library/open.js",
 	                "modules/fn.helpers.js",
 	                "modules/fn.source.js",
 	                "modules/fn.core.js",
 	                "modules/constructor.js",
 	                "lib/library/end.js",
 	                "modules/globals.js",
-	                "modules/bottom.js",
-	                "lib/iife/end.js",
+	                "modules/close.js",
+	                "lib/iife/close.js",
 	                "test/main.js"
                 ],
             "names": {
@@ -39,7 +39,7 @@ exports.jsconfigs = {
     "webapp": {
         "source": {
             "files": [
-	                "app/iife/top.js",
+	                "app/iife/open.js",
 	                "app/__init__.js",
 	                "modules/libs.js",
 	                "modules/globals.js",
@@ -48,7 +48,7 @@ exports.jsconfigs = {
 	                "modules/core.js",
 	                "modules/events.js",
 	                "modules/main.js",
-	                "app/iife/end.js"
+	                "app/iife/close.js"
                 ],
             "names": {
                 "main": "app.js"
