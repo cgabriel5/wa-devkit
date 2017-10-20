@@ -129,18 +129,18 @@
     "html": {
         "source": {
             "files": [
-                "index/top.html",
-                "head/start.html",
+                "index/open.html",
+                "head/open.html",
                 "head/meta.html",
                 "head/favicon.html",
                 "head/css.html",
                 "head/js.html",
-                "head/end.html",
-                "body/start.html",
+                "head/close.html",
+                "body/open.html",
                 "body/content.html",
                 "body/js.html",
-                "body/end.html",
-                "index/end.html"
+                "body/close.html",
+                "index/close.html"
             ],
             "names": {
                 "main": "index.html"
