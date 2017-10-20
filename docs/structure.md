@@ -11,7 +11,7 @@
 - [configs/](#configs-directory)
 - [markdown/](#markdown-directory)
 - [favicon/](#favicon-directory)
-- [root/](#root-directory)
+- [./ (root)](#root-directory)
 
 <a name="html-directory"></a>
 ## HTML Directory
@@ -25,20 +25,20 @@ html/
 │   └── hello_world.txt
 └── source/
     ├── body/
+    │   ├── close.html
     │   ├── content.html
-    │   ├── end.html
     │   ├── js.html
-    │   └── start.html
+    │   └── open.html
     ├── head/
+    │   ├── close.html
     │   ├── css.html
-    │   ├── end.html
     │   ├── favicon.html
     │   ├── js.html
     │   ├── meta.html
-    │   └── start.html
+    │   └── open.html
     └── index/
-        ├── end.html
-        └── top.html
+        ├── close.html
+        └── open.html
 ```
 
 <a name="html-break-down"></a>
