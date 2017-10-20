@@ -27,8 +27,8 @@ exports.jsconfigs = {
         "vendor": {
             "files": [
 	            	"js/vendor/modernizr/modernizr.js",
-	            	"js/vendor/jquery/dist/jquery.js",
-	                "js/vendor/fastclick/lib/fastclick.js",
+	            	"js/vendor/jquery/jquery.js",
+	                "js/vendor/fastclick/fastclick.js",
 	                "js/vendor/__init__.js"
                 ],
             "names": {
@@ -57,8 +57,8 @@ exports.jsconfigs = {
         "vendor": {
             "files": [
 					"js/vendor/modernizr/modernizr.js",
-					"js/vendor/jquery/dist/jquery.js",
-					"js/vendor/fastclick/lib/fastclick.js"
+					"js/vendor/jquery/jquery.js",
+					"js/vendor/fastclick/fastclick.js"
                 ],
             "names": {
                 "main": "vendor.js"

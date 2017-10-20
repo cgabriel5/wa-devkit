@@ -19,7 +19,7 @@ css: {
     },
     vendor: {
         files: [
-            "css/vendor/normalize.css/normalize.css",
+            "css/vendor/sanitize.css/sanitize.css",
             "css/vendor/font-awesome/css/font-awesome.css"
         ],
         names: {

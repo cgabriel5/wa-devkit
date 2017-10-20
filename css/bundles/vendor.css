@@ -1,33 +1,54 @@
-/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
+/*! sanitize.css v5.0.0 | CC0 License | github.com/jonathantneal/sanitize.css */
 
-/* Document
+/* Document (https://html.spec.whatwg.org/multipage/semantics.html#semantics)
    ========================================================================== */
 
 /**
- * 1. Correct the line height in all browsers.
- * 2. Prevent adjustments of font size after orientation changes in
- *    IE on Windows Phone and in iOS.
+ * 1. Remove repeating backgrounds in all browsers (opinionated).
+ * 2. Add box sizing inheritence in all browsers (opinionated).
+ */
+
+*,
+::before,
+::after {
+    background-repeat: no-repeat;
+    /* 1 */
+    box-sizing: inherit;
+    /* 2 */
+}
+
+/**
+ * 1. Add text decoration inheritance in all browsers (opinionated).
+ * 2. Add vertical alignment inheritence in all browsers (opinionated).
+ */
+
+::before,
+::after {
+    text-decoration: inherit;
+    /* 1 */
+    vertical-align: inherit;
+    /* 2 */
+}
+
+/**
+ * 1. Add border box sizing in all browsers (opinionated).
+ * 2. Add the default cursor in all browsers (opinionated).
+ * 3. Prevent font size adjustments after orientation changes in IE and iOS.
  */
 
 html {
-    line-height: 1.15;
+    box-sizing: border-box;
     /* 1 */
+    cursor: default;
+    /* 2 */
     -ms-text-size-adjust: 100%;
-    /* 2 */
+    /* 3 */
     -webkit-text-size-adjust: 100%;
-    /* 2 */
+    /* 3 */
 }
 
-/* Sections
+/* Sections (https://html.spec.whatwg.org/multipage/semantics.html#sections)
    ========================================================================== */
-
-/**
- * Remove the margin in all browsers (opinionated).
- */
-
-body {
-    margin: 0;
-}
 
 /**
  * Add the correct display in IE 9-.
@@ -43,16 +64,24 @@ section {
 }
 
 /**
+ * Remove the margin in all browsers (opinionated).
+ */
+
+body {
+    margin: 0;
+}
+
+/**
  * Correct the font size and margin on `h1` elements within `section` and
  * `article` contexts in Chrome, Firefox, and Safari.
  */
 
 h1 {
     font-size: 2em;
-    margin: 0.67em 0;
+    margin: .67em 0;
 }
 
-/* Grouping content
+/* Grouping content (https://html.spec.whatwg.org/multipage/semantics.html#grouping-content)
    ========================================================================== */
 
 /**
@@ -90,6 +119,15 @@ hr {
 }
 
 /**
+ * Remove the list style on navigation lists in all browsers (opinionated).
+ */
+
+nav ol,
+nav ul {
+    list-style: none;
+}
+
+/**
  * 1. Correct the inheritance and scaling of font size in all browsers.
  * 2. Correct the odd `em` font sizing in all browsers.
  */
@@ -100,7 +138,7 @@ pre {
     /* 2 */
 }
 
-/* Text-level semantics
+/* Text-level semantics (https://html.spec.whatwg.org/multipage/semantics.html#text-level-semantics)
    ========================================================================== */
 
 /**
@@ -116,7 +154,7 @@ a {
 }
 
 /**
- * 1. Remove the bottom border in Chrome 57- and Firefox 39-.
+ * 1. Remove the bottom border in Firefox 39-.
  * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
  */
 
@@ -175,8 +213,8 @@ dfn {
  */
 
 mark {
-    background: #ff0;
-    color: #000;
+    background: #ffff00;
+    color: #000000;
 }
 
 /**
@@ -201,15 +239,49 @@ sup {
 }
 
 sub {
-    bottom: -0.25em;
+    bottom: -.25em;
 }
 
 sup {
-    top: -0.5em;
+    top: -.5em;
 }
 
-/* Embedded content
+/*
+ * Remove the text shadow on text selections (opinionated).
+ * 1. Restore the coloring undone by defining the text shadow (opinionated).
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    /* 1 */
+    color: #000000;
+    /* 1 */
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    /* 1 */
+    color: #000000;
+    /* 1 */
+    text-shadow: none;
+}
+
+/* Embedded content (https://html.spec.whatwg.org/multipage/embedded-content.html#embedded-content)
    ========================================================================== */
+
+/*
+ * Change the alignment on media elements in all browers (opinionated).
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
 
 /**
  * Add the correct display in IE 9-.
@@ -238,6 +310,14 @@ img {
 }
 
 /**
+ * Change the fill color to match the text color in all browsers (opinionated).
+ */
+
+svg {
+    fill: currentColor;
+}
+
+/**
  * Hide the overflow in IE.
  */
 
@@ -245,12 +325,22 @@ svg:not(:root) {
     overflow: hidden;
 }
 
-/* Forms
+/* Tabular data (https://html.spec.whatwg.org/multipage/tables.html#tables)
    ========================================================================== */
 
 /**
- * 1. Change the font styles in all browsers (opinionated).
- * 2. Remove the margin in Firefox and Safari.
+ * Collapse border spacing
+ */
+
+table {
+    border-collapse: collapse;
+}
+
+/* Forms (https://html.spec.whatwg.org/multipage/forms.html#forms)
+   ========================================================================== */
+
+/**
+ * Remove the margin in Firefox and Safari.
  */
 
 button,
@@ -258,12 +348,21 @@ input,
 optgroup,
 select,
 textarea {
-    font: 100%/1.15 sans-serif;
-    /* 1 */
-    /* 1 */
-    /* 1 */
     margin: 0;
-    /* 2 */
+}
+
+/**
+ * Inherit styling in all browsers (opinionated).
+ */
+
+button,
+input,
+select,
+textarea {
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
 }
 
 /**
@@ -326,14 +425,6 @@ button:-moz-focusring,
 }
 
 /**
- * Correct the padding in Firefox.
- */
-
-fieldset {
-    padding: 0.35em 0.75em 0.625em;
-}
-
-/**
  * 1. Correct the text wrapping in Edge and IE.
  * 2. Correct the color inheritance from `fieldset` elements in IE.
  * 3. Remove the padding so developers are not caught out when they zero out
@@ -368,11 +459,15 @@ progress {
 }
 
 /**
- * Remove the default vertical scrollbar in IE.
+ * 1. Remove the default vertical scrollbar in IE.
+ * 2. Change the resize direction on textareas in all browsers (opinionated).
  */
 
 textarea {
     overflow: auto;
+    /* 1 */
+    resize: vertical;
+    /* 2 */
 }
 
 /**
@@ -430,7 +525,7 @@ textarea {
     /* 2 */
 }
 
-/* Interactive
+/* Interactive elements (https://html.spec.whatwg.org/multipage/forms.html#interactive-elements)
    ========================================================================== */
 
 /*
@@ -451,7 +546,7 @@ summary {
     display: list-item;
 }
 
-/* Scripting
+/* Scripting (https://html.spec.whatwg.org/multipage/scripting.html#scripting-3)
    ========================================================================== */
 
 /**
@@ -470,8 +565,27 @@ template {
     display: none;
 }
 
-/* Hidden
+/* User interaction (https://html.spec.whatwg.org/multipage/interaction.html#editing)
    ========================================================================== */
+
+/*
+ * Remove the tapping delay on clickable elements (opinionated).
+ * 1. Remove the tapping delay in IE 10.
+ */
+
+a,
+area,
+button,
+input,
+label,
+select,
+summary,
+textarea,
+[tabindex] {
+    -ms-touch-action: manipulation;
+    /* 1 */
+    touch-action: manipulation;
+}
 
 /**
  * Add the correct display in IE 10-.
@@ -479,6 +593,44 @@ template {
 
 [hidden] {
     display: none;
+}
+
+/* ARIA (https://w3c.github.io/html-aria/)
+   ========================================================================== */
+
+/**
+ * Change the cursor on busy elements (opinionated).
+ */
+
+[aria-busy="true"] {
+    cursor: progress;
+}
+
+/*
+ * Change the cursor on control elements (opinionated).
+ */
+
+[aria-controls] {
+    cursor: pointer;
+}
+
+/*
+ * Change the display on visually hidden accessible elements (opinionated).
+ */
+
+[aria-hidden="false"][hidden]:not(:focus) {
+    clip: rect(0, 0, 0, 0);
+    display: inherit;
+    position: absolute;
+}
+
+/*
+ * Change the cursor on disabled, not-editable, or otherwise
+ * inoperable elements (opinionated).
+ */
+
+[aria-disabled] {
+    cursor: default;
 }
 
 /*!
