@@ -61,6 +61,7 @@ css/
 │   └── fonts/
 │       └── font-awesome/
 │           └── ...font-awesome files
+
 ├── bundles/
 │   ├── app.css
 │   └── vendor.css
@@ -69,8 +70,7 @@ css/
 │   └── styles.css
 └── vendor/
     ├── font-awesome/
-    │   └── css/
-    │       └── font-awesome.css
+    │   └── font-awesome.css
     ├── normalize.css/
     │   └── normalize.css
     └── sanitize.css/
@@ -90,6 +90,7 @@ css/
 	- Files will build `./css/bundles/app.css`.
 - `css/vendor/` where vendor CSS files should go.
 	- Files will build `./css/bundles/vendor.css`.
+	- Uses `sanitize.css` by default. Can be switched to `normalize.css`.
 
 <a name="js-directory"></a>
 ## JS Directory
@@ -101,7 +102,7 @@ css/
 js/
 ├── bundles/
 │   ├── app.js
-│   └── libs.js
+│   └── vendor.js
 ├── source/
 │   ├── app/
 │   │   ├── iife/
@@ -117,18 +118,18 @@ js/
 │       ├── main.js
 │       └── utils.js
 └── vendor/
-	├── fastclick/
-	│   └── lib/
-	│       └── fastclick.js
-	├── jquery/
-	│   └── dist/
-	│       ├── core.js
-	│       ├── jquery.js
-	│       ├── jquery.min.js
-	│       ├── jquery.slim.js
-	│       └── jquery.slim.min.js
-	└── modernizr/
-		└── modernizr.js
+    ├── fastclick/
+    │   └── fastclick.js
+    ├── jquery/
+    │   ├── core.js
+    │   ├── jquery.js
+    │   ├── jquery.min.js
+    │   ├── jquery.min.map
+    │   ├── jquery.slim.js
+    │   ├── jquery.slim.min.js
+    │   └── jquery.slim.min.map
+    └── modernizr/
+        └── modernizr.js
 ```
 
 <a name="javascript-break-down"></a>

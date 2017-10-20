@@ -21,8 +21,8 @@
 		- Auto-closes opened tabs when `Gulp` process ends.
 - Out of convenience, comes with the following front-end libraries:
 	- [`font-awesome`](http://fontawesome.io/)
-	- [`normalize.css`](http://necolas.github.io/normalize.css/) (uses `normalize.css` by default)
-	- [`sanitize.css`](https://jonathantneal.github.io/sanitize.css/) (easily switch to `sanitize.css` if desired)
+	- [`sanitize.css`](https://jonathantneal.github.io/sanitize.css/) (uses `sanitize.css` by default)
+	- [`normalize.css`](http://necolas.github.io/normalize.css/) (easily switch to `normalize.css` if desired)
 	- [`modernizr.js`](https://modernizr.com/) (built-in support for building a custom build)
 	- [`fastclick.js`](https://labs.ft.com/fastclick/)
 	- [`jquery.js`](https://jquery.com/)
