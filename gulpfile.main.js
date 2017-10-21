@@ -1,5 +1,6 @@
-// @start requires.js ---------------------------------------------------------|
-
+/* *********************************************
+       Start requires.js
+ ********************************************* */
 "use strict";
 
 var fs = require("fs");
@@ -65,11 +66,13 @@ var prism_langs = require("prism-languages");
 var find_free_port = require("find-free-port");
 var alphabetize = require("alphabetize-object-keys");
 var bs_autoclose = require("browser-sync-close-hook");
+/* *********************************************
+       End requires.js
+ ********************************************* */
 
-// @end   requires.js ---------------------------------------------------------|
-
-// @start paths.js ------------------------------------------------------------|
-
+/* *********************************************
+       Start paths.js
+ ********************************************* */
 // paths::BASES
 var __PATHS_DEL = "/";
 var __PATHS_BASE = "./";
@@ -158,11 +161,13 @@ var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
 var __PATHS_MODERNIZR_FILE = "modernizr.js";
+/* *********************************************
+       End paths.js
+ ********************************************* */
 
-// @end   paths.js ------------------------------------------------------------|
-
-// @start vars.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start vars.js
+ ********************************************* */
 // dynamic configuration files (load via json-file to modify later)
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 
@@ -236,11 +241,13 @@ var opts_sort = {
         return 0;
     }
 };
+/* *********************************************
+       End vars.js
+ ********************************************* */
 
-// @end   vars.js -------------------------------------------------------------|
-
-// @start injection.js --------------------------------------------------------|
-
+/* *********************************************
+       Start injection.js
+ ********************************************* */
 // HTML injection variable object
 var html_injection = {
     "css_bundle_app": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
@@ -248,11 +255,13 @@ var html_injection = {
     "js_bundle_app": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
     "js_bundle_vendor": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
 };
+/* *********************************************
+       End injection.js
+ ********************************************* */
 
-// @end   injection.js --------------------------------------------------------|
-
-// @start functions.js --------------------------------------------------------|
-
+/* *********************************************
+       Start functions.js
+ ********************************************* */
 /**
  * @description [Opens the provided file in the user's browser.]
  * @param  {String}   filepath  [The path of the file to open.]
@@ -371,11 +380,13 @@ function bangify(string) {
 function globall(string) {
     return (string || "") + "**";
 }
+/* *********************************************
+       End functions.js
+ ********************************************* */
 
-// @end   functions.js --------------------------------------------------------|
-
-// @start init.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start init.js
+ ********************************************* */
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
 cleanup(function(exit_code, signal) {
     // check for current Gulp process
@@ -515,11 +526,13 @@ gulp.task("default", function(done) {
         });
     }
 });
+/* *********************************************
+       End init.js
+ ********************************************* */
 
-// @end   init.js -------------------------------------------------------------|
-
-// @start dist.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start dist.js
+ ********************************************* */
 // remove old dist / folder
 // @internal
 gulp.task("dist:clean", function(done) {
@@ -654,11 +667,13 @@ gulp.task("dist", function(done) {
     // apply the tasks and callback to sequence
     return sequence.apply(task, tasks);
 });
+/* *********************************************
+       End dist.js
+ ********************************************* */
 
-// @end   dist.js -------------------------------------------------------------|
-
-// @start lib.js --------------------------------------------------------------|
-
+/* *********************************************
+       Start lib.js
+ ********************************************* */
 // remove old lib/ folder
 // @internal
 gulp.task("lib:clean", function(done) {
@@ -714,11 +729,13 @@ gulp.task("lib", function(done) {
     // apply the tasks and callback to sequence
     return sequence.apply(task, tasks);
 });
+/* *********************************************
+       End lib.js
+ ********************************************* */
 
-// @end   lib.js --------------------------------------------------------------|
-
-// @start watch.js ------------------------------------------------------------|
-
+/* *********************************************
+       Start watch.js
+ ********************************************* */
 // watch for files changes
 // @internal
 gulp.task("watch:main", function(done) {
@@ -795,24 +812,28 @@ gulp.task("watch:main", function(done) {
             return sequence("img:main");
         });
 
-        // watch for any changes to README.md
-        gulp.watch([__PATHS_README], {
-            cwd: __PATHS_BASE
-        }, function() {
-            return sequence("tohtml", function() {
-                bs.reload();
-            });
-        });
+        // is the following watcher needed?
+
+        // // watch for any changes to README.md
+        // gulp.watch([__PATHS_README], {
+        //     cwd: __PATHS_BASE
+        // }, function() {
+        //     return sequence("tohtml", function() {
+        //         bs.reload();
+        //     });
+        // });
 
         done();
 
     });
 });
+/* *********************************************
+       End watch.js
+ ********************************************* */
 
-// @end   watch.js ------------------------------------------------------------|
-
-// @start html.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start html.js
+ ********************************************* */
 // init HTML files + minify
 // @internal
 gulp.task("html:main", function(done) {
@@ -830,11 +851,13 @@ gulp.task("html:main", function(done) {
 		bs.stream()
     ], done);
 });
+/* *********************************************
+       End html.js
+ ********************************************* */
 
-// @end   html.js -------------------------------------------------------------|
-
-// @start css.js --------------------------------------------------------------|
-
+/* *********************************************
+       Start css.js
+ ********************************************* */
 // preform custom regexp replacements
 // @internal
 gulp.task("css:preapp", function(done) {
@@ -925,11 +948,13 @@ gulp.task("css:vendor", function(done) {
         bs.stream()
     ], done);
 });
+/* *********************************************
+       End css.js
+ ********************************************* */
 
-// @end   css.js --------------------------------------------------------------|
-
-// @start js.js ---------------------------------------------------------------|
-
+/* *********************************************
+       Start js.js
+ ********************************************* */
 // build app.js + minify + beautify
 // @internal
 gulp.task("js:app", function(done) {
@@ -964,11 +989,13 @@ gulp.task("js:vendor", function(done) {
         bs.stream()
     ], done);
 });
+/* *********************************************
+       End js.js
+ ********************************************* */
 
-// @end   js.js ---------------------------------------------------------------|
-
-// @start images.js -----------------------------------------------------------|
-
+/* *********************************************
+       Start img.js
+ ********************************************* */
 // just trigger a browser-sync stream
 // @internal
 gulp.task("img:main", function(done) {
@@ -980,11 +1007,13 @@ gulp.task("img:main", function(done) {
         bs.stream()
     ], done);
 });
+/* *********************************************
+       End img.js
+ ********************************************* */
 
-// @end   images.js -----------------------------------------------------------|
-
-// @start modernizr.js --------------------------------------------------------|
-
+/* *********************************************
+       Start modernizr.js
+ ********************************************* */
 /**
  * Build Modernizr file.
  *
@@ -1006,11 +1035,13 @@ gulp.task("modernizr", function(done) {
         });
     });
 });
+/* *********************************************
+       End modernizr.js
+ ********************************************* */
 
-// @end   modernizr.js --------------------------------------------------------|
-
-// @start purify.js -----------------------------------------------------------|
-
+/* *********************************************
+       Start purify.js
+ ********************************************* */
 /**
  * Purge potentially unused CSS style definitions.
  *
@@ -1064,11 +1095,13 @@ gulp.task("purify", function(done) {
 		debug(task.__wadevkit.debug)
 	], done);
 });
+/* *********************************************
+       End purify.js
+ ********************************************* */
 
-// @end   purify.js -----------------------------------------------------------|
-
-// @start tohtml.js -----------------------------------------------------------|
-
+/* *********************************************
+       Start tohtml.js
+ ********************************************* */
 var __markdown_styles__;
 // get the CSS markdown + prismjs styles
 // @internal
@@ -1189,11 +1222,13 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		bs.stream()
         ], done);
 });
+/* *********************************************
+       End tohtml.js
+ ********************************************* */
 
-// @end   tohtml.js -----------------------------------------------------------|
-
-// @start open.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start open.js
+ ********************************************* */
 /**
  * Opens provided file in browser.
  *
@@ -1251,11 +1286,13 @@ gulp.task("open", function(done) {
     // else a port was found...use it
     return open_file_in_browser(file, port, done, task);
 });
+/* *********************************************
+       End open.js
+ ********************************************* */
 
-// @end   open.js -------------------------------------------------------------|
-
-// @start instance.js ---------------------------------------------------------|
-
+/* *********************************************
+       Start instance.js
+ ********************************************* */
 /**
  * Print whether there is an active Gulp instance.
  *
@@ -1287,11 +1324,13 @@ gulp.task("ports", function(done) {
     log(chalk.green("(local, ui)"), chalk.magenta("(" + ports.local + ", " + ports.ui + ")"));
     done();
 });
+/* *********************************************
+       End instance.js
+ ********************************************* */
 
-// @end   instance.js ---------------------------------------------------------|
-
-// @start pretty.js -----------------------------------------------------------|
-
+/* *********************************************
+       Start pretty.js
+ ********************************************* */
 /**
  * Beautify all HTML, JS, CSS, and JSON project files. Ignores ./node_modules/.
  *
@@ -1331,11 +1370,13 @@ gulp.task("pretty", function(done) {
 		gulp.dest(__PATHS_BASE)
     ], done);
 });
+/* *********************************************
+       End pretty.js
+ ********************************************* */
 
-// @end   pretty.js -----------------------------------------------------------|
-
-// @start files.js ------------------------------------------------------------|
-
+/* *********************************************
+       Start files.js
+ ********************************************* */
 /**
  * List project files.
  *
@@ -1437,11 +1478,13 @@ gulp.task("files", function(done) {
 
     });
 });
+/* *********************************************
+       End files.js
+ ********************************************* */
 
-// @end   files.js ------------------------------------------------------------|
-
-// @start dependency.js -------------------------------------------------------|
-
+/* *********************************************
+       Start dependency.js
+ ********************************************* */
 /**
  * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS vendor folder.
  *
@@ -1528,11 +1571,13 @@ gulp.task("dependency", function(done) {
             }
         });
 });
+/* *********************************************
+       End dependency.js
+ ********************************************* */
 
-// @end   dependency.js -------------------------------------------------------|
-
-// @start make.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start make.js
+ ********************************************* */
 /**
  * Build gulpfile from source files. Useful after making changes to source files.
  *
@@ -1553,16 +1598,15 @@ gulp.task("make", function(done) {
 		foreach(function(stream, file) {
             var filename = path.basename(file.path);
             var filename_length = filename.length;
-            var decor = "-".repeat(79 - 11 - filename_length) + "|";
-            var top = `// @start ${filename} ${decor}\n\n`;
-            var bottom = `\n// @end   ${filename} ${decor}\n`;
-            var empty = "// file is empty..."; // file does not contain code
+            var decor = "*".repeat(45);
+            var spacer = " ".repeat(5);
+            var header_top = `/* ${decor}\n ${spacer} Start ${filename}\n ${decor} */\n`;
+            var header_bottom = `/* ${decor}\n ${spacer} End ${filename}\n ${decor} */\n`;
             // empty check
-            var is_empty = file.contents.toString()
-                .trim() === "";
-            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
-                .pipe(insert.prepend(top))
-                .pipe(insert.append(bottom));
+            if (file.contents.toString()
+                .trim() === "") filename += " is empty";
+            return stream.pipe(insert.prepend(header_top))
+                .pipe(insert.append(header_bottom));
         }),
 		// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
 		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
@@ -1571,11 +1615,13 @@ gulp.task("make", function(done) {
 		debug(task.__wadevkit.debug)
 	], done);
 });
+/* *********************************************
+       End make.js
+ ********************************************* */
 
-// @end   make.js -------------------------------------------------------------|
-
-// @start help.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start help.js
+ ********************************************* */
 /**
  * Provides Gulp task documentation (this documentation).
  *
@@ -1643,11 +1689,13 @@ gulp.task("help", function() {
         "print": printer
     })(task);
 });
+/* *********************************************
+       End help.js
+ ********************************************* */
 
-// @end   help.js -------------------------------------------------------------|
-
-// @start favicon.js ----------------------------------------------------------|
-
+/* *********************************************
+       Start favicon.js
+ ********************************************* */
 // Generate the icons. This task takes a few seconds to complete.
 // You should run it at least once to create the icons. Then,
 // you should run it whenever RealFaviconGenerator updates its
@@ -1816,5 +1864,6 @@ gulp.task("favicon-updates", function(done) {
         }
     });
 });
-
-// @end   favicon.js ----------------------------------------------------------|
+/* *********************************************
+       End favicon.js
+ ********************************************* */

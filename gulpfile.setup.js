@@ -1,5 +1,6 @@
-// @start requires.js ---------------------------------------------------------|
-
+/* *********************************************
+       Start requires.js
+ ********************************************* */
 "use strict";
 
 var fs = require("fs");
@@ -39,11 +40,13 @@ var uglify = require("gulp-uglify");
 // // @uglify_es
 // var composer = require("gulp-uglify/composer");
 // var uglify = composer(require("uglify-es"), console);
+/* *********************************************
+       End requires.js
+ ********************************************* */
 
-// @end   requires.js ---------------------------------------------------------|
-
-// @start paths.js ------------------------------------------------------------|
-
+/* *********************************************
+       Start paths.js
+ ********************************************* */
 // paths::BASES
 var __PATHS_BASE = "./";
 var __PATHS_BASE_DOT = ".";
@@ -90,11 +93,13 @@ var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
 // exclude all vendor files from any directory
 var __PATHS_NOT_VENDOR = "!**/vendor/**";
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
+/* *********************************************
+       End paths.js
+ ********************************************* */
 
-// @end   paths.js ------------------------------------------------------------|
-
-// @start vars.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start vars.js
+ ********************************************* */
 // dynamic configuration files (load via json-file to modify later)
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 var config_pkg = json.read(__PATHS_CONFIG_PKG);
@@ -137,11 +142,13 @@ var opts_sort = {
         return 0;
     }
 };
+/* *********************************************
+       End vars.js
+ ********************************************* */
 
-// @end   vars.js -------------------------------------------------------------|
-
-// @start functions.js --------------------------------------------------------|
-
+/* *********************************************
+       Start functions.js
+ ********************************************* */
 /**
  * @description [Add a bang to the start of the string.]
  * @param  {String} string [The string to add the bang to.]
@@ -159,11 +166,13 @@ function bangify(string) {
 function globall(string) {
     return (string || "") + "**";
 }
+/* *********************************************
+       End functions.js
+ ********************************************* */
 
-// @end   functions.js --------------------------------------------------------|
-
-// @start init.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start init.js
+ ********************************************* */
 // @internal
 gulp.task("default", function(done) {
     var task = this;
@@ -259,11 +268,13 @@ gulp.task("init", function(done) {
 
     });
 });
+/* *********************************************
+       End init.js
+ ********************************************* */
 
-// @end   init.js -------------------------------------------------------------|
-
-// @start steps.js ------------------------------------------------------------|
-
+/* *********************************************
+       Start steps.js
+ ********************************************* */
 // initialization step
 // @internal
 gulp.task("init:clear-js", function(done) {
@@ -395,11 +406,13 @@ gulp.task("init:git", function(done) {
         .add("./*")
         .commit("chore: Initial commit\n\nProject initialization.");
 });
+/* *********************************************
+       End steps.js
+ ********************************************* */
 
-// @end   steps.js ------------------------------------------------------------|
-
-// @start pretty.js -----------------------------------------------------------|
-
+/* *********************************************
+       Start pretty.js
+ ********************************************* */
 // beautify html, js, css, & json files
 // @internal
 gulp.task("pretty", function(done) {
@@ -432,11 +445,13 @@ gulp.task("pretty", function(done) {
 // initialization step::alias
 // @internal
 gulp.task("init:pretty", ["pretty"]);
+/* *********************************************
+       End pretty.js
+ ********************************************* */
 
-// @end   pretty.js -----------------------------------------------------------|
-
-// @start make.js -------------------------------------------------------------|
-
+/* *********************************************
+       Start make.js
+ ********************************************* */
 // build gulpfile.setup.js
 // @internal
 gulp.task("make", function(done) {
@@ -458,16 +473,15 @@ gulp.task("make", function(done) {
 		foreach(function(stream, file) {
             var filename = path.basename(file.path);
             var filename_length = filename.length;
-            var decor = "-".repeat(79 - 11 - filename_length) + "|";
-            var top = `// @start ${filename} ${decor}\n\n`;
-            var bottom = `\n// @end   ${filename} ${decor}\n`;
-            var empty = "// file is empty..."; // file does not contain code
+            var decor = "*".repeat(45);
+            var spacer = " ".repeat(5);
+            var header_top = `/* ${decor}\n ${spacer} Start ${filename}\n ${decor} */\n`;
+            var header_bottom = `/* ${decor}\n ${spacer} End ${filename}\n ${decor} */\n`;
             // empty check
-            var is_empty = file.contents.toString()
-                .trim() === "";
-            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
-                .pipe(insert.prepend(top))
-                .pipe(insert.append(bottom));
+            if (file.contents.toString()
+                .trim() === "") filename += " is empty";
+            return stream.pipe(insert.prepend(header_top))
+                .pipe(insert.append(header_bottom));
         }),
 		concat(__PATHS_GULP_FILE_SETUP),
 		beautify(config_jsbeautify),
@@ -475,5 +489,6 @@ gulp.task("make", function(done) {
 		debug(task.__wadevkit.debug)
 	], done);
 });
-
-// @end   make.js -------------------------------------------------------------|
+/* *********************************************
+       End make.js
+ ********************************************* */
