@@ -74,14 +74,16 @@ gulp.task("watch:main", function(done) {
             return sequence("img:main");
         });
 
-        // watch for any changes to README.md
-        gulp.watch([__PATHS_README], {
-            cwd: __PATHS_BASE
-        }, function() {
-            return sequence("tohtml", function() {
-                bs.reload();
-            });
-        });
+        // is the following watcher needed?
+
+        // // watch for any changes to README.md
+        // gulp.watch([__PATHS_README], {
+        //     cwd: __PATHS_BASE
+        // }, function() {
+        //     return sequence("tohtml", function() {
+        //         bs.reload();
+        //     });
+        // });
 
         done();
 

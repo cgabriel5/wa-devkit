@@ -71,7 +71,7 @@
                 "tasks/html.js",
                 "tasks/css.js",
                 "tasks/js.js",
-                "tasks/images.js",
+                "tasks/img.js",
                 "helpers/modernizr.js",
                 "helpers/purify.js",
                 "helpers/tohtml.js",
@@ -101,27 +101,24 @@
         "watch": {
             "css": {
                 "source": [
-                    "source/*.css"
+                    "css/{source,assets}/**/*.css"
                 ],
                 "vendor": [
-                    "libs/**/*.css"
+                    "css/{vendor,assets}/**/*.css"
                 ]
             },
             "html": [
-                "i*.html",
-                "head/*.html",
-                "body/*.html"
+                "html/**/*.html"
             ],
             "img": [
                 "img/**/*.*"
             ],
             "js": {
                 "source": [
-                    "source/*.js",
-                    "source/modules/*.js"
+                    "js/source/**/*.js"
                 ],
                 "vendor": [
-                    "libs/**/*.js"
+                    "js/vendor/**/*.js"
                 ]
             }
         }
