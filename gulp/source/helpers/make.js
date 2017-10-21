@@ -18,16 +18,15 @@ gulp.task("make", function(done) {
 		foreach(function(stream, file) {
             var filename = path.basename(file.path);
             var filename_length = filename.length;
-            var decor = "-".repeat(79 - 11 - filename_length) + "|";
-            var top = `// @start ${filename} ${decor}\n\n`;
-            var bottom = `\n// @end   ${filename} ${decor}\n`;
-            var empty = "// file is empty..."; // file does not contain code
+            var decor = "*".repeat(45);
+            var spacer = " ".repeat(5);
+            var header_top = `/* ${decor}\n ${spacer} Start ${filename}\n ${decor} */\n`;
+            var header_bottom = `/* ${decor}\n ${spacer} End ${filename}\n ${decor} */\n`;
             // empty check
-            var is_empty = file.contents.toString()
-                .trim() === "";
-            return stream.pipe(gulpif(is_empty, insert.prepend(empty)))
-                .pipe(insert.prepend(top))
-                .pipe(insert.append(bottom));
+            if (file.contents.toString()
+                .trim() === "") filename += " is empty";
+            return stream.pipe(insert.prepend(header_top))
+                .pipe(insert.append(header_bottom));
         }),
 		// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
 		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
