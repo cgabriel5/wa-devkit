@@ -64,7 +64,6 @@ var current_task = function(gulp) {
     gulp.Gulp.prototype._runTask = function(task) {
         this.__wadevkit = {
             "debug": {
-                "suffix": chalk.yellow("✎"),
                 "names": {
                     "full": task.name,
                     "short": task.name.replace(/^(helper|task)\-/, "")
