@@ -61,7 +61,7 @@ var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 // paths:FAVICONS
 // file where the favicon markups are stored
 var __PATHS_FAVICON_DEST = `${__PATHS_HOMEDIR}favicon/`;
-var __PATHS_FAVICON_MASTER_PIC = `./${__PATHS_HOMEDIR}img/logo/leaf-900.png`;
+var __PATHS_FAVICON_MASTER_PIC = `./${__PATHS_HOMEDIR}docs/brand/img/leaf-900.png`;
 var __PATHS_FAVICON_ROOT_ICO = `./${__PATHS_HOMEDIR}favicon/favicon.ico`;
 var __PATHS_FAVICON_ROOT_PNG = `./${__PATHS_HOMEDIR}favicon/apple-touch-icon.png`;
 var __PATHS_FAVICON_ROOT_CONFIG = `./${__PATHS_HOMEDIR}favicon/browserconfig.xml`;
