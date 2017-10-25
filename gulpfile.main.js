@@ -136,7 +136,7 @@ var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 // paths:FAVICONS
 // file where the favicon markups are stored
 var __PATHS_FAVICON_DEST = `${__PATHS_HOMEDIR}favicon/`;
-var __PATHS_FAVICON_MASTER_PIC = `./${__PATHS_HOMEDIR}img/logo/leaf-900.png`;
+var __PATHS_FAVICON_MASTER_PIC = `./${__PATHS_HOMEDIR}docs/brand/img/leaf-900.png`;
 var __PATHS_FAVICON_ROOT_ICO = `./${__PATHS_HOMEDIR}favicon/favicon.ico`;
 var __PATHS_FAVICON_ROOT_PNG = `./${__PATHS_HOMEDIR}favicon/apple-touch-icon.png`;
 var __PATHS_FAVICON_ROOT_CONFIG = `./${__PATHS_HOMEDIR}favicon/browserconfig.xml`;
@@ -284,7 +284,8 @@ function open_file_in_browser(filepath, port, callback, task) {
                 "https": config_gulp_plugins.open.https
             })
         }),
-		debug(task.__wadevkit.debug)
+        // modify debug to take a flag to skip the use of the cli-spinner
+        // debug()
     ], function() {
         notify("File opened!");
         callback();
@@ -538,8 +539,8 @@ gulp.task("default", function(done) {
 gulp.task("dist:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
-        clean(),
-        debug(task.__wadevkit.debug)
+        debug.clean(),
+        clean()
     ], done);
 });
 
@@ -553,8 +554,9 @@ gulp.task("dist:favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	debug(),
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug.edit()
     ], done);
 });
 
@@ -570,9 +572,10 @@ gulp.task("dist:css", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
+		debug(),
 		gulpif(is_css, clean_css()),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug.edit()
     ], done);
 });
 
@@ -603,7 +606,7 @@ gulp.task("dist:img", function(done) {
             })
         ])),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug(task.__wadevkit.debug)
+		debug.edit()
     ], done);
 });
 
@@ -619,9 +622,10 @@ gulp.task("dist:js", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
+		debug(),
     	gulpif(is_js, uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug(task.__wadevkit.debug)
+		debug.edit()
     ], done);
 });
 
@@ -637,9 +641,10 @@ gulp.task("dist:root", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
+    	debug(),
     	gulpif(is_html, minify_html()),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
     ], done);
 });
 
@@ -679,8 +684,8 @@ gulp.task("dist", function(done) {
 gulp.task("lib:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts_remove),
-        clean(),
-        debug(task.__wadevkit.debug)
+        debug.clean(),
+        clean()
     ], done);
 });
 
@@ -697,11 +702,11 @@ gulp.task("lib:js", function(done) {
         concat(bundle_js.source.names.libs.main),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_LIB_HOME),
-        debug(task.__wadevkit.debug),
+        debug.edit(),
         uglify(),
         rename(bundle_js.source.names.libs.min),
 		gulp.dest(__PATHS_LIB_HOME),
-        debug(task.__wadevkit.debug)
+        debug.edit()
     ], done);
 });
 
@@ -847,7 +852,7 @@ gulp.task("html:main", function(done) {
 		beautify(config_jsbeautify),
 		injection.post(html_injection),
 		gulp.dest(__PATHS_BASE),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
 		bs.stream()
     ], done);
 });
@@ -865,7 +870,6 @@ gulp.task("css:preapp", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(),
 		beautify(config_jsbeautify),
 		// replacements...regexp pattern will match all declarations and their values
 		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
@@ -905,7 +909,7 @@ gulp.task("css:preapp", function(done) {
             return match;
         }),
         gulp.dest(__PATHS_CSS_SOURCE),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
         bs.stream()
     ], done);
 });
@@ -923,7 +927,7 @@ gulp.task("css:app", ["css:preapp"], function(done) {
         shorthand(),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -944,7 +948,7 @@ gulp.task("css:vendor", function(done) {
         shorthand(),
         beautify(config_jsbeautify),
 		gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -966,7 +970,7 @@ gulp.task("js:app", function(done) {
         concat(bundle_js.source.names.main),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -985,7 +989,7 @@ gulp.task("js:vendor", function(done) {
         concat(bundle_js.vendor.names.main),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -1084,7 +1088,8 @@ gulp.task("purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-		debug(),
+        // modify debug to take a flag to skip the use of the cli-spinner
+		// debug(),
 		purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
@@ -1092,7 +1097,7 @@ gulp.task("purify", function(done) {
 		gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
 		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
-		debug(task.__wadevkit.debug)
+		// debug.edit()
 	], done);
 });
 /* *********************************************
@@ -1121,6 +1126,7 @@ gulp.task("tohtml:prepcss", function(done) {
     	], {
             cwd: __PATHS_MARKDOWN_ASSETS
         }),
+        debug(),
         concat(__PATHS_MARKDOWN_CONCAT_NAME),
 		modify({
             fileModifier: function(file, contents) {
@@ -1129,7 +1135,7 @@ gulp.task("tohtml:prepcss", function(done) {
                 return contents;
             }
         }),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
         ], done);
 });
 
@@ -1179,7 +1185,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // run gulp process
     pump([gulp.src(file_name),
-    	debug(task.__wadevkit.debug),
+    	debug(),
 		marked(),
 		modify({
             fileModifier: function(file, contents) {
@@ -1218,7 +1224,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
         }),
         beautify(config_jsbeautify),
 		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
 		bs.stream()
         ], done);
 });
@@ -1366,7 +1372,7 @@ gulp.task("pretty", function(done) {
             "space": json_spaces
         })),
 		eol(),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
 		gulp.dest(__PATHS_BASE)
     ], done);
 });
@@ -1560,7 +1566,7 @@ gulp.task("dependency", function(done) {
                         path.dirname = path.dirname.replace(regexp, "");
                     }),
 					gulp.dest(dest),
-					debug(task.__wadevkit.debug)
+					debug.edit()
 	    	], function() {
                     log(message);
                     done();
@@ -1612,7 +1618,7 @@ gulp.task("make", function(done) {
 		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
 		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
-		debug(task.__wadevkit.debug)
+		debug.edit()
 	], done);
 });
 /* *********************************************
@@ -1785,8 +1791,9 @@ gulp.task("favicon:root", function(done) {
 	    	__PATHS_FAVICON_ROOT_CONFIG,
 	    	__PATHS_FAVICON_ROOT_MANIFEST
     	]),
+    	debug(),
         gulp.dest(__PATHS_BASE),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -1799,8 +1806,8 @@ gulp.task("favicon:delete", function(done) {
     		__PATHS_FAVICON_ROOT_CONFIG,
     		__PATHS_FAVICON_ROOT_MANIFEST
     	]),
-    	clean(),
-    	debug(task.__wadevkit.debug)
+    	debug.clean(),
+    	clean()
     ], done);
 });
 
@@ -1812,7 +1819,7 @@ gulp.task("favicon:html", function(done) {
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
             .favicon.html_code),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
-        debug(task.__wadevkit.debug),
+        debug.edit(),
         bs.stream()
     ], done);
 });

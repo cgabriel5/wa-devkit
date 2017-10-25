@@ -11,7 +11,7 @@ gulp.task("html:main", function(done) {
 		beautify(config_jsbeautify),
 		injection.post(html_injection),
 		gulp.dest(__PATHS_BASE),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
 		bs.stream()
     ], done);
 });

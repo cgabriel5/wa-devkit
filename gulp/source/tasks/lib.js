@@ -3,8 +3,8 @@
 gulp.task("lib:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts_remove),
-        clean(),
-        debug(task.__wadevkit.debug)
+        debug.clean(),
+        clean()
     ], done);
 });
 
@@ -21,11 +21,11 @@ gulp.task("lib:js", function(done) {
         concat(bundle_js.source.names.libs.main),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_LIB_HOME),
-        debug(task.__wadevkit.debug),
+        debug.edit(),
         uglify(),
         rename(bundle_js.source.names.libs.min),
 		gulp.dest(__PATHS_LIB_HOME),
-        debug(task.__wadevkit.debug)
+        debug.edit()
     ], done);
 });
 

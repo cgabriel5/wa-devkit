@@ -3,8 +3,8 @@
 gulp.task("dist:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
-        clean(),
-        debug(task.__wadevkit.debug)
+        debug.clean(),
+        clean()
     ], done);
 });
 
@@ -18,8 +18,9 @@ gulp.task("dist:favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	debug(),
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug.edit()
     ], done);
 });
 
@@ -35,9 +36,10 @@ gulp.task("dist:css", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
+		debug(),
 		gulpif(is_css, clean_css()),
-		debug(task.__wadevkit.debug),
-    	gulp.dest(__PATHS_DIST_HOME)
+    	gulp.dest(__PATHS_DIST_HOME),
+    	debug.edit()
     ], done);
 });
 
@@ -68,7 +70,7 @@ gulp.task("dist:img", function(done) {
             })
         ])),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug(task.__wadevkit.debug)
+		debug.edit()
     ], done);
 });
 
@@ -84,9 +86,10 @@ gulp.task("dist:js", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
+		debug(),
     	gulpif(is_js, uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug(task.__wadevkit.debug)
+		debug.edit()
     ], done);
 });
 
@@ -102,9 +105,10 @@ gulp.task("dist:root", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
+    	debug(),
     	gulpif(is_html, minify_html()),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
     ], done);
 });
 

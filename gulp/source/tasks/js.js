@@ -9,7 +9,7 @@ gulp.task("js:app", function(done) {
         concat(bundle_js.source.names.main),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -28,7 +28,7 @@ gulp.task("js:vendor", function(done) {
         concat(bundle_js.vendor.names.main),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });

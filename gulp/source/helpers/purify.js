@@ -40,7 +40,8 @@ gulp.task("purify", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-		debug(),
+        // modify debug to take a flag to skip the use of the cli-spinner
+		// debug(),
 		purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
@@ -48,6 +49,6 @@ gulp.task("purify", function(done) {
 		gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
 		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
-		debug(task.__wadevkit.debug)
+		// debug.edit()
 	], done);
 });

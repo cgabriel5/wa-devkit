@@ -5,7 +5,6 @@ gulp.task("css:preapp", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(),
 		beautify(config_jsbeautify),
 		// replacements...regexp pattern will match all declarations and their values
 		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
@@ -45,7 +44,7 @@ gulp.task("css:preapp", function(done) {
             return match;
         }),
         gulp.dest(__PATHS_CSS_SOURCE),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
         bs.stream()
     ], done);
 });
@@ -63,7 +62,7 @@ gulp.task("css:app", ["css:preapp"], function(done) {
         shorthand(),
         beautify(config_jsbeautify),
         gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });
@@ -84,7 +83,7 @@ gulp.task("css:vendor", function(done) {
         shorthand(),
         beautify(config_jsbeautify),
 		gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug(task.__wadevkit.debug),
+    	debug.edit(),
         bs.stream()
     ], done);
 });

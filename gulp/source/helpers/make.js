@@ -32,6 +32,6 @@ gulp.task("make", function(done) {
 		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
 		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
-		debug(task.__wadevkit.debug)
+		debug.edit()
 	], done);
 });

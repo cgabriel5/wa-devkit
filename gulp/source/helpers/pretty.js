@@ -33,7 +33,7 @@ gulp.task("pretty", function(done) {
             "space": json_spaces
         })),
 		eol(),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
 		gulp.dest(__PATHS_BASE)
     ], done);
 });

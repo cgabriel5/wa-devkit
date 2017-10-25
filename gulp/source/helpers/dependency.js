@@ -73,7 +73,7 @@ gulp.task("dependency", function(done) {
                         path.dirname = path.dirname.replace(regexp, "");
                     }),
 					gulp.dest(dest),
-					debug(task.__wadevkit.debug)
+					debug.edit()
 	    	], function() {
                     log(message);
                     done();

@@ -17,6 +17,7 @@ gulp.task("tohtml:prepcss", function(done) {
     	], {
             cwd: __PATHS_MARKDOWN_ASSETS
         }),
+        debug(),
         concat(__PATHS_MARKDOWN_CONCAT_NAME),
 		modify({
             fileModifier: function(file, contents) {
@@ -25,7 +26,7 @@ gulp.task("tohtml:prepcss", function(done) {
                 return contents;
             }
         }),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
         ], done);
 });
 
@@ -75,7 +76,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // run gulp process
     pump([gulp.src(file_name),
-    	debug(task.__wadevkit.debug),
+    	debug(),
 		marked(),
 		modify({
             fileModifier: function(file, contents) {
@@ -114,7 +115,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
         }),
         beautify(config_jsbeautify),
 		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		debug(task.__wadevkit.debug),
+		debug.edit(),
 		bs.stream()
         ], done);
 });
