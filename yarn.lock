@@ -2040,7 +2040,7 @@ gulp-concat@^2.6.1:
 
 "gulp-debug@https://github.com/cgabriel5/gulp-debug/tarball/master":
   version "3.1.0"
-  resolved "https://github.com/cgabriel5/gulp-debug/tarball/master#758a563ab04ac0d1f5ca6abf8d58710d3baa6634"
+  resolved "https://github.com/cgabriel5/gulp-debug/tarball/master#f6007e13d75fbe887d66f839f276899948e7be3d"
   dependencies:
     chalk "^1.0.0"
     gulp-util "^3.0.0"
