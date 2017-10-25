@@ -18,8 +18,8 @@ gulp.task("init:clear-js", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-    	clean(),
-    	debug(task.__wadevkit.debug)
+    	debug.clean(),
+    	clean()
     ], done);
 });
 
@@ -38,8 +38,9 @@ gulp.task("init:pick-js-option", function(done) {
             dot: true,
             cwd: __PATHS_BASE_DOT
         }),
+    	debug(),
         gulp.dest(__PATHS_JS_HOME),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
     ], done);
 });
 
@@ -59,7 +60,7 @@ gulp.task("init:fill-placeholders", function(done) {
         }),
         injection(__data__),
         gulp.dest(__PATHS_BASE),
-		debug(task.__wadevkit.debug)
+		debug.edit()
     ], done);
 });
 
@@ -75,7 +76,7 @@ gulp.task("init:setup-readme", function(done) {
         ]),
 		debug(),
         gulp.dest(__PATHS_BASE),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
     ], done);
 });
 
@@ -92,7 +93,7 @@ gulp.task("init:rename-gulpfile", function(done) {
         clean(), // remove the file
         rename(__PATHS_GULP_FILE_NAME),
         gulp.dest(__PATHS_BASE),
-    	debug(task.__wadevkit.debug)
+    	debug.edit()
     ], done);
 });
 
@@ -111,8 +112,8 @@ gulp.task("init:remove-setup", function(done) {
             read: false,
             base: __PATHS_BASE
         }),
-        clean(),
-    	debug(task.__wadevkit.debug)
+    	debug.clean(),
+        clean()
     ], done);
 });
 

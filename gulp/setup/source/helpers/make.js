@@ -32,6 +32,6 @@ gulp.task("make", function(done) {
 		concat(__PATHS_GULP_FILE_SETUP),
 		beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
-		debug(task.__wadevkit.debug)
+		debug.edit()
 	], done);
 });
