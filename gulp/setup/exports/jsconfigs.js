@@ -10,9 +10,9 @@ exports.jsconfigs = {
 	                "modules/fn.source.js",
 	                "modules/fn.core.js",
 	                "modules/constructor.js",
-	                "lib/library/end.js",
+	                "lib/library/close.js",
 	                "modules/globals.js",
-	                "modules/close.js",
+	                "modules/bottom.js",
 	                "lib/iife/close.js",
 	                "test/main.js"
                 ],
