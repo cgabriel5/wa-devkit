@@ -32,14 +32,12 @@ var injection = require("gulp-inject-content");
 var autoprefixer = require("gulp-autoprefixer");
 var real_favicon = require("gulp-real-favicon");
 
-// @non_es_uglify
-// By default the non es-uglify is used as the default uglifier.
-// Uncomment the @uglify_es comment block to use uglify-es instead.
-var uglify = require("gulp-uglify");
-
-// // @uglify_es
-// var composer = require("gulp-uglify/composer");
-// var uglify = composer(require("uglify-es"), console);
+// [https://stackoverflow.com/questions/45533101/how-to-use-uglify-es-with-gulp/45554108#45554108]
+// By default es-uglify is used to uglify JS. If ES support is not needed,
+// simply default back to "gulp-uglify" by commenting and uncommenting the
+// following lines.
+var uglify = require("gulp-uglify/composer")(require("uglify-es"), console);
+// var uglify = require("gulp-uglify");
 
 var del = require("del");
 var pump = require("pump");
