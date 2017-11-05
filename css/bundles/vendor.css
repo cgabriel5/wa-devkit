@@ -11,9 +11,10 @@
 *,
 ::before,
 ::after {
-    background-repeat: no-repeat;
     /* 1 */
     box-sizing: inherit;
+
+    background-repeat: no-repeat;
     /* 2 */
 }
 
@@ -24,9 +25,9 @@
 
 ::before,
 ::after {
-    text-decoration: inherit;
     /* 1 */
     vertical-align: inherit;
+    text-decoration: inherit;
     /* 2 */
 }
 
@@ -39,9 +40,11 @@
 html {
     box-sizing: border-box;
     /* 1 */
+
     cursor: default;
     /* 2 */
-    -ms-text-size-adjust: 100%;
+
+        -ms-text-size-adjust: 100%;
     /* 3 */
     -webkit-text-size-adjust: 100%;
     /* 3 */
@@ -78,7 +81,8 @@ body {
 
 h1 {
     font-size: 2em;
-    margin: .67em 0;
+
+    margin: 0.67em 0;
 }
 
 /* Grouping content (https://html.spec.whatwg.org/multipage/semantics.html#grouping-content)
@@ -110,11 +114,12 @@ figure {
  */
 
 hr {
+    /* 1 */
+    overflow: visible;
+
     box-sizing: content-box;
     /* 1 */
     height: 0;
-    /* 1 */
-    overflow: visible;
     /* 2 */
 }
 
@@ -149,6 +154,7 @@ pre {
 a {
     background: transparent;
     /* 1 */
+
     -webkit-text-decoration-skip: objects;
     /* 2 */
 }
@@ -159,13 +165,15 @@ a {
  */
 
 abbr[title] {
-    border-bottom: none;
     /* 1 */
-    text-decoration: underline;
+            text-decoration: underline;
+            text-decoration: underline dotted;
+
+    border-bottom: none;
     /* 2 */
+
     -webkit-text-decoration: underline dotted;
-    -moz-text-decoration: underline dotted;
-    text-decoration: underline dotted;
+       -moz-text-decoration: underline dotted;
     /* 2 */
 }
 
@@ -213,8 +221,8 @@ dfn {
  */
 
 mark {
-    background: #ffff00;
-    color: #000000;
+    color: #000;
+    background: #ff0;
 }
 
 /**
@@ -234,16 +242,18 @@ sub,
 sup {
     font-size: 75%;
     line-height: 0;
+
     position: relative;
+
     vertical-align: baseline;
 }
 
 sub {
-    bottom: -.25em;
+    bottom: -0.25em;
 }
 
 sup {
-    top: -.5em;
+    top: -0.5em;
 }
 
 /*
@@ -252,17 +262,17 @@ sup {
  */
 
 ::-moz-selection {
-    background: #b3d4fc;
     /* 1 */
-    color: #000000;
+    color: #000;
+    background: #b3d4fc;
     /* 1 */
     text-shadow: none;
 }
 
 ::selection {
-    background: #b3d4fc;
     /* 1 */
-    color: #000000;
+    color: #000;
+    background: #b3d4fc;
     /* 1 */
     text-shadow: none;
 }
@@ -298,6 +308,7 @@ video {
 
 audio:not([controls]) {
     display: none;
+
     height: 0;
 }
 
@@ -359,10 +370,11 @@ button,
 input,
 select,
 textarea {
-    background: transparent;
-    color: inherit;
     font-size: inherit;
     line-height: inherit;
+
+    color: inherit;
+    background: transparent;
 }
 
 /**
@@ -409,8 +421,9 @@ button::-moz-focus-inner,
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner {
-    border-style: none;
     padding: 0;
+
+    border-style: none;
 }
 
 /**
@@ -432,17 +445,20 @@ button:-moz-focusring,
  */
 
 legend {
-    box-sizing: border-box;
-    /* 1 */
-    color: inherit;
     /* 2 */
     display: table;
+
+    box-sizing: border-box;
     /* 1 */
     max-width: 100%;
     /* 1 */
     padding: 0;
     /* 3 */
+
     white-space: normal;
+    /* 1 */
+
+    color: inherit;
     /* 1 */
 }
 
@@ -454,6 +470,7 @@ legend {
 progress {
     display: inline-block;
     /* 1 */
+
     vertical-align: baseline;
     /* 2 */
 }
@@ -466,6 +483,7 @@ progress {
 textarea {
     overflow: auto;
     /* 1 */
+
     resize: vertical;
     /* 2 */
 }
@@ -498,9 +516,10 @@ textarea {
  */
 
 [type="search"] {
-    -webkit-appearance: textfield;
     /* 1 */
     outline-offset: -2px;
+
+    -webkit-appearance: textfield;
     /* 2 */
 }
 
@@ -519,9 +538,10 @@ textarea {
  */
 
 ::-webkit-file-upload-button {
-    -webkit-appearance: button;
     /* 1 */
     font: inherit;
+
+    -webkit-appearance: button;
     /* 2 */
 }
 
@@ -584,7 +604,7 @@ textarea,
 [tabindex] {
     -ms-touch-action: manipulation;
     /* 1 */
-    touch-action: manipulation;
+        touch-action: manipulation;
 }
 
 /**
@@ -619,9 +639,10 @@ textarea,
  */
 
 [aria-hidden="false"][hidden]:not(:focus) {
-    clip: rect(0, 0, 0, 0);
-    display: inherit;
     position: absolute;
+
+    display: inherit;
+    clip: rect(0, 0, 0, 0);
 }
 
 /*
@@ -642,17 +663,20 @@ textarea,
  * -------------------------- */
 
 @font-face {
-    font-family: 'FontAwesome';
-    src: url('../assets/fonts/font-awesome/fontawesome-webfont.eot?v=4.7.0');
-    src: url('../assets/fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('../assets/fonts/font-awesome/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('../assets/fonts/font-awesome/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('../assets/fonts/font-awesome/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('../assets/fonts/font-awesome/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
+    font-family: "FontAwesome";
     font-weight: normal;
     font-style: normal;
+
+    src: url("../assets/fonts/font-awesome/fontawesome-webfont.eot?v=4.7.0");
+    src: url("../assets/fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.7.0") format("embedded-opentype"), url("../assets/fonts/font-awesome/fontawesome-webfont.woff2?v=4.7.0") format("woff2"), url("../assets/fonts/font-awesome/fontawesome-webfont.woff?v=4.7.0") format("woff"), url("../assets/fonts/font-awesome/fontawesome-webfont.ttf?v=4.7.0") format("truetype"), url("../assets/fonts/font-awesome/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular") format("svg");
 }
 
 .fa {
-    display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
+
+    display: inline-block;
+
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -663,6 +687,7 @@ textarea,
 .fa-lg {
     font-size: 1.33333333em;
     line-height: 0.75em;
+
     vertical-align: -15%;
 }
 
@@ -684,24 +709,28 @@ textarea,
 
 .fa-fw {
     width: 1.28571429em;
+
     text-align: center;
 }
 
 .fa-ul {
-    list-style: none;
-    padding-left: 0;
     margin-left: 2.14285714em;
+    padding-left: 0;
+
+    list-style: none;
 }
 
-.fa-ul>li {
+.fa-ul > li {
     position: relative;
 }
 
 .fa-li {
     position: absolute;
-    left: -2.14285714em;
-    width: 2.14285714em;
     top: 0.14285714em;
+    left: -2.14285714em;
+
+    width: 2.14285714em;
+
     text-align: center;
 }
 
@@ -710,9 +739,10 @@ textarea,
 }
 
 .fa-border {
-    padding: .2em .25em .15em;
-    border: solid 0.08em #eeeeee;
-    border-radius: .1em;
+    padding: 0.2em 0.25em 0.15em;
+
+    border: solid 0.08em #eee;
+    border-radius: 0.1em;
 }
 
 .fa-pull-left {
@@ -724,11 +754,11 @@ textarea,
 }
 
 .fa.fa-pull-left {
-    margin-right: .3em;
+    margin-right: 0.3em;
 }
 
 .fa.fa-pull-right {
-    margin-left: .3em;
+    margin-left: 0.3em;
 }
 
 /* Deprecated as of 4.4.0 */
@@ -742,73 +772,80 @@ textarea,
 }
 
 .fa.pull-left {
-    margin-right: .3em;
+    margin-right: 0.3em;
 }
 
 .fa.pull-right {
-    margin-left: .3em;
+    margin-left: 0.3em;
 }
 
 .fa-spin {
     -webkit-animation: fa-spin 2s infinite linear;
-    animation: fa-spin 2s infinite linear;
+            animation: fa-spin 2s infinite linear;
 }
 
 .fa-pulse {
     -webkit-animation: fa-spin 1s infinite steps(8);
-    animation: fa-spin 1s infinite steps(8);
+            animation: fa-spin 1s infinite steps(8);
 }
 
 @-webkit-keyframes fa-spin {
     0% {
         -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
+                transform: rotate(0deg);
     }
+
     100% {
         -webkit-transform: rotate(359deg);
-        transform: rotate(359deg);
+                transform: rotate(359deg);
     }
 }
 
 @keyframes fa-spin {
     0% {
         -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
+                transform: rotate(0deg);
     }
+
     100% {
         -webkit-transform: rotate(359deg);
-        transform: rotate(359deg);
+                transform: rotate(359deg);
     }
 }
 
 .fa-rotate-90 {
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
     -webkit-transform: rotate(90deg);
-    transform: rotate(90deg);
+            transform: rotate(90deg);
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
 }
 
 .fa-rotate-180 {
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
     -webkit-transform: rotate(180deg);
-    transform: rotate(180deg);
+            transform: rotate(180deg);
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
 }
 
 .fa-rotate-270 {
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
     -webkit-transform: rotate(270deg);
-    transform: rotate(270deg);
+            transform: rotate(270deg);
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
 }
 
 .fa-flip-horizontal {
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
     -webkit-transform: scale(-1, 1);
-    transform: scale(-1, 1);
+            transform: scale(-1, 1);
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
 }
 
 .fa-flip-vertical {
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
     -webkit-transform: scale(1, -1);
-    transform: scale(1, -1);
+            transform: scale(1, -1);
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
 }
 
 :root .fa-rotate-90,
@@ -817,15 +854,19 @@ textarea,
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical {
     -webkit-filter: none;
-    filter: none;
+            filter: none;
 }
 
 .fa-stack {
+    line-height: 2em;
+
     position: relative;
+
     display: inline-block;
+
     width: 2em;
     height: 2em;
-    line-height: 2em;
+
     vertical-align: middle;
 }
 
@@ -833,7 +874,9 @@ textarea,
 .fa-stack-2x {
     position: absolute;
     left: 0;
+
     width: 100%;
+
     text-align: center;
 }
 
@@ -846,7 +889,7 @@ textarea,
 }
 
 .fa-inverse {
-    color: #ffffff;
+    color: #fff;
 }
 
 /* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
@@ -3665,21 +3708,26 @@ textarea,
 
 .sr-only {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
+
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+
     border: 0;
 }
 
 .sr-only-focusable:active,
 .sr-only-focusable:focus {
     position: static;
+
+    overflow: visible;
+    clip: auto;
+
     width: auto;
     height: auto;
     margin: 0;
-    overflow: visible;
-    clip: auto;
 }

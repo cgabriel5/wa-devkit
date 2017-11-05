@@ -5,22 +5,25 @@
 
 code[class*="language-"],
 pre[class*="language-"] {
-    color: #393A34;
     font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-    direction: ltr;
+    font-size: 0.95em;
+    line-height: 1.2em;
+
     text-align: left;
     white-space: pre;
     word-spacing: normal;
     word-break: normal;
-    font-size: 0.95em;
-    line-height: 1.2em;
     -moz-tab-size: 4;
-    -o-tab-size: 4;
-    tab-size: 4;
+      -o-tab-size: 4;
+         tab-size: 4;
     -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
-    hyphens: none;
+       -moz-hyphens: none;
+            hyphens: none;
+
+    color: #393a34;
+
+    direction: ltr;
+        -ms-hyphens: none;
 }
 
 pre[class*="language-"]::-moz-selection,
@@ -40,36 +43,38 @@ code[class*="language-"]::selection {
 /* Code blocks */
 
 pre[class*="language-"] {
-    padding: 1em;
-    margin: .5em 0;
     overflow: auto;
-    border: 1px solid #dddddd;
+
+    margin: 0.5em 0;
+    padding: 1em;
+
+    border: 1px solid #ddd;
     background-color: white;
 }
 
-:not(pre)>code[class*="language-"],
-pre[class*="language-"] {}
+
 
 /* Inline code */
 
-:not(pre)>code[class*="language-"] {
-    padding: .2em;
+:not(pre) > code[class*="language-"] {
+    padding: 0.2em;
     padding-top: 1px;
     padding-bottom: 1px;
+
+    border: 1px solid #ddd;
     background: #f8f8f8;
-    border: 1px solid #dddddd;
 }
 
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-    color: #999988;
+    color: #998;
     /* font-style: italic; */
 }
 
 .token.namespace {
-    opacity: .7;
+    opacity: 0.7;
 }
 
 .token.string,
@@ -80,7 +85,7 @@ pre[class*="language-"] {}
 
 .token.punctuation,
 .token.operator {
-    color: #393A34;
+    color: #393a34;
     /* no highlight */
 }
 
@@ -96,7 +101,7 @@ pre[class*="language-"] {}
 .token.inserted {
     /* color: #36acaa; */
     /* color: #627E00; */
-    color: #AA0C91;
+    color: #aa0c91;
 }
 
 .token.atrule,
@@ -104,7 +109,7 @@ pre[class*="language-"] {}
 .token.attr-name,
 .language-autohotkey .token.selector {
     color: #00a4db;
-    color: #AA0C91;
+    color: #aa0c91;
 }
 
 .token.class-name {
@@ -122,7 +127,7 @@ pre[class*="language-"] {}
 .token.selector,
 .language-autohotkey .token.keyword {
     color: #00009f;
-    color: #AA0C91;
+    color: #aa0c91;
 }
 
 .token.important,

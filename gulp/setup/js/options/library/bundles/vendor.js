@@ -5656,7 +5656,7 @@
         when: function(singleValue) {
             var
 
-            // count of uncompleted subordinates
+                // count of uncompleted subordinates
                 remaining = arguments.length,
 
                 // count of unprocessed arguments
@@ -5736,12 +5736,12 @@
         readyList
             .then(fn)
 
-        // Wrap jQuery.readyException in a function so that the lookup
-        // happens at the time of error handling instead of callback
-        // registration.
-        .catch(function(error) {
-            jQuery.readyException(error);
-        });
+            // Wrap jQuery.readyException in a function so that the lookup
+            // happens at the time of error handling instead of callback
+            // registration.
+            .catch(function(error) {
+                jQuery.readyException(error);
+            });
 
         return this;
     };
@@ -7491,9 +7491,9 @@
 
     var
 
-    /* eslint-disable max-len */
+        /* eslint-disable max-len */
 
-    // See https://github.com/eslint/eslint/issues/3229
+        // See https://github.com/eslint/eslint/issues/3229
         rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,
 
         /* eslint-enable */
@@ -8124,9 +8124,9 @@
 
     var
 
-    // Swappable if display is none or starts with table
-    // except "table", "table-cell", or "table-caption"
-    // See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+        // Swappable if display is none or starts with table
+        // except "table", "table-cell", or "table-caption"
+        // See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
         rdisplayswap = /^(none|table(?!-c[ea]).+)/,
         rcustomProp = /^--/,
         cssShow = {
@@ -9157,8 +9157,8 @@
                 .css("opacity", 0)
                 .show()
 
-            // Animate to the value specified
-            .end()
+                // Animate to the value specified
+                .end()
                 .animate({
                     opacity: to
                 }, speed, easing, callback);
@@ -12205,7 +12205,7 @@
 
     var
 
-    // Map over jQuery in case of overwrite
+        // Map over jQuery in case of overwrite
         _jQuery = window.jQuery,
 
         // Map over the $ in case of overwrite
