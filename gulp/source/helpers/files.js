@@ -3,7 +3,7 @@
  *
  * Options
  *
- * -t, --types    [string]  The optional extensions of files to list.
+ * -t, --type     [string]  The optional extensions of files to list.
  * -m, --min      [string]  Flag indicating whether to show .min. files.
  * -w, --whereis  [string]  File to look for. (Uses fuzzy search, Ignores ./node_modules/)
  *
@@ -15,9 +15,11 @@
  * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
  */
 gulp.task("files", function(done) {
+
+    var fuzzy = require("fuzzy");
+
     // run yargs
-    var _args = yargs.usage("Usage: $0 --type [string]")
-        .option("type", {
+    var _args = yargs.option("type", {
             alias: "t",
             demandOption: false,
             type: "string"
@@ -93,8 +95,8 @@ gulp.task("files", function(done) {
 
         // log files
         pump([gulp.src(files),
-			sort(opts_sort),
-			debug()
+			$.sort(opts_sort),
+			$.debug()
 	    ], done);
 
     });

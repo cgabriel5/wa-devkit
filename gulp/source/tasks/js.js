@@ -5,11 +5,11 @@ gulp.task("js:app", function(done) {
     pump([gulp.src(bundle_js.source.files, {
             cwd: __PATHS_JS_SOURCE
         }),
-    	debug(),
-        concat(bundle_js.source.names.main),
-        beautify(config_jsbeautify),
+    	$.debug(),
+        $.concat(bundle_js.source.names.main),
+        $.beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -24,11 +24,11 @@ gulp.task("js:vendor", function(done) {
     // within the js.vendor.files array.
 
     pump([gulp.src(bundle_js.vendor.files),
-    	debug(),
-        concat(bundle_js.vendor.names.main),
-        beautify(config_jsbeautify),
+    	$.debug(),
+        $.concat(bundle_js.vendor.names.main),
+        $.beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });

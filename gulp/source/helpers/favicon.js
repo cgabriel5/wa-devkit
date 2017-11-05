@@ -87,9 +87,9 @@ gulp.task("favicon:root", function(done) {
 	    	__PATHS_FAVICON_ROOT_CONFIG,
 	    	__PATHS_FAVICON_ROOT_MANIFEST
     	]),
-    	debug(),
+    	$.debug(),
         gulp.dest(__PATHS_BASE),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -102,8 +102,8 @@ gulp.task("favicon:delete", function(done) {
     		__PATHS_FAVICON_ROOT_CONFIG,
     		__PATHS_FAVICON_ROOT_MANIFEST
     	]),
-    	debug.clean(),
-    	clean()
+    	$.debug.clean(),
+    	$.clean()
     ], done);
 });
 
@@ -115,7 +115,7 @@ gulp.task("favicon:html", function(done) {
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
             .favicon.html_code),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
-        debug.edit(),
+        $.debug.edit(),
         bs.stream()
     ], done);
 });

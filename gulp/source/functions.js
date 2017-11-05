@@ -11,7 +11,7 @@ function open_file_in_browser(filepath, port, callback, task) {
             cwd: __PATHS_BASE,
             dot: true
         }),
-        open({
+        $.open({
             app: browser,
             uri: uri({
                 "appdir": APPDIR,
@@ -21,7 +21,7 @@ function open_file_in_browser(filepath, port, callback, task) {
             })
         }),
         // modify debug to take a flag to skip the use of the cli-spinner
-        // debug()
+        // $.debug()
     ], function() {
         notify("File opened!");
         callback();

@@ -2,67 +2,51 @@
 
 "use strict";
 
+// node modules
 var fs = require("fs");
 var path = require("path");
 
-var eol = require("gulp-eol");
-var open = require("gulp-open");
-var gulpif = require("gulp-if");
-var fail = require("gulp-fail");
-var sort = require("gulp-sort");
-var debug = require("gulp-debug");
-var clean = require("gulp-clean");
-var cache = require("gulp-cache");
-var order = require("gulp-order");
-var insert = require("gulp-insert");
-var concat = require("gulp-concat");
-var rename = require("gulp-rename");
-var filter = require("gulp-filter");
-var modify = require("gulp-modify");
-var foreach = require("gulp-foreach");
-var replace = require("gulp-replace");
-var marked = require("gulp-markdown");
-var csscomb = require("gulp-csscomb");
-var purify = require("gulp-purifycss");
-var imagemin = require("gulp-imagemin");
-var shorthand = require("gulp-shorthand");
-var clean_css = require("gulp-clean-css");
-var json_sort = require("gulp-json-sort")
-    .default;
-var beautify = require("gulp-jsbeautifier");
-var minify_html = require("gulp-minify-html");
-var injection = require("gulp-inject-content");
-var autoprefixer = require("gulp-autoprefixer");
-var real_favicon = require("gulp-real-favicon");
+// lazy load gulp plugins
+var $ = require("gulp-load-plugins")({
+    "rename": {
+        "gulp-if": "gulpif",
+        "gulp-autoprefixer": "ap",
+        "gulp-markdown": "marked",
+        "gulp-purifycss": "purify",
+        "gulp-clean-css": "clean_css",
+        "gulp-json-sort": "json_sort",
+        "gulp-jsbeautifier": "beautify",
+        "gulp-minify-html": "minify_html",
+        "gulp-inject-content": "injection",
+        "gulp-real-favicon": "real_favicon"
+    },
+    "postRequireTransforms": {
+        "json_sort": function(plugin) {
+            return plugin.default;
+        },
+        "uglify": function(plugin) {
+            // [https://stackoverflow.com/a/45554108]
+            // By default es-uglify is used to uglify JS.
+            var uglifyjs = require("uglify-es");
+            var composer = require("gulp-uglify/composer");
+            return composer(uglifyjs, console);
+        }
+    }
+});
 
-// [https://stackoverflow.com/questions/45533101/how-to-use-uglify-es-with-gulp/45554108#45554108]
-// By default es-uglify is used to uglify JS. If ES support is not needed,
-// simply default back to "gulp-uglify" by commenting and uncommenting the
-// following lines.
-var uglify = require("gulp-uglify/composer")(require("uglify-es"), console);
-// var uglify = require("gulp-uglify");
-
+// universal modules
 var del = require("del");
 var pump = require("pump");
-var glob = require("glob");
-var fuzzy = require("fuzzy");
 var yargs = require("yargs");
 var chalk = require("chalk");
 var dir = require("node-dir");
 var mkdirp = require("mkdirp");
-var git = require("git-state");
-var prism = require("prismjs");
 var fe = require("file-exists");
 var json = require("json-file");
 var jsonc = require("comment-json");
-var modernizr = require("modernizr");
 var de = require("directory-exists");
-var cleanup = require("node-cleanup");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
-var prism_langs = require("prism-languages");
-var find_free_port = require("find-free-port");
-var alphabetize = require("alphabetize-object-keys");
 var bs_autoclose = require("browser-sync-close-hook");
 
 //#! paths.js -- ./gulp/source/paths.js
@@ -258,7 +242,7 @@ function open_file_in_browser(filepath, port, callback, task) {
             cwd: __PATHS_BASE,
             dot: true
         }),
-        open({
+        $.open({
             app: browser,
             uri: uri({
                 "appdir": APPDIR,
@@ -268,7 +252,7 @@ function open_file_in_browser(filepath, port, callback, task) {
             })
         }),
         // modify debug to take a flag to skip the use of the cli-spinner
-        // debug()
+        // $.debug()
     ], function() {
         notify("File opened!");
         callback();
@@ -404,7 +388,10 @@ ext.isjson = function(file) {
 //#! init.js -- ./gulp/source/tasks/init.js
 
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
-cleanup(function(exit_code, signal) {
+require("node-cleanup")(function(exit_code, signal) {
+
+    var alphabetize = require("alphabetize-object-keys");
+
     // check for current Gulp process
     var pid = config_internal.get("pid");
 
@@ -449,6 +436,9 @@ gulp.task("init:save-pid", function(done) {
 // to resume gulp simply restart with the gulp command.
 // @internal
 gulp.task("init:watch-git-branch", function(done) {
+
+    var git = require("git-state");
+
     git.isGit(__PATHS_DIRNAME, function(exists) {
         // if no .git exists simply ignore and return done
         if (!exists) return done();
@@ -504,8 +494,13 @@ gulp.task("init:build", function(done) {
  * $ gulp --stop # Stops active Gulp process, if running.
  */
 gulp.task("default", function(done) {
+
+    var find_free_port = require("find-free-port");
+
     var args = yargs.argv; // get cli parameters
+
     if (args.s || args.stop) { // end the running Gulp process
+
         // get pid, if any
         var pid = config_internal.get("pid");
         if (pid) { // kill the open process
@@ -514,8 +509,11 @@ gulp.task("default", function(done) {
         } else { // no open process exists
             log("No Gulp process exists.");
         }
+
         return done();
+
     } else { // start up Gulp like normal
+
         return find_free_port(opts_ffp.port_range.start, opts_ffp.port_range.end, opts_ffp.ip, opts_ffp.port_count, function(err, p1, p2) {
             // get pid, if any
             var pid = config_internal.get("pid");
@@ -525,11 +523,13 @@ gulp.task("default", function(done) {
                 log(chalk.yellow("A Gulp instance is already running", chalk.yellow("(pid:" + pid + ")") + ".", "Stop that instance before starting a new one."));
                 return done();
             }
+
             // store the ports
             config_internal.set("ports", {
                 "local": p1,
                 "ui": p2
             });
+
             // save ports
             config_internal.write(function() {
                 // store ports on the browser-sync object itself
@@ -539,7 +539,9 @@ gulp.task("default", function(done) {
                     done();
                 });
             }, null, json_spaces);
+
         });
+
     }
 });
 
@@ -550,8 +552,8 @@ gulp.task("default", function(done) {
 gulp.task("dist:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
-        debug.clean(),
-        clean()
+        $.debug.clean(),
+        $.clean()
     ], done);
 });
 
@@ -565,9 +567,9 @@ gulp.task("dist:favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(),
+    	$.debug(),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -579,10 +581,10 @@ gulp.task("dist:css", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		debug(),
-		gulpif(ext.iscss, clean_css()),
+		$.debug(),
+		$.gulpif(ext.iscss, $.clean_css()),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -596,24 +598,24 @@ gulp.task("dist:img", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		cache(imagemin([
-            imagemin.gifsicle({
+		$.cache($.imagemin([
+            $.imagemin.gifsicle({
                 interlaced: true
             }),
-            imagemin.jpegtran({
+            $.imagemin.jpegtran({
                 progressive: true
             }),
-            imagemin.optipng({
+            $.imagemin.optipng({
                 optimizationLevel: 5
             }),
-            imagemin.svgo({
+            $.imagemin.svgo({
                 plugins: [{
                     removeViewBox: true
                 }]
             })
         ])),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug.edit()
+		$.debug.edit()
     ], done);
 });
 
@@ -625,10 +627,10 @@ gulp.task("dist:js", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		debug(),
-    	gulpif(ext.isjs, uglify()),
+		$.debug(),
+    	$.gulpif(ext.isjs, $.uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug.edit()
+		$.debug.edit()
     ], done);
 });
 
@@ -640,10 +642,10 @@ gulp.task("dist:root", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-    	debug(),
-    	gulpif(ext.ishtml, minify_html()),
+    	$.debug(),
+    	$.gulpif(ext.ishtml, $.minify_html()),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -679,8 +681,8 @@ gulp.task("dist", function(done) {
 gulp.task("lib:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_LIB_HOME, opts_remove),
-        debug.clean(),
-        clean()
+        $.debug.clean(),
+        $.clean()
     ], done);
 });
 
@@ -692,16 +694,16 @@ gulp.task("lib:js", function(done) {
             cwd: __PATHS_JS_SOURCE
         }),
     	// filter out all but test files (^test*/i)
-		filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
-		debug(),
-        concat(bundle_js.source.names.libs.main),
-        beautify(config_jsbeautify),
+		$.filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
+		$.debug(),
+        $.concat(bundle_js.source.names.libs.main),
+        $.beautify(config_jsbeautify),
         gulp.dest(__PATHS_LIB_HOME),
-        debug.edit(),
-        uglify(),
-        rename(bundle_js.source.names.libs.min),
+        $.debug.edit(),
+        $.uglify(),
+        $.rename(bundle_js.source.names.libs.min),
 		gulp.dest(__PATHS_LIB_HOME),
-        debug.edit()
+        $.debug.edit()
     ], done);
 });
 
@@ -833,13 +835,13 @@ gulp.task("html:main", function(done) {
     pump([gulp.src(bundle_html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
-    	debug(),
-		concat(bundle_html.source.names.main),
-		injection.pre(html_injection),
-		beautify(config_jsbeautify),
-		injection.post(html_injection),
+    	$.debug(),
+		$.concat(bundle_html.source.names.main),
+		$.injection.pre(html_injection),
+		$.beautify(config_jsbeautify),
+		$.injection.post(html_injection),
 		gulp.dest(__PATHS_BASE),
-		debug.edit(),
+		$.debug.edit(),
 		bs.stream()
     ], done);
 });
@@ -853,9 +855,9 @@ gulp.task("css:preapp", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	csscomb(__PATHS_CONFIG_CSSCOMB),
+    	$.csscomb(__PATHS_CONFIG_CSSCOMB),
 		// replacements...regexp pattern will match all declarations and their values
-		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
+		$.replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
             var pattern;
             // modifications...
 
@@ -892,7 +894,7 @@ gulp.task("css:preapp", function(done) {
             return match;
         }),
         gulp.dest(__PATHS_CSS_SOURCE),
-		debug.edit(),
+		$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -904,13 +906,13 @@ gulp.task("css:app", ["css:preapp"], function(done) {
     pump([gulp.src(bundle_css.source.files, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(),
-        concat(bundle_css.source.names.main),
-        autoprefixer(opts_ap),
-        shorthand(),
-        csscomb(__PATHS_CONFIG_CSSCOMB),
+    	$.debug(),
+        $.concat(bundle_css.source.names.main),
+        $.ap(opts_ap),
+        $.shorthand(),
+        $.csscomb(__PATHS_CONFIG_CSSCOMB),
         gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -925,13 +927,13 @@ gulp.task("css:vendor", function(done) {
     // within the css.vendor.files array.
 
     pump([gulp.src(bundle_css.vendor.files),
-    	debug(),
-        concat(bundle_css.vendor.names.main),
-        autoprefixer(opts_ap),
-        shorthand(),
-        csscomb(__PATHS_CONFIG_CSSCOMB),
+    	$.debug(),
+        $.concat(bundle_css.vendor.names.main),
+        $.ap(opts_ap),
+        $.shorthand(),
+        $.csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -945,11 +947,11 @@ gulp.task("js:app", function(done) {
     pump([gulp.src(bundle_js.source.files, {
             cwd: __PATHS_JS_SOURCE
         }),
-    	debug(),
-        concat(bundle_js.source.names.main),
-        beautify(config_jsbeautify),
+    	$.debug(),
+        $.concat(bundle_js.source.names.main),
+        $.beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -964,11 +966,11 @@ gulp.task("js:vendor", function(done) {
     // within the js.vendor.files array.
 
     pump([gulp.src(bundle_js.vendor.files),
-    	debug(),
-        concat(bundle_js.vendor.names.main),
-        beautify(config_jsbeautify),
+    	$.debug(),
+        $.concat(bundle_js.vendor.names.main),
+        $.beautify(config_jsbeautify),
         gulp.dest(__PATHS_JS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -982,7 +984,7 @@ gulp.task("img:main", function(done) {
     // need to copy hidden files/folders?
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(__PATHS_IMG_SOURCE),
-		debug(),
+		$.debug(),
         bs.stream()
     ], done);
 });
@@ -997,6 +999,9 @@ gulp.task("img:main", function(done) {
  * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
  */
 gulp.task("modernizr", function(done) {
+
+    var modernizr = require("modernizr");
+
     modernizr.build(config_modernizr, function(build) {
         var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
         // create missing folders
@@ -1004,7 +1009,9 @@ gulp.task("modernizr", function(done) {
             if (err) throw err;
             // save the file to vendor
             fs.writeFile(file_location, build, function() {
-                log(`Modernizr build complete. Placed in ${file_location}`);
+                var message = chalk.blue("Modernizr build complete. Placed in");
+                var location = chalk.green(file_location);
+                log(`${message} ${location}`);
                 done();
             });
         });
@@ -1031,8 +1038,7 @@ gulp.task("modernizr", function(done) {
 gulp.task("purify", function(done) {
     var task = this;
     // run yargs
-    var _args = yargs.usage("Usage: $0 --remove [boolean]")
-        .option("remove", {
+    var _args = yargs.option("remove", {
             alias: "r",
             default: false,
             describe: "Removes pure.css.",
@@ -1056,15 +1062,15 @@ gulp.task("purify", function(done) {
             cwd: __PATHS_CSS_SOURCE
         }),
         // modify debug to take a flag to skip the use of the cli-spinner
-		// debug(),
-		purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
+		// $.debug(),
+		$.purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
             info: true,
             rejected: true
         }),
-		gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
-        csscomb(__PATHS_CONFIG_CSSCOMB),
+		$.gulpif(!remove, $.rename(__PATHS_PURE_FILE_NAME)),
+        $.csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
-		// debug.edit()
+		// $.debug.edit()
 	], done);
 });
 
@@ -1089,16 +1095,16 @@ gulp.task("tohtml:prepcss", function(done) {
     	], {
             cwd: __PATHS_MARKDOWN_ASSETS
         }),
-        debug(),
-        concat(__PATHS_MARKDOWN_CONCAT_NAME),
-		modify({
+        $.debug(),
+        $.concat(__PATHS_MARKDOWN_CONCAT_NAME),
+		$.modify({
             fileModifier: function(file, contents) {
                 // store the contents in variable
                 __markdown_styles__ = contents;
                 return contents;
             }
         }),
-    	debug.edit()
+    	$.debug.edit()
         ], done);
 });
 
@@ -1118,11 +1124,14 @@ gulp.task("tohtml:prepcss", function(done) {
  * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
+
+    var prism = require("prismjs");
+    var prism_langs = require("prism-languages");
+
     var task = this;
 
     // run yargs
-    var _args = yargs.usage("Usage: $0 --file [boolean]")
-        .option("file", {
+    var _args = yargs.option("file", {
             alias: "f",
             default: "./README.md",
             describe: "The file to convert.",
@@ -1139,7 +1148,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // [https://github.com/krasimir/techy/issues/30]
     // make marked use prism for syntax highlighting
-    marked.marked.setOptions({
+    $.marked.marked.setOptions({
         highlight: function(code, language) {
             // default to markup when language is undefined
             return prism.highlight(code, prism.languages[language || "markup"]);
@@ -1148,9 +1157,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // run gulp process
     pump([gulp.src(file_name),
-    	debug(),
-		marked(),
-		modify({
+    	$.debug(),
+		$.marked(),
+		$.modify({
             fileModifier: function(file, contents) {
 
                 // path offsets
@@ -1185,9 +1194,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </html>`;
             }
         }),
-        beautify(config_jsbeautify),
+        $.beautify(config_jsbeautify),
 		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		debug.edit(),
+		$.debug.edit(),
 		bs.stream()
         ], done);
 });
@@ -1200,7 +1209,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  * Options
  *
  * -f, --file  <file>    The path of the file to open.
- * -p, --port  [number]  The port to open in. (Defaults to browser-sync port)
+ * -p, --port  [number]  The port to open in. (Defaults to browser-sync port if available or no port)
  *
  * Note
  *
@@ -1213,6 +1222,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  * Usage
  *
  * $ gulp open --file index.html --port 3000 # Open index.html in port 3000.
+ * $ gulp open -f index.html # Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
     var task = this;
@@ -1242,13 +1252,7 @@ gulp.task("open", function(done) {
         })
         .local;
 
-    // no ports...
-    if (!port) {
-        log("No ports are in use.");
-        return done();
-    }
-
-    // else a port was found...use it
+    // run the open function
     return open_file_in_browser(file, port, done, task);
 });
 
@@ -1262,7 +1266,8 @@ gulp.task("open", function(done) {
  * $ gulp status # Print Gulp status.
  */
 gulp.task("status", function(done) {
-    log("Gulp is", ((config_internal.get("pid")) ? "running. " + chalk.yellow(("(pid:" + process.pid + ")")) : "not running."));
+    var pid = config_internal.get("pid");
+    log((pid) ? "Gulp is running. " + chalk.green(`(pid: ${pid})`) : chalk.yellow("Gulp is not running."));
     done();
 });
 
@@ -1356,14 +1361,14 @@ gulp.task("pretty", function(done) {
     pump([gulp.src(files, {
             dot: true
         }),
-		sort(opts_sort),
+		$.sort(opts_sort),
 		// run css files through csscomb, everything else through jsbeautify
-		gulpif(ext.iscss, csscomb(__PATHS_CONFIG_CSSCOMB), beautify(config_jsbeautify)),
-		gulpif(ext.isjson, json_sort({
+		$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB), $.beautify(config_jsbeautify)),
+		$.gulpif(ext.isjson, $.json_sort({
             "space": json_spaces
         })),
-		eol(),
-		debug.edit(),
+		$.eol(),
+		$.debug.edit(),
 		gulp.dest(__PATHS_BASE)
     ], done);
 });
@@ -1375,7 +1380,7 @@ gulp.task("pretty", function(done) {
  *
  * Options
  *
- * -t, --types    [string]  The optional extensions of files to list.
+ * -t, --type     [string]  The optional extensions of files to list.
  * -m, --min      [string]  Flag indicating whether to show .min. files.
  * -w, --whereis  [string]  File to look for. (Uses fuzzy search, Ignores ./node_modules/)
  *
@@ -1387,9 +1392,11 @@ gulp.task("pretty", function(done) {
  * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
  */
 gulp.task("files", function(done) {
+
+    var fuzzy = require("fuzzy");
+
     // run yargs
-    var _args = yargs.usage("Usage: $0 --type [string]")
-        .option("type", {
+    var _args = yargs.option("type", {
             alias: "t",
             demandOption: false,
             type: "string"
@@ -1465,8 +1472,8 @@ gulp.task("files", function(done) {
 
         // log files
         pump([gulp.src(files),
-			sort(opts_sort),
-			debug()
+			$.sort(opts_sort),
+			$.debug()
 	    ], done);
 
     });
@@ -1492,8 +1499,7 @@ gulp.task("files", function(done) {
 gulp.task("dependency", function(done) {
     var task = this;
     // run yargs
-    var _args = yargs.usage("Usage: $0 --name [string] --type [string]")
-        .option("name", {
+    var _args = yargs.option("name", {
             alias: "n",
             demandOption: true,
             describe: "The module name.",
@@ -1542,14 +1548,14 @@ gulp.task("dependency", function(done) {
                         cwd: __PATHS_NODE_MODULES,
                         base: __PATHS_BASE_DOT
                     }),
-                    rename(function(path) {
+                    $.rename(function(path) {
                         // [https://stackoverflow.com/a/36347297]
                         // remove the node_modules/ parent folder
                         var regexp = new RegExp("^" + __PATHS_NODE_MODULES_NAME);
                         path.dirname = path.dirname.replace(regexp, "");
                     }),
 					gulp.dest(dest),
-					debug.edit()
+					$.debug.edit()
 	    	], function() {
                     log(message);
                     done();
@@ -1579,17 +1585,17 @@ gulp.task("make", function(done) {
     pump([gulp.src(bundle_gulp.source.files, {
             cwd: __PATHS_GULP_SOURCE
         }),
-		debug(),
-		foreach(function(stream, file) {
+		$.debug(),
+		$.foreach(function(stream, file) {
             var filename = path.basename(file.path);
             var filename_rel = path.relative(process.cwd(), file.path);
-            return stream.pipe(insert.prepend(`//#! ${filename} -- ./${filename_rel}\n\n`));
+            return stream.pipe($.insert.prepend(`//#! ${filename} -- ./${filename_rel}\n\n`));
         }),
 		// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-		gulpif((fe.sync(__PATHS_BASE + main_name)), concat(main_name), concat(setup_name)),
-		beautify(config_jsbeautify),
+		$.gulpif((fe.sync(__PATHS_BASE + main_name)), $.concat(main_name), $.concat(setup_name)),
+		$.beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
-		debug.edit()
+		$.debug.edit()
 	], done);
 });
 
@@ -1601,7 +1607,7 @@ gulp.task("make", function(done) {
  * Options
  *
  * (no options) List tasks and their descriptions.
- * -v, --verbose  [boolean]  Flag indicating whether to show all documentation.
+ * --verbose      [boolean]  Flag indicating whether to show all documentation.
  * -n, --name     [string]   Names of tasks to show documentation for.
  *
  * Usage
@@ -1613,8 +1619,7 @@ gulp.task("make", function(done) {
 gulp.task("help", function() {
     var task = this;
     // run yargs
-    var _args = yargs.usage("Usage: $0 --name [string]")
-        .option("name", {
+    var _args = yargs.option("name", {
             alias: "n",
             default: false,
             describe: "Name of task to show documentation for.",
@@ -1754,9 +1759,9 @@ gulp.task("favicon:root", function(done) {
 	    	__PATHS_FAVICON_ROOT_CONFIG,
 	    	__PATHS_FAVICON_ROOT_MANIFEST
     	]),
-    	debug(),
+    	$.debug(),
         gulp.dest(__PATHS_BASE),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -1769,8 +1774,8 @@ gulp.task("favicon:delete", function(done) {
     		__PATHS_FAVICON_ROOT_CONFIG,
     		__PATHS_FAVICON_ROOT_MANIFEST
     	]),
-    	debug.clean(),
-    	clean()
+    	$.debug.clean(),
+    	$.clean()
     ], done);
 });
 
@@ -1782,7 +1787,7 @@ gulp.task("favicon:html", function(done) {
         real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
             .favicon.html_code),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
-        debug.edit(),
+        $.debug.edit(),
         bs.stream()
     ], done);
 });

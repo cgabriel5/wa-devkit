@@ -6,7 +6,8 @@
  * $ gulp status # Print Gulp status.
  */
 gulp.task("status", function(done) {
-    log("Gulp is", ((config_internal.get("pid")) ? "running. " + chalk.yellow(("(pid:" + process.pid + ")")) : "not running."));
+    var pid = config_internal.get("pid");
+    log((pid) ? "Gulp is running. " + chalk.green(`(pid: ${pid})`) : chalk.yellow("Gulp is not running."));
     done();
 });
 

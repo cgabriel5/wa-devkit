@@ -1,5 +1,8 @@
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
-cleanup(function(exit_code, signal) {
+require("node-cleanup")(function(exit_code, signal) {
+
+    var alphabetize = require("alphabetize-object-keys");
+
     // check for current Gulp process
     var pid = config_internal.get("pid");
 
@@ -44,6 +47,9 @@ gulp.task("init:save-pid", function(done) {
 // to resume gulp simply restart with the gulp command.
 // @internal
 gulp.task("init:watch-git-branch", function(done) {
+
+    var git = require("git-state");
+
     git.isGit(__PATHS_DIRNAME, function(exists) {
         // if no .git exists simply ignore and return done
         if (!exists) return done();
@@ -99,8 +105,13 @@ gulp.task("init:build", function(done) {
  * $ gulp --stop # Stops active Gulp process, if running.
  */
 gulp.task("default", function(done) {
+
+    var find_free_port = require("find-free-port");
+
     var args = yargs.argv; // get cli parameters
+
     if (args.s || args.stop) { // end the running Gulp process
+
         // get pid, if any
         var pid = config_internal.get("pid");
         if (pid) { // kill the open process
@@ -109,8 +120,11 @@ gulp.task("default", function(done) {
         } else { // no open process exists
             log("No Gulp process exists.");
         }
+
         return done();
+
     } else { // start up Gulp like normal
+
         return find_free_port(opts_ffp.port_range.start, opts_ffp.port_range.end, opts_ffp.ip, opts_ffp.port_count, function(err, p1, p2) {
             // get pid, if any
             var pid = config_internal.get("pid");
@@ -120,11 +134,13 @@ gulp.task("default", function(done) {
                 log(chalk.yellow("A Gulp instance is already running", chalk.yellow("(pid:" + pid + ")") + ".", "Stop that instance before starting a new one."));
                 return done();
             }
+
             // store the ports
             config_internal.set("ports", {
                 "local": p1,
                 "ui": p2
             });
+
             // save ports
             config_internal.write(function() {
                 // store ports on the browser-sync object itself
@@ -134,6 +150,8 @@ gulp.task("default", function(done) {
                     done();
                 });
             }, null, json_spaces);
+
         });
+
     }
 });

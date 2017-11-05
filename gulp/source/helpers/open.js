@@ -4,7 +4,7 @@
  * Options
  *
  * -f, --file  <file>    The path of the file to open.
- * -p, --port  [number]  The port to open in. (Defaults to browser-sync port)
+ * -p, --port  [number]  The port to open in. (Defaults to browser-sync port if available or no port)
  *
  * Note
  *
@@ -17,6 +17,7 @@
  * Usage
  *
  * $ gulp open --file index.html --port 3000 # Open index.html in port 3000.
+ * $ gulp open -f index.html # Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
     var task = this;
@@ -46,12 +47,6 @@ gulp.task("open", function(done) {
         })
         .local;
 
-    // no ports...
-    if (!port) {
-        log("No ports are in use.");
-        return done();
-    }
-
-    // else a port was found...use it
+    // run the open function
     return open_file_in_browser(file, port, done, task);
 });

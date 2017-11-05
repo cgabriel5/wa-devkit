@@ -66,14 +66,14 @@ gulp.task("pretty", function(done) {
     pump([gulp.src(files, {
             dot: true
         }),
-		sort(opts_sort),
+		$.sort(opts_sort),
 		// run css files through csscomb, everything else through jsbeautify
-		gulpif(ext.iscss, csscomb(__PATHS_CONFIG_CSSCOMB), beautify(config_jsbeautify)),
-		gulpif(ext.isjson, json_sort({
+		$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB), $.beautify(config_jsbeautify)),
+		$.gulpif(ext.isjson, $.json_sort({
             "space": json_spaces
         })),
-		eol(),
-		debug.edit(),
+		$.eol(),
+		$.debug.edit(),
 		gulp.dest(__PATHS_BASE)
     ], done);
 });

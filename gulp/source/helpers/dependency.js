@@ -16,8 +16,7 @@
 gulp.task("dependency", function(done) {
     var task = this;
     // run yargs
-    var _args = yargs.usage("Usage: $0 --name [string] --type [string]")
-        .option("name", {
+    var _args = yargs.option("name", {
             alias: "n",
             demandOption: true,
             describe: "The module name.",
@@ -66,14 +65,14 @@ gulp.task("dependency", function(done) {
                         cwd: __PATHS_NODE_MODULES,
                         base: __PATHS_BASE_DOT
                     }),
-                    rename(function(path) {
+                    $.rename(function(path) {
                         // [https://stackoverflow.com/a/36347297]
                         // remove the node_modules/ parent folder
                         var regexp = new RegExp("^" + __PATHS_NODE_MODULES_NAME);
                         path.dirname = path.dirname.replace(regexp, "");
                     }),
 					gulp.dest(dest),
-					debug.edit()
+					$.debug.edit()
 	    	], function() {
                     log(message);
                     done();

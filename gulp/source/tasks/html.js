@@ -5,13 +5,13 @@ gulp.task("html:main", function(done) {
     pump([gulp.src(bundle_html.source.files, {
             cwd: __PATHS_HTML_SOURCE
         }),
-    	debug(),
-		concat(bundle_html.source.names.main),
-		injection.pre(html_injection),
-		beautify(config_jsbeautify),
-		injection.post(html_injection),
+    	$.debug(),
+		$.concat(bundle_html.source.names.main),
+		$.injection.pre(html_injection),
+		$.beautify(config_jsbeautify),
+		$.injection.post(html_injection),
 		gulp.dest(__PATHS_BASE),
-		debug.edit(),
+		$.debug.edit(),
 		bs.stream()
     ], done);
 });

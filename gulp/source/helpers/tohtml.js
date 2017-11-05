@@ -17,16 +17,16 @@ gulp.task("tohtml:prepcss", function(done) {
     	], {
             cwd: __PATHS_MARKDOWN_ASSETS
         }),
-        debug(),
-        concat(__PATHS_MARKDOWN_CONCAT_NAME),
-		modify({
+        $.debug(),
+        $.concat(__PATHS_MARKDOWN_CONCAT_NAME),
+		$.modify({
             fileModifier: function(file, contents) {
                 // store the contents in variable
                 __markdown_styles__ = contents;
                 return contents;
             }
         }),
-    	debug.edit()
+    	$.debug.edit()
         ], done);
 });
 
@@ -46,11 +46,14 @@ gulp.task("tohtml:prepcss", function(done) {
  * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
+
+    var prism = require("prismjs");
+    var prism_langs = require("prism-languages");
+
     var task = this;
 
     // run yargs
-    var _args = yargs.usage("Usage: $0 --file [boolean]")
-        .option("file", {
+    var _args = yargs.option("file", {
             alias: "f",
             default: "./README.md",
             describe: "The file to convert.",
@@ -67,7 +70,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // [https://github.com/krasimir/techy/issues/30]
     // make marked use prism for syntax highlighting
-    marked.marked.setOptions({
+    $.marked.marked.setOptions({
         highlight: function(code, language) {
             // default to markup when language is undefined
             return prism.highlight(code, prism.languages[language || "markup"]);
@@ -76,9 +79,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // run gulp process
     pump([gulp.src(file_name),
-    	debug(),
-		marked(),
-		modify({
+    	$.debug(),
+		$.marked(),
+		$.modify({
             fileModifier: function(file, contents) {
 
                 // path offsets
@@ -113,9 +116,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </html>`;
             }
         }),
-        beautify(config_jsbeautify),
+        $.beautify(config_jsbeautify),
 		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		debug.edit(),
+		$.debug.edit(),
 		bs.stream()
         ], done);
 });

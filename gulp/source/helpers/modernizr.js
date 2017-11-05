@@ -6,6 +6,9 @@
  * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
  */
 gulp.task("modernizr", function(done) {
+
+    var modernizr = require("modernizr");
+
     modernizr.build(config_modernizr, function(build) {
         var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
         // create missing folders
@@ -13,7 +16,9 @@ gulp.task("modernizr", function(done) {
             if (err) throw err;
             // save the file to vendor
             fs.writeFile(file_location, build, function() {
-                log(`Modernizr build complete. Placed in ${file_location}`);
+                var message = chalk.blue("Modernizr build complete. Placed in");
+                var location = chalk.green(file_location);
+                log(`${message} ${location}`);
                 done();
             });
         });

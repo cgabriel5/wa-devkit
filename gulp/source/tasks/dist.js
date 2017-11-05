@@ -3,8 +3,8 @@
 gulp.task("dist:clean", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
-        debug.clean(),
-        clean()
+        $.debug.clean(),
+        $.clean()
     ], done);
 });
 
@@ -18,9 +18,9 @@ gulp.task("dist:favicon", function(done) {
             // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
             base: __PATHS_BASE_DOT
         }),
-    	debug(),
+    	$.debug(),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -32,10 +32,10 @@ gulp.task("dist:css", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		debug(),
-		gulpif(ext.iscss, clean_css()),
+		$.debug(),
+		$.gulpif(ext.iscss, $.clean_css()),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -49,24 +49,24 @@ gulp.task("dist:img", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		cache(imagemin([
-            imagemin.gifsicle({
+		$.cache($.imagemin([
+            $.imagemin.gifsicle({
                 interlaced: true
             }),
-            imagemin.jpegtran({
+            $.imagemin.jpegtran({
                 progressive: true
             }),
-            imagemin.optipng({
+            $.imagemin.optipng({
                 optimizationLevel: 5
             }),
-            imagemin.svgo({
+            $.imagemin.svgo({
                 plugins: [{
                     removeViewBox: true
                 }]
             })
         ])),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug.edit()
+		$.debug.edit()
     ], done);
 });
 
@@ -78,10 +78,10 @@ gulp.task("dist:js", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-		debug(),
-    	gulpif(ext.isjs, uglify()),
+		$.debug(),
+    	$.gulpif(ext.isjs, $.uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
-		debug.edit()
+		$.debug.edit()
     ], done);
 });
 
@@ -93,10 +93,10 @@ gulp.task("dist:root", function(done) {
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
-    	debug(),
-    	gulpif(ext.ishtml, minify_html()),
+    	$.debug(),
+    	$.gulpif(ext.ishtml, $.minify_html()),
     	gulp.dest(__PATHS_DIST_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 

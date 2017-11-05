@@ -5,9 +5,9 @@ gulp.task("css:preapp", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	csscomb(__PATHS_CONFIG_CSSCOMB),
+    	$.csscomb(__PATHS_CONFIG_CSSCOMB),
 		// replacements...regexp pattern will match all declarations and their values
-		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
+		$.replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
             var pattern;
             // modifications...
 
@@ -44,7 +44,7 @@ gulp.task("css:preapp", function(done) {
             return match;
         }),
         gulp.dest(__PATHS_CSS_SOURCE),
-		debug.edit(),
+		$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -56,13 +56,13 @@ gulp.task("css:app", ["css:preapp"], function(done) {
     pump([gulp.src(bundle_css.source.files, {
             cwd: __PATHS_CSS_SOURCE
         }),
-    	debug(),
-        concat(bundle_css.source.names.main),
-        autoprefixer(opts_ap),
-        shorthand(),
-        csscomb(__PATHS_CONFIG_CSSCOMB),
+    	$.debug(),
+        $.concat(bundle_css.source.names.main),
+        $.ap(opts_ap),
+        $.shorthand(),
+        $.csscomb(__PATHS_CONFIG_CSSCOMB),
         gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });
@@ -77,13 +77,13 @@ gulp.task("css:vendor", function(done) {
     // within the css.vendor.files array.
 
     pump([gulp.src(bundle_css.vendor.files),
-    	debug(),
-        concat(bundle_css.vendor.names.main),
-        autoprefixer(opts_ap),
-        shorthand(),
-        csscomb(__PATHS_CONFIG_CSSCOMB),
+    	$.debug(),
+        $.concat(bundle_css.vendor.names.main),
+        $.ap(opts_ap),
+        $.shorthand(),
+        $.csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_CSS_BUNDLES),
-    	debug.edit(),
+    	$.debug.edit(),
         bs.stream()
     ], done);
 });

@@ -5,7 +5,7 @@ gulp.task("img:main", function(done) {
     // need to copy hidden files/folders?
     // [https://github.com/klaascuvelier/gulp-copy/issues/5]
     pump([gulp.src(__PATHS_IMG_SOURCE),
-		debug(),
+		$.debug(),
         bs.stream()
     ], done);
 });

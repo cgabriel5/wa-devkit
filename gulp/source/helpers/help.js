@@ -4,7 +4,7 @@
  * Options
  *
  * (no options) List tasks and their descriptions.
- * -v, --verbose  [boolean]  Flag indicating whether to show all documentation.
+ * --verbose      [boolean]  Flag indicating whether to show all documentation.
  * -n, --name     [string]   Names of tasks to show documentation for.
  *
  * Usage
@@ -16,8 +16,7 @@
 gulp.task("help", function() {
     var task = this;
     // run yargs
-    var _args = yargs.usage("Usage: $0 --name [string]")
-        .option("name", {
+    var _args = yargs.option("name", {
             alias: "n",
             default: false,
             describe: "Name of task to show documentation for.",
