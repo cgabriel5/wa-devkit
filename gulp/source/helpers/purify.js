@@ -47,7 +47,7 @@ gulp.task("purify", function(done) {
             rejected: true
         }),
 		gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
-		beautify(config_jsbeautify),
+        csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
 		// debug.edit()
 	], done);

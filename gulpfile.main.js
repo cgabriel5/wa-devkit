@@ -22,6 +22,7 @@ var modify = require("gulp-modify");
 var foreach = require("gulp-foreach");
 var replace = require("gulp-replace");
 var marked = require("gulp-markdown");
+var csscomb = require("gulp-csscomb");
 var purify = require("gulp-purifycss");
 var imagemin = require("gulp-imagemin");
 var shorthand = require("gulp-shorthand");
@@ -124,6 +125,7 @@ var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
 var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
 var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
+var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
 var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS
@@ -363,6 +365,42 @@ function globall(string) {
     return (string || "") + "**";
 }
 
+/**
+ * @description [Returns the provided file's extension or checks it against the provided extension type.]
+ * @param  {Object} file [The Gulp file object.]
+ * @param  {String} type [The optional extension type to check against.]
+ * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
+ */
+function ext(file, type) {
+    // when no file exists return an empty string
+    if (!file) return "";
+
+    // get the file extname
+    var extname = path.extname(file.path)
+        .toLowerCase();
+
+    // simply return the extname when no type is
+    // provided to check against.
+    if (!type) return extname;
+
+    // else when a type is provided check against it
+    return (extname.slice(1) === type.toLowerCase());
+}
+
+// check for the usual file types
+ext.ishtml = function(file) {
+    return ext(file, "html");
+};
+ext.iscss = function(file) {
+    return ext(file, "css");
+};
+ext.isjs = function(file) {
+    return ext(file, "js");
+};
+ext.isjson = function(file) {
+    return ext(file, "json");
+};
+
 //#! init.js -- ./gulp/source/tasks/init.js
 
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
@@ -536,17 +574,13 @@ gulp.task("dist:favicon", function(done) {
 // @internal
 gulp.task("dist:css", function(done) {
     var task = this;
-    var is_css = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".css");
-    };
     pump([gulp.src(bundle_dist.source.files.css, {
             dot: true,
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
 		debug(),
-		gulpif(is_css, clean_css()),
+		gulpif(ext.iscss, clean_css()),
     	gulp.dest(__PATHS_DIST_HOME),
     	debug.edit()
     ], done);
@@ -586,17 +620,13 @@ gulp.task("dist:img", function(done) {
 // @internal
 gulp.task("dist:js", function(done) {
     var task = this;
-    var is_js = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".js");
-    };
     pump([gulp.src(bundle_dist.source.files.js, {
             dot: true,
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
 		debug(),
-    	gulpif(is_js, uglify()),
+    	gulpif(ext.isjs, uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
 		debug.edit()
     ], done);
@@ -605,17 +635,13 @@ gulp.task("dist:js", function(done) {
 // @internal
 gulp.task("dist:root", function(done) {
     var task = this;
-    var is_html = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".html");
-    };
     pump([gulp.src(bundle_dist.source.files.root, {
             dot: true,
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
     	debug(),
-    	gulpif(is_html, minify_html()),
+    	gulpif(ext.ishtml, minify_html()),
     	gulp.dest(__PATHS_DIST_HOME),
     	debug.edit()
     ], done);
@@ -827,7 +853,7 @@ gulp.task("css:preapp", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-		beautify(config_jsbeautify),
+    	csscomb(__PATHS_CONFIG_CSSCOMB),
 		// replacements...regexp pattern will match all declarations and their values
 		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
             var pattern;
@@ -882,7 +908,7 @@ gulp.task("css:app", ["css:preapp"], function(done) {
         concat(bundle_css.source.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(config_jsbeautify),
+        csscomb(__PATHS_CONFIG_CSSCOMB),
         gulp.dest(__PATHS_CSS_BUNDLES),
     	debug.edit(),
         bs.stream()
@@ -903,7 +929,7 @@ gulp.task("css:vendor", function(done) {
         concat(bundle_css.vendor.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(config_jsbeautify),
+        csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_CSS_BUNDLES),
     	debug.edit(),
         bs.stream()
@@ -1036,7 +1062,7 @@ gulp.task("purify", function(done) {
             rejected: true
         }),
 		gulpif(!remove, rename(__PATHS_PURE_FILE_NAME)),
-		beautify(config_jsbeautify),
+        csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
 		// debug.edit()
 	], done);
@@ -1263,11 +1289,20 @@ gulp.task("ports", function(done) {
 //#! pretty.js -- ./gulp/source/helpers/pretty.js
 
 /**
- * Beautify all HTML, JS, CSS, and JSON project files. Ignores ./node_modules/.
+ * Beautify all HTML, JS, CSS, and JSON project files.
+ *
+ * Note
+ *
+ * - Ignores ./node_modules/, ./git/ and vendor/ files.
+ *
+ * Options
+ *
+ * -t, --type    [string]  The optional extension types to clean.
  *
  * Usage
  *
- * $ gulp pretty # Prettify files.
+ * $ gulp pretty # Prettify all HTML, CSS, JS, JSON files.
+ * $ gulp pretty --type "js, json" # Only prettify JS and JSON files.
  */
 gulp.task("pretty", function(done) {
     var task = this;
@@ -1277,23 +1312,54 @@ gulp.task("pretty", function(done) {
         gulp_check_warn();
         return done();
     }
-    var condition = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".json");
-    };
-    // get needed files
-    pump([gulp.src([
+
+    // run yargs
+    var _args = yargs.option("type", {
+            alias: "t",
+            demandOption: false,
+            describe: "The file type extensions to clean.",
+            type: "string"
+        })
+        .argv;
+    // get the command line arguments from yargs
+    var type = _args.t || _args.type;
+
+    // default files to clean:
+    // HTML, CSS, JS, and JSON files. exclude files containing
+    // a ".min." as this is the convention used for minified files.
+    // the node_modules/, .git/, and all vendor/ files are also excluded.
+    var files = [
 	    	__PATHS_FILES_BEAUTIFY,
 	    	__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
 	    	bangify(globall(__PATHS_NODE_MODULES_NAME)),
 	    	bangify(globall(__PATHS_GIT)),
     		__PATHS_NOT_VENDOR
-    	], {
+    	];
+
+    // reset the files array when extension types are provided
+    if (type) {
+        // remove all spaces from provided types string
+        type = type.replace(/\s+?/g, "");
+
+        // ...when using globs and there is only 1 file
+        // type in .{js} for example, it will not work.
+        // if only 1 file type is provided the {} must
+        // not be present. they only seem to work when
+        // multiple options are used like .{js,css,html}.
+        // this is normalized below.
+        if (-~type.indexOf(",")) type = "{" + type + "}";
+        // finally, reset the files array
+        files[0] = `**/*.${type}`;
+    }
+
+    // get needed files
+    pump([gulp.src(files, {
             dot: true
         }),
 		sort(opts_sort),
-		beautify(config_jsbeautify),
-		gulpif(condition, json_sort({
+		// run css files through csscomb, everything else through jsbeautify
+		gulpif(ext.iscss, csscomb(__PATHS_CONFIG_CSSCOMB), beautify(config_jsbeautify)),
+		gulpif(ext.isjson, json_sort({
             "space": json_spaces
         })),
 		eol(),

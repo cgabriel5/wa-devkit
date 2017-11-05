@@ -5,7 +5,7 @@ gulp.task("css:preapp", function(done) {
     pump([gulp.src(__PATHS_USERS_CSS_FILE, {
             cwd: __PATHS_CSS_SOURCE
         }),
-		beautify(config_jsbeautify),
+    	csscomb(__PATHS_CONFIG_CSSCOMB),
 		// replacements...regexp pattern will match all declarations and their values
 		replace(/^\s*([\w\d-]*):\s*(.*)/gm, function(match, p1, offset, string) {
             var pattern;
@@ -60,7 +60,7 @@ gulp.task("css:app", ["css:preapp"], function(done) {
         concat(bundle_css.source.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(config_jsbeautify),
+        csscomb(__PATHS_CONFIG_CSSCOMB),
         gulp.dest(__PATHS_CSS_BUNDLES),
     	debug.edit(),
         bs.stream()
@@ -81,7 +81,7 @@ gulp.task("css:vendor", function(done) {
         concat(bundle_css.vendor.names.main),
         autoprefixer(opts_ap),
         shorthand(),
-        beautify(config_jsbeautify),
+        csscomb(__PATHS_CONFIG_CSSCOMB),
 		gulp.dest(__PATHS_CSS_BUNDLES),
     	debug.edit(),
         bs.stream()

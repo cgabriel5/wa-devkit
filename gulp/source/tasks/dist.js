@@ -27,17 +27,13 @@ gulp.task("dist:favicon", function(done) {
 // @internal
 gulp.task("dist:css", function(done) {
     var task = this;
-    var is_css = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".css");
-    };
     pump([gulp.src(bundle_dist.source.files.css, {
             dot: true,
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
 		debug(),
-		gulpif(is_css, clean_css()),
+		gulpif(ext.iscss, clean_css()),
     	gulp.dest(__PATHS_DIST_HOME),
     	debug.edit()
     ], done);
@@ -77,17 +73,13 @@ gulp.task("dist:img", function(done) {
 // @internal
 gulp.task("dist:js", function(done) {
     var task = this;
-    var is_js = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".js");
-    };
     pump([gulp.src(bundle_dist.source.files.js, {
             dot: true,
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
 		debug(),
-    	gulpif(is_js, uglify()),
+    	gulpif(ext.isjs, uglify()),
     	gulp.dest(__PATHS_DIST_HOME),
 		debug.edit()
     ], done);
@@ -96,17 +88,13 @@ gulp.task("dist:js", function(done) {
 // @internal
 gulp.task("dist:root", function(done) {
     var task = this;
-    var is_html = function(file) {
-        return (path.extname(file.path)
-            .toLowerCase() === ".html");
-    };
     pump([gulp.src(bundle_dist.source.files.root, {
             dot: true,
             cwd: __PATHS_BASE,
             base: __PATHS_BASE_DOT
         }),
     	debug(),
-    	gulpif(is_html, minify_html()),
+    	gulpif(ext.ishtml, minify_html()),
     	gulp.dest(__PATHS_DIST_HOME),
     	debug.edit()
     ], done);
