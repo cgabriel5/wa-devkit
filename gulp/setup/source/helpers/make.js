@@ -15,23 +15,15 @@ gulp.task("make", function(done) {
     pump([gulp.src(files, {
             cwd: __PATHS_GULP_SETUP_SOURCE
         }),
-		debug(),
-		foreach(function(stream, file) {
+		$.debug(),
+		$.foreach(function(stream, file) {
             var filename = path.basename(file.path);
-            var filename_length = filename.length;
-            var decor = "*".repeat(45);
-            var spacer = " ".repeat(5);
-            var header_top = `/* ${decor}\n ${spacer} Start ${filename}\n ${decor} */\n`;
-            var header_bottom = `/* ${decor}\n ${spacer} End ${filename}\n ${decor} */\n`;
-            // empty check
-            if (file.contents.toString()
-                .trim() === "") filename += " is empty";
-            return stream.pipe(insert.prepend(header_top))
-                .pipe(insert.append(header_bottom));
+            var filename_rel = path.relative(process.cwd(), file.path);
+            return stream.pipe($.insert.prepend(`//#! ${filename} -- ./${filename_rel}\n\n`));
         }),
-		concat(__PATHS_GULP_FILE_SETUP),
-		beautify(config_jsbeautify),
+		$.concat(__PATHS_GULP_FILE_SETUP),
+		$.beautify(config_jsbeautify),
 		gulp.dest(__PATHS_BASE),
-		debug.edit()
+		$.debug.edit()
 	], done);
 });

@@ -1,9 +1,40 @@
 "use strict";
 
+// node modules
 var fs = require("fs");
 var path = require("path");
 
+// lazy load gulp plugins
+var $ = require("gulp-load-plugins")({
+    "rename": {
+        "gulp-if": "gulpif",
+        "gulp-autoprefixer": "ap",
+        "gulp-markdown": "marked",
+        "gulp-purifycss": "purify",
+        "gulp-clean-css": "clean_css",
+        "gulp-json-sort": "json_sort",
+        "gulp-jsbeautifier": "beautify",
+        "gulp-minify-html": "minify_html",
+        "gulp-inject-content": "injection",
+        "gulp-real-favicon": "real_favicon"
+    },
+    "postRequireTransforms": {
+        "json_sort": function(plugin) {
+            return plugin.default;
+        },
+        "uglify": function(plugin) {
+            // [https://stackoverflow.com/a/45554108]
+            // By default es-uglify is used to uglify JS.
+            var uglifyjs = require("uglify-es");
+            var composer = require("gulp-uglify/composer");
+            return composer(uglifyjs, console);
+        }
+    }
+});
+
+// universal modules
 var pump = require("pump");
+var yargs = require("yargs");
 var chalk = require("chalk");
 var prompt = require("prompt");
 var marked = require("marked");
@@ -13,27 +44,3 @@ var git = require("simple-git")();
 var jsonc = require("comment-json");
 var sequence = require("run-sequence");
 var alphabetize = require("alphabetize-object-keys");
-
-var eol = require("gulp-eol");
-var sort = require("gulp-sort");
-var gulpif = require("gulp-if");
-var debug = require("gulp-debug");
-var clean = require("gulp-clean");
-var modify = require("gulp-modify");
-var insert = require("gulp-insert");
-var concat = require("gulp-concat");
-var rename = require("gulp-rename");
-var foreach = require("gulp-foreach");
-var json_sort = require("gulp-json-sort")
-    .default;
-var beautify = require("gulp-jsbeautifier");
-var injection = require("gulp-inject-content");
-
-// @non_es_uglify
-// By default the non es-uglify is used as the default uglifier.
-// Uncomment the @uglify_es comment block to use uglify-es instead.
-var uglify = require("gulp-uglify");
-
-// // @uglify_es
-// var composer = require("gulp-uglify/composer");
-// var uglify = composer(require("uglify-es"), console);

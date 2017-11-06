@@ -18,8 +18,8 @@ gulp.task("init:clear-js", function(done) {
             dot: true,
             cwd: __PATHS_BASE
         }),
-    	debug.clean(),
-    	clean()
+    	$.debug.clean(),
+    	$.clean()
     ], done);
 });
 
@@ -38,9 +38,9 @@ gulp.task("init:pick-js-option", function(done) {
             dot: true,
             cwd: __PATHS_BASE_DOT
         }),
-    	debug(),
+    	$.debug(),
         gulp.dest(__PATHS_JS_HOME),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -58,9 +58,9 @@ gulp.task("init:fill-placeholders", function(done) {
         ], {
             base: __PATHS_BASE
         }),
-        injection(__data__),
+        $.injection(__data__),
         gulp.dest(__PATHS_BASE),
-		debug.edit()
+		$.debug.edit()
     ], done);
 });
 
@@ -74,9 +74,9 @@ gulp.task("init:setup-readme", function(done) {
         	__PATHS_GULP_SETUP_README_TEMPLATE,
         	__PATHS_GULP_SETUP_LICENSE_TEMPLATE
         ]),
-		debug(),
+		$.debug(),
         gulp.dest(__PATHS_BASE),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -89,11 +89,11 @@ gulp.task("init:rename-gulpfile", function(done) {
         gulp.src(__PATHS_GULP_FILE_MAIN, {
             base: __PATHS_BASE
         }),
-    	debug(),
-        clean(), // remove the file
-        rename(__PATHS_GULP_FILE_NAME),
+    	$.debug(),
+        $.clean(), // remove the file
+        $.rename(__PATHS_GULP_FILE_NAME),
         gulp.dest(__PATHS_BASE),
-    	debug.edit()
+    	$.debug.edit()
     ], done);
 });
 
@@ -112,8 +112,8 @@ gulp.task("init:remove-setup", function(done) {
             read: false,
             base: __PATHS_BASE
         }),
-    	debug.clean(),
-        clean()
+    	$.debug.clean(),
+        $.clean()
     ], done);
 });
 
@@ -121,12 +121,27 @@ gulp.task("init:remove-setup", function(done) {
 // @internal
 gulp.task("init:git", function(done) {
     var task = this;
+
     // git init new project
     git.init("", function() {
-            log(`Git initialized (${__data__.apptype})`);
-            notify(`Git initialized (${__data__.apptype})`);
-            done();
-        })
-        .add("./*")
-        .commit("chore: Initial commit\n\nProject initialization.");
+        // set gitconfig values
+        git.raw(["config", "--local", "core.fileMode", "false"], function(err, result) {
+            git.raw(["config", "--local", "core.autocrlf", "input"], function(err, result) {
+                git.raw(["config", "--local", "user.email", __data__.email], function(err, result) {
+                    git.raw(["config", "--local", "user.name", __data__.git_id], function(err, result) {
+                        git.add("./*")
+                            .commit("chore: Initial commit\n\nProject initialization.", function() {
+                                console.log("");
+                                log("Make sure to set your editor of choice with Git if not already set.");
+                                log("For example, if using Sublime Text run ", chalk.green("$ git config core.editor \"subl -n w\""));
+                                log("More information can be found here: https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration\n");
+                                log(`Git initialized and configured (${__data__.apptype})`);
+                                notify(`Git initialized and configured (${__data__.apptype})`);
+                                done();
+                            });
+                    });
+                });
+            });
+        });
+    });
 });
