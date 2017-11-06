@@ -1676,7 +1676,7 @@ gulp.task("help", function() {
 // package (see the check-for-favicon-update task below).
 // @internal
 gulp.task("favicon:generate", function(done) {
-    real_favicon.generateFavicon({
+    $.real_favicon.generateFavicon({
         masterPicture: __PATHS_FAVICON_MASTER_PIC,
         dest: __PATHS_FAVICON_DEST,
         iconsPath: __PATHS_FAVICON_DEST,
@@ -1784,7 +1784,7 @@ gulp.task("favicon:delete", function(done) {
 gulp.task("favicon:html", function(done) {
     var task = this;
     pump([gulp.src(__PATHS_FAVICON_HTML),
-        real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
+        $.real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
             .favicon.html_code),
         gulp.dest(__PATHS_FAVICON_HTML_DEST),
         $.debug.edit(),
@@ -1833,7 +1833,7 @@ gulp.task("favicon", function(done) {
 gulp.task("favicon-updates", function(done) {
     var currentVersion = JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
         .version;
-    real_favicon.checkForUpdates(currentVersion, function(err) {
+    $.real_favicon.checkForUpdates(currentVersion, function(err) {
         if (err) {
             throw err;
         }
