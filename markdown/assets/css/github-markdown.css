@@ -622,7 +622,7 @@
 
 .markdown-body table tr {
     border-top: 1px solid #c6cbd1;
-    background-color: #fff;
+    background-color: #ffffff;
 }
 
 .markdown-body table tr:nth-child(2n) {
@@ -633,7 +633,7 @@
     box-sizing: content-box;
     max-width: 100%;
 
-    background-color: #fff;
+    background-color: #ffffff;
 }
 
 .markdown-body code {
@@ -720,7 +720,7 @@
 /* pre>code unhighlight yellow */
 
 .markdown-body pre code {
-    color: #333;
+    color: #333333;
     background: #ff5cc;
 }
 
@@ -774,7 +774,7 @@
 }
 
 .markdown-body hr {
-    border-bottom-color: #eee;
+    border-bottom-color: #eeeeee;
 }
 
 /* [https://github.com/sindresorhus/github-markdown-css#usage] */
@@ -790,9 +790,9 @@
 
     word-wrap: break-word;
 
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd;
     border-radius: 3px;
-    background-color: #fff;
+    background-color: #ffffff;
 }
 
 @media (max-width: 767px) {

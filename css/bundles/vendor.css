@@ -221,8 +221,8 @@ dfn {
  */
 
 mark {
-    color: #000;
-    background: #ff0;
+    color: #000000;
+    background: #ffff00;
 }
 
 /**
@@ -263,7 +263,7 @@ sup {
 
 ::-moz-selection {
     /* 1 */
-    color: #000;
+    color: #000000;
     background: #b3d4fc;
     /* 1 */
     text-shadow: none;
@@ -271,7 +271,7 @@ sup {
 
 ::selection {
     /* 1 */
-    color: #000;
+    color: #000000;
     background: #b3d4fc;
     /* 1 */
     text-shadow: none;
@@ -741,7 +741,7 @@ textarea,
 .fa-border {
     padding: 0.2em 0.25em 0.15em;
 
-    border: solid 0.08em #eee;
+    border: solid 0.08em #eeeeee;
     border-radius: 0.1em;
 }
 
@@ -889,7 +889,7 @@ textarea,
 }
 
 .fa-inverse {
-    color: #fff;
+    color: #ffffff;
 }
 
 /* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
