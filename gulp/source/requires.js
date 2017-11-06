@@ -8,7 +8,6 @@ var path = require("path");
 var $ = require("gulp-load-plugins")({
     "rename": {
         "gulp-if": "gulpif",
-        "gulp-autoprefixer": "ap",
         "gulp-markdown": "marked",
         "gulp-purifycss": "purify",
         "gulp-clean-css": "clean_css",
