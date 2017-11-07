@@ -81,6 +81,7 @@
                 "helpers/files.js",
                 "helpers/dependency.js",
                 "helpers/make.js",
+                "helpers/indent.js",
                 "helpers/help.js",
                 "helpers/favicon.js"
             ],
