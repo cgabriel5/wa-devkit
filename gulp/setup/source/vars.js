@@ -4,22 +4,20 @@ var config_pkg = json.read(__PATHS_CONFIG_PKG);
 var config_gulp_bundles = json.read(__PATHS_CONFIG_GULP_BUNDLES);
 
 // static configuration files (just need to read file)
-var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
-    .toString());
-var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
-    .toString());
-var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
-    .toString());
+var config_gulp_plugins = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
+);
+var config_jsbeautify = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
+);
+var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
 
 // plugin options
 var json_spaces = config_gulp_plugins.json_format.indent_size;
 
-var questions = require(__PATHS_GULP_SETUP_QUESTIONS)
-    .questions;
-var templates = require(__PATHS_GULP_SETUP_TEMPLATES)
-    .templates;
-var jsconfigs = require(__PATHS_GULP_SETUP_JSCONFIGS)
-    .jsconfigs;
+var questions = require(__PATHS_GULP_SETUP_QUESTIONS).questions;
+var templates = require(__PATHS_GULP_SETUP_TEMPLATES).templates;
+var jsconfigs = require(__PATHS_GULP_SETUP_JSCONFIGS).jsconfigs;
 var utils = require(__PATHS_GULP_UTILS);
 var log = utils.log;
 var time = utils.time;

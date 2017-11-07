@@ -6,7 +6,7 @@ var path = require("path");
 
 // lazy load gulp plugins
 var $ = require("gulp-load-plugins")({
-    "rename": {
+    rename: {
         "gulp-if": "gulpif",
         "gulp-autoprefixer": "ap",
         "gulp-markdown": "marked",
@@ -18,11 +18,11 @@ var $ = require("gulp-load-plugins")({
         "gulp-inject-content": "injection",
         "gulp-real-favicon": "real_favicon"
     },
-    "postRequireTransforms": {
-        "json_sort": function(plugin) {
+    postRequireTransforms: {
+        json_sort: function(plugin) {
             return plugin.default;
         },
-        "uglify": function(plugin) {
+        uglify: function(plugin) {
             // [https://stackoverflow.com/a/45554108]
             // By default es-uglify is used to uglify JS.
             var uglifyjs = require("uglify-es");

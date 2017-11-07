@@ -7,25 +7,29 @@
  * @return {Undefined}          [Nothing is returned.]
  */
 function open_file_in_browser(filepath, port, callback, task) {
-    pump([gulp.src(filepath, {
-            cwd: __PATHS_BASE,
-            dot: true
-        }),
-        $.open({
-            app: browser,
-            uri: uri({
-                "appdir": APPDIR,
-                "filepath": filepath,
-                "port": port,
-                "https": config_gulp_plugins.open.https
+    pump(
+        [
+            gulp.src(filepath, {
+                cwd: __PATHS_BASE,
+                dot: true
+            }),
+            $.open({
+                app: browser,
+                uri: uri({
+                    appdir: APPDIR,
+                    filepath: filepath,
+                    port: port,
+                    https: config_gulp_plugins.open.https
+                })
             })
-        }),
-        // modify debug to take a flag to skip the use of the cli-spinner
-        // $.debug()
-    ], function() {
-        notify("File opened!");
-        callback();
-    });
+            // modify debug to take a flag to skip the use of the cli-spinner
+            // $.debug()
+        ],
+        function() {
+            notify("File opened!");
+            callback();
+        }
+    );
 }
 
 /**
@@ -33,7 +37,11 @@ function open_file_in_browser(filepath, port, callback, task) {
  * @return {Undefined} 			[Nothing is returned.]
  */
 function gulp_check_warn() {
-    log(chalk.red("Task cannot be performed while Gulp is running. Close Gulp then try again."));
+    log(
+        chalk.red(
+            "Task cannot be performed while Gulp is running. Close Gulp then try again."
+        )
+    );
 }
 
 /**
@@ -44,33 +52,34 @@ function gulp_check_warn() {
  * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
  */
 function print_tasks(tasks, verbose, filter) {
-
-    tasks = tasks.filterHidden(verbose)
-        .sort();
+    tasks = tasks.filterHidden(verbose).sort();
 
     // determine the header
-    var header = (filter ? "Filtered" : "Tasks");
+    var header = filter ? "Filtered" : "Tasks";
     var results = ["", chalk.underline.bold(header), ""];
     var help_doc = ["", chalk.underline.bold("Help"), ""];
 
     var field_task_len = tasks.getLongestNameLength();
 
     tasks.forEach(function(task) {
-
         // help task will always be placed before all other tasks
         // to always have its documentation present.
-        var is_help_task = (task.name === "help");
+        var is_help_task = task.name === "help";
         // determine the correct array to reference
-        var array_ref = (is_help_task ? help_doc : results);
+        var array_ref = is_help_task ? help_doc : results;
 
         var comment = task.comment || {};
         var lines = comment.lines || [];
 
-        array_ref.push(format_column(task.name, field_task_len) + (lines[0] || ""));
+        array_ref.push(
+            format_column(task.name, field_task_len) + (lines[0] || "")
+        );
         // only print verbose documentation when flag is provided
         if (verbose || is_help_task) {
             for (var i = 1; i < lines.length; i++) {
-                array_ref.push(format_column("", field_task_len) + "  " + lines[i]);
+                array_ref.push(
+                    format_column("", field_task_len) + "  " + lines[i]
+                );
                 if (verbose && i === lines.length - 1) array_ref.push("\n");
             }
         }
@@ -78,8 +87,7 @@ function print_tasks(tasks, verbose, filter) {
 
     if (!verbose) results.push("\n");
 
-    return help_doc.concat(results)
-        .join("\n");
+    return help_doc.concat(results).join("\n");
 }
 
 /**
@@ -94,10 +102,12 @@ function print_tasks(tasks, verbose, filter) {
 function format_column(text, width, offset_left, offset_right) {
     offset_left = undefined !== offset_left ? offset_left : 3;
     offset_right = undefined !== offset_right ? offset_right : 3;
-    return new Array(offset_left + 1)
-        .join(" ") + chalk.magenta(text) + new Array(Math.max(width - text.length, 0) + 1)
-        .join(" ") + new Array(offset_right + 1)
-        .join(" ");
+    return (
+        new Array(offset_left + 1).join(" ") +
+        chalk.magenta(text) +
+        new Array(Math.max(width - text.length, 0) + 1).join(" ") +
+        new Array(offset_right + 1).join(" ")
+    );
 }
 
 /**
@@ -129,15 +139,14 @@ function ext(file, type) {
     if (!file) return "";
 
     // get the file extname
-    var extname = path.extname(file.path)
-        .toLowerCase();
+    var extname = path.extname(file.path).toLowerCase();
 
     // simply return the extname when no type is
     // provided to check against.
     if (!type) return extname;
 
     // else when a type is provided check against it
-    return (extname.slice(1) === type.toLowerCase());
+    return extname.slice(1) === type.toLowerCase();
 }
 
 // check for the usual file types

@@ -27,15 +27,14 @@ function ext(file, type) {
     if (!file) return "";
 
     // get the file extname
-    var extname = path.extname(file.path)
-        .toLowerCase();
+    var extname = path.extname(file.path).toLowerCase();
 
     // simply return the extname when no type is
     // provided to check against.
     if (!type) return extname;
 
     // else when a type is provided check against it
-    return (extname.slice(1) === type.toLowerCase());
+    return extname.slice(1) === type.toLowerCase();
 }
 
 // check for the usual file types

@@ -18,19 +18,19 @@ gulp.task("pretty", function(done) {
     var task = this;
     // this task can only run when gulp is not running as gulps watchers
     // can run too many times as many files are potentially being beautified
-    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
+    if (config_internal.get("pid")) {
+        // Gulp instance exists so cleanup
         gulp_check_warn();
         return done();
     }
 
     // run yargs
     var _args = yargs.option("type", {
-            alias: "t",
-            demandOption: false,
-            describe: "The file type extensions to clean.",
-            type: "string"
-        })
-        .argv;
+        alias: "t",
+        demandOption: false,
+        describe: "The file type extensions to clean.",
+        type: "string"
+    }).argv;
     // get the command line arguments from yargs
     var type = _args.t || _args.type;
 
@@ -39,12 +39,13 @@ gulp.task("pretty", function(done) {
     // a ".min." as this is the convention used for minified files.
     // the node_modules/, .git/, and all vendor/ files are also excluded.
     var files = [
-	    	__PATHS_FILES_BEAUTIFY,
-	    	__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
-	    	bangify(globall(__PATHS_NODE_MODULES_NAME)),
-	    	bangify(globall(__PATHS_GIT)),
-    		__PATHS_NOT_VENDOR
-    	];
+        __PATHS_FILES_BEAUTIFY,
+        __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
+        bangify(globall(__PATHS_NODE_MODULES_NAME)),
+        bangify(globall(__PATHS_GIT)),
+        __PATHS_NOT_VENDOR,
+        __PATHS_NOT_IGNORE
+    ];
 
     // reset the files array when extension types are provided
     if (type) {
@@ -63,17 +64,26 @@ gulp.task("pretty", function(done) {
     }
 
     // get needed files
-    pump([gulp.src(files, {
-            dot: true
-        }),
-		$.sort(opts_sort),
-		// run css files through csscomb, everything else through jsbeautify
-		$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB), $.beautify(config_jsbeautify)),
-		$.gulpif(ext.isjson, $.json_sort({
-            "space": json_spaces
-        })),
-		$.eol(),
-		$.debug.edit(),
-		gulp.dest(__PATHS_BASE)
-    ], done);
+    pump(
+        [
+            gulp.src(files, {
+                dot: true
+            }),
+            $.sort(opts_sort),
+            // run css files through csscomb, everything else through jsbeautify
+            $.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB)),
+            $.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
+            $.gulpif(ext.isjs, $.prettier(config_prettier)),
+            $.gulpif(
+                ext.isjson,
+                $.json_sort({
+                    space: json_spaces
+                })
+            ),
+            $.eol(),
+            $.debug.edit(),
+            gulp.dest(__PATHS_BASE)
+        ],
+        done
+    );
 });

@@ -6,7 +6,6 @@
  * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
  */
 gulp.task("modernizr", function(done) {
-
     var modernizr = require("modernizr");
 
     modernizr.build(config_modernizr, function(build) {

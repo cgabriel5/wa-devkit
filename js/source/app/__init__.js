@@ -1,5 +1,4 @@
 (function() {
-
     // add to global scope for ease of use
     // use global app var or create it if not present
     var app = window.app || (window.app = {}),
@@ -64,7 +63,6 @@
     // the readystatechange event is fired when the readyState attribute of a
     // document has changed
     document.onreadystatechange = function() {
-
         // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
         // loading === document still loading
         // complete === document and all sub-resources have finished loading.
@@ -92,7 +90,5 @@
 
         // good explanation with images:
         // https://varvy.com/performance/document-ready-state.html
-
     };
-
 })();

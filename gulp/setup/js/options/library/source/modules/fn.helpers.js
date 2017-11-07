@@ -65,7 +65,8 @@ function to_array(alo) {
  */
 var dtype = function(object) {
     // will always return something like "[object {type}]"
-    return Object.prototype.toString.call(object)
+    return Object.prototype.toString
+        .call(object)
         .replace(/(\[object |\])/g, "")
         .toLowerCase();
 };
@@ -81,8 +82,7 @@ dtype.is = function(object, types) {
     // get the object type
     var type = this(object);
     // prepare the types
-    types = "|" + types.toLowerCase()
-        .trim() + "|";
+    types = "|" + types.toLowerCase().trim() + "|";
     // check if the object's type is in the list
     return Boolean(-~types.indexOf("|" + type + "|"));
 };

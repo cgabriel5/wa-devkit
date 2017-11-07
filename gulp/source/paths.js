@@ -55,6 +55,7 @@ var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json
 var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
 var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
 var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
+var __PATHS_CONFIG_PRETTIER = `./${__PATHS_HOMEDIR}configs/prettier.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
 var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
 var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
@@ -83,6 +84,8 @@ var __PATHS_FILES_MIN = "**/*.min.*";
 var __PATHS_FILES_TEST = "!**/test/**";
 // exclude all vendor files from any directory
 var __PATHS_NOT_VENDOR = "!**/vendor/**";
+// files with this sub extension will be (ig)nored when prettifying is done
+var __PATHS_NOT_IGNORE = "!**/*.ig.*";
 var __PATHS_NODE_MODULES_NAME = "node_modules/";
 var __PATHS_NODE_MODULES = "./node_modules/";
 var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;

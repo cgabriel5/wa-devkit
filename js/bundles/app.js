@@ -3,7 +3,6 @@
     "use strict";
 
     (function() {
-
         // add to global scope for ease of use
         // use global app var or create it if not present
         var app = window.app || (window.app = {}),
@@ -19,7 +18,8 @@
         // add a module to load
         app.module = function(module_name, fn, mode) {
             // determine what array the module needs to be added to
-            var type = !mode || mode === "complete" ? "complete" : "interactive";
+            var type =
+                !mode || mode === "complete" ? "complete" : "interactive";
             // add the module to the queue
             queue[type].push([module_name, fn]);
         };
@@ -68,7 +68,6 @@
         // the readystatechange event is fired when the readyState attribute of a
         // document has changed
         document.onreadystatechange = function() {
-
             // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
             // loading === document still loading
             // complete === document and all sub-resources have finished loading.
@@ -96,42 +95,74 @@
 
             // good explanation with images:
             // https://varvy.com/performance/document-ready-state.html
-
         };
-
     })();
 
-    app.module("libs", function(modules, name) {
-        // init FastClickJS
-        if ("addEventListener" in document) {
-            FastClick.attach(document.body);
-        }
-    }, "interactive");
+    app.module(
+        "libs",
+        function(modules, name) {
+            // init FastClickJS
+            if ("addEventListener" in document) {
+                FastClick.attach(document.body);
+            }
+        },
+        "interactive"
+    );
 
-    app.module("globals", function(modules, name) {
-        // app logic...
-    }, "complete", "module handles global app variables");
+    app.module(
+        "globals",
+        function(modules, name) {
+            // app logic...
+        },
+        "complete",
+        "module handles global app variables"
+    );
 
-    app.module("utils", function(modules, name) {
-        // app logic...
-    }, "complete", "module handles app function utlities");
+    app.module(
+        "utils",
+        function(modules, name) {
+            // app logic...
+        },
+        "complete",
+        "module handles app function utlities"
+    );
 
-    app.module("$$", function(modules, name) {
-        // app logic...
-    }, "complete", "module handles getting needed elements");
+    app.module(
+        "$$",
+        function(modules, name) {
+            // app logic...
+        },
+        "complete",
+        "module handles getting needed elements"
+    );
 
-    app.module("core", function(modules, name) {
-        // app logic...
-    }, "complete", "module handles core app functions");
+    app.module(
+        "core",
+        function(modules, name) {
+            // app logic...
+        },
+        "complete",
+        "module handles core app functions"
+    );
 
-    app.module("events", function(modules, name) {
-        // app logic...
-    }, "complete", "module handles app event handlers");
+    app.module(
+        "events",
+        function(modules, name) {
+            // app logic...
+        },
+        "complete",
+        "module handles app event handlers"
+    );
 
-    app.module("main", function(modules, name) {
-        // app logic...
-        console.log("My app has loaded!");
-    }, "complete", "main app module. where the apps logic should me placed");
+    app.module(
+        "main",
+        function(modules, name) {
+            // app logic...
+            console.log("My app has loaded!");
+        },
+        "complete",
+        "main app module. where the apps logic should me placed"
+    );
 
     // IIFE end
 })(window);

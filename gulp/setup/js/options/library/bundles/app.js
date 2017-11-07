@@ -3,7 +3,6 @@
     "use strict";
 
     var library = (function() {
-
         // =============================== Helper Functions
 
         /**
@@ -71,7 +70,8 @@
          */
         var dtype = function(object) {
             // will always return something like "[object {type}]"
-            return Object.prototype.toString.call(object)
+            return Object.prototype.toString
+                .call(object)
                 .replace(/(\[object |\])/g, "")
                 .toLowerCase();
         };
@@ -87,8 +87,7 @@
             // get the object type
             var type = this(object);
             // prepare the types
-            types = "|" + types.toLowerCase()
-                .trim() + "|";
+            types = "|" + types.toLowerCase().trim() + "|";
             // check if the object's type is in the list
             return Boolean(-~types.indexOf("|" + type + "|"));
         };
@@ -180,7 +179,6 @@
 // the readystatechange event is fired when the readyState attribute of a
 // document has changed
 document.onreadystatechange = function() {
-
     "use strict";
 
     /* [functions.utils] */
@@ -209,5 +207,4 @@ document.onreadystatechange = function() {
 
     // good explanation with images:
     // https://varvy.com/performance/document-ready-state.html
-
 };

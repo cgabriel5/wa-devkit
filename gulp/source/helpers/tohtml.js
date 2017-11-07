@@ -10,24 +10,30 @@ gulp.task("tohtml:prepcss", function(done) {
     var __PATHS_MARKDOWN_CONCAT_NAME = "markdown.css";
 
     // run gulp process
-    pump([
-    	gulp.src([
-    		__PATHS_MARKDOWN_STYLES_GITHUB,
-    		__PATHS_MARKDOWN_STYLES_PRISMJS
-    	], {
-            cwd: __PATHS_MARKDOWN_ASSETS
-        }),
-        $.debug(),
-        $.concat(__PATHS_MARKDOWN_CONCAT_NAME),
-		$.modify({
-            fileModifier: function(file, contents) {
-                // store the contents in variable
-                __markdown_styles__ = contents;
-                return contents;
-            }
-        }),
-    	$.debug.edit()
-        ], done);
+    pump(
+        [
+            gulp.src(
+                [
+                    __PATHS_MARKDOWN_STYLES_GITHUB,
+                    __PATHS_MARKDOWN_STYLES_PRISMJS
+                ],
+                {
+                    cwd: __PATHS_MARKDOWN_ASSETS
+                }
+            ),
+            $.debug(),
+            $.concat(__PATHS_MARKDOWN_CONCAT_NAME),
+            $.modify({
+                fileModifier: function(file, contents) {
+                    // store the contents in variable
+                    __markdown_styles__ = contents;
+                    return contents;
+                }
+            }),
+            $.debug.edit()
+        ],
+        done
+    );
 });
 
 /**
@@ -46,7 +52,6 @@ gulp.task("tohtml:prepcss", function(done) {
  * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
-
     var prism = require("prismjs");
     var prism_langs = require("prism-languages");
 
@@ -54,12 +59,11 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 
     // run yargs
     var _args = yargs.option("file", {
-            alias: "f",
-            default: "./README.md",
-            describe: "The file to convert.",
-            type: "string"
-        })
-        .argv;
+        alias: "f",
+        default: "./README.md",
+        describe: "The file to convert.",
+        type: "string"
+    }).argv;
     // get the command line arguments from yargs
     var file_name = _args.f || _args.file;
 
@@ -78,19 +82,20 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     });
 
     // run gulp process
-    pump([gulp.src(file_name),
-    	$.debug(),
-		$.marked(),
-		$.modify({
-            fileModifier: function(file, contents) {
+    pump(
+        [
+            gulp.src(file_name),
+            $.debug(),
+            $.marked(),
+            $.modify({
+                fileModifier: function(file, contents) {
+                    // path offsets
+                    var fpath = "../../favicon/";
+                    // get file name
+                    var file_name = path.basename(file.path);
 
-                // path offsets
-                var fpath = "../../favicon/";
-                // get file name
-                var file_name = path.basename(file.path);
-
-                // return filled in template
-                return `
+                    // return filled in template
+                    return `
 <!doctype html>
 <html lang="en">
 <head>
@@ -114,11 +119,13 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </head>
     <body class="markdown-body">${contents}</body>
 </html>`;
-            }
-        }),
-        $.beautify(config_jsbeautify),
-		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		$.debug.edit(),
-		bs.stream()
-        ], done);
+                }
+            }),
+            $.beautify(config_jsbeautify),
+            gulp.dest(__PATHS_MARKDOWN_PREVIEW),
+            $.debug.edit(),
+            bs.stream()
+        ],
+        done
+    );
 });

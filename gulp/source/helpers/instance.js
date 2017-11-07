@@ -7,7 +7,11 @@
  */
 gulp.task("status", function(done) {
     var pid = config_internal.get("pid");
-    log((pid) ? "Gulp is running. " + chalk.green(`(pid: ${pid})`) : chalk.yellow("Gulp is not running."));
+    log(
+        pid
+            ? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
+            : chalk.yellow("Gulp is not running.")
+    );
     done();
 });
 
@@ -27,6 +31,9 @@ gulp.task("ports", function(done) {
         return done();
     }
     // ports exist...
-    log(chalk.green("(local, ui)"), chalk.magenta("(" + ports.local + ", " + ports.ui + ")"));
+    log(
+        chalk.green("(local, ui)"),
+        chalk.magenta("(" + ports.local + ", " + ports.ui + ")")
+    );
     done();
 });

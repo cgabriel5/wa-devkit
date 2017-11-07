@@ -22,7 +22,11 @@ var chalk = gutil.colors;
 var browser = function() {
     var platform = os.platform();
     // linux (else) darwin (else) windows (else) firefox
-    return ((platform === "linux") ? "google-chrome" : (platform === "darwin" ? "google chrome" : (platform === "win32" ? "chrome" : "firefox")));
+    return platform === "linux"
+        ? "google-chrome"
+        : platform === "darwin"
+          ? "google chrome"
+          : platform === "win32" ? "chrome" : "firefox";
 };
 
 /**
@@ -63,10 +67,10 @@ var current_task = function(gulp) {
     gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
     gulp.Gulp.prototype._runTask = function(task) {
         this.__wadevkit = {
-            "debug": {
-                "names": {
-                    "full": task.name,
-                    "short": task.name.replace(/^(helper|task)\-/, "")
+            debug: {
+                names: {
+                    full: task.name,
+                    short: task.name.replace(/^(helper|task)\-/, "")
                 }
             }
         };

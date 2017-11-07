@@ -2,16 +2,22 @@
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 
 // static configuration files (just need to read file)
-var config_gulp_bundles = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES)
-    .toString());
-var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
-    .toString());
-var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
-    .toString());
-var config_modernizr = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_MODERNIZR)
-    .toString());
-var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
-    .toString());
+var config_gulp_bundles = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES).toString()
+);
+var config_gulp_plugins = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
+);
+var config_jsbeautify = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
+);
+var config_prettier = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
+);
+var config_modernizr = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
+);
+var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
 
 // plugin options
 var opts_ap = config_gulp_plugins.autoprefixer;

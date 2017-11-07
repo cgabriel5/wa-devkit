@@ -35,17 +35,18 @@ gulp.task("open", function(done) {
             demandOption: false,
             describe: "The port to open browser in.",
             type: "number"
-        })
-        .argv;
+        }).argv;
 
     // get the command line arguments from yargs
     var file = _args.f || _args.file;
     // check for explicitly provided port...if none is provided
     // check the internally fetched free ports and get the local port
-    var port = _args.p || _args.port || (config_internal.get("ports") || {
-            "local": null
-        })
-        .local;
+    var port =
+        _args.p ||
+        _args.port ||
+        (config_internal.get("ports") || {
+            local: null
+        }).local;
 
     // run the open function
     return open_file_in_browser(file, port, done, task);

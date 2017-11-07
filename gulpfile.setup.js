@@ -8,7 +8,7 @@ var path = require("path");
 
 // lazy load gulp plugins
 var $ = require("gulp-load-plugins")({
-    "rename": {
+    rename: {
         "gulp-if": "gulpif",
         "gulp-autoprefixer": "ap",
         "gulp-markdown": "marked",
@@ -20,11 +20,11 @@ var $ = require("gulp-load-plugins")({
         "gulp-inject-content": "injection",
         "gulp-real-favicon": "real_favicon"
     },
-    "postRequireTransforms": {
-        "json_sort": function(plugin) {
+    postRequireTransforms: {
+        json_sort: function(plugin) {
             return plugin.default;
         },
-        "uglify": function(plugin) {
+        uglify: function(plugin) {
             // [https://stackoverflow.com/a/45554108]
             // By default es-uglify is used to uglify JS.
             var uglifyjs = require("uglify-es");
@@ -105,22 +105,20 @@ var config_pkg = json.read(__PATHS_CONFIG_PKG);
 var config_gulp_bundles = json.read(__PATHS_CONFIG_GULP_BUNDLES);
 
 // static configuration files (just need to read file)
-var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
-    .toString());
-var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
-    .toString());
-var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
-    .toString());
+var config_gulp_plugins = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
+);
+var config_jsbeautify = jsonc.parse(
+    fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
+);
+var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
 
 // plugin options
 var json_spaces = config_gulp_plugins.json_format.indent_size;
 
-var questions = require(__PATHS_GULP_SETUP_QUESTIONS)
-    .questions;
-var templates = require(__PATHS_GULP_SETUP_TEMPLATES)
-    .templates;
-var jsconfigs = require(__PATHS_GULP_SETUP_JSCONFIGS)
-    .jsconfigs;
+var questions = require(__PATHS_GULP_SETUP_QUESTIONS).questions;
+var templates = require(__PATHS_GULP_SETUP_TEMPLATES).templates;
+var jsconfigs = require(__PATHS_GULP_SETUP_JSCONFIGS).jsconfigs;
 var utils = require(__PATHS_GULP_UTILS);
 var log = utils.log;
 var time = utils.time;
@@ -173,15 +171,14 @@ function ext(file, type) {
     if (!file) return "";
 
     // get the file extname
-    var extname = path.extname(file.path)
-        .toLowerCase();
+    var extname = path.extname(file.path).toLowerCase();
 
     // simply return the extname when no type is
     // provided to check against.
     if (!type) return extname;
 
     // else when a type is provided check against it
-    return (extname.slice(1) === type.toLowerCase());
+    return extname.slice(1) === type.toLowerCase();
 }
 
 // check for the usual file types
@@ -204,7 +201,7 @@ ext.isjson = function(file) {
 gulp.task("default", function(done) {
     var task = this;
     // show the user the init message
-    log("Run \"$ gulp init\" before running Gulp's default command.");
+    log('Run "$ gulp init" before running Gulp\'s default command.');
     done();
 });
 
@@ -218,10 +215,12 @@ gulp.task("init", function(done) {
     prompt.delimiter = " ";
 
     prompt.get(questions, function(err, result) {
-
         // kill prompt and show user error message
         if (err) {
-            console.log("\n" + time(), (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
+            console.log(
+                "\n" + time(),
+                err.message === "canceled" ? chalk.red("Setup canceled.") : err
+            );
             return prompt.stop();
         }
 
@@ -267,32 +266,45 @@ gulp.task("init", function(done) {
         config_pkg.data = alphabetize(config_pkg.data);
 
         // saves changes to files
-        config_gulp_bundles.write(function() {
-            config_internal.write(function() {
-                config_pkg.write(function() {
-                    // run initialization steps
-                    var tasks = [
-							"init:clear-js",
-							"init:pick-js-option",
-							"init:fill-placeholders",
-							"init:setup-readme",
-							"init:rename-gulpfile",
-							"init:remove-setup",
-							"init:pretty",
-							"init:git"
-                    ];
-                    tasks.push(function() {
-                        var message = `Project initialized (${type})`;
-                        notify(message);
-                        log(message);
-                        log("Run \"$ gulp\" to start watching project for any file changes.");
-                        done();
-                    });
-                    return sequence.apply(task, tasks);
-                }, null, json_spaces);
-            }, null, json_spaces);
-        }, null, json_spaces);
-
+        config_gulp_bundles.write(
+            function() {
+                config_internal.write(
+                    function() {
+                        config_pkg.write(
+                            function() {
+                                // run initialization steps
+                                var tasks = [
+                                    "init:clear-js",
+                                    "init:pick-js-option",
+                                    "init:fill-placeholders",
+                                    "init:setup-readme",
+                                    "init:rename-gulpfile",
+                                    "init:remove-setup",
+                                    "init:pretty",
+                                    "init:git"
+                                ];
+                                tasks.push(function() {
+                                    var message = `Project initialized (${type})`;
+                                    notify(message);
+                                    log(message);
+                                    log(
+                                        'Run "$ gulp" to start watching project for any file changes.'
+                                    );
+                                    done();
+                                });
+                                return sequence.apply(task, tasks);
+                            },
+                            null,
+                            json_spaces
+                        );
+                    },
+                    null,
+                    json_spaces
+                );
+            },
+            null,
+            json_spaces
+        );
     });
 });
 
@@ -301,7 +313,6 @@ gulp.task("init", function(done) {
 // initialization step
 // @internal
 gulp.task("init:clear-js", function(done) {
-
     // no need to change any as the project
     // is defaulted to this type anyway. just
     // complete the task.
@@ -314,19 +325,22 @@ gulp.task("init:clear-js", function(done) {
 
     var task = this;
     // pick the js/ directory to use
-    pump([gulp.src(__PATHS_JS_SOURCE, {
-            dot: true,
-            cwd: __PATHS_BASE
-        }),
-    	$.debug.clean(),
-    	$.clean()
-    ], done);
+    pump(
+        [
+            gulp.src(__PATHS_JS_SOURCE, {
+                dot: true,
+                cwd: __PATHS_BASE
+            }),
+            $.debug.clean(),
+            $.clean()
+        ],
+        done
+    );
 });
 
 // initialization step
 // @internal
 gulp.task("init:pick-js-option", function(done) {
-
     // no need to change any as the project
     // is defaulted to this type anyway. just
     // complete the task.
@@ -334,14 +348,18 @@ gulp.task("init:pick-js-option", function(done) {
 
     var task = this;
     // pick the js/ directory to use
-    pump([gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
-            dot: true,
-            cwd: __PATHS_BASE_DOT
-        }),
-    	$.debug(),
-        gulp.dest(__PATHS_JS_HOME),
-    	$.debug.edit()
-    ], done);
+    pump(
+        [
+            gulp.src(__PATHS_JS_OPTIONS_DYNAMIC, {
+                dot: true,
+                cwd: __PATHS_BASE_DOT
+            }),
+            $.debug(),
+            gulp.dest(__PATHS_JS_HOME),
+            $.debug.edit()
+        ],
+        done
+    );
 });
 
 // initialization step
@@ -349,19 +367,25 @@ gulp.task("init:pick-js-option", function(done) {
 gulp.task("init:fill-placeholders", function(done) {
     var task = this;
     // replace placeholder with real data
-    pump([
-        gulp.src([
-        	__PATHS_GULP_SETUP_README_TEMPLATE,
-        	__PATHS_GULP_SETUP_LICENSE_TEMPLATE,
-        	__PATHS_HTML_HEADMETA,
-        	INDEX
-        ], {
-            base: __PATHS_BASE
-        }),
-        $.injection(__data__),
-        gulp.dest(__PATHS_BASE),
-		$.debug.edit()
-    ], done);
+    pump(
+        [
+            gulp.src(
+                [
+                    __PATHS_GULP_SETUP_README_TEMPLATE,
+                    __PATHS_GULP_SETUP_LICENSE_TEMPLATE,
+                    __PATHS_HTML_HEADMETA,
+                    INDEX
+                ],
+                {
+                    base: __PATHS_BASE
+                }
+            ),
+            $.injection(__data__),
+            gulp.dest(__PATHS_BASE),
+            $.debug.edit()
+        ],
+        done
+    );
 });
 
 // initialization step
@@ -369,15 +393,18 @@ gulp.task("init:fill-placeholders", function(done) {
 gulp.task("init:setup-readme", function(done) {
     var task = this;
     // move templates to new locations
-    pump([
-        gulp.src([
-        	__PATHS_GULP_SETUP_README_TEMPLATE,
-        	__PATHS_GULP_SETUP_LICENSE_TEMPLATE
-        ]),
-		$.debug(),
-        gulp.dest(__PATHS_BASE),
-    	$.debug.edit()
-    ], done);
+    pump(
+        [
+            gulp.src([
+                __PATHS_GULP_SETUP_README_TEMPLATE,
+                __PATHS_GULP_SETUP_LICENSE_TEMPLATE
+            ]),
+            $.debug(),
+            gulp.dest(__PATHS_BASE),
+            $.debug.edit()
+        ],
+        done
+    );
 });
 
 // initialization step
@@ -385,16 +412,19 @@ gulp.task("init:setup-readme", function(done) {
 gulp.task("init:rename-gulpfile", function(done) {
     var task = this;
     // rename the gulpfile.main.js to gulpfile.js
-    pump([
-        gulp.src(__PATHS_GULP_FILE_MAIN, {
-            base: __PATHS_BASE
-        }),
-    	$.debug(),
-        $.clean(), // remove the file
-        $.rename(__PATHS_GULP_FILE_NAME),
-        gulp.dest(__PATHS_BASE),
-    	$.debug.edit()
-    ], done);
+    pump(
+        [
+            gulp.src(__PATHS_GULP_FILE_MAIN, {
+                base: __PATHS_BASE
+            }),
+            $.debug(),
+            $.clean(), // remove the file
+            $.rename(__PATHS_GULP_FILE_NAME),
+            gulp.dest(__PATHS_BASE),
+            $.debug.edit()
+        ],
+        done
+    );
 });
 
 // initialization step
@@ -402,19 +432,21 @@ gulp.task("init:rename-gulpfile", function(done) {
 gulp.task("init:remove-setup", function(done) {
     var task = this;
     // remove the setup files/folders/old .git folder
-    pump([
-        gulp.src([
-        	__PATHS_GULP_FILE_SETUP,
-        	__PATHS_GULP_SETUP,
-        	__PATHS_GIT
-        ], {
-            dot: true,
-            read: false,
-            base: __PATHS_BASE
-        }),
-    	$.debug.clean(),
-        $.clean()
-    ], done);
+    pump(
+        [
+            gulp.src(
+                [__PATHS_GULP_FILE_SETUP, __PATHS_GULP_SETUP, __PATHS_GIT],
+                {
+                    dot: true,
+                    read: false,
+                    base: __PATHS_BASE
+                }
+            ),
+            $.debug.clean(),
+            $.clean()
+        ],
+        done
+    );
 });
 
 // initialization step
@@ -425,22 +457,51 @@ gulp.task("init:git", function(done) {
     // git init new project
     git.init("", function() {
         // set gitconfig values
-        git.raw(["config", "--local", "core.fileMode", "false"], function(err, result) {
-            git.raw(["config", "--local", "core.autocrlf", "input"], function(err, result) {
-                git.raw(["config", "--local", "user.email", __data__.email], function(err, result) {
-                    git.raw(["config", "--local", "user.name", __data__.git_id], function(err, result) {
-                        git.add("./*")
-                            .commit("chore: Initial commit\n\nProject initialization.", function() {
-                                console.log("");
-                                log("Make sure to set your editor of choice with Git if not already set.");
-                                log("For example, if using Sublime Text run ", chalk.green("$ git config core.editor \"subl -n w\""));
-                                log("More information can be found here: https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration\n");
-                                log(`Git initialized and configured (${__data__.apptype})`);
-                                notify(`Git initialized and configured (${__data__.apptype})`);
-                                done();
-                            });
-                    });
-                });
+        git.raw(["config", "--local", "core.fileMode", "false"], function(
+            err,
+            result
+        ) {
+            git.raw(["config", "--local", "core.autocrlf", "input"], function(
+                err,
+                result
+            ) {
+                git.raw(
+                    ["config", "--local", "user.email", __data__.email],
+                    function(err, result) {
+                        git.raw(
+                            ["config", "--local", "user.name", __data__.git_id],
+                            function(err, result) {
+                                git
+                                    .add("./*")
+                                    .commit(
+                                        "chore: Initial commit\n\nProject initialization.",
+                                        function() {
+                                            console.log("");
+                                            log(
+                                                "Make sure to set your editor of choice with Git if not already set."
+                                            );
+                                            log(
+                                                "For example, if using Sublime Text run ",
+                                                chalk.green(
+                                                    '$ git config core.editor "subl -n w"'
+                                                )
+                                            );
+                                            log(
+                                                "More information can be found here: https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration\n"
+                                            );
+                                            log(
+                                                `Git initialized and configured (${__data__.apptype})`
+                                            );
+                                            notify(
+                                                `Git initialized and configured (${__data__.apptype})`
+                                            );
+                                            done();
+                                        }
+                                    );
+                            }
+                        );
+                    }
+                );
             });
         });
     });
@@ -455,12 +516,11 @@ gulp.task("pretty", function(done) {
 
     // run yargs
     var _args = yargs.option("type", {
-            alias: "t",
-            demandOption: false,
-            describe: "The file type extensions to clean.",
-            type: "string"
-        })
-        .argv;
+        alias: "t",
+        demandOption: false,
+        describe: "The file type extensions to clean.",
+        type: "string"
+    }).argv;
     // get the command line arguments from yargs
     var type = _args.t || _args.type;
 
@@ -469,12 +529,12 @@ gulp.task("pretty", function(done) {
     // a ".min." as this is the convention used for minified files.
     // the node_modules/, .git/, and all vendor/ files are also excluded.
     var files = [
-	    	__PATHS_FILES_BEAUTIFY,
-	    	__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
-	    	bangify(globall(__PATHS_NODE_MODULES_NAME)),
-	    	bangify(globall(__PATHS_GIT)),
-    		__PATHS_NOT_VENDOR
-    	];
+        __PATHS_FILES_BEAUTIFY,
+        __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
+        bangify(globall(__PATHS_NODE_MODULES_NAME)),
+        bangify(globall(__PATHS_GIT)),
+        __PATHS_NOT_VENDOR
+    ];
 
     // reset the files array when extension types are provided
     if (type) {
@@ -493,21 +553,31 @@ gulp.task("pretty", function(done) {
     }
 
     // get needed files
-    pump([gulp.src(files, {
-            dot: true
-        }),
-		$.sort(opts_sort),
-		// run css files through csscomb, everything else through jsbeautify
-		$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB), $.beautify(config_jsbeautify)),
-		$.gulpif(ext.isjson, $.json_sort({
-            "space": json_spaces
-        })),
-		$.eol(),
-		$.debug.edit(),
-		gulp.dest(__PATHS_BASE)
-    ], done);
+    pump(
+        [
+            gulp.src(files, {
+                dot: true
+            }),
+            $.sort(opts_sort),
+            // run css files through csscomb, everything else through jsbeautify
+            $.gulpif(
+                ext.iscss,
+                $.csscomb(__PATHS_CONFIG_CSSCOMB),
+                $.beautify(config_jsbeautify)
+            ),
+            $.gulpif(
+                ext.isjson,
+                $.json_sort({
+                    space: json_spaces
+                })
+            ),
+            $.eol(),
+            $.debug.edit(),
+            gulp.dest(__PATHS_BASE)
+        ],
+        done
+    );
 });
-
 
 // initialization step::alias
 // @internal
@@ -529,18 +599,26 @@ gulp.task("make", function(done) {
         "helpers/pretty.js",
         "helpers/make.js"
     ];
-    pump([gulp.src(files, {
-            cwd: __PATHS_GULP_SETUP_SOURCE
-        }),
-		$.debug(),
-		$.foreach(function(stream, file) {
-            var filename = path.basename(file.path);
-            var filename_rel = path.relative(process.cwd(), file.path);
-            return stream.pipe($.insert.prepend(`//#! ${filename} -- ./${filename_rel}\n\n`));
-        }),
-		$.concat(__PATHS_GULP_FILE_SETUP),
-		$.beautify(config_jsbeautify),
-		gulp.dest(__PATHS_BASE),
-		$.debug.edit()
-	], done);
+    pump(
+        [
+            gulp.src(files, {
+                cwd: __PATHS_GULP_SETUP_SOURCE
+            }),
+            $.debug(),
+            $.foreach(function(stream, file) {
+                var filename = path.basename(file.path);
+                var filename_rel = path.relative(process.cwd(), file.path);
+                return stream.pipe(
+                    $.insert.prepend(
+                        `//#! ${filename} -- ./${filename_rel}\n\n`
+                    )
+                );
+            }),
+            $.concat(__PATHS_GULP_FILE_SETUP),
+            $.beautify(config_jsbeautify),
+            gulp.dest(__PATHS_BASE),
+            $.debug.edit()
+        ],
+        done
+    );
 });

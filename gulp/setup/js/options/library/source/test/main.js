@@ -2,7 +2,6 @@
 // the readystatechange event is fired when the readyState attribute of a
 // document has changed
 document.onreadystatechange = function() {
-
     "use strict";
 
     /* [functions.utils] */
@@ -31,5 +30,4 @@ document.onreadystatechange = function() {
 
     // good explanation with images:
     // https://varvy.com/performance/document-ready-state.html
-
 };

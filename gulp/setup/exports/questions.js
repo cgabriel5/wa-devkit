@@ -55,15 +55,14 @@ exports.questions = {
             message: "Enter 'yes' or 'no'.",
             default: "yes",
             before: function(value) {
-                return (value.charAt(0) === "y");
+                return value.charAt(0) === "y";
             }
         },
         year: {
             description: "License year",
             type: "number",
             pattern: /^20\d\d$/i,
-            default: new Date()
-                .getFullYear()
+            default: new Date().getFullYear()
         }
     }
 };

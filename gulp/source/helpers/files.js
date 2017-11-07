@@ -13,13 +13,14 @@
  * $ gulp files --type "js html" # Only list HTML and JS files.
  * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in basename.
  * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
+ * $ gulp files -w ".ig." -e # Turn off fuzzy search & find all files containing ".ig." (ignored).
  */
 gulp.task("files", function(done) {
-
     var fuzzy = require("fuzzy");
 
     // run yargs
-    var _args = yargs.option("type", {
+    var _args = yargs
+        .option("type", {
             alias: "t",
             demandOption: false,
             type: "string"
@@ -34,12 +35,17 @@ gulp.task("files", function(done) {
             demandOption: false,
             type: "string"
         })
-        .argv;
+        .option("exact", {
+            alias: "e",
+            demandOption: false,
+            type: "boolean"
+        }).argv;
 
     // get the command line arguments from yargs
-    var types = (_args.t || _args.type);
-    var min = (_args.m || _args.min);
-    var whereis = (_args.w || _args.whereis);
+    var types = _args.t || _args.type;
+    var min = _args.m || _args.min;
+    var whereis = _args.w || _args.whereis;
+    var no_fuzzy = _args.e || _args.exact;
     // turn to an array when present
     if (types) types = types.split(/\s+/);
 
@@ -67,37 +73,47 @@ gulp.task("files", function(done) {
         // when the type argument is provided
         if (types) {
             files = files.filter(function(filepath) {
-                return (-~types.indexOf(path.extname(filepath)
-                    .toLowerCase()
-                    .slice(1)));
+                return -~types.indexOf(
+                    path
+                        .extname(filepath)
+                        .toLowerCase()
+                        .slice(1)
+                );
             });
         }
 
         // filter the files based on their whether its a minified (.min.) file
         if (min) {
             files = files.filter(function(filepath) {
-                return (-~path.basename(filepath)
-                    .indexOf(".min."));
+                return -~path.basename(filepath).indexOf(".min.");
             });
         }
 
-        // if whereis parameter is provided run a fuzzy search on files
+        // if whereis parameter is provided run a search on files
         if (whereis) {
-            var fuzzy_results = fuzzy.filter(whereis, files, {});
-            // turn into an array
+            // contain filtered files
             var results = [];
-            fuzzy_results.forEach(function(result) {
-                results.push(result.string);
-            });
+
+            // run a non fuzzy search
+            if (no_fuzzy) {
+                // loop over files
+                var results = [];
+                files.forEach(function(file) {
+                    if (-~file.indexOf(whereis)) results.push(file);
+                });
+            } else {
+                // default to a fuzzy search
+                var fuzzy_results = fuzzy.filter(whereis, files, {});
+                // turn into an array
+                fuzzy_results.forEach(function(result) {
+                    results.push(result.string);
+                });
+            }
             // reset var
             files = results;
         }
 
         // log files
-        pump([gulp.src(files),
-			$.sort(opts_sort),
-			$.debug()
-	    ], done);
-
+        pump([gulp.src(files), $.sort(opts_sort), $.debug()], done);
     });
 });

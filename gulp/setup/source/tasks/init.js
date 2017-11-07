@@ -2,7 +2,7 @@
 gulp.task("default", function(done) {
     var task = this;
     // show the user the init message
-    log("Run \"$ gulp init\" before running Gulp's default command.");
+    log('Run "$ gulp init" before running Gulp\'s default command.');
     done();
 });
 
@@ -16,10 +16,12 @@ gulp.task("init", function(done) {
     prompt.delimiter = " ";
 
     prompt.get(questions, function(err, result) {
-
         // kill prompt and show user error message
         if (err) {
-            console.log("\n" + time(), (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
+            console.log(
+                "\n" + time(),
+                err.message === "canceled" ? chalk.red("Setup canceled.") : err
+            );
             return prompt.stop();
         }
 
@@ -65,31 +67,44 @@ gulp.task("init", function(done) {
         config_pkg.data = alphabetize(config_pkg.data);
 
         // saves changes to files
-        config_gulp_bundles.write(function() {
-            config_internal.write(function() {
-                config_pkg.write(function() {
-                    // run initialization steps
-                    var tasks = [
-							"init:clear-js",
-							"init:pick-js-option",
-							"init:fill-placeholders",
-							"init:setup-readme",
-							"init:rename-gulpfile",
-							"init:remove-setup",
-							"init:pretty",
-							"init:git"
-                    ];
-                    tasks.push(function() {
-                        var message = `Project initialized (${type})`;
-                        notify(message);
-                        log(message);
-                        log("Run \"$ gulp\" to start watching project for any file changes.");
-                        done();
-                    });
-                    return sequence.apply(task, tasks);
-                }, null, json_spaces);
-            }, null, json_spaces);
-        }, null, json_spaces);
-
+        config_gulp_bundles.write(
+            function() {
+                config_internal.write(
+                    function() {
+                        config_pkg.write(
+                            function() {
+                                // run initialization steps
+                                var tasks = [
+                                    "init:clear-js",
+                                    "init:pick-js-option",
+                                    "init:fill-placeholders",
+                                    "init:setup-readme",
+                                    "init:rename-gulpfile",
+                                    "init:remove-setup",
+                                    "init:pretty",
+                                    "init:git"
+                                ];
+                                tasks.push(function() {
+                                    var message = `Project initialized (${type})`;
+                                    notify(message);
+                                    log(message);
+                                    log(
+                                        'Run "$ gulp" to start watching project for any file changes.'
+                                    );
+                                    done();
+                                });
+                                return sequence.apply(task, tasks);
+                            },
+                            null,
+                            json_spaces
+                        );
+                    },
+                    null,
+                    json_spaces
+                );
+            },
+            null,
+            json_spaces
+        );
     });
 });
