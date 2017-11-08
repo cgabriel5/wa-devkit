@@ -124,7 +124,7 @@
 }
 
 .markdown-body .pl-mi2 {
-    background-color: rgba(78, 44, 32, 0.01);
+    background-color: #fdfcfc;
     background-color: #005cc5;
 }
 
@@ -626,7 +626,7 @@
 }
 
 .markdown-body table tr:nth-child(2n) {
-    background-color: rgba(78, 44, 32, 0.01);
+    background-color: #fdfcfc;
 }
 
 .markdown-body img {
@@ -691,7 +691,7 @@
     padding: 16px;
 
     border-radius: 3px;
-    background-color: rgba(78, 44, 32, 0.01);
+    background-color: #fdfcfc;
 }
 
 .markdown-body pre code {
@@ -721,7 +721,7 @@
 
 .markdown-body pre code {
     color: #333333;
-    background: #ff5cc;
+    background: #fdfcfc;
 }
 
 .markdown-body pre code::before,
