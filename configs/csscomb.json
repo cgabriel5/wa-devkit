@@ -5,11 +5,7 @@
 	"color-shorthand": false,
 	"element-case": "lower",
 	"eof-newline": true,
-	"exclude": [
-		".git/**",
-		"node_modules/**",
-		"bower_components/**"
-	],
+	"exclude": [".git/**", "node_modules/**", "bower_components/**"],
 	"leading-zero": true,
 	"quotes": "double",
 	"remove-empty-rulesets": true,
@@ -30,14 +26,7 @@
 			"font-smooth",
 			"line-height"
 		],
-		[
-			"position",
-			"z-index",
-			"top",
-			"right",
-			"bottom",
-			"left"
-		],
+		["position", "z-index", "top", "right", "bottom", "left"],
 		[
 			"display",
 			"visibility",

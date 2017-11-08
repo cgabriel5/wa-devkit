@@ -5,7 +5,8 @@
 
 code[class*="language-"],
 pre[class*="language-"] {
-	font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+	font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier,
+		monospace;
 	font-size: 0.95em;
 	line-height: 1.2em;
 
@@ -14,16 +15,16 @@ pre[class*="language-"] {
 	word-spacing: normal;
 	word-break: normal;
 	-moz-tab-size: 4;
-	  -o-tab-size: 4;
-	     tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
 	-webkit-hyphens: none;
-	   -moz-hyphens: none;
-	        hyphens: none;
+	-moz-hyphens: none;
+	hyphens: none;
 
 	color: #393a34;
 
 	direction: ltr;
-	    -ms-hyphens: none;
+	-ms-hyphens: none;
 }
 
 pre[class*="language-"]::-moz-selection,
@@ -51,8 +52,6 @@ pre[class*="language-"] {
 	border: 1px solid #dddddd;
 	background-color: white;
 }
-
-
 
 /* Inline code */
 
