@@ -70,16 +70,18 @@ gulp.task("pretty", function(done) {
 				dot: true
 			}),
 			$.sort(opts_sort),
-			// run css files through csscomb, everything else through jsbeautify
 			$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB)),
 			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
-			$.gulpif(ext.isjs, $.prettier(config_prettier)),
 			$.gulpif(
 				ext.isjson,
 				$.json_sort({
 					space: json_spaces
 				})
 			),
+			// use prettier on all files except HTML files
+			$.gulpif(function(file) {
+				return !ext(file, "html");
+			}, $.prettier(config_prettier)),
 			$.eol(),
 			$.debug.edit(),
 			gulp.dest(__PATHS_BASE)
