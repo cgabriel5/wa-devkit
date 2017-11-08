@@ -20,13 +20,13 @@ var chalk = gutil.colors;
  * @return {String} [The browser name.]
  */
 var browser = function() {
-    var platform = os.platform();
-    // linux (else) darwin (else) windows (else) firefox
-    return platform === "linux"
-        ? "google-chrome"
-        : platform === "darwin"
-          ? "google chrome"
-          : platform === "win32" ? "chrome" : "firefox";
+	var platform = os.platform();
+	// linux (else) darwin (else) windows (else) firefox
+	return platform === "linux"
+		? "google-chrome"
+		: platform === "darwin"
+			? "google chrome"
+			: platform === "win32" ? "chrome" : "firefox";
 };
 
 /**
@@ -34,8 +34,8 @@ var browser = function() {
  * @return {String} [The time formated, colored, Gulp like string.]
  */
 var time = function() {
-    // return the formated/colored time
-    return "[" + chalk.gray(format_date(new Date(), "HH:MM:ss")) + "]";
+	// return the formated/colored time
+	return "[" + chalk.gray(format_date(new Date(), "HH:MM:ss")) + "]";
 };
 
 /**
@@ -45,15 +45,15 @@ var time = function() {
  * @return {Undefined} [Nothing is returned.]
  */
 var notify = function(message, error) {
-    // determine what image to show
-    var image = (!error ? "success" : "error") + "_256.png";
-    // OS agnostic
-    notifier.notify({
-        title: "Gulp",
-        message: message,
-        icon: path.join(__dirname, "../img/node-notifier/" + image),
-        sound: true
-    });
+	// determine what image to show
+	var image = (!error ? "success" : "error") + "_256.png";
+	// OS agnostic
+	notifier.notify({
+		title: "Gulp",
+		message: message,
+		icon: path.join(__dirname, "../img/node-notifier/" + image),
+		sound: true
+	});
 };
 
 /**
@@ -62,21 +62,21 @@ var notify = function(message, error) {
  * @return {Object}      [Modified Gulp.]
  */
 var current_task = function(gulp) {
-    // Get the current task name inside task itself
-    // [http://stackoverflow.com/a/27535245]
-    gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
-    gulp.Gulp.prototype._runTask = function(task) {
-        this.__wadevkit = {
-            debug: {
-                names: {
-                    full: task.name,
-                    short: task.name.replace(/^(helper|task)\-/, "")
-                }
-            }
-        };
-        this.__runTask(task);
-    };
-    return gulp;
+	// Get the current task name inside task itself
+	// [http://stackoverflow.com/a/27535245]
+	gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
+	gulp.Gulp.prototype._runTask = function(task) {
+		this.__wadevkit = {
+			debug: {
+				names: {
+					full: task.name,
+					short: task.name.replace(/^(helper|task)\-/, "")
+				}
+			}
+		};
+		this.__runTask(task);
+	};
+	return gulp;
 };
 
 /**
@@ -85,19 +85,19 @@ var current_task = function(gulp) {
  * @return {String}       	   [The URL.]
  */
 var uri = function(params) {
-    // get provided arguments
-    var appdir = params.appdir;
-    var filepath = params.filepath;
-    var port = params.port;
-    var https = params.https;
+	// get provided arguments
+	var appdir = params.appdir;
+	var filepath = params.filepath;
+	var port = params.port;
+	var https = params.https;
 
-    // build url to open on
-    var scheme = "http" + (https ? "s" : "") + "://";
-    var parsed = new url(scheme + appdir);
-    parsed.set("port", port);
-    parsed.set("pathname", path.join(parsed.pathname, filepath));
+	// build url to open on
+	var scheme = "http" + (https ? "s" : "") + "://";
+	var parsed = new url(scheme + appdir);
+	parsed.set("port", port);
+	parsed.set("pathname", path.join(parsed.pathname, filepath));
 
-    return parsed.href;
+	return parsed.href;
 };
 
 /**
@@ -107,10 +107,10 @@ var uri = function(params) {
  * @return {Undefined}  [Nothing is returned.]
  */
 function format(template, data) {
-    return template.replace(/\{\{\#(.*?)\}\}/g, function(match) {
-        match = match.replace(/^\{\{\#|\}\}$/g, "");
-        return data[match] ? data[match] : match;
-    });
+	return template.replace(/\{\{\#(.*?)\}\}/g, function(match) {
+		match = match.replace(/^\{\{\#|\}\}$/g, "");
+		return data[match] ? data[match] : match;
+	});
 }
 
 /**

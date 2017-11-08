@@ -5,10 +5,10 @@ var config_gulp_bundles = json.read(__PATHS_CONFIG_GULP_BUNDLES);
 
 // static configuration files (just need to read file)
 var config_gulp_plugins = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
+	fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
 );
 var config_jsbeautify = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
+	fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
 );
 var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
 
@@ -29,12 +29,12 @@ var __data__ = {}; // placeholder fillers
 var INDEX = config_app.index;
 
 var opts_sort = {
-    // sort based on dirname alphabetically
-    comparator: function(file1, file2) {
-        var dir1 = path.dirname(file1.path);
-        var dir2 = path.dirname(file2.path);
-        if (dir1 > dir2) return 1;
-        if (dir1 < dir2) return -1;
-        return 0;
-    }
+	// sort based on dirname alphabetically
+	comparator: function(file1, file2) {
+		var dir1 = path.dirname(file1.path);
+		var dir2 = path.dirname(file2.path);
+		if (dir1 > dir2) return 1;
+		if (dir1 < dir2) return -1;
+		return 0;
+	}
 };

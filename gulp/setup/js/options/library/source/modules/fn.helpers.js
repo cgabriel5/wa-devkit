@@ -7,9 +7,9 @@
  * @source {http://stackoverflow.com/a/38622545}
  */
 function id(length) {
-    return Math.random()
-        .toString(36)
-        .substr(2, length);
+	return Math.random()
+		.toString(36)
+		.substr(2, length);
 }
 
 /**
@@ -19,7 +19,7 @@ function id(length) {
  * @return {Integer}        [Returns the index value. -1 if not in array.]
  */
 function index(array, value) {
-    return array.indexOf(value);
+	return array.indexOf(value);
 }
 
 /**
@@ -32,7 +32,7 @@ function index(array, value) {
  * when-it-precedes-an-expression/12299717#12299717]
  */
 function includes(iterable, value) {
-    return -~index(iterable, value);
+	return -~index(iterable, value);
 }
 
 /**
@@ -41,7 +41,7 @@ function includes(iterable, value) {
  * @return {Boolean}       [False if -1. Otherwise, true.]
  */
 function indexed(index) {
-    return -~index ? true : false;
+	return -~index ? true : false;
 }
 
 /**
@@ -51,11 +51,11 @@ function indexed(index) {
  * @return {Array}   [The created array.]
  */
 function to_array(alo) {
-    // vars
-    var true_array = [];
-    // loop through ALO and pushing items into true_array
-    for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
-    return true_array;
+	// vars
+	var true_array = [];
+	// loop through ALO and pushing items into true_array
+	for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
+	return true_array;
 }
 
 /**
@@ -64,11 +64,11 @@ function to_array(alo) {
  * @return {String}    [The data type of the checked object.]
  */
 var dtype = function(object) {
-    // will always return something like "[object {type}]"
-    return Object.prototype.toString
-        .call(object)
-        .replace(/(\[object |\])/g, "")
-        .toLowerCase();
+	// will always return something like "[object {type}]"
+	return Object.prototype.toString
+		.call(object)
+		.replace(/(\[object |\])/g, "")
+		.toLowerCase();
 };
 
 /**
@@ -79,12 +79,12 @@ var dtype = function(object) {
  *                           allowed data types.]
  */
 dtype.is = function(object, types) {
-    // get the object type
-    var type = this(object);
-    // prepare the types
-    types = "|" + types.toLowerCase().trim() + "|";
-    // check if the object's type is in the list
-    return Boolean(-~types.indexOf("|" + type + "|"));
+	// get the object type
+	var type = this(object);
+	// prepare the types
+	types = "|" + types.toLowerCase().trim() + "|";
+	// check if the object's type is in the list
+	return Boolean(-~types.indexOf("|" + type + "|"));
 };
 
 /**
@@ -95,8 +95,8 @@ dtype.is = function(object, types) {
  *                           allowed data types.]
  */
 dtype.isnot = function(object, types) {
-    // return the inverse of the is method
-    return !this.is(object, types);
+	// return the inverse of the is method
+	return !this.is(object, types);
 };
 
 /**
@@ -111,22 +111,22 @@ dtype.isnot = function(object, types) {
  * @return {Function}         [Returns class constructor.]
  */
 function class__(cobject) {
-    // cache class data
-    var constructor = cobject.constructor__,
-        methods = cobject.methods__,
-        parent = cobject.extend__;
-    // extend if parent class provided
-    if (parent) {
-        constructor.prototype = Object.create(parent.prototype);
-        constructor.prototype.constructor = constructor;
-    }
-    // cache prototype
-    var prototype = constructor.prototype;
-    // add class methods to prototype
-    for (var method in methods) {
-        if (methods.hasOwnProperty(method)) {
-            prototype[method] = methods[method];
-        }
-    }
-    return constructor;
+	// cache class data
+	var constructor = cobject.constructor__,
+		methods = cobject.methods__,
+		parent = cobject.extend__;
+	// extend if parent class provided
+	if (parent) {
+		constructor.prototype = Object.create(parent.prototype);
+		constructor.prototype.constructor = constructor;
+	}
+	// cache prototype
+	var prototype = constructor.prototype;
+	// add class methods to prototype
+	for (var method in methods) {
+		if (methods.hasOwnProperty(method)) {
+			prototype[method] = methods[method];
+		}
+	}
+	return constructor;
 }

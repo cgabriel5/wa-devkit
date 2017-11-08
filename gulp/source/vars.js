@@ -3,19 +3,19 @@ var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 
 // static configuration files (just need to read file)
 var config_gulp_bundles = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES).toString()
+	fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES).toString()
 );
 var config_gulp_plugins = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
+	fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
 );
 var config_jsbeautify = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
+	fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
 );
 var config_prettier = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
+	fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
 );
 var config_modernizr = jsonc.parse(
-    fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
+	fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
 );
 var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
 
@@ -62,18 +62,18 @@ var branch_name;
 
 // remove options
 var opts_remove = {
-    read: false,
-    cwd: __PATHS_BASE
+	read: false,
+	cwd: __PATHS_BASE
 };
 
 // gulp-sort custom sort function
 var opts_sort = {
-    // sort based on dirname alphabetically
-    comparator: function(file1, file2) {
-        var dir1 = path.dirname(file1.path);
-        var dir2 = path.dirname(file2.path);
-        if (dir1 > dir2) return 1;
-        if (dir1 < dir2) return -1;
-        return 0;
-    }
+	// sort based on dirname alphabetically
+	comparator: function(file1, file2) {
+		var dir1 = path.dirname(file1.path);
+		var dir2 = path.dirname(file2.path);
+		if (dir1 > dir2) return 1;
+		if (dir1 < dir2) return -1;
+		return 0;
+	}
 };
