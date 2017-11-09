@@ -11,11 +11,8 @@
 *,
 ::before,
 ::after {
-	/* 1 */
-	box-sizing: inherit;
-
-	background-repeat: no-repeat;
-	/* 2 */
+	background-repeat: no-repeat; /* 1 */
+	box-sizing: inherit; /* 2 */
 }
 
 /**
@@ -25,10 +22,8 @@
 
 ::before,
 ::after {
-	/* 1 */
-	vertical-align: inherit;
-	text-decoration: inherit;
-	/* 2 */
+	text-decoration: inherit; /* 1 */
+	vertical-align: inherit; /* 2 */
 }
 
 /**
@@ -38,16 +33,11 @@
  */
 
 html {
-	box-sizing: border-box;
-	/* 1 */
-
-	cursor: default;
-	/* 3 */
-
+	box-sizing: border-box; /* 1 */
+	cursor: default; /* 2 *//* 3 */
 	-webkit-text-size-adjust: 100%;
-	/* 2 */
-	-ms-text-size-adjust: 100%;
-	/* 3 */
+	    -ms-text-size-adjust: 100%;
+	        text-size-adjust: 100%; /* 3 */
 }
 
 /* Sections (https://html.spec.whatwg.org/multipage/semantics.html#sections)
@@ -81,7 +71,6 @@ body {
 
 h1 {
 	font-size: 2em;
-
 	margin: 0.67em 0;
 }
 
@@ -114,13 +103,9 @@ figure {
  */
 
 hr {
-	/* 1 */
-	overflow: visible;
-
-	box-sizing: content-box;
-	/* 1 */
-	height: 0;
-	/* 2 */
+	box-sizing: content-box; /* 1 */
+	height: 0; /* 1 */
+	overflow: visible; /* 2 */
 }
 
 /**
@@ -138,9 +123,8 @@ nav ul {
  */
 
 pre {
-	font: 1em monospace, monospace;
-	/* 1 */
-	/* 2 */
+	font-family: monospace, monospace; /* 1 */
+	font-size: 1em; /* 2 */
 }
 
 /* Text-level semantics (https://html.spec.whatwg.org/multipage/semantics.html#text-level-semantics)
@@ -152,11 +136,9 @@ pre {
  */
 
 a {
-	background: transparent;
-	/* 1 */
-
+	background-color: transparent; /* 1 */
 	-webkit-text-decoration-skip: objects;
-	/* 2 */
+	        text-decoration-skip: objects; /* 2 */
 }
 
 /**
@@ -165,16 +147,11 @@ a {
  */
 
 abbr[title] {
-	/* 1 */
-	text-decoration: underline;
-	text-decoration: underline dotted;
-
-	border-bottom: none;
-	/* 2 */
-
+	border-bottom: none; /* 1 */
+	        text-decoration: underline; /* 2 */
 	-webkit-text-decoration: underline dotted;
-	-moz-text-decoration: underline dotted;
-	/* 2 */
+	   -moz-text-decoration: underline dotted;
+	        text-decoration: underline dotted; /* 2 */
 }
 
 /**
@@ -203,9 +180,8 @@ strong {
 code,
 kbd,
 samp {
-	font: 1em monospace, monospace;
-	/* 1 */
-	/* 2 */
+	font-family: monospace, monospace; /* 1 */
+	font-size: 1em; /* 2 */
 }
 
 /**
@@ -221,8 +197,8 @@ dfn {
  */
 
 mark {
+	background-color: #ffff00;
 	color: #000000;
-	background: #ffff00;
 }
 
 /**
@@ -242,18 +218,16 @@ sub,
 sup {
 	font-size: 75%;
 	line-height: 0;
-
 	position: relative;
-
 	vertical-align: baseline;
 }
 
 sub {
-	bottom: -0.25em;
+	bottom: -.25em;
 }
 
 sup {
-	top: -0.5em;
+	top: -.5em;
 }
 
 /*
@@ -262,18 +236,14 @@ sup {
  */
 
 ::-moz-selection {
-	/* 1 */
-	color: #000000;
-	background: #b3d4fc;
-	/* 1 */
+	background-color: #b3d4fc; /* 1 */
+	color: #000000; /* 1 */
 	text-shadow: none;
 }
 
 ::selection {
-	/* 1 */
-	color: #000000;
-	background: #b3d4fc;
-	/* 1 */
+	background-color: #b3d4fc; /* 1 */
+	color: #000000; /* 1 */
 	text-shadow: none;
 }
 
@@ -308,7 +278,6 @@ video {
 
 audio:not([controls]) {
 	display: none;
-
 	height: 0;
 }
 
@@ -370,11 +339,10 @@ button,
 input,
 select,
 textarea {
+	background-color: transparent;
+	color: inherit;
 	font-size: inherit;
 	line-height: inherit;
-
-	color: inherit;
-	background: transparent;
 }
 
 /**
@@ -406,11 +374,12 @@ select {
  */
 
 button,
-html [type="button"],
+html [type="button"], /* 1 */
 [type="reset"],
 [type="submit"] {
 	-webkit-appearance: button;
-	/* 2 */
+	   -moz-appearance: button;
+	        appearance: button; /* 2 */
 }
 
 /**
@@ -421,9 +390,8 @@ button::-moz-focus-inner,
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner {
-	padding: 0;
-
 	border-style: none;
+	padding: 0;
 }
 
 /**
@@ -445,21 +413,12 @@ button:-moz-focusring,
  */
 
 legend {
-	/* 2 */
-	display: table;
-
-	box-sizing: border-box;
-	/* 1 */
-	max-width: 100%;
-	/* 1 */
-	padding: 0;
-	/* 3 */
-
-	white-space: normal;
-	/* 1 */
-
-	color: inherit;
-	/* 1 */
+	box-sizing: border-box; /* 1 */
+	color: inherit; /* 2 */
+	display: table; /* 1 */
+	max-width: 100%; /* 1 */
+	padding: 0; /* 3 */
+	white-space: normal; /* 1 */
 }
 
 /**
@@ -468,11 +427,8 @@ legend {
  */
 
 progress {
-	display: inline-block;
-	/* 1 */
-
-	vertical-align: baseline;
-	/* 2 */
+	display: inline-block; /* 1 */
+	vertical-align: baseline; /* 2 */
 }
 
 /**
@@ -481,11 +437,8 @@ progress {
  */
 
 textarea {
-	overflow: auto;
-	/* 1 */
-
-	resize: vertical;
-	/* 2 */
+	overflow: auto; /* 1 */
+	resize: vertical; /* 2 */
 }
 
 /**
@@ -495,10 +448,8 @@ textarea {
 
 [type="checkbox"],
 [type="radio"] {
-	box-sizing: border-box;
-	/* 1 */
-	padding: 0;
-	/* 2 */
+	box-sizing: border-box; /* 1 */
+	padding: 0; /* 2 */
 }
 
 /**
@@ -516,11 +467,10 @@ textarea {
  */
 
 [type="search"] {
-	/* 1 */
-	outline-offset: -2px;
-
 	-webkit-appearance: textfield;
-	/* 2 */
+	   -moz-appearance: textfield;
+	        appearance: textfield; /* 1 */
+	outline-offset: -2px; /* 2 */
 }
 
 /**
@@ -530,6 +480,7 @@ textarea {
 [type="search"]::-webkit-search-cancel-button,
 [type="search"]::-webkit-search-decoration {
 	-webkit-appearance: none;
+	        appearance: none;
 }
 
 /**
@@ -538,11 +489,9 @@ textarea {
  */
 
 ::-webkit-file-upload-button {
-	/* 1 */
-	font: inherit;
-
 	-webkit-appearance: button;
-	/* 2 */
+	        appearance: button; /* 1 */
+	font: inherit; /* 2 */
 }
 
 /* Interactive elements (https://html.spec.whatwg.org/multipage/forms.html#interactive-elements)
@@ -553,7 +502,7 @@ textarea {
  * 1. Add the correct display in Edge, IE, and Firefox.
  */
 
-details,
+details, /* 1 */
 menu {
 	display: block;
 }
@@ -602,9 +551,9 @@ select,
 summary,
 textarea,
 [tabindex] {
-	-ms-touch-action: manipulation;
 	/* 1 */
-	touch-action: manipulation;
+	-ms-touch-action: manipulation;
+	    touch-action: manipulation;
 }
 
 /**
@@ -639,10 +588,9 @@ textarea,
  */
 
 [aria-hidden="false"][hidden]:not(:focus) {
-	position: absolute;
-
-	display: inherit;
 	clip: rect(0, 0, 0, 0);
+	display: inherit;
+	position: absolute;
 }
 
 /*
@@ -663,32 +611,23 @@ textarea,
  * -------------------------- */
 
 @font-face {
-	font-family: "FontAwesome";
+	font-family: 'FontAwesome';
+	src: url('../assets/fonts/font-awesome/fontawesome-webfont.eot?v=4.7.0');
+	src: url('../assets/fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'),
+         url('../assets/fonts/font-awesome/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),
+         url('../assets/fonts/font-awesome/fontawesome-webfont.woff?v=4.7.0') format('woff'),
+         url('../assets/fonts/font-awesome/fontawesome-webfont.ttf?v=4.7.0') format('truetype'),
+         url('../assets/fonts/font-awesome/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
 	font-weight: normal;
 	font-style: normal;
-
-	src: url("../assets/fonts/font-awesome/fontawesome-webfont.eot?v=4.7.0");
-	src: url("../assets/fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.7.0")
-			format("embedded-opentype"),
-		url("../assets/fonts/font-awesome/fontawesome-webfont.woff2?v=4.7.0")
-			format("woff2"),
-		url("../assets/fonts/font-awesome/fontawesome-webfont.woff?v=4.7.0")
-			format("woff"),
-		url("../assets/fonts/font-awesome/fontawesome-webfont.ttf?v=4.7.0")
-			format("truetype"),
-		url("../assets/fonts/font-awesome/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular")
-			format("svg");
 }
 
 .fa {
+	display: inline-block;
 	font: normal normal normal 14px/1 FontAwesome;
 	font-size: inherit;
-
-	display: inline-block;
-
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
 	text-rendering: auto;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* makes the font 33% larger relative to the icon container */
@@ -696,7 +635,6 @@ textarea,
 .fa-lg {
 	font-size: 1.33333333em;
 	line-height: 0.75em;
-
 	vertical-align: -15%;
 }
 
@@ -718,15 +656,13 @@ textarea,
 
 .fa-fw {
 	width: 1.28571429em;
-
 	text-align: center;
 }
 
 .fa-ul {
-	margin-left: 2.14285714em;
 	padding-left: 0;
-
-	list-style: none;
+	margin-left: 2.14285714em;
+	list-style-type: none;
 }
 
 .fa-ul > li {
@@ -735,11 +671,9 @@ textarea,
 
 .fa-li {
 	position: absolute;
-	top: 0.14285714em;
 	left: -2.14285714em;
-
 	width: 2.14285714em;
-
+	top: 0.14285714em;
 	text-align: center;
 }
 
@@ -749,7 +683,6 @@ textarea,
 
 .fa-border {
 	padding: 0.2em 0.25em 0.15em;
-
 	border: solid 0.08em #eeeeee;
 	border-radius: 0.1em;
 }
@@ -790,71 +723,66 @@ textarea,
 
 .fa-spin {
 	-webkit-animation: fa-spin 2s infinite linear;
-	animation: fa-spin 2s infinite linear;
+	        animation: fa-spin 2s infinite linear;
 }
 
 .fa-pulse {
 	-webkit-animation: fa-spin 1s infinite steps(8);
-	animation: fa-spin 1s infinite steps(8);
+	        animation: fa-spin 1s infinite steps(8);
 }
 
 @-webkit-keyframes fa-spin {
 	0% {
 		-webkit-transform: rotate(0deg);
-		transform: rotate(0deg);
+		        transform: rotate(0deg);
 	}
 
 	100% {
 		-webkit-transform: rotate(359deg);
-		transform: rotate(359deg);
+		        transform: rotate(359deg);
 	}
 }
 
 @keyframes fa-spin {
 	0% {
 		-webkit-transform: rotate(0deg);
-		transform: rotate(0deg);
+		        transform: rotate(0deg);
 	}
 
 	100% {
 		-webkit-transform: rotate(359deg);
-		transform: rotate(359deg);
+		        transform: rotate(359deg);
 	}
 }
 
 .fa-rotate-90 {
+	filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
 	-webkit-transform: rotate(90deg);
-	transform: rotate(90deg);
-
-	-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
+	        transform: rotate(90deg);
 }
 
 .fa-rotate-180 {
+	filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
 	-webkit-transform: rotate(180deg);
-	transform: rotate(180deg);
-
-	-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
+	        transform: rotate(180deg);
 }
 
 .fa-rotate-270 {
+	filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
 	-webkit-transform: rotate(270deg);
-	transform: rotate(270deg);
-
-	-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+	        transform: rotate(270deg);
 }
 
 .fa-flip-horizontal {
+	filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
 	-webkit-transform: scale(-1, 1);
-	transform: scale(-1, 1);
-
-	-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
+	        transform: scale(-1, 1);
 }
 
 .fa-flip-vertical {
+	filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
 	-webkit-transform: scale(1, -1);
-	transform: scale(1, -1);
-
-	-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
+	        transform: scale(1, -1);
 }
 
 :root .fa-rotate-90,
@@ -863,19 +791,15 @@ textarea,
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical {
 	-webkit-filter: none;
-	filter: none;
+	        filter: none;
 }
 
 .fa-stack {
-	line-height: 2em;
-
 	position: relative;
-
 	display: inline-block;
-
 	width: 2em;
 	height: 2em;
-
+	line-height: 2em;
 	vertical-align: middle;
 }
 
@@ -883,9 +807,7 @@ textarea,
 .fa-stack-2x {
 	position: absolute;
 	left: 0;
-
 	width: 100%;
-
 	text-align: center;
 }
 
@@ -3717,26 +3639,21 @@ textarea,
 
 .sr-only {
 	position: absolute;
-
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-
 	width: 1px;
 	height: 1px;
-	margin: -1px;
 	padding: 0;
-
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
 	border: 0;
 }
 
 .sr-only-focusable:active,
 .sr-only-focusable:focus {
 	position: static;
-
-	overflow: visible;
-	clip: auto;
-
 	width: auto;
 	height: auto;
 	margin: 0;
+	overflow: visible;
+	clip: auto;
 }
