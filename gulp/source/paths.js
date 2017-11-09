@@ -50,16 +50,25 @@ var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
 
 // paths:CONFIG_FILES
-var __PATHS_CONFIG_PERFECTIONIST = `./${__PATHS_HOMEDIR}configs/perfectionist.json`;
-var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
-var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
-var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
-var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
-var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
-var __PATHS_CONFIG_PRETTIER = `./${__PATHS_HOMEDIR}configs/prettier.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-// var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
-var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
+var __PATHS_CONFIG_SETTINGS_JSON_FILES = `./${__PATHS_HOMEDIR}configs/**/*.json`;
+var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/._internal.json`;
+var __PATHS_CONFIG_SETTINGS = `./${__PATHS_HOMEDIR}configs/._settings.json`;
+var __PATHS_CONFIG_HOME = `./${__PATHS_HOMEDIR}configs/`;
+var __PATHS_CONFIG_SETTINGS_NAME = "._settings.json";
+var __PATHS_CONFIG_PERFECTIONIST = `perfectionist`;
+var __PATHS_CONFIG_FAVICONDATA = `favicondata`;
+var __PATHS_CONFIG_JSBEAUTIFY = `jsbeautify`;
+var __PATHS_CONFIG_BUNDLES = `bundles`;
+var __PATHS_CONFIG_MODERNIZR = `modernizr`;
+var __PATHS_CONFIG_PRETTIER = `prettier`;
+
+var __PATHS_CONFIG_FINDFREEPORT = `findfreeport`;
+var __PATHS_CONFIG_AUTOPREFIXER = `autoprefixer`;
+var __PATHS_CONFIG_BROWSERSYNC = `browsersync`;
+var __PATHS_CONFIG_JSON_FORMAT = `json.format`;
+var __PATHS_CONFIG_OPEN = `open`;
+// var __PATHS_CONFIG_CSSCOMB = `csscomb`;
+var __PATHS_CONFIG_APP = `app`;
 
 // paths:FAVICONS
 // file where the favicon markups are stored

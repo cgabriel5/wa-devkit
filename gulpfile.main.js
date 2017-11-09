@@ -103,16 +103,25 @@ var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
 
 // paths:CONFIG_FILES
-var __PATHS_CONFIG_PERFECTIONIST = `./${__PATHS_HOMEDIR}configs/perfectionist.json`;
-var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
-var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
-var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
-var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
-var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
-var __PATHS_CONFIG_PRETTIER = `./${__PATHS_HOMEDIR}configs/prettier.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-// var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
-var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
+var __PATHS_CONFIG_SETTINGS_JSON_FILES = `./${__PATHS_HOMEDIR}configs/**/*.json`;
+var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/._internal.json`;
+var __PATHS_CONFIG_SETTINGS = `./${__PATHS_HOMEDIR}configs/._settings.json`;
+var __PATHS_CONFIG_HOME = `./${__PATHS_HOMEDIR}configs/`;
+var __PATHS_CONFIG_SETTINGS_NAME = "._settings.json";
+var __PATHS_CONFIG_PERFECTIONIST = `perfectionist`;
+var __PATHS_CONFIG_FAVICONDATA = `favicondata`;
+var __PATHS_CONFIG_JSBEAUTIFY = `jsbeautify`;
+var __PATHS_CONFIG_BUNDLES = `bundles`;
+var __PATHS_CONFIG_MODERNIZR = `modernizr`;
+var __PATHS_CONFIG_PRETTIER = `prettier`;
+
+var __PATHS_CONFIG_FINDFREEPORT = `findfreeport`;
+var __PATHS_CONFIG_AUTOPREFIXER = `autoprefixer`;
+var __PATHS_CONFIG_BROWSERSYNC = `browsersync`;
+var __PATHS_CONFIG_JSON_FORMAT = `json.format`;
+var __PATHS_CONFIG_OPEN = `open`;
+// var __PATHS_CONFIG_CSSCOMB = `csscomb`;
+var __PATHS_CONFIG_APP = `app`;
 
 // paths:FAVICONS
 // file where the favicon markups are stored
@@ -151,41 +160,33 @@ var __PATHS_MODERNIZR_FILE = "modernizr.js";
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 
 // static configuration files (just need to read file)
-var config_gulp_bundles = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES).toString()
+var config_settings = jsonc.parse(
+	fs.readFileSync(__PATHS_CONFIG_SETTINGS).toString()
 );
-var config_gulp_plugins = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
-);
-var config_jsbeautify = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
-);
-var config_prettier = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
-);
-var config_perfectionist = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_PERFECTIONIST).toString()
-);
-var config_modernizr = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
-);
-var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
+
+// get each individually files settings from the consolidated settings file
+var config_bundles = config_settings[__PATHS_CONFIG_BUNDLES];
+var config_jsbeautify = config_settings[__PATHS_CONFIG_JSBEAUTIFY];
+var config_prettier = config_settings[__PATHS_CONFIG_PRETTIER];
+var config_perfectionist = config_settings[__PATHS_CONFIG_PERFECTIONIST];
+var config_modernizr = config_settings[__PATHS_CONFIG_MODERNIZR];
+var config_app = config_settings[__PATHS_CONFIG_APP];
 
 // plugin options
-var opts_ap = config_gulp_plugins.autoprefixer;
-var opts_bs = config_gulp_plugins.browsersync;
-var opts_ffp = config_gulp_plugins.find_free_port;
-var json_format = config_gulp_plugins.json_format;
+var opts_ap = config_settings[__PATHS_CONFIG_AUTOPREFIXER];
+var opts_bs = config_settings[__PATHS_CONFIG_BROWSERSYNC];
+var opts_ffp = config_settings[__PATHS_CONFIG_FINDFREEPORT];
+var json_format = config_settings[__PATHS_CONFIG_JSON_FORMAT];
 var json_spaces = json_format.indent_size;
 
 // bundles
-var bundle_html = config_gulp_bundles.html;
-var bundle_css = config_gulp_bundles.css;
-var bundle_js = config_gulp_bundles.js;
-var bundle_img = config_gulp_bundles.img;
-var bundle_gulp = config_gulp_bundles.gulp;
-var bundle_dist = config_gulp_bundles.dist;
-var bundle_lib = config_gulp_bundles.lib;
+var bundle_html = config_bundles.html;
+var bundle_css = config_bundles.css;
+var bundle_js = config_bundles.js;
+var bundle_img = config_bundles.img;
+var bundle_gulp = config_bundles.gulp;
+var bundle_dist = config_bundles.dist;
+var bundle_lib = config_bundles.lib;
 
 // app directory information
 var INDEX = config_app.index;
@@ -565,10 +566,10 @@ gulp.task("default", function(done) {
 		// start up Gulp like normal
 
 		return find_free_port(
-			opts_ffp.port_range.start,
-			opts_ffp.port_range.end,
+			opts_ffp.range.start,
+			opts_ffp.range.end,
 			opts_ffp.ip,
-			opts_ffp.port_count,
+			opts_ffp.count,
 			function(err, p1, p2) {
 				// get pid, if any
 				var pid = config_internal.get("pid");
@@ -1778,6 +1779,34 @@ gulp.task("make", function(done) {
 			),
 			$.prettier(config_prettier),
 			gulp.dest(__PATHS_BASE),
+			$.debug.edit()
+		],
+		done
+	);
+});
+
+//#! settings.js -- ./gulp/source/helpers/settings.js
+
+/**
+ * Re-build ./configs/._settings.json.
+ *
+ * Usage
+ *
+ * $ gulp settings # Re-build ._settings.json.
+ */
+gulp.task("settings", function(done) {
+	var task = this;
+
+	pump(
+		[
+			gulp.src(__PATHS_CONFIG_SETTINGS_JSON_FILES, {
+				cwd: __PATHS_BASE
+			}),
+			$.debug(),
+			$.jsoncombine(__PATHS_CONFIG_SETTINGS_NAME, function(data, meta) {
+				return new Buffer(JSON.stringify(data, null, json_spaces));
+			}),
+			gulp.dest(__PATHS_CONFIG_HOME),
 			$.debug.edit()
 		],
 		done

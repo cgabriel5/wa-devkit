@@ -151,10 +151,10 @@ gulp.task("default", function(done) {
 		// start up Gulp like normal
 
 		return find_free_port(
-			opts_ffp.port_range.start,
-			opts_ffp.port_range.end,
+			opts_ffp.range.start,
+			opts_ffp.range.end,
 			opts_ffp.ip,
-			opts_ffp.port_count,
+			opts_ffp.count,
 			function(err, p1, p2) {
 				// get pid, if any
 				var pid = config_internal.get("pid");

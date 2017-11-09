@@ -2,41 +2,33 @@
 var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
 
 // static configuration files (just need to read file)
-var config_gulp_bundles = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES).toString()
+var config_settings = jsonc.parse(
+	fs.readFileSync(__PATHS_CONFIG_SETTINGS).toString()
 );
-var config_gulp_plugins = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS).toString()
-);
-var config_jsbeautify = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY).toString()
-);
-var config_prettier = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
-);
-var config_perfectionist = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_PERFECTIONIST).toString()
-);
-var config_modernizr = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
-);
-var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP).toString());
+
+// get each individually files settings from the consolidated settings file
+var config_bundles = config_settings[__PATHS_CONFIG_BUNDLES];
+var config_jsbeautify = config_settings[__PATHS_CONFIG_JSBEAUTIFY];
+var config_prettier = config_settings[__PATHS_CONFIG_PRETTIER];
+var config_perfectionist = config_settings[__PATHS_CONFIG_PERFECTIONIST];
+var config_modernizr = config_settings[__PATHS_CONFIG_MODERNIZR];
+var config_app = config_settings[__PATHS_CONFIG_APP];
 
 // plugin options
-var opts_ap = config_gulp_plugins.autoprefixer;
-var opts_bs = config_gulp_plugins.browsersync;
-var opts_ffp = config_gulp_plugins.find_free_port;
-var json_format = config_gulp_plugins.json_format;
+var opts_ap = config_settings[__PATHS_CONFIG_AUTOPREFIXER];
+var opts_bs = config_settings[__PATHS_CONFIG_BROWSERSYNC];
+var opts_ffp = config_settings[__PATHS_CONFIG_FINDFREEPORT];
+var json_format = config_settings[__PATHS_CONFIG_JSON_FORMAT];
 var json_spaces = json_format.indent_size;
 
 // bundles
-var bundle_html = config_gulp_bundles.html;
-var bundle_css = config_gulp_bundles.css;
-var bundle_js = config_gulp_bundles.js;
-var bundle_img = config_gulp_bundles.img;
-var bundle_gulp = config_gulp_bundles.gulp;
-var bundle_dist = config_gulp_bundles.dist;
-var bundle_lib = config_gulp_bundles.lib;
+var bundle_html = config_bundles.html;
+var bundle_css = config_bundles.css;
+var bundle_js = config_bundles.js;
+var bundle_img = config_bundles.img;
+var bundle_gulp = config_bundles.gulp;
+var bundle_dist = config_bundles.dist;
+var bundle_lib = config_bundles.lib;
 
 // app directory information
 var INDEX = config_app.index;
