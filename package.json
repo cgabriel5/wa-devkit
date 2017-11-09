@@ -67,6 +67,7 @@
 		"node-cleanup": "^2.1.2",
 		"node-dir": "^0.1.17",
 		"node-notifier": "^5.1.2",
+		"perfectionist": "^2.4.0",
 		"postcss-merge-longhand": "^3.0.0",
 		"postcss-unprefix": "^2.1.1",
 		"prettier": "1.7.4",

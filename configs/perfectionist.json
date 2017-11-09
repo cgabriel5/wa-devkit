@@ -1,0 +1,16 @@
+{
+	"cascade": true,
+	"colorCase": "lower",
+	"colorShorthand": false,
+	"format": "expanded",
+	"indentChar": "\t",
+	"indentSize": 1,
+	"maxAtRuleLength": false,
+	"maxSelectorLength": false,
+	"maxValueLength": false,
+	"sourcemap": false,
+	"syntax": "string",
+	"trimLeadingZero": false,
+	"trimTrailingZeros": true,
+	"zeroLengthNoUnit": true
+}

@@ -14,6 +14,9 @@ var config_jsbeautify = jsonc.parse(
 var config_prettier = jsonc.parse(
 	fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
 );
+var config_perfectionist = jsonc.parse(
+	fs.readFileSync(__PATHS_CONFIG_PERFECTIONIST).toString()
+);
 var config_modernizr = jsonc.parse(
 	fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
 );

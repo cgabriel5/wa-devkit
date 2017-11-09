@@ -50,6 +50,7 @@ var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
 
 // paths:CONFIG_FILES
+var __PATHS_CONFIG_PERFECTIONIST = `./${__PATHS_HOMEDIR}configs/perfectionist.json`;
 var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
 var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
 var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
@@ -57,7 +58,7 @@ var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
 var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
 var __PATHS_CONFIG_PRETTIER = `./${__PATHS_HOMEDIR}configs/prettier.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
+// var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
 var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS

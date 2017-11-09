@@ -3,6 +3,7 @@
 gulp.task("css:app", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
 	var task = this;
@@ -14,12 +15,12 @@ gulp.task("css:app", function(done) {
 			}),
 			$.debug(),
 			$.concat(bundle_css.source.names.main),
-			$.postcss([unprefix(), shorthand(), autoprefixer(opts_ap)]),
-			// run csscomb outside of postcss plugin to be able to use a
-			// custom config file. gulp-csscomb plugin allows the use of a
-			// custom config file. the regular csscomb plugin says it does
-			// but it does not work.
-			$.csscomb(__PATHS_CONFIG_CSSCOMB),
+			$.postcss([
+				unprefix(),
+				shorthand(),
+				autoprefixer(opts_ap),
+				perfectionist(config_perfectionist)
+			]),
 			gulp.dest(__PATHS_CSS_BUNDLES),
 			$.debug.edit(),
 			bs.stream()
@@ -33,6 +34,7 @@ gulp.task("css:app", function(done) {
 gulp.task("css:vendor", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
 	var task = this;
@@ -46,12 +48,12 @@ gulp.task("css:vendor", function(done) {
 			gulp.src(bundle_css.vendor.files),
 			$.debug(),
 			$.concat(bundle_css.vendor.names.main),
-			$.postcss([unprefix(), shorthand(), autoprefixer(opts_ap)]),
-			// run csscomb outside of postcss plugin to be able to use a
-			// custom config file. gulp-csscomb plugin allows the use of a
-			// custom config file. the regular csscomb plugin says it does
-			// but it does not work.
-			$.csscomb(__PATHS_CONFIG_CSSCOMB),
+			$.postcss([
+				unprefix(),
+				shorthand(),
+				autoprefixer(opts_ap),
+				perfectionist(config_perfectionist)
+			]),
 			gulp.dest(__PATHS_CSS_BUNDLES),
 			$.debug.edit(),
 			bs.stream()

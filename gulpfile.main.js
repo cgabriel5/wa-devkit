@@ -103,6 +103,7 @@ var __PATHS_GULP_FILE_NAME = "gulpfile.js";
 var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
 
 // paths:CONFIG_FILES
+var __PATHS_CONFIG_PERFECTIONIST = `./${__PATHS_HOMEDIR}configs/perfectionist.json`;
 var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
 var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
 var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
@@ -110,7 +111,7 @@ var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
 var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
 var __PATHS_CONFIG_PRETTIER = `./${__PATHS_HOMEDIR}configs/prettier.json`;
 var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
+// var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
 var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
 
 // paths:FAVICONS
@@ -161,6 +162,9 @@ var config_jsbeautify = jsonc.parse(
 );
 var config_prettier = jsonc.parse(
 	fs.readFileSync(__PATHS_CONFIG_PRETTIER).toString()
+);
+var config_perfectionist = jsonc.parse(
+	fs.readFileSync(__PATHS_CONFIG_PERFECTIONIST).toString()
 );
 var config_modernizr = jsonc.parse(
 	fs.readFileSync(__PATHS_CONFIG_MODERNIZR).toString()
@@ -371,36 +375,39 @@ function globall(string) {
 /**
  * @description [Returns the provided file's extension or checks it against the provided extension type.]
  * @param  {Object} file [The Gulp file object.]
- * @param  {String} type [The optional extension type to check against.]
+ * @param  {Array} types [The optional extension type(s) to check against.]
  * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
  */
-function ext(file, type) {
+function ext(file, types) {
 	// when no file exists return an empty string
 	if (!file) return "";
 
 	// get the file extname
-	var extname = path.extname(file.path).toLowerCase();
+	var extname = path
+		.extname(file.path)
+		.toLowerCase()
+		.replace(/^\./, "");
 
 	// simply return the extname when no type is
 	// provided to check against.
-	if (!type) return extname;
+	if (!types) return extname;
 
 	// else when a type is provided check against it
-	return extname.slice(1) === type.toLowerCase();
+	return Boolean(-~types.indexOf(extname));
 }
 
 // check for the usual file types
 ext.ishtml = function(file) {
-	return ext(file, "html");
+	return ext(file, ["html"]);
 };
 ext.iscss = function(file) {
-	return ext(file, "css");
+	return ext(file, ["css"]);
 };
 ext.isjs = function(file) {
-	return ext(file, "js");
+	return ext(file, ["js"]);
 };
 ext.isjson = function(file) {
-	return ext(file, "json");
+	return ext(file, ["json"]);
 };
 
 //#! init.js -- ./gulp/source/tasks/init.js
@@ -970,6 +977,7 @@ gulp.task("html:main", function(done) {
 gulp.task("css:app", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
 	var task = this;
@@ -981,12 +989,12 @@ gulp.task("css:app", function(done) {
 			}),
 			$.debug(),
 			$.concat(bundle_css.source.names.main),
-			$.postcss([unprefix(), shorthand(), autoprefixer(opts_ap)]),
-			// run csscomb outside of postcss plugin to be able to use a
-			// custom config file. gulp-csscomb plugin allows the use of a
-			// custom config file. the regular csscomb plugin says it does
-			// but it does not work.
-			$.csscomb(__PATHS_CONFIG_CSSCOMB),
+			$.postcss([
+				unprefix(),
+				shorthand(),
+				autoprefixer(opts_ap),
+				perfectionist(config_perfectionist)
+			]),
 			gulp.dest(__PATHS_CSS_BUNDLES),
 			$.debug.edit(),
 			bs.stream()
@@ -1000,6 +1008,7 @@ gulp.task("css:app", function(done) {
 gulp.task("css:vendor", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
 	var task = this;
@@ -1013,12 +1022,12 @@ gulp.task("css:vendor", function(done) {
 			gulp.src(bundle_css.vendor.files),
 			$.debug(),
 			$.concat(bundle_css.vendor.names.main),
-			$.postcss([unprefix(), shorthand(), autoprefixer(opts_ap)]),
-			// run csscomb outside of postcss plugin to be able to use a
-			// custom config file. gulp-csscomb plugin allows the use of a
-			// custom config file. the regular csscomb plugin says it does
-			// but it does not work.
-			$.csscomb(__PATHS_CONFIG_CSSCOMB),
+			$.postcss([
+				unprefix(),
+				shorthand(),
+				autoprefixer(opts_ap),
+				perfectionist(config_perfectionist)
+			]),
 			gulp.dest(__PATHS_CSS_BUNDLES),
 			$.debug.edit(),
 			bs.stream()
@@ -1109,66 +1118,6 @@ gulp.task("modernizr", function(done) {
 			});
 		});
 	});
-});
-
-//#! purify.js -- ./gulp/source/helpers/purify.js
-
-/**
- * Purge potentially unused CSS style definitions.
- *
- * Options
- *
- * (no options)  ---------  Creates pure.css which contains only used styles.
- * -r, --remove  [boolean]  Deletes pure.css and removes unused CSS.
- * -D, --delete  [boolean]  Deletes pure.css.
- *
- * Usage
- *
- * $ gulp purify # Creates pure.css which contains only used styles.
- * $ gulp purify --remove # Deletes pure.css and removes unused CSS.
- * $ gulp purify --delete # Deletes pure.css.
- */
-gulp.task("purify", function(done) {
-	var task = this;
-	// run yargs
-	var _args = yargs
-		.option("remove", {
-			alias: "r",
-			default: false,
-			describe: "Removes pure.css.",
-			type: "boolean"
-		})
-		.option("delete", {
-			alias: "D",
-			default: false,
-			describe: "Removes pure.css and removed unused CSS.",
-			type: "boolean"
-		}).argv;
-	// get the command line arguments from yargs
-	var remove = _args.r || _args.remove;
-	var delete_file = _args.D || _args.delete;
-	// remove pure.css
-	if (remove || delete_file) del([__PATHS_PURE_FILE]);
-	// don't run gulp just delete the file.
-	if (delete_file) return done();
-	pump(
-		[
-			gulp.src(__PATHS_USERS_CSS_FILE, {
-				cwd: __PATHS_CSS_SOURCE
-			}),
-			// modify debug to take a flag to skip the use of the cli-spinner
-			// $.debug(),
-			$.purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
-				info: true,
-				rejected: true
-			}),
-			$.gulpif(!remove, $.rename(__PATHS_PURE_FILE_NAME)),
-			$.csscomb(__PATHS_CONFIG_CSSCOMB),
-			gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : ""))
-			// $.debug.edit()
-		],
-		done
-	);
 });
 
 //#! tohtml.js -- ./gulp/source/helpers/tohtml.js
@@ -1414,14 +1363,27 @@ gulp.task("ports", function(done) {
  *
  * Options
  *
- * -t, --type    [string]  The optional extension types to clean.
+ * -t, --type     [string]   The optional extension types to clean.
+ * -g, --glob     [array]   Use glob to find files to prettify.
+ * -s, --show     [boolean]  Show the used globs before prettifying.
+ * -e, --empty    [boolean]  Empty default globs array. Careful as this can prettify all project files.
+ *                           By default the node_modules/ is ignored, for example. Be sure to exclude
+ *                           files that don't need to be prettified.
  *
  * Usage
  *
  * $ gulp pretty # Prettify all HTML, CSS, JS, JSON files.
  * $ gulp pretty --type "js, json" # Only prettify JS and JSON files.
+ * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
+ * $ gulp pretty --show # Halts prettifying and only shows the globs to be used for prettifying.
+ * $ gulp pretty --empty --glob "**\/*.js" # Empties the default globs and uses only the provided.
  */
 gulp.task("pretty", function(done) {
+	var unprefix = require("postcss-unprefix");
+	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
+	var shorthand = require("postcss-merge-longhand");
+
 	var task = this;
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
@@ -1432,14 +1394,36 @@ gulp.task("pretty", function(done) {
 	}
 
 	// run yargs
-	var _args = yargs.option("type", {
-		alias: "t",
-		demandOption: false,
-		describe: "The file type extensions to clean.",
-		type: "string"
-	}).argv;
+	var _args = yargs
+		.option("type", {
+			alias: "t",
+			demandOption: false,
+			describe: "The file type extensions to clean.",
+			type: "string"
+		})
+		.option("glob", {
+			alias: "g",
+			demandOption: false,
+			describe: "Use glob to find files to prettify.",
+			type: "array"
+		})
+		.option("show", {
+			alias: "s",
+			demandOption: false,
+			describe: "Show the used globs before prettifying.",
+			type: "boolean"
+		})
+		.option("empty", {
+			alias: "e",
+			demandOption: false,
+			describe: "Empty default globs array.",
+			type: "boolean"
+		}).argv;
 	// get the command line arguments from yargs
 	var type = _args.t || _args.type;
+	var globs = _args.g || _args.glob;
+	var show = _args.s || _args.show;
+	var empty = _args.e || _args.empty;
 
 	// default files to clean:
 	// HTML, CSS, JS, and JSON files. exclude files containing
@@ -1453,6 +1437,11 @@ gulp.task("pretty", function(done) {
 		__PATHS_NOT_VENDOR,
 		__PATHS_NOT_IGNORE
 	];
+
+	// empty the files array?
+	if (empty) {
+		files.length = 0;
+	}
 
 	// reset the files array when extension types are provided
 	if (type) {
@@ -1470,6 +1459,28 @@ gulp.task("pretty", function(done) {
 		files[0] = `**/*.${type}`;
 	}
 
+	if (globs) {
+		// only do changes when the type flag is not provided
+		// therefore, in other words, respect the type flag.
+		if (!type) {
+			files.shift();
+		}
+
+		// add the globs
+		globs.forEach(function(glob) {
+			files.push(glob);
+		});
+	}
+
+	if (show) {
+		log(chalk.green("Using globs:"));
+		var prefix = " ".repeat(10);
+		files.forEach(function(glob) {
+			log(prefix, chalk.blue(glob));
+		});
+		return done();
+	}
+
 	// get needed files
 	pump(
 		[
@@ -1477,7 +1488,6 @@ gulp.task("pretty", function(done) {
 				dot: true
 			}),
 			$.sort(opts_sort),
-			$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB)),
 			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
 			$.gulpif(
 				ext.isjson,
@@ -1485,10 +1495,19 @@ gulp.task("pretty", function(done) {
 					space: json_spaces
 				})
 			),
-			// use prettier on all files except HTML files
 			$.gulpif(function(file) {
-				return !ext(file, "html");
+				// exclude HTML and CSS files
+				return ext(file, ["html", "css"]) ? false : true;
 			}, $.prettier(config_prettier)),
+			$.gulpif(
+				ext.iscss,
+				$.postcss([
+					unprefix(),
+					shorthand(),
+					autoprefixer(opts_ap),
+					perfectionist(config_perfectionist)
+				])
+			),
 			$.eol(),
 			$.debug.edit(),
 			gulp.dest(__PATHS_BASE)
