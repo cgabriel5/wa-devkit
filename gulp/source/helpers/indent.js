@@ -38,13 +38,13 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					__PATHS_ALLFILES.replace(/\*$/, "js"), // only JS FILES
-					bangify(globall(__PATHS_NODE_MODULES_NAME)),
-					bangify(globall(__PATHS_GIT)),
-					__PATHS_NOT_VENDOR
+					__paths__.allfiles.replace(/\*$/, "js"), // only JS FILES
+					bangify(globall(__paths__.node_modules_name)),
+					bangify(globall(__paths__.git)),
+					__paths__.not_vendor
 				],
 				{
-					base: __PATHS_BASE_DOT
+					base: __paths__.base_dot
 				}
 			),
 			$.gulpif(

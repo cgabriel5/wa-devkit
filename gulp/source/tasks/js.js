@@ -5,12 +5,12 @@ gulp.task("js:app", function(done) {
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
-				cwd: __PATHS_JS_SOURCE
+				cwd: __paths__.js_source
 			}),
 			$.debug(),
 			$.concat(bundle_js.source.names.main),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_JS_BUNDLES),
+			gulp.dest(__paths__.js_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -33,7 +33,7 @@ gulp.task("js:vendor", function(done) {
 			$.debug(),
 			$.concat(bundle_js.vendor.names.main),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_JS_BUNDLES),
+			gulp.dest(__paths__.js_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],

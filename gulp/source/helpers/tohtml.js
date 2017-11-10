@@ -4,25 +4,20 @@ var __markdown_styles__;
 gulp.task("tohtml:prepcss", function(done) {
 	var task = this;
 
-	var __PATHS_MARKDOWN_STYLES_GITHUB = "github-markdown.css";
-	var __PATHS_MARKDOWN_STYLES_PRISMJS = "prism-github.css";
-	var __PATHS_MARKDOWN_ASSETS = "./markdown/assets/css/";
-	var __PATHS_MARKDOWN_CONCAT_NAME = "markdown.css";
-
 	// run gulp process
 	pump(
 		[
 			gulp.src(
 				[
-					__PATHS_MARKDOWN_STYLES_GITHUB,
-					__PATHS_MARKDOWN_STYLES_PRISMJS
+					__paths__.markdown_styles_github,
+					__paths__.markdown_styles_prismjs
 				],
 				{
-					cwd: __PATHS_MARKDOWN_ASSETS
+					cwd: __paths__.markdown_assets
 				}
 			),
 			$.debug(),
-			$.concat(__PATHS_MARKDOWN_CONCAT_NAME),
+			$.concat(__paths__.markdown_concat_name),
 			$.modify({
 				fileModifier: function(file, contents) {
 					// store the contents in variable
@@ -122,7 +117,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 				}
 			}),
 			$.beautify(config_jsbeautify),
-			gulp.dest(__PATHS_MARKDOWN_PREVIEW),
+			gulp.dest(__paths__.markdown_preview),
 			$.debug.edit(),
 			bs.stream()
 		],

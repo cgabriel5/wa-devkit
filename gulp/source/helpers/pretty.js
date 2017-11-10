@@ -74,12 +74,12 @@ gulp.task("pretty", function(done) {
 	// a ".min." as this is the convention used for minified files.
 	// the node_modules/, .git/, and all vendor/ files are also excluded.
 	var files = [
-		__PATHS_FILES_BEAUTIFY,
-		__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
-		bangify(globall(__PATHS_NODE_MODULES_NAME)),
-		bangify(globall(__PATHS_GIT)),
-		__PATHS_NOT_VENDOR,
-		__PATHS_NOT_IGNORE
+		__paths__.files_beautify,
+		__paths__.files_beautify_exclude_min,
+		bangify(globall(__paths__.node_modules_name)),
+		bangify(globall(__paths__.git)),
+		__paths__.not_vendor,
+		__paths__.not_ignore
 	];
 
 	// empty the files array?
@@ -134,7 +134,13 @@ gulp.task("pretty", function(done) {
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
 			$.gulpif(
-				ext.isjson,
+				function(file) {
+					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
+					// to be sortable as comments are not allowed in JSON files.
+					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
+						? true
+						: false;
+				},
 				$.json_sort({
 					space: json_spaces
 				})
@@ -154,7 +160,7 @@ gulp.task("pretty", function(done) {
 			),
 			$.eol(),
 			$.debug.edit(),
-			gulp.dest(__PATHS_BASE)
+			gulp.dest(__paths__.base)
 		],
 		done
 	);

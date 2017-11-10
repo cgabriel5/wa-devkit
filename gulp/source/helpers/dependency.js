@@ -42,9 +42,9 @@ gulp.task("dependency", function(done) {
 	var type = _args.t || _args.type;
 	var action = _args.a || _args.action;
 	// get needed paths
-	var dest = type === "js" ? __PATHS_JS_VENDOR : __PATHS_CSS_VENDOR;
+	var dest = type === "js" ? __paths__.js_vendor : __paths__.css_vendor;
 	var delete_path = dest + name;
-	var module_path = __PATHS_NODE_MODULES + name;
+	var module_path = __paths__.node_modules + name;
 	// check that the module exists
 	if (action === "add" && !de.sync(module_path)) {
 		log("The module", chalk.magenta(`${module_path}`), "does not exist.");
@@ -69,16 +69,16 @@ gulp.task("dependency", function(done) {
 			// copy module to location
 			pump(
 				[
-					gulp.src(name + __PATHS_DEL + __PATHS_ALLFILES, {
+					gulp.src(name + __paths__.del + __paths__.allfiles, {
 						dot: true,
-						cwd: __PATHS_NODE_MODULES,
-						base: __PATHS_BASE_DOT
+						cwd: __paths__.node_modules,
+						base: __paths__.base_dot
 					}),
 					$.rename(function(path) {
 						// [https://stackoverflow.com/a/36347297]
 						// remove the node_modules/ parent folder
 						var regexp = new RegExp(
-							"^" + __PATHS_NODE_MODULES_NAME
+							"^" + __paths__.node_modules_name
 						);
 						path.dirname = path.dirname.replace(regexp, "");
 					}),

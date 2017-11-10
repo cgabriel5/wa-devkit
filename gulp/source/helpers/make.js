@@ -14,7 +14,7 @@ gulp.task("make", function(done) {
 	pump(
 		[
 			gulp.src(bundle_gulp.source.files, {
-				cwd: __PATHS_GULP_SOURCE
+				cwd: __paths__.gulp_source
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
@@ -28,12 +28,12 @@ gulp.task("make", function(done) {
 			}),
 			// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
 			$.gulpif(
-				fe.sync(__PATHS_BASE + main_name),
+				fe.sync(__paths__.base + main_name),
 				$.concat(main_name),
 				$.concat(setup_name)
 			),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_BASE),
+			gulp.dest(__paths__.base),
 			$.debug.edit()
 		],
 		done

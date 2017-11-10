@@ -51,132 +51,72 @@ var bs_autoclose = require("browser-sync-close-hook");
 
 //#! paths.js -- ./gulp/source/paths.js
 
-// paths::BASES
-var __PATHS_DEL = "/";
-var __PATHS_BASE = "./";
-var __PATHS_BASE_DOT = ".";
-var __PATHS_DIRNAME = __dirname;
-var __PATHS_CWD = process.cwd();
-var __PATHS_HOMEDIR = ""; // "assets/";
+//  get the paths
+var __paths__ = jsonc.parse(
+	fs.readFileSync(`./configs/paths.cm.json`).toString(),
+	null,
+	true
+);
 
-// paths:DISTRIBUTION (only for apptype=webapp)
-var __PATHS_DIST_HOME = "dist/";
+// path placeholders substitutes. these paths will also get added to the
+// paths object after substitution down below.
+var __paths_subs__ = {
+	// paths::BASES
+	del: "/",
+	base: "./",
+	base_dot: ".",
+	dirname: __dirname,
+	cwd: process.cwd(),
+	homedir: "" // "assets/"
+};
 
-// paths: library (only for apptype=library)
-var __PATHS_LIB_HOME = "lib/";
+// recursively replace all the placeholders
+for (var key in __paths__) {
+	if (__paths__.hasOwnProperty(key)) {
+		var __path = __paths__[key];
+		// find all the placeholders
+		while (/\$\{.*?\}/g.test(__path)) {
+			__path = __path.replace(/\$\{.*?\}/g, function(match) {
+				var replacement =
+					__paths_subs__[match.replace(/^\$\{|\}$/g, "")];
+				return replacement !== undefined ? replacement : undefined;
+			});
+		}
+		// reset the substituted string back in the __paths__ object
+		__paths__[key] = __path;
+	}
+}
 
-// paths:HTML
-var __PATHS_HTML_SOURCE = `${__PATHS_HOMEDIR}html/source/`;
-var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/injection/`;
-
-// paths:CSS
-var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
-var __PATHS_CSS_VENDOR = `${__PATHS_HOMEDIR}css/vendor/`;
-var __PATHS_NOT_CSS_VENDOR = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
-var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
-var __PATHS_USERS_CSS_FILE = "styles.css";
-
-// paths::PURIFY_CSS
-var __PATHS_PURE_FILE = `${__PATHS_HOMEDIR}css/pure.css`;
-var __PATHS_PURE_FILE_NAME = "pure.css";
-var __PATHS_PURIFY_JS_SOURCE_FILES = `${__PATHS_HOMEDIR}js/bundles/*.js`;
-var __PATHS_PURE_SOURCE = "source/";
-var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
-
-// paths:JS
-var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
-var __PATHS_JS_VENDOR = `${__PATHS_HOMEDIR}js/vendor/`;
-var __PATHS_NOT_JS_VENDOR = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
-var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
-
-// paths:IMG
-var __PATHS_IMG_SOURCE = `${__PATHS_HOMEDIR}img/**/*`;
-
-// paths:GULP
-var __PATHS_GULP_HOME = `${__PATHS_HOMEDIR}gulp/`;
-var __PATHS_GULP_SOURCE = `${__PATHS_HOMEDIR}gulp/source/`;
-var __PATHS_GULPDIR = `./${__PATHS_HOMEDIR}gulp/`;
-var __PATHS_GULP_UTILS = `./${__PATHS_HOMEDIR}gulp/assets/utils/utils.js`;
-var __PATHS_GULP_FILE_NAME = "gulpfile.js";
-
-// paths:MARKDOWN
-var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
-
-// paths:CONFIG_FILES
-var __PATHS_CONFIG_SETTINGS_JSON_FILES = `./${__PATHS_HOMEDIR}configs/**/*.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/._internal.json`;
-var __PATHS_CONFIG_SETTINGS = `./${__PATHS_HOMEDIR}configs/._settings.json`;
-var __PATHS_CONFIG_HOME = `./${__PATHS_HOMEDIR}configs/`;
-var __PATHS_CONFIG_SETTINGS_NAME = "._settings.json";
-var __PATHS_CONFIG_PERFECTIONIST = `perfectionist`;
-var __PATHS_CONFIG_FAVICONDATA = `favicondata`;
-var __PATHS_CONFIG_JSBEAUTIFY = `jsbeautify`;
-var __PATHS_CONFIG_BUNDLES = `bundles`;
-var __PATHS_CONFIG_MODERNIZR = `modernizr`;
-var __PATHS_CONFIG_PRETTIER = `prettier`;
-
-var __PATHS_CONFIG_FINDFREEPORT = `findfreeport`;
-var __PATHS_CONFIG_AUTOPREFIXER = `autoprefixer`;
-var __PATHS_CONFIG_BROWSERSYNC = `browsersync`;
-var __PATHS_CONFIG_JSON_FORMAT = `json.format`;
-var __PATHS_CONFIG_OPEN = `open`;
-// var __PATHS_CONFIG_CSSCOMB = `csscomb`;
-var __PATHS_CONFIG_APP = `app`;
-
-// paths:FAVICONS
-// file where the favicon markups are stored
-var __PATHS_FAVICON_DEST = `${__PATHS_HOMEDIR}favicon/`;
-var __PATHS_FAVICON_MASTER_PIC = `./${__PATHS_HOMEDIR}docs/brand/img/leaf-900.png`;
-var __PATHS_FAVICON_ROOT_ICO = `./${__PATHS_HOMEDIR}favicon/favicon.ico`;
-var __PATHS_FAVICON_ROOT_PNG = `./${__PATHS_HOMEDIR}favicon/apple-touch-icon.png`;
-var __PATHS_FAVICON_ROOT_CONFIG = `./${__PATHS_HOMEDIR}favicon/browserconfig.xml`;
-var __PATHS_FAVICON_ROOT_MANIFEST = `./${__PATHS_HOMEDIR}favicon/manifest.json`;
-var __PATHS_FAVICON_HTML = `./${__PATHS_HOMEDIR}html/source/head/favicon.html`;
-var __PATHS_FAVICON_HTML_DEST = `./${__PATHS_HOMEDIR}html/source/head/`;
-
-// paths:OTHER
-var __PATHS_GIT = ".git/";
-var __PATHS_GITHEAD = ".git/HEAD";
-var __PATHS_README = "README.md";
-var __PATHS_README_HTML = "README.html";
-var __PATHS_ALLFILES = "**/*.*";
-var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
-var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
-var __PATHS_FILES_MIN = "**/*.min.*";
-// exclude all test files from any directory
-var __PATHS_FILES_TEST = "!**/test/**";
-// exclude all vendor files from any directory
-var __PATHS_NOT_VENDOR = "!**/vendor/**";
-// files with this sub extension will be (ig)nored when prettifying is done
-var __PATHS_NOT_IGNORE = "!**/*.ig.*";
-var __PATHS_NODE_MODULES_NAME = "node_modules/";
-var __PATHS_NODE_MODULES = "./node_modules/";
-var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
-var __PATHS_MODERNIZR_FILE = "modernizr.js";
+// add the subs to the paths object
+for (var key in __paths_subs__) {
+	if (__paths_subs__.hasOwnProperty(key)) {
+		__paths__[key] = __paths_subs__[key];
+	}
+}
 
 //#! vars.js -- ./gulp/source/vars.js
 
 // dynamic configuration files (load via json-file to modify later)
-var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
+var config_internal = json.read(__paths__.config_internal);
 
 // static configuration files (just need to read file)
 var config_settings = jsonc.parse(
-	fs.readFileSync(__PATHS_CONFIG_SETTINGS).toString()
+	fs.readFileSync(__paths__.config_settings).toString()
 );
 
 // get each individually files settings from the consolidated settings file
-var config_bundles = config_settings[__PATHS_CONFIG_BUNDLES];
-var config_jsbeautify = config_settings[__PATHS_CONFIG_JSBEAUTIFY];
-var config_prettier = config_settings[__PATHS_CONFIG_PRETTIER];
-var config_perfectionist = config_settings[__PATHS_CONFIG_PERFECTIONIST];
-var config_modernizr = config_settings[__PATHS_CONFIG_MODERNIZR];
-var config_app = config_settings[__PATHS_CONFIG_APP];
+var config_bundles = config_settings[__paths__.config_bundles];
+var config_jsbeautify = config_settings[__paths__.config_jsbeautify];
+var config_prettier = config_settings[__paths__.config_prettier];
+var config_perfectionist = config_settings[__paths__.config_perfectionist];
+var config_modernizr = config_settings[__paths__.config_modernizr];
+var config_app = config_settings[__paths__.config_app];
 
 // plugin options
-var opts_ap = config_settings[__PATHS_CONFIG_AUTOPREFIXER];
-var opts_bs = config_settings[__PATHS_CONFIG_BROWSERSYNC];
-var opts_ffp = config_settings[__PATHS_CONFIG_FINDFREEPORT];
-var json_format = config_settings[__PATHS_CONFIG_JSON_FORMAT];
+var opts_ap = config_settings[__paths__.config_autoprefixer];
+var opts_bs = config_settings[__paths__.config_browsersync];
+var opts_ffp = config_settings[__paths__.config_findfreeport];
+var json_format = config_settings[__paths__.config_json_format];
 var json_spaces = json_format.indent_size;
 
 // bundles
@@ -191,14 +131,14 @@ var bundle_lib = config_bundles.lib;
 // app directory information
 var INDEX = config_app.index;
 var BASE = config_app.base;
-var ROOTDIR = path.basename(path.resolve(__PATHS_DIRNAME)) + "/";
+var ROOTDIR = path.basename(path.resolve(__paths__.dirname)) + "/";
 var APPDIR = BASE + ROOTDIR;
 
 // internal information
 var APPTYPE = config_internal.get("apptype");
 
 // project utils
-var utils = require(__PATHS_GULP_UTILS);
+var utils = require(__paths__.gulp_utils);
 var color = utils.color;
 var log = utils.log;
 var time = utils.time;
@@ -216,7 +156,7 @@ var branch_name;
 // remove options
 var opts_remove = {
 	read: false,
-	cwd: __PATHS_BASE
+	cwd: __paths__.base
 };
 
 // gulp-sort custom sort function
@@ -235,10 +175,10 @@ var opts_sort = {
 
 // HTML injection variable object
 var html_injection = {
-	css_bundle_app: __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
-	css_bundle_vendor: __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
-	js_bundle_app: __PATHS_JS_BUNDLES + bundle_js.source.names.main,
-	js_bundle_vendor: __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
+	css_bundle_app: __paths__.css_bundles + bundle_css.source.names.main,
+	css_bundle_vendor: __paths__.css_bundles + bundle_css.vendor.names.main,
+	js_bundle_app: __paths__.js_bundles + bundle_js.source.names.main,
+	js_bundle_vendor: __paths__.js_bundles + bundle_js.vendor.names.main
 };
 
 //#! functions.js -- ./gulp/source/functions.js
@@ -255,7 +195,7 @@ function open_file_in_browser(filepath, port, callback, task) {
 	pump(
 		[
 			gulp.src(filepath, {
-				cwd: __PATHS_BASE,
+				cwd: __paths__.base,
 				dot: true
 			}),
 			$.open({
@@ -469,22 +409,22 @@ gulp.task("init:save-pid", function(done) {
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
-	git.isGit(__PATHS_DIRNAME, function(exists) {
+	git.isGit(__paths__.dirname, function(exists) {
 		// if no .git exists simply ignore and return done
 		if (!exists) return done();
-		git.check(__PATHS_DIRNAME, function(err, result) {
+		git.check(__paths__.dirname, function(err, result) {
 			if (err) throw err;
 			// record branch name
 			branch_name = result.branch;
 			// set the gulp watcher as .git exists
 			gulp.watch(
-				[__PATHS_GITHEAD],
+				[__paths__.githead],
 				{
-					cwd: __PATHS_BASE,
+					cwd: __paths__.base,
 					dot: true
 				},
 				function() {
-					var brn_current = git.checkSync(__PATHS_DIRNAME).branch;
+					var brn_current = git.checkSync(__paths__.dirname).branch;
 					if (branch_name)
 						log(
 							chalk.yellow("(pid:" + process.pid + ")"),
@@ -623,7 +563,11 @@ gulp.task("default", function(done) {
 gulp.task("dist:clean", function(done) {
 	var task = this;
 	pump(
-		[gulp.src(__PATHS_DIST_HOME, opts_remove), $.debug.clean(), $.clean()],
+		[
+			gulp.src(__paths__.dist_home, opts_remove),
+			$.debug.clean(),
+			$.clean()
+		],
 		done
 	);
 });
@@ -636,12 +580,12 @@ gulp.task("dist:favicon", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.favicon, {
 				dot: true,
-				cwd: __PATHS_BASE,
+				cwd: __paths__.base,
 				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
-				base: __PATHS_BASE_DOT
+				base: __paths__.base_dot
 			}),
 			$.debug(),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -655,12 +599,12 @@ gulp.task("dist:css", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.css, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.debug(),
 			$.gulpif(ext.iscss, $.clean_css()),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -676,8 +620,8 @@ gulp.task("dist:img", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.img, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.cache(
 				$.imagemin([
@@ -699,7 +643,7 @@ gulp.task("dist:img", function(done) {
 					})
 				])
 			),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -713,12 +657,12 @@ gulp.task("dist:js", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.js, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.debug(),
 			$.gulpif(ext.isjs, $.uglify()),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -732,12 +676,12 @@ gulp.task("dist:root", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.root, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.debug(),
 			$.gulpif(ext.ishtml, $.minify_html()),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -776,7 +720,7 @@ gulp.task("dist", function(done) {
 gulp.task("lib:clean", function(done) {
 	var task = this;
 	pump(
-		[gulp.src(__PATHS_LIB_HOME, opts_remove), $.debug.clean(), $.clean()],
+		[gulp.src(__paths__.lib_home, opts_remove), $.debug.clean(), $.clean()],
 		done
 	);
 });
@@ -788,18 +732,18 @@ gulp.task("lib:js", function(done) {
 		[
 			gulp.src(bundle_js.source.files, {
 				nocase: true,
-				cwd: __PATHS_JS_SOURCE
+				cwd: __paths__.js_source
 			}),
 			// filter out all but test files (^test*/i)
-			$.filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
+			$.filter([__paths__.allfiles, __paths__.files_test]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_LIB_HOME),
+			gulp.dest(__paths__.lib_home),
 			$.debug.edit(),
 			$.uglify(),
 			$.rename(bundle_js.source.names.libs.min),
-			gulp.dest(__PATHS_LIB_HOME),
+			gulp.dest(__paths__.lib_home),
 			$.debug.edit()
 		],
 		done
@@ -869,7 +813,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.html,
 				{
-					cwd: __PATHS_HTML_SOURCE
+					cwd: __paths__.html_source
 				},
 				function() {
 					return sequence("html:main");
@@ -880,7 +824,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.css.source,
 				{
-					cwd: __PATHS_CSS_SOURCE
+					cwd: __paths__.css_source
 				},
 				function() {
 					return sequence("css:app");
@@ -891,7 +835,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.css.vendor,
 				{
-					cwd: __PATHS_CSS_VENDOR
+					cwd: __paths__.css_vendor
 				},
 				function() {
 					return sequence("css:vendor");
@@ -902,7 +846,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.js.source,
 				{
-					cwd: __PATHS_JS_SOURCE
+					cwd: __paths__.js_source
 				},
 				function() {
 					return sequence("js:app");
@@ -913,7 +857,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.js.vendor,
 				{
-					cwd: __PATHS_JS_VENDOR
+					cwd: __paths__.js_vendor
 				},
 				function() {
 					return sequence("js:vendor");
@@ -924,7 +868,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.img,
 				{
-					cwd: __PATHS_IMG_SOURCE
+					cwd: __paths__.img_source
 				},
 				function() {
 					return sequence("img:main");
@@ -934,8 +878,8 @@ gulp.task("watch:main", function(done) {
 			// is the following watcher needed?
 
 			// // watch for any changes to README.md
-			// gulp.watch([__PATHS_README], {
-			//     cwd: __PATHS_BASE
+			// gulp.watch([__paths__.readme], {
+			//     cwd: __paths__.base
 			// }, function() {
 			//     return sequence("tohtml", function() {
 			//         bs.reload();
@@ -956,14 +900,14 @@ gulp.task("html:main", function(done) {
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {
-				cwd: __PATHS_HTML_SOURCE
+				cwd: __paths__.html_source
 			}),
 			$.debug(),
 			$.concat(bundle_html.source.names.main),
 			$.injection.pre(html_injection),
 			$.prettier(config_prettier),
 			$.injection.post(html_injection),
-			gulp.dest(__PATHS_BASE),
+			gulp.dest(__paths__.base),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -986,7 +930,7 @@ gulp.task("css:app", function(done) {
 	pump(
 		[
 			gulp.src(bundle_css.source.files, {
-				cwd: __PATHS_CSS_SOURCE
+				cwd: __paths__.css_source
 			}),
 			$.debug(),
 			$.concat(bundle_css.source.names.main),
@@ -996,7 +940,7 @@ gulp.task("css:app", function(done) {
 				autoprefixer(opts_ap),
 				perfectionist(config_perfectionist)
 			]),
-			gulp.dest(__PATHS_CSS_BUNDLES),
+			gulp.dest(__paths__.css_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -1029,7 +973,7 @@ gulp.task("css:vendor", function(done) {
 				autoprefixer(opts_ap),
 				perfectionist(config_perfectionist)
 			]),
-			gulp.dest(__PATHS_CSS_BUNDLES),
+			gulp.dest(__paths__.css_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -1046,12 +990,12 @@ gulp.task("js:app", function(done) {
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
-				cwd: __PATHS_JS_SOURCE
+				cwd: __paths__.js_source
 			}),
 			$.debug(),
 			$.concat(bundle_js.source.names.main),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_JS_BUNDLES),
+			gulp.dest(__paths__.js_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -1074,7 +1018,7 @@ gulp.task("js:vendor", function(done) {
 			$.debug(),
 			$.concat(bundle_js.vendor.names.main),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_JS_BUNDLES),
+			gulp.dest(__paths__.js_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -1090,7 +1034,7 @@ gulp.task("img:main", function(done) {
 	var task = this;
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
-	pump([gulp.src(__PATHS_IMG_SOURCE), $.debug(), bs.stream()], done);
+	pump([gulp.src(__paths__.img_source), $.debug(), bs.stream()], done);
 });
 
 //#! modernizr.js -- ./gulp/source/helpers/modernizr.js
@@ -1106,9 +1050,10 @@ gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
 	modernizr.build(config_modernizr, function(build) {
-		var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
+		var file_location =
+			__paths__.vendor_modernizr + __paths__.modernizr_file;
 		// create missing folders
-		mkdirp(__PATHS_VENDOR_MODERNIZR, function(err) {
+		mkdirp(__paths__.vendor_modernizr, function(err) {
 			if (err) throw err;
 			// save the file to vendor
 			fs.writeFile(file_location, build, function() {
@@ -1129,25 +1074,20 @@ var __markdown_styles__;
 gulp.task("tohtml:prepcss", function(done) {
 	var task = this;
 
-	var __PATHS_MARKDOWN_STYLES_GITHUB = "github-markdown.css";
-	var __PATHS_MARKDOWN_STYLES_PRISMJS = "prism-github.css";
-	var __PATHS_MARKDOWN_ASSETS = "./markdown/assets/css/";
-	var __PATHS_MARKDOWN_CONCAT_NAME = "markdown.css";
-
 	// run gulp process
 	pump(
 		[
 			gulp.src(
 				[
-					__PATHS_MARKDOWN_STYLES_GITHUB,
-					__PATHS_MARKDOWN_STYLES_PRISMJS
+					__paths__.markdown_styles_github,
+					__paths__.markdown_styles_prismjs
 				],
 				{
-					cwd: __PATHS_MARKDOWN_ASSETS
+					cwd: __paths__.markdown_assets
 				}
 			),
 			$.debug(),
-			$.concat(__PATHS_MARKDOWN_CONCAT_NAME),
+			$.concat(__paths__.markdown_concat_name),
 			$.modify({
 				fileModifier: function(file, contents) {
 					// store the contents in variable
@@ -1247,7 +1187,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 				}
 			}),
 			$.beautify(config_jsbeautify),
-			gulp.dest(__PATHS_MARKDOWN_PREVIEW),
+			gulp.dest(__paths__.markdown_preview),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -1431,12 +1371,12 @@ gulp.task("pretty", function(done) {
 	// a ".min." as this is the convention used for minified files.
 	// the node_modules/, .git/, and all vendor/ files are also excluded.
 	var files = [
-		__PATHS_FILES_BEAUTIFY,
-		__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
-		bangify(globall(__PATHS_NODE_MODULES_NAME)),
-		bangify(globall(__PATHS_GIT)),
-		__PATHS_NOT_VENDOR,
-		__PATHS_NOT_IGNORE
+		__paths__.files_beautify,
+		__paths__.files_beautify_exclude_min,
+		bangify(globall(__paths__.node_modules_name)),
+		bangify(globall(__paths__.git)),
+		__paths__.not_vendor,
+		__paths__.not_ignore
 	];
 
 	// empty the files array?
@@ -1491,7 +1431,13 @@ gulp.task("pretty", function(done) {
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
 			$.gulpif(
-				ext.isjson,
+				function(file) {
+					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
+					// to be sortable as comments are not allowed in JSON files.
+					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
+						? true
+						: false;
+				},
 				$.json_sort({
 					space: json_spaces
 				})
@@ -1511,7 +1457,7 @@ gulp.task("pretty", function(done) {
 			),
 			$.eol(),
 			$.debug.edit(),
-			gulp.dest(__PATHS_BASE)
+			gulp.dest(__paths__.base)
 		],
 		done
 	);
@@ -1581,7 +1527,7 @@ gulp.task("files", function(done) {
 			var filepath = paths[i];
 
 			// skip .git/, node_modules/
-			var ignores = [__PATHS_NODE_MODULES_NAME, __PATHS_GIT];
+			var ignores = [__paths__.node_modules_name, __paths__.git];
 			for (var j = 0, ll = ignores.length; j < ll; j++) {
 				var ignore = ignores[j];
 				if (-~filepath.indexOf(ignore)) continue loop1;
@@ -1685,9 +1631,9 @@ gulp.task("dependency", function(done) {
 	var type = _args.t || _args.type;
 	var action = _args.a || _args.action;
 	// get needed paths
-	var dest = type === "js" ? __PATHS_JS_VENDOR : __PATHS_CSS_VENDOR;
+	var dest = type === "js" ? __paths__.js_vendor : __paths__.css_vendor;
 	var delete_path = dest + name;
-	var module_path = __PATHS_NODE_MODULES + name;
+	var module_path = __paths__.node_modules + name;
 	// check that the module exists
 	if (action === "add" && !de.sync(module_path)) {
 		log("The module", chalk.magenta(`${module_path}`), "does not exist.");
@@ -1712,16 +1658,16 @@ gulp.task("dependency", function(done) {
 			// copy module to location
 			pump(
 				[
-					gulp.src(name + __PATHS_DEL + __PATHS_ALLFILES, {
+					gulp.src(name + __paths__.del + __paths__.allfiles, {
 						dot: true,
-						cwd: __PATHS_NODE_MODULES,
-						base: __PATHS_BASE_DOT
+						cwd: __paths__.node_modules,
+						base: __paths__.base_dot
 					}),
 					$.rename(function(path) {
 						// [https://stackoverflow.com/a/36347297]
 						// remove the node_modules/ parent folder
 						var regexp = new RegExp(
-							"^" + __PATHS_NODE_MODULES_NAME
+							"^" + __paths__.node_modules_name
 						);
 						path.dirname = path.dirname.replace(regexp, "");
 					}),
@@ -1759,7 +1705,7 @@ gulp.task("make", function(done) {
 	pump(
 		[
 			gulp.src(bundle_gulp.source.files, {
-				cwd: __PATHS_GULP_SOURCE
+				cwd: __paths__.gulp_source
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
@@ -1773,12 +1719,12 @@ gulp.task("make", function(done) {
 			}),
 			// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
 			$.gulpif(
-				fe.sync(__PATHS_BASE + main_name),
+				fe.sync(__paths__.base + main_name),
 				$.concat(main_name),
 				$.concat(setup_name)
 			),
 			$.prettier(config_prettier),
-			gulp.dest(__PATHS_BASE),
+			gulp.dest(__paths__.base),
 			$.debug.edit()
 		],
 		done
@@ -1799,14 +1745,14 @@ gulp.task("settings", function(done) {
 
 	pump(
 		[
-			gulp.src(__PATHS_CONFIG_SETTINGS_JSON_FILES, {
-				cwd: __PATHS_BASE
+			gulp.src(__paths__.config_settings_json_files, {
+				cwd: __paths__.base
 			}),
 			$.debug(),
-			$.jsoncombine(__PATHS_CONFIG_SETTINGS_NAME, function(data, meta) {
+			$.jsoncombine(__paths__.config_settings_name, function(data, meta) {
 				return new Buffer(JSON.stringify(data, null, json_spaces));
 			}),
-			gulp.dest(__PATHS_CONFIG_HOME),
+			gulp.dest(__paths__.config_home),
 			$.debug.edit()
 		],
 		done
@@ -1855,13 +1801,13 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					__PATHS_ALLFILES.replace(/\*$/, "js"), // only JS FILES
-					bangify(globall(__PATHS_NODE_MODULES_NAME)),
-					bangify(globall(__PATHS_GIT)),
-					__PATHS_NOT_VENDOR
+					__paths__.allfiles.replace(/\*$/, "js"), // only JS FILES
+					bangify(globall(__paths__.node_modules_name)),
+					bangify(globall(__paths__.git)),
+					__paths__.not_vendor
 				],
 				{
-					base: __PATHS_BASE_DOT
+					base: __paths__.base_dot
 				}
 			),
 			$.gulpif(
@@ -1976,9 +1922,9 @@ gulp.task("help", function() {
 gulp.task("favicon:generate", function(done) {
 	$.real_favicon.generateFavicon(
 		{
-			masterPicture: __PATHS_FAVICON_MASTER_PIC,
-			dest: __PATHS_FAVICON_DEST,
-			iconsPath: __PATHS_FAVICON_DEST,
+			masterPicture: __paths__.favicon_master_pic,
+			dest: __paths__.favicon_dest,
+			iconsPath: __paths__.favicon_dest,
 			design: {
 				ios: {
 					pictureAspect: "backgroundAndMargin",
@@ -2031,7 +1977,7 @@ gulp.task("favicon:generate", function(done) {
 				scalingAlgorithm: "Mitchell",
 				errorOnImageTooSmall: false
 			},
-			markupFile: __PATHS_CONFIG_FAVICONDATA
+			markupFile: __paths__.config_favicondata
 		},
 		function() {
 			done();
@@ -2042,7 +1988,7 @@ gulp.task("favicon:generate", function(done) {
 // update manifest.json
 // @internal
 gulp.task("favicon:edit-manifest", function(done) {
-	var manifest = json.read(__PATHS_FAVICON_ROOT_MANIFEST);
+	var manifest = json.read(__paths__.favicon_root_manifest);
 	manifest.set("name", "wa-devkit");
 	manifest.set("short_name", "WADK");
 	manifest.write(
@@ -2061,13 +2007,13 @@ gulp.task("favicon:root", function(done) {
 	pump(
 		[
 			gulp.src([
-				__PATHS_FAVICON_ROOT_ICO,
-				__PATHS_FAVICON_ROOT_PNG,
-				__PATHS_FAVICON_ROOT_CONFIG,
-				__PATHS_FAVICON_ROOT_MANIFEST
+				__paths__.favicon_root_ico,
+				__paths__.favicon_root_png,
+				__paths__.favicon_root_config,
+				__paths__.favicon_root_manifest
 			]),
 			$.debug(),
-			gulp.dest(__PATHS_BASE),
+			gulp.dest(__paths__.base),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -2082,8 +2028,8 @@ gulp.task("favicon:delete", function(done) {
 	pump(
 		[
 			gulp.src([
-				__PATHS_FAVICON_ROOT_CONFIG,
-				__PATHS_FAVICON_ROOT_MANIFEST
+				__paths__.favicon_root_config,
+				__paths__.favicon_root_manifest
 			]),
 			$.debug.clean(),
 			$.clean()
@@ -2098,12 +2044,12 @@ gulp.task("favicon:html", function(done) {
 	var task = this;
 	pump(
 		[
-			gulp.src(__PATHS_FAVICON_HTML),
+			gulp.src(__paths__.favicon_html),
 			$.real_favicon.injectFaviconMarkups(
-				JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA)).favicon
-					.html_code
+				JSON.parse(fs.readFileSync(__paths__.config_favicondata))
+					.favicon.html_code
 			),
-			gulp.dest(__PATHS_FAVICON_HTML_DEST),
+			gulp.dest(__paths__.favicon_html_dest),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -2151,8 +2097,9 @@ gulp.task("favicon", function(done) {
 // Check for RealFaviconGenerator updates.
 // @internal
 gulp.task("favicon-updates", function(done) {
-	var currentVersion = JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
-		.version;
+	var currentVersion = JSON.parse(
+		fs.readFileSync(__paths__.config_favicondata)
+	).version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
 		if (err) {
 			throw err;

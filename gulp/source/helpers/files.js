@@ -60,7 +60,7 @@ gulp.task("files", function(done) {
 			var filepath = paths[i];
 
 			// skip .git/, node_modules/
-			var ignores = [__PATHS_NODE_MODULES_NAME, __PATHS_GIT];
+			var ignores = [__paths__.node_modules_name, __paths__.git];
 			for (var j = 0, ll = ignores.length; j < ll; j++) {
 				var ignore = ignores[j];
 				if (-~filepath.indexOf(ignore)) continue loop1;

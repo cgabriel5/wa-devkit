@@ -54,22 +54,22 @@ gulp.task("init:save-pid", function(done) {
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
-	git.isGit(__PATHS_DIRNAME, function(exists) {
+	git.isGit(__paths__.dirname, function(exists) {
 		// if no .git exists simply ignore and return done
 		if (!exists) return done();
-		git.check(__PATHS_DIRNAME, function(err, result) {
+		git.check(__paths__.dirname, function(err, result) {
 			if (err) throw err;
 			// record branch name
 			branch_name = result.branch;
 			// set the gulp watcher as .git exists
 			gulp.watch(
-				[__PATHS_GITHEAD],
+				[__paths__.githead],
 				{
-					cwd: __PATHS_BASE,
+					cwd: __paths__.base,
 					dot: true
 				},
 				function() {
-					var brn_current = git.checkSync(__PATHS_DIRNAME).branch;
+					var brn_current = git.checkSync(__paths__.dirname).branch;
 					if (branch_name)
 						log(
 							chalk.yellow("(pid:" + process.pid + ")"),

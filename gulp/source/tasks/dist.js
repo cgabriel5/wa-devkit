@@ -3,7 +3,11 @@
 gulp.task("dist:clean", function(done) {
 	var task = this;
 	pump(
-		[gulp.src(__PATHS_DIST_HOME, opts_remove), $.debug.clean(), $.clean()],
+		[
+			gulp.src(__paths__.dist_home, opts_remove),
+			$.debug.clean(),
+			$.clean()
+		],
 		done
 	);
 });
@@ -16,12 +20,12 @@ gulp.task("dist:favicon", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.favicon, {
 				dot: true,
-				cwd: __PATHS_BASE,
+				cwd: __paths__.base,
 				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
-				base: __PATHS_BASE_DOT
+				base: __paths__.base_dot
 			}),
 			$.debug(),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -35,12 +39,12 @@ gulp.task("dist:css", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.css, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.debug(),
 			$.gulpif(ext.iscss, $.clean_css()),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -56,8 +60,8 @@ gulp.task("dist:img", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.img, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.cache(
 				$.imagemin([
@@ -79,7 +83,7 @@ gulp.task("dist:img", function(done) {
 					})
 				])
 			),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -93,12 +97,12 @@ gulp.task("dist:js", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.js, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.debug(),
 			$.gulpif(ext.isjs, $.uglify()),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done
@@ -112,12 +116,12 @@ gulp.task("dist:root", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.root, {
 				dot: true,
-				cwd: __PATHS_BASE,
-				base: __PATHS_BASE_DOT
+				cwd: __paths__.base,
+				base: __paths__.base_dot
 			}),
 			$.debug(),
 			$.gulpif(ext.ishtml, $.minify_html()),
-			gulp.dest(__PATHS_DIST_HOME),
+			gulp.dest(__paths__.dist_home),
 			$.debug.edit()
 		],
 		done

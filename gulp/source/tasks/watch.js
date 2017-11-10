@@ -34,7 +34,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.html,
 				{
-					cwd: __PATHS_HTML_SOURCE
+					cwd: __paths__.html_source
 				},
 				function() {
 					return sequence("html:main");
@@ -45,7 +45,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.css.source,
 				{
-					cwd: __PATHS_CSS_SOURCE
+					cwd: __paths__.css_source
 				},
 				function() {
 					return sequence("css:app");
@@ -56,7 +56,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.css.vendor,
 				{
-					cwd: __PATHS_CSS_VENDOR
+					cwd: __paths__.css_vendor
 				},
 				function() {
 					return sequence("css:vendor");
@@ -67,7 +67,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.js.source,
 				{
-					cwd: __PATHS_JS_SOURCE
+					cwd: __paths__.js_source
 				},
 				function() {
 					return sequence("js:app");
@@ -78,7 +78,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.js.vendor,
 				{
-					cwd: __PATHS_JS_VENDOR
+					cwd: __paths__.js_vendor
 				},
 				function() {
 					return sequence("js:vendor");
@@ -89,7 +89,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.img,
 				{
-					cwd: __PATHS_IMG_SOURCE
+					cwd: __paths__.img_source
 				},
 				function() {
 					return sequence("img:main");
@@ -99,8 +99,8 @@ gulp.task("watch:main", function(done) {
 			// is the following watcher needed?
 
 			// // watch for any changes to README.md
-			// gulp.watch([__PATHS_README], {
-			//     cwd: __PATHS_BASE
+			// gulp.watch([__paths__.readme], {
+			//     cwd: __paths__.base
 			// }, function() {
 			//     return sequence("tohtml", function() {
 			//         bs.reload();

@@ -10,7 +10,7 @@ function open_file_in_browser(filepath, port, callback, task) {
 	pump(
 		[
 			gulp.src(filepath, {
-				cwd: __PATHS_BASE,
+				cwd: __paths__.base,
 				dot: true
 			}),
 			$.open({

@@ -10,14 +10,14 @@ gulp.task("settings", function(done) {
 
 	pump(
 		[
-			gulp.src(__PATHS_CONFIG_SETTINGS_JSON_FILES, {
-				cwd: __PATHS_BASE
+			gulp.src(__paths__.config_settings_json_files, {
+				cwd: __paths__.base
 			}),
 			$.debug(),
-			$.jsoncombine(__PATHS_CONFIG_SETTINGS_NAME, function(data, meta) {
+			$.jsoncombine(__paths__.config_settings_name, function(data, meta) {
 				return new Buffer(JSON.stringify(data, null, json_spaces));
 			}),
-			gulp.dest(__PATHS_CONFIG_HOME),
+			gulp.dest(__paths__.config_home),
 			$.debug.edit()
 		],
 		done
