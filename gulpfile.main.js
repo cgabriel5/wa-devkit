@@ -18,7 +18,8 @@ var $ = require("gulp-load-plugins")({
 		"gulp-minify-html": "minify_html",
 		"gulp-prettier-plugin": "prettier",
 		"gulp-inject-content": "injection",
-		"gulp-real-favicon": "real_favicon"
+		"gulp-real-favicon": "real_favicon",
+		"gulp-strip-json-comments": "strip_jsonc"
 	},
 	postRequireTransforms: {
 		json_sort: function(plugin) {
@@ -875,6 +876,17 @@ gulp.task("watch:main", function(done) {
 				}
 			);
 
+			// watch for any changes to config files
+			gulp.watch(
+				__paths__.config_settings_json_files,
+				{
+					cwd: __paths__.base
+				},
+				function() {
+					return sequence("settings");
+				}
+			);
+
 			// is the following watcher needed?
 
 			// // watch for any changes to README.md
@@ -1110,7 +1122,7 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * Notes
  *
- * - Files will get placed in ./markdown/previews/
+ * • Files will get placed in ./markdown/previews/
  *
  * Usage
  *
@@ -1205,9 +1217,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  * -f, --file  <file>    The path of the file to open.
  * -p, --port  [number]  The port to open in. (Defaults to browser-sync port if available or no port)
  *
- * Note
+ * Notes
  *
- * - New tabs should be opened via the terminal using `open`. Doing so will
+ * • New tabs should be opened via the terminal using `open`. Doing so will
  * ensure the generated tab will auto-close when Gulp is closed/existed. Opening
  * tabs by typing/copy-pasting the project URL into the browser address bar will
  * not auto-close the tab(s) due to security issues as noted here:
@@ -1298,26 +1310,31 @@ gulp.task("ports", function(done) {
 /**
  * Beautify all HTML, JS, CSS, and JSON project files.
  *
- * Note
- *
- * - Ignores ./node_modules/, ./git/ and vendor/ files.
- *
  * Options
  *
  * -t, --type     [string]   The optional extension types to clean.
- * -g, --glob     [array]   Use glob to find files to prettify.
+ * -g, --glob     [array]    Use glob to find files to prettify.
  * -s, --show     [boolean]  Show the used globs before prettifying.
- * -e, --empty    [boolean]  Empty default globs array. Careful as this can prettify all project files.
- *                           By default the node_modules/ is ignored, for example. Be sure to exclude
- *                           files that don't need to be prettified.
+ * -e, --empty    [boolean]  Empty default globs array. Careful as this can prettify
+ *                           all project files. By default the node_modules/ is ignored,
+ *                           for example. Be sure to exclude files that don't need to be
+ *                           prettified.
+ *
+ * Notes
+ *
+ * • By default files in the following directories or containing the following
+ *          sub-extensions are ignored: ./node_modules/, ./git/, vendor/, .ig.,
+ *          and .min. files.
+ * • Special characters in globs provided via the CLI (--glob) might need to be
+ *          escaped if getting an error.
  *
  * Usage
  *
  * $ gulp pretty # Prettify all HTML, CSS, JS, JSON files.
  * $ gulp pretty --type "js, json" # Only prettify JS and JSON files.
  * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
- * $ gulp pretty --show # Halts prettifying and only shows the globs to be used for prettifying.
- * $ gulp pretty --empty --glob "**\/*.js" # Empties the default globs and uses only the provided.
+ * $ gulp pretty --show # Halts prettifying to show the globs to be used for prettifying.
+ * $ gulp pretty --empty --glob "**\/*.js" # Flag indicating to remove default globs.
  */
 gulp.task("pretty", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -1426,7 +1443,8 @@ gulp.task("pretty", function(done) {
 	pump(
 		[
 			gulp.src(files, {
-				dot: true
+				dot: true,
+				base: __paths__.base_dot
 			}),
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
@@ -1749,6 +1767,7 @@ gulp.task("settings", function(done) {
 				cwd: __paths__.base
 			}),
 			$.debug(),
+			$.strip_jsonc(), // remove any json comments
 			$.jsoncombine(__paths__.config_settings_name, function(data, meta) {
 				return new Buffer(JSON.stringify(data, null, json_spaces));
 			}),
@@ -1764,14 +1783,15 @@ gulp.task("settings", function(done) {
 /**
  * Indent all JS files with tabs or spaces.
  *
- * Note
- *
- * - Ignores ./node_modules/, ./git/ and vendor/ files.
- *
  * Options
  *
  * --style    [string]  Indent using spaces or tabs. Defaults to tabs.
  * --size     [string]  The amount of spaces to use. Defaults to 4.
+ *
+ * Notes
+ *
+ * • @experimental: This task is currently experimental.
+ * • Ignores ./node_modules/, ./git/ and vendor/ files.
  *
  * Usage
  *
