@@ -2322,6 +2322,14 @@ gulp-sourcemaps@1.6.0:
     through2 "^2.0.0"
     vinyl "^1.0.0"
 
+gulp-strip-json-comments@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/gulp-strip-json-comments/-/gulp-strip-json-comments-2.1.0.tgz#cad946a6f7215052ebd164dca1a80cdf5772e3d9"
+  dependencies:
+    gulp-util "^3.0.0"
+    strip-json-comments "^2.0.0"
+    through2 "^2.0.0"
+
 gulp-task-doc@^1.0.11:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/gulp-task-doc/-/gulp-task-doc-1.0.11.tgz#072a6c3fc9e81b3d02bba94fb6f6c08e05ece245"
@@ -5015,7 +5023,7 @@ strip-indent@^1.0.1:
   dependencies:
     get-stdin "^4.0.1"
 
-strip-json-comments@~2.0.1:
+strip-json-comments@^2.0.0, strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 

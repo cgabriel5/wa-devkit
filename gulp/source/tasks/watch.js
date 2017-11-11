@@ -96,6 +96,17 @@ gulp.task("watch:main", function(done) {
 				}
 			);
 
+			// watch for any changes to config files
+			gulp.watch(
+				__paths__.config_settings_json_files,
+				{
+					cwd: __paths__.base
+				},
+				function() {
+					return sequence("settings");
+				}
+			);
+
 			// is the following watcher needed?
 
 			// // watch for any changes to README.md

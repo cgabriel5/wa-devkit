@@ -16,7 +16,8 @@ var $ = require("gulp-load-plugins")({
 		"gulp-minify-html": "minify_html",
 		"gulp-prettier-plugin": "prettier",
 		"gulp-inject-content": "injection",
-		"gulp-real-favicon": "real_favicon"
+		"gulp-real-favicon": "real_favicon",
+		"gulp-strip-json-comments": "strip_jsonc"
 	},
 	postRequireTransforms: {
 		json_sort: function(plugin) {
