@@ -129,7 +129,8 @@ gulp.task("pretty", function(done) {
 	pump(
 		[
 			gulp.src(files, {
-				dot: true
+				dot: true,
+				base: __paths__.base_dot
 			}),
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
