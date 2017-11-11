@@ -40,7 +40,7 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * Notes
  *
- * - Files will get placed in ./markdown/previews/
+ * • Files will get placed in ./markdown/previews/
  *
  * Usage
  *

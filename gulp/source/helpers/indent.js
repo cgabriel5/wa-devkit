@@ -1,14 +1,15 @@
 /**
  * Indent all JS files with tabs or spaces.
  *
- * Note
- *
- * - Ignores ./node_modules/, ./git/ and vendor/ files.
- *
  * Options
  *
  * --style    [string]  Indent using spaces or tabs. Defaults to tabs.
  * --size     [string]  The amount of spaces to use. Defaults to 4.
+ *
+ * Notes
+ *
+ * • @experimental: This task is currently experimental.
+ * • Ignores ./node_modules/, ./git/ and vendor/ files.
  *
  * Usage
  *
