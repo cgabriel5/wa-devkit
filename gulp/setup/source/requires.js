@@ -43,4 +43,5 @@ var git = require("simple-git")();
 var inquirer = require("inquirer");
 var jsonc = require("comment-json");
 var sequence = require("run-sequence");
+var license = require("create-license");
 var alphabetize = require("alphabetize-object-keys");

@@ -60,6 +60,7 @@ gulp.task("default", function(done) {
 					"init:settings-main",
 					"init:remove-webapp-files",
 					"init:add-library-files",
+					"init:create-license",
 					"init:fill-placeholders",
 					"init:setup-readme",
 					"init:rename-gulpfile",

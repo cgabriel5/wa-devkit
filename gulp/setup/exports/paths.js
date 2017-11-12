@@ -12,7 +12,6 @@ module.exports = {
 	gulp_setup_jsconfigs: "./${homedir}gulp/setup/exports/jsconfigs.js",
 	gulp_setup_source: "./${homedir}gulp/setup/source/",
 	gulp_setup_readme_template: "./${homedir}gulp/setup/templates/README.md",
-	gulp_setup_license_template: "./${homedir}gulp/setup/templates/LICENSE.txt",
 	gulp_setup_settings_internal: "./gulp/setup/exports/internal.json",
 	gulp_setup_settings_internal_name: "._internal.json",
 	gulp_file_name: "gulpfile.js",

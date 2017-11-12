@@ -84,6 +84,47 @@ gulp.task("init:add-library-files", function(done) {
 
 // initialization step
 // @internal
+gulp.task("init:create-license", function(done) {
+	var task = this;
+
+	// generate the license
+	license($paths.base, __data__.license, {
+		author: __data__.fullname,
+		year: __data__.year,
+		project: __data__.name
+	});
+
+	// remove the ext from the path
+	var license_no_ext = $paths.license.replace(".txt", "");
+
+	// rename the generated license
+	pump(
+		[
+			gulp.src(license_no_ext, {
+				base: $paths.base
+			}),
+			$.rename($paths.license),
+			gulp.dest($paths.base),
+			$.debug.edit()
+		],
+		// remove the old license file
+		function() {
+			pump(
+				[
+					gulp.src(license_no_ext, {
+						base: $paths.base
+					}),
+					$.debug.clean(),
+					$.clean()
+				],
+				done
+			);
+		}
+	);
+});
+
+// initialization step
+// @internal
 gulp.task("init:fill-placeholders", function(done) {
 	var task = this;
 	// replace placeholder with real data
@@ -92,7 +133,6 @@ gulp.task("init:fill-placeholders", function(done) {
 			gulp.src(
 				[
 					$paths.gulp_setup_readme_template,
-					$paths.gulp_setup_license_template,
 					$paths.html_headmeta,
 					INDEX
 				],
@@ -115,10 +155,7 @@ gulp.task("init:setup-readme", function(done) {
 	// move templates to new locations
 	pump(
 		[
-			gulp.src([
-				$paths.gulp_setup_readme_template,
-				$paths.gulp_setup_license_template
-			]),
+			gulp.src([$paths.gulp_setup_readme_template]),
 			$.debug(),
 			gulp.dest($paths.base),
 			$.debug.edit()
