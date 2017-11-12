@@ -54,6 +54,7 @@
 			"files": [
 				"requires.js",
 				"paths.js",
+				"configs.js",
 				"vars.js",
 				"injection.js",
 				"functions.js",
@@ -108,18 +109,18 @@
 	"html": {
 		"source": {
 			"files": [
-				"index/open.html",
-				"head/open.html",
+				"index/open.ig.html",
+				"head/open.ig.html",
 				"head/meta.html",
 				"head/favicon.html",
 				"head/css.html",
 				"head/js.html",
-				"head/close.html",
-				"body/open.html",
+				"head/close.ig.html",
+				"body/open.ig.html",
 				"body/content.html",
 				"body/js.html",
-				"body/close.html",
-				"index/close.html"
+				"body/close.ig.html",
+				"index/close.ig.html"
 			],
 			"names": {
 				"main": "index.html"
@@ -134,7 +135,7 @@
 	"js": {
 		"source": {
 			"files": [
-				"app/iife/open.js",
+				"app/iife/open.ig.js",
 				"app/__init__.js",
 				"modules/libs.js",
 				"modules/globals.js",
@@ -143,7 +144,7 @@
 				"modules/core.js",
 				"modules/events.js",
 				"modules/main.js",
-				"app/iife/close.js"
+				"app/iife/close.ig.js"
 			],
 			"names": {
 				"main": "app.js"
