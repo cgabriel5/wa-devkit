@@ -1,19 +1,19 @@
 "use strict";
 
-exports.jsconfigs = {
+module.exports = {
 	library: {
 		source: {
 			files: [
-				"lib/iife/open.js",
-				"lib/library/open.js",
+				"lib/iife/open.ig.js",
+				"lib/library/open.ig.js",
 				"modules/fn.helpers.js",
 				"modules/fn.source.js",
 				"modules/fn.core.js",
 				"modules/constructor.js",
-				"lib/library/close.js",
+				"lib/library/close.ig.js",
 				"modules/globals.js",
 				"modules/bottom.js",
-				"lib/iife/close.js",
+				"lib/iife/close.ig.js",
 				"test/main.js"
 			],
 			names: {
@@ -39,7 +39,7 @@ exports.jsconfigs = {
 	webapp: {
 		source: {
 			files: [
-				"app/iife/open.js",
+				"app/iife/open.ig.js",
 				"app/__init__.js",
 				"modules/libs.js",
 				"modules/globals.js",
@@ -48,7 +48,7 @@ exports.jsconfigs = {
 				"modules/core.js",
 				"modules/events.js",
 				"modules/main.js",
-				"app/iife/close.js"
+				"app/iife/close.ig.js"
 			],
 			names: {
 				main: "app.js"

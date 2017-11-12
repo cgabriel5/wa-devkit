@@ -1,6 +1,6 @@
 "use strict";
 
-exports.templates = {
+module.exports = {
 	"repository.url": "git+https://github.com/{{#git_id}}/{{#repo_name}}.git",
 	author: "{{#fullname}} <{{#email}}> (https://github.com/{{#git_id}})",
 	"bugs.url": "https://github.com/{{#git_id}}/{{#repo_name}}/issues",

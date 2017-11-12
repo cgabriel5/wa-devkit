@@ -1,68 +1,66 @@
 "use strict";
 
-exports.questions = {
-	properties: {
-		apptype: {
-			description: "Setting up webapp or library",
-			type: "string",
-			pattern: /^(webapp|library)$/i,
-			default: "webapp",
-			message: "Enter 'webapp' or 'library'.",
-			required: true
-		},
-		name: {
-			description: "Application name",
-			type: "string",
-			default: "my-app"
-		},
-		version: {
-			description: "Version? (format #.#.#)",
-			type: "string",
-			pattern: /^\d+.\d+.\d+$/,
-			default: "0.0.1"
-		},
-		description: {
-			description: "Application description",
-			type: "string",
-			default: "The next big thing."
-		},
-		fullname: {
-			description: "Fullname",
-			type: "string",
-			default: "John Doe"
-		},
-		email: {
-			description: "Email",
-			type: "string",
-			default: "johndoe@example.com"
-		},
-		git_id: {
-			description: "GitHub username",
-			type: "string",
-			default: "johndoe23",
-			required: true
-		},
-		repo_name: {
-			description: "Repository name",
-			type: "string",
-			default: "my-app",
-			required: true
-		},
-		private: {
-			description: "Keep private",
-			type: "string",
-			pattern: /^(y(es)?|no?)$/i,
-			message: "Enter 'yes' or 'no'.",
-			default: "yes",
-			before: function(value) {
-				return value.charAt(0) === "y";
-			}
-		},
-		year: {
-			description: "License year",
-			type: "number",
-			pattern: /^20\d\d$/i,
-			default: new Date().getFullYear()
-		}
+module.exports = [
+	{
+		type: "list",
+		name: "apptype",
+		message: "Setup project as a webapp or library?",
+		choices: ["webapp", "library"],
+		default: "webapp"
+	},
+	{
+		type: "input",
+		name: "name",
+		message: "What's the name of your application?",
+		default: "my-app"
+	},
+	{
+		type: "input",
+		name: "version",
+		message: "Start project version at?",
+		default: "0.0.1"
+	},
+	{
+		type: "input",
+		name: "description",
+		message: "Describe your application.",
+		default: "The next big thing."
+	},
+	{
+		type: "input",
+		name: "fullname",
+		message: "Author fullname?",
+		default: "John Doe"
+	},
+	{
+		type: "input",
+		name: "email",
+		message: "What's your email?",
+		default: "johndoe@example.com"
+	},
+	{
+		type: "input",
+		name: "git_id",
+		message: "What's your GitHub username?",
+		default: "johndoe23"
+	},
+	{
+		type: "input",
+		name: "repo_name",
+		message: "What's the name of the repository?",
+		default: "my-app"
+	},
+	{
+		type: "input",
+		name: "private",
+		message: "Should this project be kept private?",
+		choices: ["Yes", "No"],
+		default: "yes"
+	},
+	{
+		type: "input",
+		name: "year",
+		message: "The project license year?",
+		default: new Date().getFullYear()
 	}
-};
+];

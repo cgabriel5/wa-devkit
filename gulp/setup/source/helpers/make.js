@@ -5,6 +5,7 @@ gulp.task("make", function(done) {
 	var files = [
 		"requires.js",
 		"paths.js",
+		"configs.js",
 		"vars.js",
 		"functions.js",
 		"tasks/init.js",
@@ -15,7 +16,7 @@ gulp.task("make", function(done) {
 	pump(
 		[
 			gulp.src(files, {
-				cwd: __PATHS_GULP_SETUP_SOURCE
+				cwd: $paths.gulp_setup_source
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
@@ -27,9 +28,9 @@ gulp.task("make", function(done) {
 					)
 				);
 			}),
-			$.concat(__PATHS_GULP_FILE_SETUP),
-			$.beautify(config_jsbeautify),
-			gulp.dest(__PATHS_BASE),
+			$.concat($paths.gulp_file_setup),
+			$.prettier($prettier),
+			gulp.dest($paths.base),
 			$.debug.edit()
 		],
 		done
