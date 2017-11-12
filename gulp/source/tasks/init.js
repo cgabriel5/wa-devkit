@@ -1,9 +1,10 @@
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
-require("node-cleanup")(function(exit_code, signal) {
+var cleanup = require("node-cleanup");
+cleanup(function(exit_code, signal) {
 	var alphabetize = require("alphabetize-object-keys");
 
 	// check for current Gulp process
-	var pid = config_internal.get("pid");
+	var pid = $internal.get("pid");
 
 	// only perform this cleanup when the Gulp instance is closed.
 	// when any other task is run the cleanup should not be done.
@@ -12,10 +13,10 @@ require("node-cleanup")(function(exit_code, signal) {
 	if (pid && signal) {
 		// Gulp instance exists so cleanup
 		// clear gulp internal configuration keys
-		config_internal.set("pid", null);
-		config_internal.set("ports", null);
-		config_internal.data = alphabetize(config_internal.data);
-		config_internal.writeSync(null, json_spaces);
+		$internal.set("pid", null);
+		$internal.set("ports", null);
+		$internal.data = alphabetize($internal.data);
+		$internal.writeSync(null, jindent);
 		// cleanup vars, process
 		branch_name = undefined;
 		if (bs) bs.exit();
@@ -33,14 +34,14 @@ require("node-cleanup")(function(exit_code, signal) {
 // prevent another Gulp instance from being opened.
 // @internal
 gulp.task("init:save-pid", function(done) {
-	config_internal.set("pid", process.pid); // set the status
-	config_internal.write(
+	$internal.set("pid", process.pid); // set the status
+	$internal.write(
 		function() {
 			// save changes to file
 			done();
 		},
 		null,
-		json_spaces
+		jindent
 	);
 });
 
@@ -54,22 +55,22 @@ gulp.task("init:save-pid", function(done) {
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
-	git.isGit(__paths__.dirname, function(exists) {
+	git.isGit($paths.dirname, function(exists) {
 		// if no .git exists simply ignore and return done
 		if (!exists) return done();
-		git.check(__paths__.dirname, function(err, result) {
+		git.check($paths.dirname, function(err, result) {
 			if (err) throw err;
 			// record branch name
 			branch_name = result.branch;
 			// set the gulp watcher as .git exists
 			gulp.watch(
-				[__paths__.githead],
+				[$paths.githead],
 				{
-					cwd: __paths__.base,
+					cwd: $paths.base,
 					dot: true
 				},
 				function() {
-					var brn_current = git.checkSync(__paths__.dirname).branch;
+					var brn_current = git.checkSync($paths.dirname).branch;
 					if (branch_name)
 						log(
 							chalk.yellow("(pid:" + process.pid + ")"),
@@ -136,7 +137,7 @@ gulp.task("default", function(done) {
 		// end the running Gulp process
 
 		// get pid, if any
-		var pid = config_internal.get("pid");
+		var pid = $internal.get("pid");
 		if (pid) {
 			// kill the open process
 			log(chalk.green("Gulp process stopped."));
@@ -151,13 +152,13 @@ gulp.task("default", function(done) {
 		// start up Gulp like normal
 
 		return find_free_port(
-			opts_ffp.range.start,
-			opts_ffp.range.end,
-			opts_ffp.ip,
-			opts_ffp.count,
+			$findfreeport.range.start,
+			$findfreeport.range.end,
+			$findfreeport.ip,
+			$findfreeport.count,
 			function(err, p1, p2) {
 				// get pid, if any
-				var pid = config_internal.get("pid");
+				var pid = $internal.get("pid");
 				// if there is a pid present it means a Gulp instance has already started.
 				// therefore, prevent another from starting.
 				if (pid) {
@@ -172,16 +173,16 @@ gulp.task("default", function(done) {
 				}
 
 				// store the ports
-				config_internal.set("ports", {
+				$internal.set("ports", {
 					local: p1,
 					ui: p2
 				});
 
 				// save ports
-				config_internal.write(
+				$internal.write(
 					function() {
 						// store ports on the browser-sync object itself
-						bs.__ports__ = [p1, p2]; // [app, ui]
+						bs._ports_ = [p1, p2]; // [app, ui]
 						// after getting the free ports, finally run the build task
 						return sequence(
 							"init:save-pid",
@@ -194,7 +195,7 @@ gulp.task("default", function(done) {
 						);
 					},
 					null,
-					json_spaces
+					jindent
 				);
 			}
 		);

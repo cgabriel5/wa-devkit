@@ -17,11 +17,11 @@ gulp.task("watch:main", function(done) {
 			proxy: uri({
 				appdir: APPDIR,
 				filepath: INDEX,
-				https: config_gulp_plugins.open.https
+				https: $open.https
 			}), // "markdown/preview/README.html"
-			port: bs.__ports__[0],
+			port: bs._ports_[0],
 			ui: {
-				port: bs.__ports__[1]
+				port: bs._ports_[1]
 			},
 			notify: false,
 			open: true
@@ -34,7 +34,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.html,
 				{
-					cwd: __paths__.html_source
+					cwd: $paths.html_source
 				},
 				function() {
 					return sequence("html:main");
@@ -45,7 +45,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.css.source,
 				{
-					cwd: __paths__.css_source
+					cwd: $paths.css_source
 				},
 				function() {
 					return sequence("css:app");
@@ -56,7 +56,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.css.vendor,
 				{
-					cwd: __paths__.css_vendor
+					cwd: $paths.css_vendor
 				},
 				function() {
 					return sequence("css:vendor");
@@ -67,7 +67,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.js.source,
 				{
-					cwd: __paths__.js_source
+					cwd: $paths.js_source
 				},
 				function() {
 					return sequence("js:app");
@@ -78,7 +78,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.js.vendor,
 				{
-					cwd: __paths__.js_vendor
+					cwd: $paths.js_vendor
 				},
 				function() {
 					return sequence("js:vendor");
@@ -89,7 +89,7 @@ gulp.task("watch:main", function(done) {
 			gulp.watch(
 				watch_paths.img,
 				{
-					cwd: __paths__.img_source
+					cwd: $paths.img_source
 				},
 				function() {
 					return sequence("img:main");
@@ -98,9 +98,9 @@ gulp.task("watch:main", function(done) {
 
 			// watch for any changes to config files
 			gulp.watch(
-				__paths__.config_settings_json_files,
+				$paths.config_settings_json_files,
 				{
-					cwd: __paths__.base
+					cwd: $paths.base
 				},
 				function() {
 					return sequence("settings");
@@ -110,8 +110,8 @@ gulp.task("watch:main", function(done) {
 			// is the following watcher needed?
 
 			// // watch for any changes to README.md
-			// gulp.watch([__paths__.readme], {
-			//     cwd: __paths__.base
+			// gulp.watch([$paths.readme], {
+			//     cwd: $paths.base
 			// }, function() {
 			//     return sequence("tohtml", function() {
 			//         bs.reload();

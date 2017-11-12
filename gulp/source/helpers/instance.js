@@ -6,7 +6,7 @@
  * $ gulp status # Print Gulp status.
  */
 gulp.task("status", function(done) {
-	var pid = config_internal.get("pid");
+	var pid = $internal.get("pid");
 	log(
 		pid
 			? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
@@ -24,7 +24,7 @@ gulp.task("status", function(done) {
  */
 gulp.task("ports", function(done) {
 	// get the ports
-	var ports = config_internal.get("ports");
+	var ports = $internal.get("ports");
 	// if file is empty
 	if (!ports) {
 		log(chalk.yellow("No ports are in use."));

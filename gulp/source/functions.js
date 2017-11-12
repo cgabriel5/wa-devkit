@@ -10,7 +10,7 @@ function open_file_in_browser(filepath, port, callback, task) {
 	pump(
 		[
 			gulp.src(filepath, {
-				cwd: __paths__.base,
+				cwd: $paths.base,
 				dot: true
 			}),
 			$.open({
@@ -19,7 +19,7 @@ function open_file_in_browser(filepath, port, callback, task) {
 					appdir: APPDIR,
 					filepath: filepath,
 					port: port,
-					https: config_gulp_plugins.open.https
+					https: $open.https
 				})
 			})
 			// modify debug to take a flag to skip the use of the cli-spinner
@@ -165,3 +165,51 @@ ext.isjs = function(file) {
 ext.isjson = function(file) {
 	return ext(file, ["json"]);
 };
+
+/**
+ * @description  [Recursively fill-in the placeholders in each path contained
+ *               in the provided paths object.]
+ * @param  {Object} $paths [Object containing the paths.]
+ * @return {Object}           [The object with paths filled-in.]
+ */
+function expand_paths($paths) {
+	// path placeholders substitutes. these paths will also get added to the
+	// paths object after substitution down below.
+	var paths_subs_ = {
+		// paths::BASES
+		del: "/",
+		base: "./",
+		base_dot: ".",
+		dirname: __dirname,
+		cwd: process.cwd(),
+		homedir: "" // "assets/"
+	};
+
+	var replacer = function(match) {
+		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
+		return replacement !== undefined ? replacement : undefined;
+	};
+	// recursively replace all the placeholders
+	for (var key in $paths) {
+		if ($paths.hasOwnProperty(key)) {
+			var __path = $paths[key];
+
+			// find all the placeholders
+			while (/\$\{.*?\}/g.test(__path)) {
+				__path = __path.replace(/\$\{.*?\}/g, replacer);
+			}
+			// reset the substituted string back in the $paths object
+			$paths[key] = __path;
+		}
+	}
+
+	// add the subs to the paths object
+	for (var key in paths_subs_) {
+		if (paths_subs_.hasOwnProperty(key)) {
+			$paths[key] = paths_subs_[key];
+		}
+	}
+
+	// filled-in paths
+	return $paths;
+}

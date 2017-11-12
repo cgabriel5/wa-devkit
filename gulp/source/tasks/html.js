@@ -5,14 +5,14 @@ gulp.task("html:main", function(done) {
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {
-				cwd: __paths__.html_source
+				cwd: $paths.html_source
 			}),
 			$.debug(),
 			$.concat(bundle_html.source.names.main),
 			$.injection.pre(html_injection),
-			$.prettier(config_prettier),
+			$.beautify($jsbeautify),
 			$.injection.post(html_injection),
-			gulp.dest(__paths__.base),
+			gulp.dest($paths.base),
 			$.debug.edit(),
 			bs.stream()
 		],

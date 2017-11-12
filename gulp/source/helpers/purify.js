@@ -33,23 +33,23 @@
 // 	var remove = _args.r || _args.remove;
 // 	var delete_file = _args.D || _args.delete;
 // 	// remove pure.css
-// 	if (remove || delete_file) del([__paths__.pure_file]);
+// 	if (remove || delete_file) del([$paths.pure_file]);
 // 	// don't run gulp just delete the file.
 // 	if (delete_file) return done();
 // 	pump(
 // 		[
-// 			gulp.src(__paths__.users_css_file, {
-// 				cwd: __paths__.css_source
+// 			gulp.src($paths.users_css_file, {
+// 				cwd: $paths.css_source
 // 			}),
 // 			// modify debug to take a flag to skip the use of the cli-spinner
 // 			// $.debug(),
-// 			$.purify([__paths__.purify_js_source_files, INDEX], {
+// 			$.purify([$paths.purify_js_source_files, INDEX], {
 // 				info: true,
 // 				rejected: true
 // 			}),
-// 			$.gulpif(!remove, $.rename(__paths__.pure_file_name)),
+// 			$.gulpif(!remove, $.rename($paths.pure_file_name)),
 // 			// clean file here?
-// 			gulp.dest(__paths__.pure_css + (remove ? __paths__.pure_source : ""))
+// 			gulp.dest($paths.pure_css + (remove ? $paths.pure_source : ""))
 // 			// $.debug.edit()
 // 		],
 // 		done

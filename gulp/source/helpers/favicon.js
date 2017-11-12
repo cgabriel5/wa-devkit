@@ -6,9 +6,9 @@
 gulp.task("favicon:generate", function(done) {
 	$.real_favicon.generateFavicon(
 		{
-			masterPicture: __paths__.favicon_master_pic,
-			dest: __paths__.favicon_dest,
-			iconsPath: __paths__.favicon_dest,
+			masterPicture: $paths.favicon_master_pic,
+			dest: $paths.favicon_dest,
+			iconsPath: $paths.favicon_dest,
 			design: {
 				ios: {
 					pictureAspect: "backgroundAndMargin",
@@ -61,7 +61,7 @@ gulp.task("favicon:generate", function(done) {
 				scalingAlgorithm: "Mitchell",
 				errorOnImageTooSmall: false
 			},
-			markupFile: __paths__.config_favicondata
+			markupFile: $paths.config_favicondata
 		},
 		function() {
 			done();
@@ -72,7 +72,7 @@ gulp.task("favicon:generate", function(done) {
 // update manifest.json
 // @internal
 gulp.task("favicon:edit-manifest", function(done) {
-	var manifest = json.read(__paths__.favicon_root_manifest);
+	var manifest = json.read($paths.favicon_root_manifest);
 	manifest.set("name", "wa-devkit");
 	manifest.set("short_name", "WADK");
 	manifest.write(
@@ -80,7 +80,7 @@ gulp.task("favicon:edit-manifest", function(done) {
 			done();
 		},
 		null,
-		json_spaces
+		jindent
 	);
 });
 
@@ -91,13 +91,13 @@ gulp.task("favicon:root", function(done) {
 	pump(
 		[
 			gulp.src([
-				__paths__.favicon_root_ico,
-				__paths__.favicon_root_png,
-				__paths__.favicon_root_config,
-				__paths__.favicon_root_manifest
+				$paths.favicon_root_ico,
+				$paths.favicon_root_png,
+				$paths.favicon_root_config,
+				$paths.favicon_root_manifest
 			]),
 			$.debug(),
-			gulp.dest(__paths__.base),
+			gulp.dest($paths.base),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -112,8 +112,8 @@ gulp.task("favicon:delete", function(done) {
 	pump(
 		[
 			gulp.src([
-				__paths__.favicon_root_config,
-				__paths__.favicon_root_manifest
+				$paths.favicon_root_config,
+				$paths.favicon_root_manifest
 			]),
 			$.debug.clean(),
 			$.clean()
@@ -128,12 +128,12 @@ gulp.task("favicon:html", function(done) {
 	var task = this;
 	pump(
 		[
-			gulp.src(__paths__.favicon_html),
+			gulp.src($paths.favicon_html),
 			$.real_favicon.injectFaviconMarkups(
-				JSON.parse(fs.readFileSync(__paths__.config_favicondata))
-					.favicon.html_code
+				JSON.parse(fs.readFileSync($paths.config_favicondata)).favicon
+					.html_code
 			),
-			gulp.dest(__paths__.favicon_html_dest),
+			gulp.dest($paths.favicon_html_dest),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -152,7 +152,7 @@ gulp.task("favicon", function(done) {
 	var task = this;
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
-	if (config_internal.get("pid")) {
+	if ($internal.get("pid")) {
 		// Gulp instance exists so cleanup
 		gulp_check_warn();
 		return done();
@@ -181,9 +181,8 @@ gulp.task("favicon", function(done) {
 // Check for RealFaviconGenerator updates.
 // @internal
 gulp.task("favicon-updates", function(done) {
-	var currentVersion = JSON.parse(
-		fs.readFileSync(__paths__.config_favicondata)
-	).version;
+	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
+		.version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
 		if (err) {
 			throw err;

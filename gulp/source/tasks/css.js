@@ -11,17 +11,17 @@ gulp.task("css:app", function(done) {
 	pump(
 		[
 			gulp.src(bundle_css.source.files, {
-				cwd: __paths__.css_source
+				cwd: $paths.css_source
 			}),
 			$.debug(),
 			$.concat(bundle_css.source.names.main),
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer(opts_ap),
-				perfectionist(config_perfectionist)
+				autoprefixer($ap),
+				perfectionist($perfectionist)
 			]),
-			gulp.dest(__paths__.css_bundles),
+			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -51,10 +51,10 @@ gulp.task("css:vendor", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer(opts_ap),
-				perfectionist(config_perfectionist)
+				autoprefixer($ap),
+				perfectionist($perfectionist)
 			]),
-			gulp.dest(__paths__.css_bundles),
+			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
 			bs.stream()
 		],

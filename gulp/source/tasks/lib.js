@@ -3,7 +3,7 @@
 gulp.task("lib:clean", function(done) {
 	var task = this;
 	pump(
-		[gulp.src(__paths__.lib_home, opts_remove), $.debug.clean(), $.clean()],
+		[gulp.src($paths.lib_home, opts_remove), $.debug.clean(), $.clean()],
 		done
 	);
 });
@@ -15,18 +15,18 @@ gulp.task("lib:js", function(done) {
 		[
 			gulp.src(bundle_js.source.files, {
 				nocase: true,
-				cwd: __paths__.js_source
+				cwd: $paths.js_source
 			}),
 			// filter out all but test files (^test*/i)
-			$.filter([__paths__.allfiles, __paths__.files_test]),
+			$.filter([$paths.allfiles, $paths.files_test]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
-			$.prettier(config_prettier),
-			gulp.dest(__paths__.lib_home),
+			$.prettier($prettier),
+			gulp.dest($paths.lib_home),
 			$.debug.edit(),
 			$.uglify(),
 			$.rename(bundle_js.source.names.libs.min),
-			gulp.dest(__paths__.lib_home),
+			gulp.dest($paths.lib_home),
 			$.debug.edit()
 		],
 		done

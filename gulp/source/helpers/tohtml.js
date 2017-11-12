@@ -1,4 +1,4 @@
-var __markdown_styles__;
+var _markdown_styles_;
 // get the CSS markdown + prismjs styles
 // @internal
 gulp.task("tohtml:prepcss", function(done) {
@@ -8,20 +8,17 @@ gulp.task("tohtml:prepcss", function(done) {
 	pump(
 		[
 			gulp.src(
-				[
-					__paths__.markdown_styles_github,
-					__paths__.markdown_styles_prismjs
-				],
+				[$paths.markdown_styles_github, $paths.markdown_styles_prismjs],
 				{
-					cwd: __paths__.markdown_assets
+					cwd: $paths.markdown_assets
 				}
 			),
 			$.debug(),
-			$.concat(__paths__.markdown_concat_name),
+			$.concat($paths.markdown_concat_name),
 			$.modify({
 				fileModifier: function(file, contents) {
 					// store the contents in variable
-					__markdown_styles__ = contents;
+					_markdown_styles_ = contents;
 					return contents;
 				}
 			}),
@@ -110,14 +107,14 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <meta name="msapplication-config" content="${fpath}/browserconfig.xml">
     <meta name="theme-color" content="#f6f5dd">
     <!-- https://github.com/sindresorhus/github-markdown-css -->
-	<style>${__markdown_styles__}</style>
+	<style>${_markdown_styles_}</style>
 </head>
     <body class="markdown-body">${contents}</body>
 </html>`;
 				}
 			}),
-			$.beautify(config_jsbeautify),
-			gulp.dest(__paths__.markdown_preview),
+			$.beautify($jsbeautify),
+			gulp.dest($paths.markdown_preview),
 			$.debug.edit(),
 			bs.stream()
 		],

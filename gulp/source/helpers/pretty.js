@@ -36,7 +36,7 @@ gulp.task("pretty", function(done) {
 	var task = this;
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
-	if (config_internal.get("pid")) {
+	if ($internal.get("pid")) {
 		// Gulp instance exists so cleanup
 		gulp_check_warn();
 		return done();
@@ -79,12 +79,12 @@ gulp.task("pretty", function(done) {
 	// a ".min." as this is the convention used for minified files.
 	// the node_modules/, .git/, and all vendor/ files are also excluded.
 	var files = [
-		__paths__.files_beautify,
-		__paths__.files_beautify_exclude_min,
-		bangify(globall(__paths__.node_modules_name)),
-		bangify(globall(__paths__.git)),
-		__paths__.not_vendor,
-		__paths__.not_ignore
+		$paths.files_beautify,
+		$paths.files_beautify_exclude_min,
+		bangify(globall($paths.node_modules_name)),
+		bangify(globall($paths.git)),
+		$paths.not_vendor,
+		$paths.not_ignore
 	];
 
 	// empty the files array?
@@ -135,10 +135,10 @@ gulp.task("pretty", function(done) {
 		[
 			gulp.src(files, {
 				dot: true,
-				base: __paths__.base_dot
+				base: $paths.base_dot
 			}),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify(config_jsbeautify)),
+			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
@@ -148,25 +148,25 @@ gulp.task("pretty", function(done) {
 						: false;
 				},
 				$.json_sort({
-					space: json_spaces
+					space: jindent
 				})
 			),
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
 				return ext(file, ["html", "css"]) ? false : true;
-			}, $.prettier(config_prettier)),
+			}, $.prettier($prettier)),
 			$.gulpif(
 				ext.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
-					autoprefixer(opts_ap),
-					perfectionist(config_perfectionist)
+					autoprefixer($ap),
+					perfectionist($perfectionist)
 				])
 			),
 			$.eol(),
 			$.debug.edit(),
-			gulp.dest(__paths__.base)
+			gulp.dest($paths.base)
 		],
 		done
 	);

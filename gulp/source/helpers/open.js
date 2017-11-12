@@ -44,7 +44,7 @@ gulp.task("open", function(done) {
 	var port =
 		_args.p ||
 		_args.port ||
-		(config_internal.get("ports") || {
+		($internal.get("ports") || {
 			local: null
 		}).local;
 
