@@ -14,7 +14,7 @@ gulp.task("modernizr", function(done) {
 		mkdirp($paths.vendor_modernizr, function(err) {
 			if (err) throw err;
 			// save the file to vendor
-			fs.writeFile(file_location, build, function() {
+			fs.writeFile(file_location, build + EOL_ENDING, function() {
 				var message = chalk.blue("Modernizr build complete. Placed in");
 				var location = chalk.green(file_location);
 				log(`${message} ${location}`);
