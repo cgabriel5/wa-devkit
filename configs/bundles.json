@@ -71,6 +71,8 @@
 				"helpers/open.js",
 				"helpers/instance.js",
 				"helpers/pretty.js",
+				"helpers/eol.js",
+				"helpers/stats.js",
 				"helpers/files.js",
 				"helpers/dependency.js",
 				"helpers/make.js",

@@ -30,7 +30,7 @@
 	"js_bundles": "${homedir}js/bundles/",
 	//
 	// paths:img
-	"img_source": "${homedir}img/**/*",
+	"img_source": "${homedir}img/**/*.*",
 	//
 	// paths:gulp
 	"gulp_home": "${homedir}gulp/",
@@ -97,5 +97,8 @@
 	"node_modules_name": "node_modules/",
 	"node_modules": "./node_modules/",
 	"vendor_modernizr": "./${homedir}js/vendor/modernizr/",
-	"modernizr_file": "modernizr.js"
+	"modernizr_file": "modernizr.js",
+	"mediafiles": "**/*.{jpeg,jpg,png,gif,svg,ico}",
+	"codefiles":
+		"**/*.{bat,coffee,css,htm,html,inc,ini,js,json,jsx,less,od,onlydata,php,pl,py,rb,sass,scm,scss,sh,sql,styl,tag,ts,tsx,xml,xhtml,markdown,md,mdwn,mdown,mkd,mkdn,mdtxt,mdtext,txt,text}"
 }

@@ -623,6 +623,15 @@ cli-spinners@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-1.1.0.tgz#f1847b168844d917a671eb9d147e3df497c90d06"
 
+cli-table2@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/cli-table2/-/cli-table2-0.2.0.tgz#2d1ef7f218a0e786e214540562d4bd177fe32d97"
+  dependencies:
+    lodash "^3.10.1"
+    string-width "^1.0.1"
+  optionalDependencies:
+    colors "^1.1.2"
+
 cli-width@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
@@ -2086,6 +2095,14 @@ gulp-filter@^5.0.1:
     multimatch "^2.0.0"
     streamfilter "^1.0.5"
 
+gulp-fn@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/gulp-fn/-/gulp-fn-0.0.0.tgz#354393f0830916a195d73000ff06eabd9b672d48"
+  dependencies:
+    gulp "^3.6.2"
+    gulp-util "^2.2.14"
+    through2 "^0.4.2"
+
 gulp-foreach@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/gulp-foreach/-/gulp-foreach-0.1.0.tgz#2547abfd1a1b75f569b54194190ef1c0b0289538"
@@ -2326,7 +2343,7 @@ gulp-util@^2.2.14, gulp-util@~2.2, gulp-util@~2.2.0, gulp-util@~2.2.14:
     through2 "^0.5.0"
     vinyl "^0.2.1"
 
-gulp@^3.9.1:
+gulp@^3.6.2, gulp@^3.9.1:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/gulp/-/gulp-3.9.1.tgz#571ce45928dd40af6514fc4011866016c13845b4"
   dependencies:

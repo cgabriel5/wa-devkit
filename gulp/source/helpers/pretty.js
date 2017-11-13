@@ -26,6 +26,7 @@
  * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
  * $ gulp pretty --show # Halts prettifying to show the globs to be used for prettifying.
  * $ gulp pretty --empty --glob "**\/*.js" # Flag indicating to remove default globs.
+ * $ gulp pretty --line-ending "\n" # Make files have "\n" line-ending.
  */
 gulp.task("pretty", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -67,12 +68,19 @@ gulp.task("pretty", function(done) {
 			demandOption: false,
 			describe: "Empty default globs array.",
 			type: "boolean"
+		})
+		.option("line-ending", {
+			alias: "l",
+			demandOption: false,
+			describe: "The type of line-ending to use.",
+			type: "string"
 		}).argv;
 	// get the command line arguments from yargs
 	var type = _args.t || _args.type;
 	var globs = _args.g || _args.glob;
 	var show = _args.s || _args.show;
 	var empty = _args.e || _args.empty;
+	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
 	// default files to clean:
 	// HTML, CSS, JS, and JSON files. exclude files containing
@@ -164,7 +172,7 @@ gulp.task("pretty", function(done) {
 					perfectionist($perfectionist)
 				])
 			),
-			$.eol(),
+			$.eol(ending),
 			$.debug.edit(),
 			gulp.dest($paths.base)
 		],

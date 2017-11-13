@@ -44,6 +44,7 @@ var dir = require("node-dir");
 var mkdirp = require("mkdirp");
 var fe = require("file-exists");
 var json = require("json-file");
+var Table = require("cli-table2");
 var jsonc = require("comment-json");
 var de = require("directory-exists");
 var sequence = require("run-sequence");
@@ -103,6 +104,9 @@ var INDEX = $app.index;
 var BASE = $app.base;
 var ROOTDIR = path.basename(path.resolve($paths.dirname)) + "/";
 var APPDIR = BASE + ROOTDIR;
+var EOL = $app.eol;
+var EOL_ENDING = EOL.ending;
+var EOL_STYLE = EOL.style;
 
 // internal information
 var APPTYPE = $internal.get("apptype");
@@ -1079,7 +1083,7 @@ gulp.task("modernizr", function(done) {
 		mkdirp($paths.vendor_modernizr, function(err) {
 			if (err) throw err;
 			// save the file to vendor
-			fs.writeFile(file_location, build, function() {
+			fs.writeFile(file_location, build + EOL_ENDING, function() {
 				var message = chalk.blue("Modernizr build complete. Placed in");
 				var location = chalk.green(file_location);
 				log(`${message} ${location}`);
@@ -1343,6 +1347,7 @@ gulp.task("ports", function(done) {
  * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
  * $ gulp pretty --show # Halts prettifying to show the globs to be used for prettifying.
  * $ gulp pretty --empty --glob "**\/*.js" # Flag indicating to remove default globs.
+ * $ gulp pretty --line-ending "\n" # Make files have "\n" line-ending.
  */
 gulp.task("pretty", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -1384,12 +1389,19 @@ gulp.task("pretty", function(done) {
 			demandOption: false,
 			describe: "Empty default globs array.",
 			type: "boolean"
+		})
+		.option("line-ending", {
+			alias: "l",
+			demandOption: false,
+			describe: "The type of line-ending to use.",
+			type: "string"
 		}).argv;
 	// get the command line arguments from yargs
 	var type = _args.t || _args.type;
 	var globs = _args.g || _args.glob;
 	var show = _args.s || _args.show;
 	var empty = _args.e || _args.empty;
+	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
 	// default files to clean:
 	// HTML, CSS, JS, and JSON files. exclude files containing
@@ -1481,11 +1493,145 @@ gulp.task("pretty", function(done) {
 					perfectionist($perfectionist)
 				])
 			),
-			$.eol(),
+			$.eol(ending),
 			$.debug.edit(),
 			gulp.dest($paths.base)
 		],
 		done
+	);
+});
+
+//#! eol.js -- ./gulp/source/helpers/eol.js
+
+/**
+ * Correct file line endings.
+ *
+ * Usage
+ *
+ * $ gulp eol # Check file line endings.
+ */
+gulp.task("eol", function(done) {
+	var task = this;
+
+	// run yargs
+	var _args = yargs.option("line-ending", {
+		alias: "l",
+		demandOption: false,
+		describe: "The type of line-ending to use.",
+		type: "string"
+	}).argv;
+	// get the command line arguments from yargs
+	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
+
+	// check:
+	// HTML, CSS, JS, JSON, TXT, TEXT, and MD files.
+	// exclude files containing a ".min." as this is the convention used for minified files.
+	// the node_modules/, .git/, img/ files are also excluded.
+	var files = [
+		$paths.codefiles,
+		$paths.files_beautify_exclude_min,
+		bangify($paths.img_source),
+		bangify(globall($paths.node_modules_name)),
+		bangify(globall($paths.git))
+	];
+
+	// get needed files
+	pump(
+		[
+			gulp.src(files, {
+				dot: true,
+				base: $paths.base_dot
+			}),
+			$.sort(opts_sort),
+			$.eol(ending),
+			$.debug.edit(),
+			gulp.dest($paths.base)
+		],
+		done
+	);
+});
+
+//#! stats.js -- ./gulp/source/helpers/stats.js
+
+/**
+ * Return a breakdown of the types of files contained in project.
+ *
+ * Usage
+ *
+ * $ gulp stats # get project stats.
+ */
+gulp.task("stats", function(done) {
+	var Table = require("cli-table2");
+
+	var task = this;
+	// get all files excluding the following: node_modules/, .git/, and img/.
+	var files = [
+		$paths.codefiles,
+		bangify($paths.img_source),
+		bangify(globall($paths.node_modules_name)),
+		bangify(globall($paths.git))
+	];
+
+	var file_count = 0;
+	var extensions = {};
+
+	// get needed files
+	pump(
+		[
+			gulp.src(files, {
+				dot: true,
+				read: false
+			}),
+			$.fn(function(file) {
+				// get the extension type
+				var ext = path
+					.extname(file.path)
+					.toLowerCase()
+					.slice(1);
+
+				// exclude any extension-less files
+				if (!ext) return;
+
+				var ext_count = extensions[ext];
+
+				file_count++;
+
+				if (ext_count === undefined) {
+					// does not exist, so start extension count
+					extensions[ext] = 1;
+				} else {
+					// already exists just increment the value
+					extensions[ext] = ++ext_count;
+				}
+			})
+		],
+		function() {
+			// instantiate
+			var table = new Table({
+				head: ["Extensions", `Count (${file_count})`, "% Of Project"],
+				style: { head: ["green"] }
+			});
+
+			// add data to table
+			for (var ext in extensions) {
+				if (extensions.hasOwnProperty(ext)) {
+					var count = +extensions[ext];
+					table.push([
+						ext.toUpperCase(),
+						count,
+						Math.round(count / file_count * 100)
+					]);
+				}
+			}
+
+			table.sort(function(a, b) {
+				return b[2] - a[2];
+			});
+
+			console.log(table.toString());
+
+			done();
+		}
 	);
 });
 
