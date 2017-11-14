@@ -71,6 +71,39 @@ function print_tasks(tasks, verbose, filter) {
 		var comment = task.comment || {};
 		var lines = comment.lines || [];
 
+		/* HACK-START: Modify long comment indentation */
+		// reset the starting indentation for long explanations
+		var indentation = false;
+		var indentation_index = -1;
+		var indentation_length;
+		lines.forEach(function(line, i) {
+			// check whether its a long explanation
+			indentation_index = line.indexOf("=>");
+			// if => is found set the flag and calculate the indentation length
+			// also reset the line by removing the "=>".
+			if (-~indentation_index) {
+				indentation = true;
+				indentation_length = indentation_index - 1;
+				// reset the line, remove "=>"
+				lines[i] = line.replace(/\=>\s+/, "");
+			}
+			// if the line starts with "/" it needs to be indented
+			if (/^\//.test(line) && indentation) {
+				// add the previous indentation to it
+				lines[i] =
+					" ".repeat(indentation_length) +
+					line.replace(/^\/\s+/, " ");
+			}
+			// reset the vars after the final loop run
+			if (lines.length - 1 === i) {
+				// reset the vars
+				indentation = false;
+				indentation_index = -1;
+				indentation_length = null;
+			}
+		});
+		/* HACK-END */
+
 		array_ref.push(
 			format_column(task.name, field_task_len) + (lines[0] || "")
 		);

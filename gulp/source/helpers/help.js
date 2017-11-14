@@ -3,7 +3,7 @@
  *
  * Options
  *
- * (no options) List tasks and their descriptions.
+ * (no options)   --------   List tasks and their descriptions.
  * --verbose      [boolean]  Flag indicating whether to show all documentation.
  * -n, --name     [string]   Names of tasks to show documentation for.
  *

@@ -228,6 +228,39 @@ function print_tasks(tasks, verbose, filter) {
 		var comment = task.comment || {};
 		var lines = comment.lines || [];
 
+		/* HACK-START: Modify long comment indentation */
+		// reset the starting indentation for long explanations
+		var indentation = false;
+		var indentation_index = -1;
+		var indentation_length;
+		lines.forEach(function(line, i) {
+			// check whether its a long explanation
+			indentation_index = line.indexOf("=>");
+			// if => is found set the flag and calculate the indentation length
+			// also reset the line by removing the "=>".
+			if (-~indentation_index) {
+				indentation = true;
+				indentation_length = indentation_index - 1;
+				// reset the line, remove "=>"
+				lines[i] = line.replace(/\=>\s+/, "");
+			}
+			// if the line starts with "/" it needs to be indented
+			if (/^\//.test(line) && indentation) {
+				// add the previous indentation to it
+				lines[i] =
+					" ".repeat(indentation_length) +
+					line.replace(/^\/\s+/, " ");
+			}
+			// reset the vars after the final loop run
+			if (lines.length - 1 === i) {
+				// reset the vars
+				indentation = false;
+				indentation_index = -1;
+				indentation_length = null;
+			}
+		});
+		/* HACK-END */
+
 		array_ref.push(
 			format_column(task.name, field_task_len) + (lines[0] || "")
 		);
@@ -1232,11 +1265,11 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *
  * Notes
  *
- * • New tabs should be opened via the terminal using `open`. Doing so will
- * ensure the generated tab will auto-close when Gulp is closed/existed. Opening
- * tabs by typing/copy-pasting the project URL into the browser address bar will
- * not auto-close the tab(s) due to security issues as noted here:
- * [https://stackoverflow.com/q/19761241].
+ * • => New tabs should be opened via the terminal using `open`. Doing so will
+ * / ensure the generated tab will auto-close when Gulp is closed/existed. Opening
+ * / tabs by typing/copy-pasting the project URL into the browser address bar will
+ * / not auto-close the tab(s) due to security issues as noted here:
+ * / https://stackoverflow.com/q/19761241.
  *
  * Usage
  *
@@ -1325,21 +1358,23 @@ gulp.task("ports", function(done) {
  *
  * Options
  *
- * -t, --type     [string]   The optional extension types to clean.
- * -g, --glob     [array]    Use glob to find files to prettify.
- * -s, --show     [boolean]  Show the used globs before prettifying.
- * -e, --empty    [boolean]  Empty default globs array. Careful as this can prettify
- *                           all project files. By default the node_modules/ is ignored,
- *                           for example. Be sure to exclude files that don't need to be
- *                           prettified.
+ * -t, --type         [string]   The optional extension types to clean.
+ * -g, --glob         [array]    Use glob to find files to prettify.
+ * -s, --show         [boolean]  Show the used globs before prettifying.
+ * -e, --empty        [boolean]  => Empty default globs array. Careful as this can prettify
+ *                               / all project files. By default the node_modules/ is ignored,
+ *                               / for example. Be sure to exclude files that don't need to be
+ *                               / prettified.
+ * -l, --line-ending  [string]   => If provided, the file ending will get changed to to provided
+ * 								 / character(s). Line endings default to LF (\n).
  *
  * Notes
  *
- * • By default files in the following directories or containing the following
- *          sub-extensions are ignored: ./node_modules/, ./git/, vendor/, .ig.,
- *          and .min. files.
- * • Special characters in globs provided via the CLI (--glob) might need to be
- *          escaped if getting an error.
+ * • => By default files in the following directories or containing the following
+ *   / sub-extensions are ignored: ./node_modules/, ./git/, vendor/, .ig.,
+ *   / and .min. files.
+ * • => Special characters in globs provided via the CLI (--glob) might need to be
+ *   / escaped if getting an error.
  *
  * Usage
  *
@@ -2026,7 +2061,7 @@ gulp.task("indent", function(done) {
  *
  * Options
  *
- * (no options) List tasks and their descriptions.
+ * (no options)   --------   List tasks and their descriptions.
  * --verbose      [boolean]  Flag indicating whether to show all documentation.
  * -n, --name     [string]   Names of tasks to show documentation for.
  *

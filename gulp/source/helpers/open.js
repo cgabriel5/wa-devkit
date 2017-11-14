@@ -8,11 +8,11 @@
  *
  * Notes
  *
- * • New tabs should be opened via the terminal using `open`. Doing so will
- * ensure the generated tab will auto-close when Gulp is closed/existed. Opening
- * tabs by typing/copy-pasting the project URL into the browser address bar will
- * not auto-close the tab(s) due to security issues as noted here:
- * [https://stackoverflow.com/q/19761241].
+ * • => New tabs should be opened via the terminal using `open`. Doing so will
+ * / ensure the generated tab will auto-close when Gulp is closed/existed. Opening
+ * / tabs by typing/copy-pasting the project URL into the browser address bar will
+ * / not auto-close the tab(s) due to security issues as noted here:
+ * / https://stackoverflow.com/q/19761241.
  *
  * Usage
  *
