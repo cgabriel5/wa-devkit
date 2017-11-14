@@ -1556,9 +1556,13 @@ gulp.task("eol", function(done) {
 /**
  * Return a breakdown of the types of files contained in project.
  *
+ * Notes
+ *
+ * • Depending on the project size, this task might take a while to run.
+ *
  * Usage
  *
- * $ gulp stats # get project stats.
+ * $ gulp stats # Print a table containing project files type information.
  */
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
