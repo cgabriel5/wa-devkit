@@ -18,7 +18,7 @@ gulp.task("lib:js", function(done) {
 				cwd: $paths.js_source
 			}),
 			// filter out all but test files (^test*/i)
-			$.filter([$paths.allfiles, $paths.files_test]),
+			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
 			$.prettier($prettier),

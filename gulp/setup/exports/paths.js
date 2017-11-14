@@ -1,55 +1,46 @@
 "use strict";
 
 module.exports = {
-	// paths:JS
+	// paths.js
 	js_home: "./${homedir}js/",
 	js_source: "./${homedir}js/source/",
 	js_options_dynamic: "",
-	// paths:GULP
+	// paths.gulp
 	gulp_utils: "./${homedir}gulp/assets/utils/utils.js",
+	gulp_setup: "./${homedir}gulp/setup/",
+	gulp_setup_source: "./${homedir}gulp/setup/source/",
 	gulp_setup_questions: "./${homedir}gulp/setup/exports/questions.js",
 	gulp_setup_templates: "./${homedir}gulp/setup/exports/templates.js",
 	gulp_setup_jsconfigs: "./${homedir}gulp/setup/exports/jsconfigs.js",
-	gulp_setup_source: "./${homedir}gulp/setup/source/",
 	gulp_setup_readme_template: "./${homedir}gulp/setup/templates/README.md",
 	gulp_setup_settings_internal: "./gulp/setup/exports/internal.json",
 	gulp_setup_settings_internal_name: "._internal.json",
 	gulp_file_name: "gulpfile.js",
 	gulp_file_setup: "gulpfile.setup.js",
-	gulp_setup: "./${homedir}gulp/setup/",
 	gulp_file_main: "gulpfile.main.js",
-	// paths:MARKDOWN
-	markdown_preview: "${homedir}markdown/preview/",
-	markdown_source: "${homedir}markdown/source/",
-	// paths:CONFIG_FILES
-	config_settings_json_files: "./${homedir}configs/**/*.json",
-	config_internal: "./${homedir}configs/._internal.json",
-	config_settings: "./${homedir}configs/._settings.json",
+	// paths.config_files
 	config_home: "./${homedir}configs/",
+	config_settings_json_files: "./${homedir}configs/**/*.json",
 	config_settings_name: "._settings.json",
 	config_perfectionist: "./${homedir}configs/perfectionist.json",
-	config_favicondata: "./${homedir}configs/favicondata.json",
-	config_jsbeautify: "./${homedir}configs/jsbeautify.json",
-	config_bundles: "./${homedir}configs/bundles.json",
-	config_modernizr: "./${homedir}configs/modernizr.json",
-	config_prettier: "./${homedir}configs/prettier.json",
-	config_findfreeport: "./${homedir}configs/findfreeport.json",
 	config_autoprefixer: "./${homedir}configs/autoprefixer.json",
-	config_browsersync: "./${homedir}configs/browsersync.json",
 	config_json_format: "./${homedir}configs/json.format.json",
-	config_open: "./${homedir}configs/open.json",
-	config_csscomb: "./${homedir}configs/csscomb.json",
+	config_jsbeautify: "./${homedir}configs/jsbeautify.json",
+	config_prettier: "./${homedir}configs/prettier.json",
+	config_bundles: "./${homedir}configs/bundles.json",
 	config_app: "./${homedir}configs/app.json",
 	config_pkg: "./${homedir}package.json",
-	// paths:OTHER
+	// paths.git
 	git: ".git/",
-	readme: "README.md",
-	license: "LICENSE.txt",
-	html_headmeta: "html/source/head/meta.html",
-	files_beautify: "**/*.{html,css,js,json}",
-	files_beautify_exclude_min: "!**/*.min.*",
-	// exclude all vendor files from any directory
-	not_vendor: "!**/vendor/**",
+	// paths.node_modules
 	node_modules_name: "node_modules/",
-	not_ignore: "!**/*.ig.*"
+	// paths.files
+	files_common: "**/*.{html,css,js,json}",
+	// paths.files.not (exclude files w/ following in path)
+	not_min: "!**/*.min.*",
+	not_vendor: "!**/vendor/**",
+	not_ignore: "!**/*.ig.*",
+	// paths.other
+	license: "LICENSE.txt",
+	html_headmeta: "html/source/head/meta.html"
 };

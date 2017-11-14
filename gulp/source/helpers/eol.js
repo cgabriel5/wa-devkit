@@ -23,8 +23,8 @@ gulp.task("eol", function(done) {
 	// exclude files containing a ".min." as this is the convention used for minified files.
 	// the node_modules/, .git/, img/ files are also excluded.
 	var files = [
-		$paths.codefiles,
-		$paths.files_beautify_exclude_min,
+		$paths.files_code,
+		$paths.not_min,
 		bangify($paths.img_source),
 		bangify(globall($paths.node_modules_name)),
 		bangify(globall($paths.git))

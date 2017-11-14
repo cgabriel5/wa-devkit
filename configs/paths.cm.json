@@ -1,75 +1,50 @@
 {
-	// paths:distribution (only for apptype=webapp)
+	// paths.distribution (only for apptype=webapp)
 	"dist_home": "dist/",
-	//
-	// paths: library (only for apptype=library)
+	// paths. library (only for apptype=library)
 	"lib_home": "lib/",
-	//
-	// paths:html
+	// paths.html
 	"html_source": "${homedir}html/source/",
-	"html_regexp_source": "${homedir}html/injection/",
-	//
-	// paths:css
+	// paths.css
 	"css_source": "${homedir}css/source/",
 	"css_vendor": "${homedir}css/vendor/",
-	"not_css_vendor": "!${homedir}css/vendor/**/*.*",
 	"css_bundles": "${homedir}css/bundles/",
-	"users_css_file": "styles.css",
-	//
-	// paths::purify_css
-	"pure_file": "${homedir}css/pure.css",
-	"pure_file_name": "pure.css",
-	"purify_js_source_files": "${homedir}js/bundles/*.js",
-	"pure_source": "source/",
-	"pure_css": "${homedir}css/",
-	//
-	// paths:js
+	// paths.js
 	"js_source": "${homedir}js/source/",
 	"js_vendor": "${homedir}js/vendor/",
-	"not_js_vendor": "!${homedir}js/vendor/**/*.*",
 	"js_bundles": "${homedir}js/bundles/",
-	//
-	// paths:img
+	// paths.img
 	"img_source": "${homedir}img/**/*.*",
-	//
-	// paths:gulp
-	"gulp_home": "${homedir}gulp/",
+	// paths.gulp
+	// "gulp_home": "${homedir}gulp/",
 	"gulp_source": "${homedir}gulp/source/",
-	"gulpdir": "./${homedir}gulp/",
 	"gulp_utils": "./${homedir}gulp/assets/utils/utils.js",
-	"gulp_file_name": "gulpfile.js",
-	//
-	// paths:markdown
+	// paths.markdown (tohtml:prepcss)
 	"markdown_preview": "${homedir}markdown/previews/",
-	//
-	// paths:markdown (tohtml:prepcss)
 	"markdown_styles_github": "github-markdown.css",
 	"markdown_styles_prismjs": "prism-github.css",
 	"markdown_assets": "./markdown/assets/css/",
 	"markdown_concat_name": "markdown.css",
-	//
-	// paths:config_files
-	"config_settings_json_files": "./${homedir}configs/**/*.json",
+	// paths.config_files
+	"config_home": "./${homedir}configs/",
 	"config_internal": "./${homedir}configs/._internal.json",
 	"config_settings": "./${homedir}configs/._settings.json",
-	"config_home": "./${homedir}configs/",
+	"config_settings_json_files": "./${homedir}configs/**/*.json",
 	"config_settings_name": "._settings.json",
 	"config_perfectionist": "perfectionist",
-	"config_favicondata": "favicondata",
-	"config_jsbeautify": "jsbeautify",
-	"config_bundles": "bundles",
-	"config_modernizr": "modernizr",
-	"config_prettier": "prettier",
 	"config_findfreeport": "findfreeport",
 	"config_autoprefixer": "autoprefixer",
+	"config_favicondata": "favicondata",
 	"config_browsersync": "browsersync",
 	"config_json_format": "json.format",
-	"config_open": "open",
+	"config_jsbeautify": "jsbeautify",
+	"config_modernizr": "modernizr",
+	"config_prettier": "prettier",
+	"config_bundles": "bundles",
 	"config_csscomb": "csscomb",
+	"config_open": "open",
 	"config_app": "app",
-	//
-	// paths:favicons
-	// file where the favicon markups are stored
+	// paths.favicons
 	"favicon_dest": "${homedir}favicon/",
 	"favicon_master_pic": "./${homedir}docs/brand/img/leaf-900.png",
 	"favicon_root_ico": "./${homedir}favicon/favicon.ico",
@@ -78,27 +53,27 @@
 	"favicon_root_manifest": "./${homedir}favicon/manifest.json",
 	"favicon_html": "./${homedir}html/source/head/favicon.html",
 	"favicon_html_dest": "./${homedir}html/source/head/",
-	//
-	// paths:other
+	// paths.git
 	"git": ".git/",
 	"githead": ".git/head",
+	// paths.node_modules
+	"node_modules": "./node_modules/",
+	"node_modules_name": "node_modules/",
+	// paths.readme
 	"readme": "readme.md",
 	"readme_html": "readme.html",
-	"allfiles": "**/*.*",
-	"files_beautify": "**/*.{html,css,js,json}",
-	"files_beautify_exclude_min": "!**/*.min.*",
-	"files_min": "**/*.min.*",
-	// exclude all test files from any directory
-	"files_test": "!**/test/**",
-	// exclude all vendor files from any directory
-	"not_vendor": "!**/vendor/**",
-	// files with this sub extension will be (ig)nored when prettifying is done
-	"not_ignore": "!**/*.ig.*",
-	"node_modules_name": "node_modules/",
-	"node_modules": "./node_modules/",
+	// paths.modernizr
 	"vendor_modernizr": "./${homedir}js/vendor/modernizr/",
-	"modernizr_file": "modernizr.js",
-	"mediafiles": "**/*.{jpeg,jpg,png,gif,svg,ico}",
-	"codefiles":
-		"**/*.{bat,coffee,css,htm,html,inc,ini,js,json,jsx,less,od,onlydata,php,pl,py,rb,sass,scm,scss,sh,sql,styl,tag,ts,tsx,xml,xhtml,markdown,md,mdwn,mdown,mkd,mkdn,mdtxt,mdtext,txt,text}"
+	"modernizr_file_name": "modernizr.js",
+	// paths.files
+	"files_all": "**/*.*",
+	"files_min": "**/*.min.*",
+	"files_common": "**/*.{html,css,js,json}",
+	"files_code":
+		"**/*.{bat,coffee,css,htm,html,inc,ini,js,json,jsx,less,od,onlydata,php,pl,py,rb,sass,scm,scss,sh,sql,styl,tag,ts,tsx,xml,xhtml,markdown,md,mdwn,mdown,mkd,mkdn,mdtxt,mdtext,txt,text}",
+	// paths.files.not (exclude files w/ following in path)
+	"not_min": "!**/*.min.*",
+	"not_tests": "!**/test/**",
+	"not_vendor": "!**/vendor/**",
+	"not_ignore": "!**/*.ig.*"
 }

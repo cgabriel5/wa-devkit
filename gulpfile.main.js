@@ -752,7 +752,7 @@ gulp.task("lib:js", function(done) {
 				cwd: $paths.js_source
 			}),
 			// filter out all but test files (^test*/i)
-			$.filter([$paths.allfiles, $paths.files_test]),
+			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
 			$.prettier($prettier),
@@ -1078,7 +1078,8 @@ gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
 	modernizr.build($modernizr, function(build) {
-		var file_location = $paths.vendor_modernizr + $paths.modernizr_file;
+		var file_location =
+			$paths.vendor_modernizr + $paths.modernizr_file_name;
 		// create missing folders
 		mkdirp($paths.vendor_modernizr, function(err) {
 			if (err) throw err;
@@ -1408,8 +1409,8 @@ gulp.task("pretty", function(done) {
 	// a ".min." as this is the convention used for minified files.
 	// the node_modules/, .git/, and all vendor/ files are also excluded.
 	var files = [
-		$paths.files_beautify,
-		$paths.files_beautify_exclude_min,
+		$paths.files_common,
+		$paths.not_min,
 		bangify(globall($paths.node_modules_name)),
 		bangify(globall($paths.git)),
 		$paths.not_vendor,
@@ -1528,8 +1529,8 @@ gulp.task("eol", function(done) {
 	// exclude files containing a ".min." as this is the convention used for minified files.
 	// the node_modules/, .git/, img/ files are also excluded.
 	var files = [
-		$paths.codefiles,
-		$paths.files_beautify_exclude_min,
+		$paths.files_code,
+		$paths.not_min,
 		bangify($paths.img_source),
 		bangify(globall($paths.node_modules_name)),
 		bangify(globall($paths.git))
