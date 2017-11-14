@@ -1,33 +1,31 @@
-var __markdown_styles__;
+var _markdown_styles_;
 // get the CSS markdown + prismjs styles
 // @internal
 gulp.task("tohtml:prepcss", function(done) {
-    var task = this;
+	var task = this;
 
-    var __PATHS_MARKDOWN_STYLES_GITHUB = "github-markdown.css";
-    var __PATHS_MARKDOWN_STYLES_PRISMJS = "prism-github.css";
-    var __PATHS_MARKDOWN_ASSETS = "./markdown/assets/css/";
-    var __PATHS_MARKDOWN_CONCAT_NAME = "markdown.css";
-
-    // run gulp process
-    pump([
-    	gulp.src([
-    		__PATHS_MARKDOWN_STYLES_GITHUB,
-    		__PATHS_MARKDOWN_STYLES_PRISMJS
-    	], {
-            cwd: __PATHS_MARKDOWN_ASSETS
-        }),
-        $.debug(),
-        $.concat(__PATHS_MARKDOWN_CONCAT_NAME),
-		$.modify({
-            fileModifier: function(file, contents) {
-                // store the contents in variable
-                __markdown_styles__ = contents;
-                return contents;
-            }
-        }),
-    	$.debug.edit()
-        ], done);
+	// run gulp process
+	pump(
+		[
+			gulp.src(
+				[$paths.markdown_styles_github, $paths.markdown_styles_prismjs],
+				{
+					cwd: $paths.markdown_assets
+				}
+			),
+			$.debug(),
+			$.concat($paths.markdown_concat_name),
+			$.modify({
+				fileModifier: function(file, contents) {
+					// store the contents in variable
+					_markdown_styles_ = contents;
+					return contents;
+				}
+			}),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 /**
@@ -39,58 +37,57 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * Notes
  *
- * - Files will get placed in ./markdown/previews/
+ * • Files will get placed in ./markdown/previews/
  *
  * Usage
  *
  * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
+	var prism = require("prismjs");
+	var prism_langs = require("prism-languages");
 
-    var prism = require("prismjs");
-    var prism_langs = require("prism-languages");
+	var task = this;
 
-    var task = this;
+	// run yargs
+	var _args = yargs.option("file", {
+		alias: "f",
+		default: "./README.md",
+		describe: "The file to convert.",
+		type: "string"
+	}).argv;
+	// get the command line arguments from yargs
+	var file_name = _args.f || _args.file;
 
-    // run yargs
-    var _args = yargs.option("file", {
-            alias: "f",
-            default: "./README.md",
-            describe: "The file to convert.",
-            type: "string"
-        })
-        .argv;
-    // get the command line arguments from yargs
-    var file_name = _args.f || _args.file;
+	// get file markdown file contents
+	// convert contents into HTML via marked
+	// inject HTML fragment into HTML markdown template
+	// save file in markdown/previews/
 
-    // get file markdown file contents
-    // convert contents into HTML via marked
-    // inject HTML fragment into HTML markdown template
-    // save file in markdown/previews/
+	// [https://github.com/krasimir/techy/issues/30]
+	// make marked use prism for syntax highlighting
+	$.marked.marked.setOptions({
+		highlight: function(code, language) {
+			// default to markup when language is undefined
+			return prism.highlight(code, prism.languages[language || "markup"]);
+		}
+	});
 
-    // [https://github.com/krasimir/techy/issues/30]
-    // make marked use prism for syntax highlighting
-    $.marked.marked.setOptions({
-        highlight: function(code, language) {
-            // default to markup when language is undefined
-            return prism.highlight(code, prism.languages[language || "markup"]);
-        }
-    });
+	// run gulp process
+	pump(
+		[
+			gulp.src(file_name),
+			$.debug(),
+			$.marked(),
+			$.modify({
+				fileModifier: function(file, contents) {
+					// path offsets
+					var fpath = "../../favicon/";
+					// get file name
+					var file_name = path.basename(file.path);
 
-    // run gulp process
-    pump([gulp.src(file_name),
-    	$.debug(),
-		$.marked(),
-		$.modify({
-            fileModifier: function(file, contents) {
-
-                // path offsets
-                var fpath = "../../favicon/";
-                // get file name
-                var file_name = path.basename(file.path);
-
-                // return filled in template
-                return `
+					// return filled in template
+					return `
 <!doctype html>
 <html lang="en">
 <head>
@@ -110,15 +107,17 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <meta name="msapplication-config" content="${fpath}/browserconfig.xml">
     <meta name="theme-color" content="#f6f5dd">
     <!-- https://github.com/sindresorhus/github-markdown-css -->
-	<style>${__markdown_styles__}</style>
+	<style>${_markdown_styles_}</style>
 </head>
     <body class="markdown-body">${contents}</body>
 </html>`;
-            }
-        }),
-        $.beautify(config_jsbeautify),
-		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		$.debug.edit(),
-		bs.stream()
-        ], done);
+				}
+			}),
+			$.beautify($jsbeautify),
+			gulp.dest($paths.markdown_preview),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });

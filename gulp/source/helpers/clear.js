@@ -24,12 +24,12 @@
 //         // using the flag "w+" will create the file if it does not exists. if
 //         // it does exists it will truncate the current file. in effect clearing
 //         // if out. which is what is needed.
-//         config_internal.set(key, null);
+//         $internal.set(key, null);
 //         // reset name if needed
 //         if (key === "pid") key = "status";
 //         log(key, "cleared.");
 //     }
-//     config_internal.write(function() {
+//     $internal.write(function() {
 //         done();
 //     }, null, json_format);
 // });

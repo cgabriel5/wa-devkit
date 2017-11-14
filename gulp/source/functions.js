@@ -7,25 +7,29 @@
  * @return {Undefined}          [Nothing is returned.]
  */
 function open_file_in_browser(filepath, port, callback, task) {
-    pump([gulp.src(filepath, {
-            cwd: __PATHS_BASE,
-            dot: true
-        }),
-        $.open({
-            app: browser,
-            uri: uri({
-                "appdir": APPDIR,
-                "filepath": filepath,
-                "port": port,
-                "https": config_gulp_plugins.open.https
-            })
-        }),
-        // modify debug to take a flag to skip the use of the cli-spinner
-        // $.debug()
-    ], function() {
-        notify("File opened!");
-        callback();
-    });
+	pump(
+		[
+			gulp.src(filepath, {
+				cwd: $paths.base,
+				dot: true
+			}),
+			$.open({
+				app: browser,
+				uri: uri({
+					appdir: APPDIR,
+					filepath: filepath,
+					port: port,
+					https: $open.https
+				})
+			})
+			// modify debug to take a flag to skip the use of the cli-spinner
+			// $.debug()
+		],
+		function() {
+			notify("File opened!");
+			callback();
+		}
+	);
 }
 
 /**
@@ -33,7 +37,11 @@ function open_file_in_browser(filepath, port, callback, task) {
  * @return {Undefined} 			[Nothing is returned.]
  */
 function gulp_check_warn() {
-    log(chalk.red("Task cannot be performed while Gulp is running. Close Gulp then try again."));
+	log(
+		chalk.red(
+			"Task cannot be performed while Gulp is running. Close Gulp then try again."
+		)
+	);
 }
 
 /**
@@ -44,42 +52,42 @@ function gulp_check_warn() {
  * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
  */
 function print_tasks(tasks, verbose, filter) {
+	tasks = tasks.filterHidden(verbose).sort();
 
-    tasks = tasks.filterHidden(verbose)
-        .sort();
+	// determine the header
+	var header = filter ? "Filtered" : "Tasks";
+	var results = ["", chalk.underline.bold(header), ""];
+	var help_doc = ["", chalk.underline.bold("Help"), ""];
 
-    // determine the header
-    var header = (filter ? "Filtered" : "Tasks");
-    var results = ["", chalk.underline.bold(header), ""];
-    var help_doc = ["", chalk.underline.bold("Help"), ""];
+	var field_task_len = tasks.getLongestNameLength();
 
-    var field_task_len = tasks.getLongestNameLength();
+	tasks.forEach(function(task) {
+		// help task will always be placed before all other tasks
+		// to always have its documentation present.
+		var is_help_task = task.name === "help";
+		// determine the correct array to reference
+		var array_ref = is_help_task ? help_doc : results;
 
-    tasks.forEach(function(task) {
+		var comment = task.comment || {};
+		var lines = comment.lines || [];
 
-        // help task will always be placed before all other tasks
-        // to always have its documentation present.
-        var is_help_task = (task.name === "help");
-        // determine the correct array to reference
-        var array_ref = (is_help_task ? help_doc : results);
+		array_ref.push(
+			format_column(task.name, field_task_len) + (lines[0] || "")
+		);
+		// only print verbose documentation when flag is provided
+		if (verbose || is_help_task) {
+			for (var i = 1; i < lines.length; i++) {
+				array_ref.push(
+					format_column("", field_task_len) + "  " + lines[i]
+				);
+				if (verbose && i === lines.length - 1) array_ref.push("\n");
+			}
+		}
+	});
 
-        var comment = task.comment || {};
-        var lines = comment.lines || [];
+	if (!verbose) results.push("\n");
 
-        array_ref.push(format_column(task.name, field_task_len) + (lines[0] || ""));
-        // only print verbose documentation when flag is provided
-        if (verbose || is_help_task) {
-            for (var i = 1; i < lines.length; i++) {
-                array_ref.push(format_column("", field_task_len) + "  " + lines[i]);
-                if (verbose && i === lines.length - 1) array_ref.push("\n");
-            }
-        }
-    });
-
-    if (!verbose) results.push("\n");
-
-    return help_doc.concat(results)
-        .join("\n");
+	return help_doc.concat(results).join("\n");
 }
 
 /**
@@ -92,12 +100,14 @@ function print_tasks(tasks, verbose, filter) {
  * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
  */
 function format_column(text, width, offset_left, offset_right) {
-    offset_left = undefined !== offset_left ? offset_left : 3;
-    offset_right = undefined !== offset_right ? offset_right : 3;
-    return new Array(offset_left + 1)
-        .join(" ") + chalk.magenta(text) + new Array(Math.max(width - text.length, 0) + 1)
-        .join(" ") + new Array(offset_right + 1)
-        .join(" ");
+	offset_left = undefined !== offset_left ? offset_left : 3;
+	offset_right = undefined !== offset_right ? offset_right : 3;
+	return (
+		new Array(offset_left + 1).join(" ") +
+		chalk.magenta(text) +
+		new Array(Math.max(width - text.length, 0) + 1).join(" ") +
+		new Array(offset_right + 1).join(" ")
+	);
 }
 
 /**
@@ -106,7 +116,7 @@ function format_column(text, width, offset_left, offset_right) {
  * @return {String}        [The new string with bang added.]
  */
 function bangify(string) {
-    return "!" + (string || "");
+	return "!" + (string || "");
 }
 
 /**
@@ -115,41 +125,91 @@ function bangify(string) {
  * @return {String}        [The new string with added pattern.]
  */
 function globall(string) {
-    return (string || "") + "**";
+	return (string || "") + "**";
 }
 
 /**
  * @description [Returns the provided file's extension or checks it against the provided extension type.]
  * @param  {Object} file [The Gulp file object.]
- * @param  {String} type [The optional extension type to check against.]
+ * @param  {Array} types [The optional extension type(s) to check against.]
  * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
  */
-function ext(file, type) {
-    // when no file exists return an empty string
-    if (!file) return "";
+function ext(file, types) {
+	// when no file exists return an empty string
+	if (!file) return "";
 
-    // get the file extname
-    var extname = path.extname(file.path)
-        .toLowerCase();
+	// get the file extname
+	var extname = path
+		.extname(file.path)
+		.toLowerCase()
+		.replace(/^\./, "");
 
-    // simply return the extname when no type is
-    // provided to check against.
-    if (!type) return extname;
+	// simply return the extname when no type is
+	// provided to check against.
+	if (!types) return extname;
 
-    // else when a type is provided check against it
-    return (extname.slice(1) === type.toLowerCase());
+	// else when a type is provided check against it
+	return Boolean(-~types.indexOf(extname));
 }
 
 // check for the usual file types
 ext.ishtml = function(file) {
-    return ext(file, "html");
+	return ext(file, ["html"]);
 };
 ext.iscss = function(file) {
-    return ext(file, "css");
+	return ext(file, ["css"]);
 };
 ext.isjs = function(file) {
-    return ext(file, "js");
+	return ext(file, ["js"]);
 };
 ext.isjson = function(file) {
-    return ext(file, "json");
+	return ext(file, ["json"]);
 };
+
+/**
+ * @description  [Recursively fill-in the placeholders in each path contained
+ *               in the provided paths object.]
+ * @param  {Object} $paths [Object containing the paths.]
+ * @return {Object}           [The object with paths filled-in.]
+ */
+function expand_paths($paths) {
+	// path placeholders substitutes. these paths will also get added to the
+	// paths object after substitution down below.
+	var paths_subs_ = {
+		// paths::BASES
+		del: "/",
+		base: "./",
+		base_dot: ".",
+		dirname: __dirname,
+		cwd: process.cwd(),
+		homedir: "" // "assets/"
+	};
+
+	var replacer = function(match) {
+		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
+		return replacement !== undefined ? replacement : undefined;
+	};
+	// recursively replace all the placeholders
+	for (var key in $paths) {
+		if ($paths.hasOwnProperty(key)) {
+			var __path = $paths[key];
+
+			// find all the placeholders
+			while (/\$\{.*?\}/g.test(__path)) {
+				__path = __path.replace(/\$\{.*?\}/g, replacer);
+			}
+			// reset the substituted string back in the $paths object
+			$paths[key] = __path;
+		}
+	}
+
+	// add the subs to the paths object
+	for (var key in paths_subs_) {
+		if (paths_subs_.hasOwnProperty(key)) {
+			$paths[key] = paths_subs_[key];
+		}
+	}
+
+	// filled-in paths
+	return $paths;
+}

@@ -6,9 +6,13 @@
  * $ gulp status # Print Gulp status.
  */
 gulp.task("status", function(done) {
-    var pid = config_internal.get("pid");
-    log((pid) ? "Gulp is running. " + chalk.green(`(pid: ${pid})`) : chalk.yellow("Gulp is not running."));
-    done();
+	var pid = $internal.get("pid");
+	log(
+		pid
+			? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
+			: chalk.yellow("Gulp is not running.")
+	);
+	done();
 });
 
 /**
@@ -19,14 +23,17 @@ gulp.task("status", function(done) {
  * $ gulp ports # Print uses ports.
  */
 gulp.task("ports", function(done) {
-    // get the ports
-    var ports = config_internal.get("ports");
-    // if file is empty
-    if (!ports) {
-        log(chalk.yellow("No ports are in use."));
-        return done();
-    }
-    // ports exist...
-    log(chalk.green("(local, ui)"), chalk.magenta("(" + ports.local + ", " + ports.ui + ")"));
-    done();
+	// get the ports
+	var ports = $internal.get("ports");
+	// if file is empty
+	if (!ports) {
+		log(chalk.yellow("No ports are in use."));
+		return done();
+	}
+	// ports exist...
+	log(
+		chalk.green("(local, ui)"),
+		chalk.magenta("(" + ports.local + ", " + ports.ui + ")")
+	);
+	done();
 });

@@ -1,95 +1,93 @@
 // @internal
 gulp.task("default", function(done) {
-    var task = this;
-    // show the user the init message
-    log("Run \"$ gulp init\" before running Gulp's default command.");
-    done();
+	var task = this;
+	// show the user the init message
+	log('Run "$ gulp init" before running Gulp\'s default command.');
+	done();
 });
 
-// run the prompt to setup project
-// @internal
-gulp.task("init", function(done) {
-    var task = this;
+gulp.task("default", function(done) {
+	var task = this;
 
-    prompt.start(); // start the prompt
-    prompt.message = chalk.green("[question]");
-    prompt.delimiter = " ";
+	inquirer.prompt($questions).then(function(answers) {
+		// get answers
+		__data__ = answers;
+		var type = __data__.apptype;
 
-    prompt.get(questions, function(err, result) {
+		// set the path for js option
+		$paths.js_options_dynamic = `gulp/setup/js/options/${type}/**/*.*`;
 
-        // kill prompt and show user error message
-        if (err) {
-            console.log("\n" + time(), (err.message === "canceled") ? chalk.red("Setup canceled.") : err);
-            return prompt.stop();
-        }
+		// set the application type
+		$internal.apptype = type;
+		// pick js bundle based on provided project type + reset the config js bundle
+		$bundles.data.js = $jsconfigs[type];
 
-        // get user input
-        __data__ = result;
-        var type = __data__.apptype;
+		// remove distribution configuration if type is library
+		// as the project is defaulted for a webapp project.
+		if (type === "library") {
+			// remove the distribution configuration
+			delete $bundles.data.dist;
+			// add the library configuration
+			$bundles.data.lib = $jsconfigs.lib;
+		} // else leave as-is for webapp project
 
-        // set the path for js option
-        __PATHS_JS_OPTIONS_DYNAMIC = `gulp/setup/js/options/${type}/**/*.*`;
+		// set package.json properties
+		$pkg.set("name", __data__.name);
+		$pkg.set("version", __data__.version);
+		$pkg.set("description", __data__.description);
+		$pkg.set("author", format($templates.author, __data__));
+		$pkg.set("repository", {
+			type: "git",
+			url: format($templates["repository.url"], __data__)
+		});
+		$pkg.set("bugs", {
+			url: format($templates["bugs.url"], __data__)
+		});
+		$pkg.set("homepage", format($templates.homepage, __data__));
+		$pkg.set("private", __data__.private);
 
-        // set the application type
-        config_internal.set("apptype", type);
-        // pick js bundle based on provided project type + reset the config js bundle
-        config_gulp_bundles.data.js = jsconfigs[type];
+		// sort keys
+		$bundles.data = alphabetize($bundles.data);
+		$pkg.data = alphabetize($pkg.data);
 
-        // remove distribution configuration if type is library
-        // as the project is defaulted for a webapp project.
-        if (type === "library") {
-            // remove the distribution configuration
-            delete config_gulp_bundles.data.dist;
-            // add the library configuration
-            config_gulp_bundles.data.lib = jsconfigs.lib;
-        } // else leave as-is for webapp project
-
-        // set package.json properties
-        config_pkg.set("name", __data__.name);
-        config_pkg.set("version", __data__.version);
-        config_pkg.set("description", __data__.description);
-        config_pkg.set("author", format(templates.author, __data__));
-        config_pkg.set("repository", {
-            type: "git",
-            url: format(templates["repository.url"], __data__)
-        });
-        config_pkg.set("bugs", {
-            url: format(templates["bugs.url"], __data__)
-        });
-        config_pkg.set("homepage", format(templates.homepage, __data__));
-        config_pkg.set("private", __data__.private);
-
-        // sort keys
-        config_gulp_bundles.data = alphabetize(config_gulp_bundles.data);
-        config_internal.data = alphabetize(config_internal.data);
-        config_pkg.data = alphabetize(config_pkg.data);
-
-        // saves changes to files
-        config_gulp_bundles.write(function() {
-            config_internal.write(function() {
-                config_pkg.write(function() {
-                    // run initialization steps
-                    var tasks = [
-							"init:clear-js",
-							"init:pick-js-option",
-							"init:fill-placeholders",
-							"init:setup-readme",
-							"init:rename-gulpfile",
-							"init:remove-setup",
-							"init:pretty",
-							"init:git"
-                    ];
-                    tasks.push(function() {
-                        var message = `Project initialized (${type})`;
-                        notify(message);
-                        log(message);
-                        log("Run \"$ gulp\" to start watching project for any file changes.");
-                        done();
-                    });
-                    return sequence.apply(task, tasks);
-                }, null, json_spaces);
-            }, null, json_spaces);
-        }, null, json_spaces);
-
-    });
+		// saves changes to files
+		$bundles.writeSync(null, jindent);
+		$pkg.write(
+			function() {
+				// run initialization steps
+				var tasks = [
+					"init:settings-internal",
+					"init:settings-main",
+					"init:remove-webapp-files",
+					"init:add-library-files",
+					"init:create-license",
+					"init:fill-placeholders",
+					"init:setup-readme",
+					"init:rename-gulpfile",
+					"init:remove-setup",
+					"init:pretty",
+					"init:git"
+				];
+				// remove steps that are only for library project setup
+				// when the apptype is set to webapp.
+				if (__data__.apptype === "webapp") {
+					tasks.splice(2, 2);
+				}
+				tasks.push(function() {
+					var message = `Project initialized (${type})`;
+					notify(message);
+					log(message, "\n");
+					log(
+						"Run",
+						chalk.green("$ gulp"),
+						"to start watching project for any file changes.\n"
+					);
+					done();
+				});
+				return sequence.apply(task, tasks);
+			},
+			null,
+			jindent
+		);
+	});
 });

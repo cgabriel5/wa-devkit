@@ -8,29 +8,31 @@ var path = require("path");
 
 // lazy load gulp plugins
 var $ = require("gulp-load-plugins")({
-    "rename": {
-        "gulp-if": "gulpif",
-        "gulp-markdown": "marked",
-        "gulp-purifycss": "purify",
-        "gulp-clean-css": "clean_css",
-        "gulp-json-sort": "json_sort",
-        "gulp-jsbeautifier": "beautify",
-        "gulp-minify-html": "minify_html",
-        "gulp-inject-content": "injection",
-        "gulp-real-favicon": "real_favicon"
-    },
-    "postRequireTransforms": {
-        "json_sort": function(plugin) {
-            return plugin.default;
-        },
-        "uglify": function(plugin) {
-            // [https://stackoverflow.com/a/45554108]
-            // By default es-uglify is used to uglify JS.
-            var uglifyjs = require("uglify-es");
-            var composer = require("gulp-uglify/composer");
-            return composer(uglifyjs, console);
-        }
-    }
+	rename: {
+		"gulp-if": "gulpif",
+		"gulp-markdown": "marked",
+		"gulp-purifycss": "purify",
+		"gulp-clean-css": "clean_css",
+		"gulp-json-sort": "json_sort",
+		"gulp-jsbeautifier": "beautify",
+		"gulp-minify-html": "minify_html",
+		"gulp-prettier-plugin": "prettier",
+		"gulp-inject-content": "injection",
+		"gulp-real-favicon": "real_favicon",
+		"gulp-strip-json-comments": "strip_jsonc"
+	},
+	postRequireTransforms: {
+		json_sort: function(plugin) {
+			return plugin.default;
+		},
+		uglify: function(plugin) {
+			// [https://stackoverflow.com/a/45554108]
+			// By default es-uglify is used to uglify JS.
+			var uglifyjs = require("uglify-es");
+			var composer = require("gulp-uglify/composer");
+			return composer(uglifyjs, console);
+		}
+	}
 });
 
 // universal modules
@@ -42,6 +44,7 @@ var dir = require("node-dir");
 var mkdirp = require("mkdirp");
 var fe = require("file-exists");
 var json = require("json-file");
+var Table = require("cli-table2");
 var jsonc = require("comment-json");
 var de = require("directory-exists");
 var sequence = require("run-sequence");
@@ -50,180 +53,104 @@ var bs_autoclose = require("browser-sync-close-hook");
 
 //#! paths.js -- ./gulp/source/paths.js
 
-// paths::BASES
-var __PATHS_DEL = "/";
-var __PATHS_BASE = "./";
-var __PATHS_BASE_DOT = ".";
-var __PATHS_DIRNAME = __dirname;
-var __PATHS_CWD = process.cwd();
-var __PATHS_HOMEDIR = ""; // "assets/";
+// get and fill in path placeholders
+var $paths = expand_paths(
+	jsonc.parse(
+		fs.readFileSync(`./configs/paths.cm.json`).toString(),
+		null,
+		true
+	)
+);
 
-// paths:DISTRIBUTION (only for apptype=webapp)
-var __PATHS_DIST_HOME = "dist/";
+//#! configs.js -- ./gulp/source/configs.js
 
-// paths: library (only for apptype=library)
-var __PATHS_LIB_HOME = "lib/";
+// dynamic configuration files (load via json-file to modify later)
+var $internal = json.read($paths.config_internal);
 
-// paths:HTML
-var __PATHS_HTML_SOURCE = `${__PATHS_HOMEDIR}html/source/`;
-var __PATHS_HTML_REGEXP_SOURCE = `${__PATHS_HOMEDIR}html/injection/`;
+// static configuration files (just need to read file)
+var $settings = jsonc.parse(fs.readFileSync($paths.config_settings).toString());
 
-// paths:CSS
-var __PATHS_CSS_SOURCE = `${__PATHS_HOMEDIR}css/source/`;
-var __PATHS_CSS_VENDOR = `${__PATHS_HOMEDIR}css/vendor/`;
-var __PATHS_NOT_CSS_VENDOR = `!${__PATHS_HOMEDIR}css/vendor/**/*.*`;
-var __PATHS_CSS_BUNDLES = `${__PATHS_HOMEDIR}css/bundles/`;
-var __PATHS_USERS_CSS_FILE = "styles.css";
-
-// paths::PURIFY_CSS
-var __PATHS_PURE_FILE = `${__PATHS_HOMEDIR}css/pure.css`;
-var __PATHS_PURE_FILE_NAME = "pure.css";
-var __PATHS_PURIFY_JS_SOURCE_FILES = `${__PATHS_HOMEDIR}js/bundles/*.js`;
-var __PATHS_PURE_SOURCE = "source/";
-var __PATHS_PURE_CSS = `${__PATHS_HOMEDIR}css/`;
-
-// paths:JS
-var __PATHS_JS_SOURCE = `${__PATHS_HOMEDIR}js/source/`;
-var __PATHS_JS_VENDOR = `${__PATHS_HOMEDIR}js/vendor/`;
-var __PATHS_NOT_JS_VENDOR = `!${__PATHS_HOMEDIR}js/vendor/**/*.*`;
-var __PATHS_JS_BUNDLES = `${__PATHS_HOMEDIR}js/bundles/`;
-
-// paths:IMG
-var __PATHS_IMG_SOURCE = `${__PATHS_HOMEDIR}img/**/*`;
-
-// paths:GULP
-var __PATHS_GULP_HOME = `${__PATHS_HOMEDIR}gulp/`;
-var __PATHS_GULP_SOURCE = `${__PATHS_HOMEDIR}gulp/source/`;
-var __PATHS_GULPDIR = `./${__PATHS_HOMEDIR}gulp/`;
-var __PATHS_GULP_UTILS = `./${__PATHS_HOMEDIR}gulp/assets/utils/utils.js`;
-var __PATHS_GULP_FILE_NAME = "gulpfile.js";
-
-// paths:MARKDOWN
-var __PATHS_MARKDOWN_PREVIEW = `${__PATHS_HOMEDIR}markdown/previews/`;
-
-// paths:CONFIG_FILES
-var __PATHS_CONFIG_GULP_BUNDLES = `./${__PATHS_HOMEDIR}configs/gulp/bundles.json`;
-var __PATHS_CONFIG_GULP_PLUGINS = `./${__PATHS_HOMEDIR}configs/gulp/plugins.json`;
-var __PATHS_CONFIG_FAVICONDATA = `./${__PATHS_HOMEDIR}configs/favicondata.json`;
-var __PATHS_CONFIG_JSBEAUTIFY = `./${__PATHS_HOMEDIR}configs/jsbeautify.json`;
-var __PATHS_CONFIG_MODERNIZR = `./${__PATHS_HOMEDIR}configs/modernizr.json`;
-var __PATHS_CONFIG_INTERNAL = `./${__PATHS_HOMEDIR}configs/.hidden-internal.json`;
-var __PATHS_CONFIG_CSSCOMB = `./${__PATHS_HOMEDIR}configs/csscomb.json`;
-var __PATHS_CONFIG_APP = `./${__PATHS_HOMEDIR}configs/app.json`;
-
-// paths:FAVICONS
-// file where the favicon markups are stored
-var __PATHS_FAVICON_DEST = `${__PATHS_HOMEDIR}favicon/`;
-var __PATHS_FAVICON_MASTER_PIC = `./${__PATHS_HOMEDIR}docs/brand/img/leaf-900.png`;
-var __PATHS_FAVICON_ROOT_ICO = `./${__PATHS_HOMEDIR}favicon/favicon.ico`;
-var __PATHS_FAVICON_ROOT_PNG = `./${__PATHS_HOMEDIR}favicon/apple-touch-icon.png`;
-var __PATHS_FAVICON_ROOT_CONFIG = `./${__PATHS_HOMEDIR}favicon/browserconfig.xml`;
-var __PATHS_FAVICON_ROOT_MANIFEST = `./${__PATHS_HOMEDIR}favicon/manifest.json`;
-var __PATHS_FAVICON_HTML = `./${__PATHS_HOMEDIR}html/source/head/favicon.html`;
-var __PATHS_FAVICON_HTML_DEST = `./${__PATHS_HOMEDIR}html/source/head/`;
-
-// paths:OTHER
-var __PATHS_GIT = ".git/";
-var __PATHS_GITHEAD = ".git/HEAD";
-var __PATHS_README = "README.md";
-var __PATHS_README_HTML = "README.html";
-var __PATHS_ALLFILES = "**/*.*";
-var __PATHS_FILES_BEAUTIFY = "**/*.{html,css,js,json}";
-var __PATHS_FILES_BEAUTIFY_EXCLUDE_MIN = "!**/*.min.*";
-var __PATHS_FILES_MIN = "**/*.min.*";
-// exclude all test files from any directory
-var __PATHS_FILES_TEST = "!**/test/**";
-// exclude all vendor files from any directory
-var __PATHS_NOT_VENDOR = "!**/vendor/**";
-var __PATHS_NODE_MODULES_NAME = "node_modules/";
-var __PATHS_NODE_MODULES = "./node_modules/";
-var __PATHS_VENDOR_MODERNIZR = `./${__PATHS_HOMEDIR}js/vendor/modernizr/`;
-var __PATHS_MODERNIZR_FILE = "modernizr.js";
+// get individual plugin settings
+var $app = $settings[$paths.config_app];
+var $ap = $settings[$paths.config_autoprefixer];
+var $browsersync = $settings[$paths.config_browsersync];
+var $bundles = $settings[$paths.config_bundles];
+// var $csscomb = $settings[$paths.config_csscomb];
+// var $favicondata = $settings[$paths.config_favicondata];
+var $findfreeport = $settings[$paths.config_findfreeport];
+var $jsbeautify = $settings[$paths.config_jsbeautify];
+var $json_format = $settings[$paths.config_json_format];
+var $modernizr = $settings[$paths.config_modernizr];
+var $open = $settings[$paths.config_open];
+var $perfectionist = $settings[$paths.config_perfectionist];
+var $prettier = $settings[$paths.config_prettier];
 
 //#! vars.js -- ./gulp/source/vars.js
 
-// dynamic configuration files (load via json-file to modify later)
-var config_internal = json.read(__PATHS_CONFIG_INTERNAL);
-
-// static configuration files (just need to read file)
-var config_gulp_bundles = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_BUNDLES)
-    .toString());
-var config_gulp_plugins = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_GULP_PLUGINS)
-    .toString());
-var config_jsbeautify = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_JSBEAUTIFY)
-    .toString());
-var config_modernizr = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_MODERNIZR)
-    .toString());
-var config_app = jsonc.parse(fs.readFileSync(__PATHS_CONFIG_APP)
-    .toString());
-
-// plugin options
-var opts_ap = config_gulp_plugins.autoprefixer;
-var opts_bs = config_gulp_plugins.browsersync;
-var opts_ffp = config_gulp_plugins.find_free_port;
-var json_format = config_gulp_plugins.json_format;
-var json_spaces = json_format.indent_size;
+// get JSON indentation size
+var jindent = $json_format.indent_size;
 
 // bundles
-var bundle_html = config_gulp_bundles.html;
-var bundle_css = config_gulp_bundles.css;
-var bundle_js = config_gulp_bundles.js;
-var bundle_img = config_gulp_bundles.img;
-var bundle_gulp = config_gulp_bundles.gulp;
-var bundle_dist = config_gulp_bundles.dist;
-var bundle_lib = config_gulp_bundles.lib;
+var bundle_html = $bundles.html;
+var bundle_css = $bundles.css;
+var bundle_js = $bundles.js;
+// var bundle_img = $bundles.img;
+var bundle_gulp = $bundles.gulp;
+var bundle_dist = $bundles.dist;
+var bundle_lib = $bundles.lib;
 
 // app directory information
-var INDEX = config_app.index;
-var BASE = config_app.base;
-var ROOTDIR = path.basename(path.resolve(__PATHS_DIRNAME)) + "/";
+var INDEX = $app.index;
+var BASE = $app.base;
+var ROOTDIR = path.basename(path.resolve($paths.dirname)) + "/";
 var APPDIR = BASE + ROOTDIR;
+var EOL = $app.eol;
+var EOL_ENDING = EOL.ending;
+var EOL_STYLE = EOL.style;
 
 // internal information
-var APPTYPE = config_internal.get("apptype");
+var APPTYPE = $internal.get("apptype");
 
 // project utils
-var utils = require(__PATHS_GULP_UTILS);
-var color = utils.color;
+var utils = require($paths.gulp_utils);
 var log = utils.log;
-var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var uri = utils.uri;
 var browser = utils.browser;
 
 // create browsersync server
-var bs = browser_sync.create(opts_bs.server_name);
+var bs = browser_sync.create($browsersync.server_name);
 
 // get current branch name
 var branch_name;
 
 // remove options
 var opts_remove = {
-    read: false,
-    cwd: __PATHS_BASE
+	read: false,
+	cwd: $paths.base
 };
 
 // gulp-sort custom sort function
 var opts_sort = {
-    // sort based on dirname alphabetically
-    comparator: function(file1, file2) {
-        var dir1 = path.dirname(file1.path);
-        var dir2 = path.dirname(file2.path);
-        if (dir1 > dir2) return 1;
-        if (dir1 < dir2) return -1;
-        return 0;
-    }
+	// sort based on dirname alphabetically
+	comparator: function(file1, file2) {
+		var dir1 = path.dirname(file1.path);
+		var dir2 = path.dirname(file2.path);
+		if (dir1 > dir2) return 1;
+		if (dir1 < dir2) return -1;
+		return 0;
+	}
 };
 
 //#! injection.js -- ./gulp/source/injection.js
 
 // HTML injection variable object
 var html_injection = {
-    "css_bundle_app": __PATHS_CSS_BUNDLES + bundle_css.source.names.main,
-    "css_bundle_vendor": __PATHS_CSS_BUNDLES + bundle_css.vendor.names.main,
-    "js_bundle_app": __PATHS_JS_BUNDLES + bundle_js.source.names.main,
-    "js_bundle_vendor": __PATHS_JS_BUNDLES + bundle_js.vendor.names.main
+	css_bundle_app: $paths.css_bundles + bundle_css.source.names.main,
+	css_bundle_vendor: $paths.css_bundles + bundle_css.vendor.names.main,
+	js_bundle_app: $paths.js_bundles + bundle_js.source.names.main,
+	js_bundle_vendor: $paths.js_bundles + bundle_js.vendor.names.main
 };
 
 //#! functions.js -- ./gulp/source/functions.js
@@ -237,25 +164,29 @@ var html_injection = {
  * @return {Undefined}          [Nothing is returned.]
  */
 function open_file_in_browser(filepath, port, callback, task) {
-    pump([gulp.src(filepath, {
-            cwd: __PATHS_BASE,
-            dot: true
-        }),
-        $.open({
-            app: browser,
-            uri: uri({
-                "appdir": APPDIR,
-                "filepath": filepath,
-                "port": port,
-                "https": config_gulp_plugins.open.https
-            })
-        }),
-        // modify debug to take a flag to skip the use of the cli-spinner
-        // $.debug()
-    ], function() {
-        notify("File opened!");
-        callback();
-    });
+	pump(
+		[
+			gulp.src(filepath, {
+				cwd: $paths.base,
+				dot: true
+			}),
+			$.open({
+				app: browser,
+				uri: uri({
+					appdir: APPDIR,
+					filepath: filepath,
+					port: port,
+					https: $open.https
+				})
+			})
+			// modify debug to take a flag to skip the use of the cli-spinner
+			// $.debug()
+		],
+		function() {
+			notify("File opened!");
+			callback();
+		}
+	);
 }
 
 /**
@@ -263,7 +194,11 @@ function open_file_in_browser(filepath, port, callback, task) {
  * @return {Undefined} 			[Nothing is returned.]
  */
 function gulp_check_warn() {
-    log(chalk.red("Task cannot be performed while Gulp is running. Close Gulp then try again."));
+	log(
+		chalk.red(
+			"Task cannot be performed while Gulp is running. Close Gulp then try again."
+		)
+	);
 }
 
 /**
@@ -274,42 +209,42 @@ function gulp_check_warn() {
  * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
  */
 function print_tasks(tasks, verbose, filter) {
+	tasks = tasks.filterHidden(verbose).sort();
 
-    tasks = tasks.filterHidden(verbose)
-        .sort();
+	// determine the header
+	var header = filter ? "Filtered" : "Tasks";
+	var results = ["", chalk.underline.bold(header), ""];
+	var help_doc = ["", chalk.underline.bold("Help"), ""];
 
-    // determine the header
-    var header = (filter ? "Filtered" : "Tasks");
-    var results = ["", chalk.underline.bold(header), ""];
-    var help_doc = ["", chalk.underline.bold("Help"), ""];
+	var field_task_len = tasks.getLongestNameLength();
 
-    var field_task_len = tasks.getLongestNameLength();
+	tasks.forEach(function(task) {
+		// help task will always be placed before all other tasks
+		// to always have its documentation present.
+		var is_help_task = task.name === "help";
+		// determine the correct array to reference
+		var array_ref = is_help_task ? help_doc : results;
 
-    tasks.forEach(function(task) {
+		var comment = task.comment || {};
+		var lines = comment.lines || [];
 
-        // help task will always be placed before all other tasks
-        // to always have its documentation present.
-        var is_help_task = (task.name === "help");
-        // determine the correct array to reference
-        var array_ref = (is_help_task ? help_doc : results);
+		array_ref.push(
+			format_column(task.name, field_task_len) + (lines[0] || "")
+		);
+		// only print verbose documentation when flag is provided
+		if (verbose || is_help_task) {
+			for (var i = 1; i < lines.length; i++) {
+				array_ref.push(
+					format_column("", field_task_len) + "  " + lines[i]
+				);
+				if (verbose && i === lines.length - 1) array_ref.push("\n");
+			}
+		}
+	});
 
-        var comment = task.comment || {};
-        var lines = comment.lines || [];
+	if (!verbose) results.push("\n");
 
-        array_ref.push(format_column(task.name, field_task_len) + (lines[0] || ""));
-        // only print verbose documentation when flag is provided
-        if (verbose || is_help_task) {
-            for (var i = 1; i < lines.length; i++) {
-                array_ref.push(format_column("", field_task_len) + "  " + lines[i]);
-                if (verbose && i === lines.length - 1) array_ref.push("\n");
-            }
-        }
-    });
-
-    if (!verbose) results.push("\n");
-
-    return help_doc.concat(results)
-        .join("\n");
+	return help_doc.concat(results).join("\n");
 }
 
 /**
@@ -322,12 +257,14 @@ function print_tasks(tasks, verbose, filter) {
  * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
  */
 function format_column(text, width, offset_left, offset_right) {
-    offset_left = undefined !== offset_left ? offset_left : 3;
-    offset_right = undefined !== offset_right ? offset_right : 3;
-    return new Array(offset_left + 1)
-        .join(" ") + chalk.magenta(text) + new Array(Math.max(width - text.length, 0) + 1)
-        .join(" ") + new Array(offset_right + 1)
-        .join(" ");
+	offset_left = undefined !== offset_left ? offset_left : 3;
+	offset_right = undefined !== offset_right ? offset_right : 3;
+	return (
+		new Array(offset_left + 1).join(" ") +
+		chalk.magenta(text) +
+		new Array(Math.max(width - text.length, 0) + 1).join(" ") +
+		new Array(offset_right + 1).join(" ")
+	);
 }
 
 /**
@@ -336,7 +273,7 @@ function format_column(text, width, offset_left, offset_right) {
  * @return {String}        [The new string with bang added.]
  */
 function bangify(string) {
-    return "!" + (string || "");
+	return "!" + (string || "");
 }
 
 /**
@@ -345,75 +282,126 @@ function bangify(string) {
  * @return {String}        [The new string with added pattern.]
  */
 function globall(string) {
-    return (string || "") + "**";
+	return (string || "") + "**";
 }
 
 /**
  * @description [Returns the provided file's extension or checks it against the provided extension type.]
  * @param  {Object} file [The Gulp file object.]
- * @param  {String} type [The optional extension type to check against.]
+ * @param  {Array} types [The optional extension type(s) to check against.]
  * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
  */
-function ext(file, type) {
-    // when no file exists return an empty string
-    if (!file) return "";
+function ext(file, types) {
+	// when no file exists return an empty string
+	if (!file) return "";
 
-    // get the file extname
-    var extname = path.extname(file.path)
-        .toLowerCase();
+	// get the file extname
+	var extname = path
+		.extname(file.path)
+		.toLowerCase()
+		.replace(/^\./, "");
 
-    // simply return the extname when no type is
-    // provided to check against.
-    if (!type) return extname;
+	// simply return the extname when no type is
+	// provided to check against.
+	if (!types) return extname;
 
-    // else when a type is provided check against it
-    return (extname.slice(1) === type.toLowerCase());
+	// else when a type is provided check against it
+	return Boolean(-~types.indexOf(extname));
 }
 
 // check for the usual file types
 ext.ishtml = function(file) {
-    return ext(file, "html");
+	return ext(file, ["html"]);
 };
 ext.iscss = function(file) {
-    return ext(file, "css");
+	return ext(file, ["css"]);
 };
 ext.isjs = function(file) {
-    return ext(file, "js");
+	return ext(file, ["js"]);
 };
 ext.isjson = function(file) {
-    return ext(file, "json");
+	return ext(file, ["json"]);
 };
+
+/**
+ * @description  [Recursively fill-in the placeholders in each path contained
+ *               in the provided paths object.]
+ * @param  {Object} $paths [Object containing the paths.]
+ * @return {Object}           [The object with paths filled-in.]
+ */
+function expand_paths($paths) {
+	// path placeholders substitutes. these paths will also get added to the
+	// paths object after substitution down below.
+	var paths_subs_ = {
+		// paths::BASES
+		del: "/",
+		base: "./",
+		base_dot: ".",
+		dirname: __dirname,
+		cwd: process.cwd(),
+		homedir: "" // "assets/"
+	};
+
+	var replacer = function(match) {
+		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
+		return replacement !== undefined ? replacement : undefined;
+	};
+	// recursively replace all the placeholders
+	for (var key in $paths) {
+		if ($paths.hasOwnProperty(key)) {
+			var __path = $paths[key];
+
+			// find all the placeholders
+			while (/\$\{.*?\}/g.test(__path)) {
+				__path = __path.replace(/\$\{.*?\}/g, replacer);
+			}
+			// reset the substituted string back in the $paths object
+			$paths[key] = __path;
+		}
+	}
+
+	// add the subs to the paths object
+	for (var key in paths_subs_) {
+		if (paths_subs_.hasOwnProperty(key)) {
+			$paths[key] = paths_subs_[key];
+		}
+	}
+
+	// filled-in paths
+	return $paths;
+}
 
 //#! init.js -- ./gulp/source/tasks/init.js
 
 // when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
-require("node-cleanup")(function(exit_code, signal) {
+var cleanup = require("node-cleanup");
+cleanup(function(exit_code, signal) {
+	var alphabetize = require("alphabetize-object-keys");
 
-    var alphabetize = require("alphabetize-object-keys");
+	// check for current Gulp process
+	var pid = $internal.get("pid");
 
-    // check for current Gulp process
-    var pid = config_internal.get("pid");
+	// only perform this cleanup when the Gulp instance is closed.
+	// when any other task is run the cleanup should not be done.
+	// [https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html]
 
-    // only perform this cleanup when the Gulp instance is closed.
-    // when any other task is run the cleanup should not be done.
-    // [https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html]
-
-    if (pid && signal) { // Gulp instance exists so cleanup
-        // clear gulp internal configuration keys
-        config_internal.set("pid", null);
-        config_internal.set("ports", null);
-        config_internal.data = alphabetize(config_internal.data);
-        config_internal.writeSync(null, json_spaces);
-        // cleanup vars, process
-        branch_name = undefined;
-        if (bs) bs.exit();
-        if (process) {
-            process.exit();
-            if (signal) process.kill(pid, signal);
-        }
-        cleanup.uninstall(); // don't call cleanup handler again
-        return false;
-    }
+	if (pid && signal) {
+		// Gulp instance exists so cleanup
+		// clear gulp internal configuration keys
+		$internal.set("pid", null);
+		$internal.set("ports", null);
+		$internal.data = alphabetize($internal.data);
+		$internal.writeSync(null, jindent);
+		// cleanup vars, process
+		branch_name = undefined;
+		if (bs) bs.exit();
+		if (process) {
+			process.exit();
+			if (signal) process.kill(pid, signal);
+		}
+		cleanup.uninstall(); // don't call cleanup handler again
+		return false;
+	}
 });
 
 // update the status of gulp to active. this will write the current gulp
@@ -421,10 +409,15 @@ require("node-cleanup")(function(exit_code, signal) {
 // prevent another Gulp instance from being opened.
 // @internal
 gulp.task("init:save-pid", function(done) {
-    config_internal.set("pid", process.pid); // set the status
-    config_internal.write(function() { // save changes to file
-        done();
-    }, null, json_spaces);
+	$internal.set("pid", process.pid); // set the status
+	$internal.write(
+		function() {
+			// save changes to file
+			done();
+		},
+		null,
+		jindent
+	);
 });
 
 // watch for git branch changes:
@@ -435,49 +428,67 @@ gulp.task("init:save-pid", function(done) {
 // to resume gulp simply restart with the gulp command.
 // @internal
 gulp.task("init:watch-git-branch", function(done) {
+	var git = require("git-state");
 
-    var git = require("git-state");
-
-    git.isGit(__PATHS_DIRNAME, function(exists) {
-        // if no .git exists simply ignore and return done
-        if (!exists) return done();
-        git.check(__PATHS_DIRNAME, function(err, result) {
-            if (err) throw err;
-            // record branch name
-            branch_name = result.branch;
-            // set the gulp watcher as .git exists
-            gulp.watch([__PATHS_GITHEAD], {
-                cwd: __PATHS_BASE,
-                dot: true
-            }, function() {
-                var brn_current = git.checkSync(__PATHS_DIRNAME)
-                    .branch;
-                if (branch_name) log(chalk.yellow("(pid:" + process.pid + ")"), "Gulp monitoring", chalk.green(branch_name), "branch.");
-                if (brn_current !== branch_name) {
-                    // message + exit
-                    log("Gulp stopped due to branch switch. (", chalk.green(branch_name), "=>", chalk.yellow(brn_current), ")");
-                    log("Restart Gulp to monitor", chalk.yellow(brn_current), "branch.");
-                    process.exit();
-                }
-            });
-            done();
-        });
-    });
+	git.isGit($paths.dirname, function(exists) {
+		// if no .git exists simply ignore and return done
+		if (!exists) return done();
+		git.check($paths.dirname, function(err, result) {
+			if (err) throw err;
+			// record branch name
+			branch_name = result.branch;
+			// set the gulp watcher as .git exists
+			gulp.watch(
+				[$paths.githead],
+				{
+					cwd: $paths.base,
+					dot: true
+				},
+				function() {
+					var brn_current = git.checkSync($paths.dirname).branch;
+					if (branch_name)
+						log(
+							chalk.yellow("(pid:" + process.pid + ")"),
+							"Gulp monitoring",
+							chalk.green(branch_name),
+							"branch."
+						);
+					if (brn_current !== branch_name) {
+						// message + exit
+						log(
+							"Gulp stopped due to branch switch. (",
+							chalk.green(branch_name),
+							"=>",
+							chalk.yellow(brn_current),
+							")"
+						);
+						log(
+							"Restart Gulp to monitor",
+							chalk.yellow(brn_current),
+							"branch."
+						);
+						process.exit();
+					}
+				}
+			);
+			done();
+		});
+	});
 });
 
 // build app files
 // @internal
 gulp.task("init:build", function(done) {
-    var task = this;
-    // get the gulp build tasks
-    var tasks = bundle_gulp.tasks;
-    // add callback to the sequence
-    tasks.push(function() {
-        notify("Build complete");
-        done();
-    });
-    // apply the tasks and callback to sequence
-    return sequence.apply(task, tasks);
+	var task = this;
+	// get the gulp build tasks
+	var tasks = bundle_gulp.tasks;
+	// add callback to the sequence
+	tasks.push(function() {
+		notify("Build complete");
+		done();
+	});
+	// apply the tasks and callback to sequence
+	return sequence.apply(task, tasks);
 });
 
 /**
@@ -493,55 +504,77 @@ gulp.task("init:build", function(done) {
  * $ gulp --stop # Stops active Gulp process, if running.
  */
 gulp.task("default", function(done) {
+	var find_free_port = require("find-free-port");
 
-    var find_free_port = require("find-free-port");
+	var args = yargs.argv; // get cli parameters
 
-    var args = yargs.argv; // get cli parameters
+	if (args.s || args.stop) {
+		// end the running Gulp process
 
-    if (args.s || args.stop) { // end the running Gulp process
+		// get pid, if any
+		var pid = $internal.get("pid");
+		if (pid) {
+			// kill the open process
+			log(chalk.green("Gulp process stopped."));
+			process.kill(pid);
+		} else {
+			// no open process exists
+			log("No Gulp process exists.");
+		}
 
-        // get pid, if any
-        var pid = config_internal.get("pid");
-        if (pid) { // kill the open process
-            log(chalk.green("Gulp process stopped."));
-            process.kill(pid);
-        } else { // no open process exists
-            log("No Gulp process exists.");
-        }
+		return done();
+	} else {
+		// start up Gulp like normal
 
-        return done();
+		return find_free_port(
+			$findfreeport.range.start,
+			$findfreeport.range.end,
+			$findfreeport.ip,
+			$findfreeport.count,
+			function(err, p1, p2) {
+				// get pid, if any
+				var pid = $internal.get("pid");
+				// if there is a pid present it means a Gulp instance has already started.
+				// therefore, prevent another from starting.
+				if (pid) {
+					log(
+						chalk.yellow(
+							"A Gulp instance is already running",
+							chalk.yellow("(pid:" + pid + ")") + ".",
+							"Stop that instance before starting a new one."
+						)
+					);
+					return done();
+				}
 
-    } else { // start up Gulp like normal
+				// store the ports
+				$internal.set("ports", {
+					local: p1,
+					ui: p2
+				});
 
-        return find_free_port(opts_ffp.port_range.start, opts_ffp.port_range.end, opts_ffp.ip, opts_ffp.port_count, function(err, p1, p2) {
-            // get pid, if any
-            var pid = config_internal.get("pid");
-            // if there is a pid present it means a Gulp instance has already started.
-            // therefore, prevent another from starting.
-            if (pid) {
-                log(chalk.yellow("A Gulp instance is already running", chalk.yellow("(pid:" + pid + ")") + ".", "Stop that instance before starting a new one."));
-                return done();
-            }
-
-            // store the ports
-            config_internal.set("ports", {
-                "local": p1,
-                "ui": p2
-            });
-
-            // save ports
-            config_internal.write(function() {
-                // store ports on the browser-sync object itself
-                bs.__ports__ = [p1, p2]; // [app, ui]
-                // after getting the free ports, finally run the build task
-                return sequence("init:save-pid", "init:watch-git-branch", "init:build", "watch:main", function() {
-                    done();
-                });
-            }, null, json_spaces);
-
-        });
-
-    }
+				// save ports
+				$internal.write(
+					function() {
+						// store ports on the browser-sync object itself
+						bs._ports_ = [p1, p2]; // [app, ui]
+						// after getting the free ports, finally run the build task
+						return sequence(
+							"init:save-pid",
+							"init:watch-git-branch",
+							"init:build",
+							"watch:main",
+							function() {
+								done();
+							}
+						);
+					},
+					null,
+					jindent
+				);
+			}
+		);
+	}
 });
 
 //#! dist.js -- ./gulp/source/tasks/dist.js
@@ -549,103 +582,127 @@ gulp.task("default", function(done) {
 // remove old dist / folder
 // @internal
 gulp.task("dist:clean", function(done) {
-    var task = this;
-    pump([gulp.src(__PATHS_DIST_HOME, opts_remove),
-        $.debug.clean(),
-        $.clean()
-    ], done);
+	var task = this;
+	pump(
+		[gulp.src($paths.dist_home, opts_remove), $.debug.clean(), $.clean()],
+		done
+	);
 });
 
 // copy new file/folders
 // @internal
 gulp.task("dist:favicon", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_dist.source.files.favicon, {
-            dot: true,
-            cwd: __PATHS_BASE,
-            // https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
-            base: __PATHS_BASE_DOT
-        }),
-    	$.debug(),
-    	gulp.dest(__PATHS_DIST_HOME),
-    	$.debug.edit()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_dist.source.files.favicon, {
+				dot: true,
+				cwd: $paths.base,
+				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
+				base: $paths.base_dot
+			}),
+			$.debug(),
+			gulp.dest($paths.dist_home),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 // @internal
 gulp.task("dist:css", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_dist.source.files.css, {
-            dot: true,
-            cwd: __PATHS_BASE,
-            base: __PATHS_BASE_DOT
-        }),
-		$.debug(),
-		$.gulpif(ext.iscss, $.clean_css()),
-    	gulp.dest(__PATHS_DIST_HOME),
-    	$.debug.edit()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_dist.source.files.css, {
+				dot: true,
+				cwd: $paths.base,
+				base: $paths.base_dot
+			}),
+			$.debug(),
+			$.gulpif(ext.iscss, $.clean_css()),
+			gulp.dest($paths.dist_home),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 // @internal
 gulp.task("dist:img", function(done) {
-    var task = this;
-    // need to copy hidden files/folders?
-    // [https://github.com/klaascuvelier/gulp-copy/issues/5]
-    pump([gulp.src(bundle_dist.source.files.img, {
-            dot: true,
-            cwd: __PATHS_BASE,
-            base: __PATHS_BASE_DOT
-        }),
-		$.cache($.imagemin([
-            $.imagemin.gifsicle({
-                interlaced: true
-            }),
-            $.imagemin.jpegtran({
-                progressive: true
-            }),
-            $.imagemin.optipng({
-                optimizationLevel: 5
-            }),
-            $.imagemin.svgo({
-                plugins: [{
-                    removeViewBox: true
-                }]
-            })
-        ])),
-    	gulp.dest(__PATHS_DIST_HOME),
-		$.debug.edit()
-    ], done);
+	var task = this;
+	// need to copy hidden files/folders?
+	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
+	pump(
+		[
+			gulp.src(bundle_dist.source.files.img, {
+				dot: true,
+				cwd: $paths.base,
+				base: $paths.base_dot
+			}),
+			$.cache(
+				$.imagemin([
+					$.imagemin.gifsicle({
+						interlaced: true
+					}),
+					$.imagemin.jpegtran({
+						progressive: true
+					}),
+					$.imagemin.optipng({
+						optimizationLevel: 5
+					}),
+					$.imagemin.svgo({
+						plugins: [
+							{
+								removeViewBox: true
+							}
+						]
+					})
+				])
+			),
+			gulp.dest($paths.dist_home),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 // @internal
 gulp.task("dist:js", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_dist.source.files.js, {
-            dot: true,
-            cwd: __PATHS_BASE,
-            base: __PATHS_BASE_DOT
-        }),
-		$.debug(),
-    	$.gulpif(ext.isjs, $.uglify()),
-    	gulp.dest(__PATHS_DIST_HOME),
-		$.debug.edit()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_dist.source.files.js, {
+				dot: true,
+				cwd: $paths.base,
+				base: $paths.base_dot
+			}),
+			$.debug(),
+			$.gulpif(ext.isjs, $.uglify()),
+			gulp.dest($paths.dist_home),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 // @internal
 gulp.task("dist:root", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_dist.source.files.root, {
-            dot: true,
-            cwd: __PATHS_BASE,
-            base: __PATHS_BASE_DOT
-        }),
-    	$.debug(),
-    	$.gulpif(ext.ishtml, $.minify_html()),
-    	gulp.dest(__PATHS_DIST_HOME),
-    	$.debug.edit()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_dist.source.files.root, {
+				dot: true,
+				cwd: $paths.base,
+				base: $paths.base_dot
+			}),
+			$.debug(),
+			$.gulpif(ext.ishtml, $.minify_html()),
+			gulp.dest($paths.dist_home),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 /**
@@ -656,21 +713,21 @@ gulp.task("dist:root", function(done) {
  * $ gulp dist # Create dist/ folder.
  */
 gulp.task("dist", function(done) {
-    var task = this;
-    if (APPTYPE !== "webapp") {
-        log("This helper task is only available for webapp projects.");
-        return done();
-    }
-    // get the gulp build tasks
-    var tasks = bundle_dist.tasks;
-    // add callback to the sequence
-    tasks.push(function() {
-        notify("Distribution folder complete.");
-        log("Distribution folder complete.");
-        done();
-    });
-    // apply the tasks and callback to sequence
-    return sequence.apply(task, tasks);
+	var task = this;
+	if (APPTYPE !== "webapp") {
+		log("This helper task is only available for webapp projects.");
+		return done();
+	}
+	// get the gulp build tasks
+	var tasks = bundle_dist.tasks;
+	// add callback to the sequence
+	tasks.push(function() {
+		notify("Distribution folder complete.");
+		log("Distribution folder complete.");
+		done();
+	});
+	// apply the tasks and callback to sequence
+	return sequence.apply(task, tasks);
 });
 
 //#! lib.js -- ./gulp/source/tasks/lib.js
@@ -678,32 +735,36 @@ gulp.task("dist", function(done) {
 // remove old lib/ folder
 // @internal
 gulp.task("lib:clean", function(done) {
-    var task = this;
-    pump([gulp.src(__PATHS_LIB_HOME, opts_remove),
-        $.debug.clean(),
-        $.clean()
-    ], done);
+	var task = this;
+	pump(
+		[gulp.src($paths.lib_home, opts_remove), $.debug.clean(), $.clean()],
+		done
+	);
 });
 
 // @internal
 gulp.task("lib:js", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_js.source.files, {
-            nocase: true,
-            cwd: __PATHS_JS_SOURCE
-        }),
-    	// filter out all but test files (^test*/i)
-		$.filter([__PATHS_ALLFILES, __PATHS_FILES_TEST]),
-		$.debug(),
-        $.concat(bundle_js.source.names.libs.main),
-        $.beautify(config_jsbeautify),
-        gulp.dest(__PATHS_LIB_HOME),
-        $.debug.edit(),
-        $.uglify(),
-        $.rename(bundle_js.source.names.libs.min),
-		gulp.dest(__PATHS_LIB_HOME),
-        $.debug.edit()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_js.source.files, {
+				nocase: true,
+				cwd: $paths.js_source
+			}),
+			// filter out all but test files (^test*/i)
+			$.filter([$paths.allfiles, $paths.files_test]),
+			$.debug(),
+			$.concat(bundle_js.source.names.libs.main),
+			$.prettier($prettier),
+			gulp.dest($paths.lib_home),
+			$.debug.edit(),
+			$.uglify(),
+			$.rename(bundle_js.source.names.libs.min),
+			gulp.dest($paths.lib_home),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 /**
@@ -714,21 +775,21 @@ gulp.task("lib:js", function(done) {
  * $ gulp lib # Create lib/ folder.
  */
 gulp.task("lib", function(done) {
-    var task = this;
-    if (APPTYPE !== "library") {
-        log("This helper task is only available for library projects.");
-        return done();
-    }
-    // get the gulp build tasks
-    var tasks = bundle_lib.tasks;
-    // add callback to the sequence
-    tasks.push(function() {
-        notify("Library folder complete.");
-        log("Library folder complete.");
-        done();
-    });
-    // apply the tasks and callback to sequence
-    return sequence.apply(task, tasks);
+	var task = this;
+	if (APPTYPE !== "library") {
+		log("This helper task is only available for library projects.");
+		return done();
+	}
+	// get the gulp build tasks
+	var tasks = bundle_lib.tasks;
+	// add callback to the sequence
+	tasks.push(function() {
+		notify("Library folder complete.");
+		log("Library folder complete.");
+		done();
+	});
+	// apply the tasks and callback to sequence
+	return sequence.apply(task, tasks);
 });
 
 //#! watch.js -- ./gulp/source/tasks/watch.js
@@ -736,93 +797,126 @@ gulp.task("lib", function(done) {
 // watch for files changes
 // @internal
 gulp.task("watch:main", function(done) {
+	// add auto tab closing capability to browser-sync. this will
+	// auto close the used bs tabs when gulp closes.
+	bs.use({
+		plugin() {},
+		hooks: {
+			"client:js": bs_autoclose
+		}
+	});
 
-    // add auto tab closing capability to browser-sync. this will
-    // auto close the used bs tabs when gulp closes.
-    bs.use({
-        plugin() {},
-        hooks: {
-            "client:js": bs_autoclose
-        }
-    });
+	// start browser-sync
+	bs.init(
+		{
+			browser: browser,
+			proxy: uri({
+				appdir: APPDIR,
+				filepath: INDEX,
+				https: $open.https
+			}), // "markdown/preview/README.html"
+			port: bs._ports_[0],
+			ui: {
+				port: bs._ports_[1]
+			},
+			notify: false,
+			open: true
+		},
+		function() {
+			// gulp watcher paths
+			var watch_paths = bundle_gulp.watch;
 
-    // start browser-sync
-    bs.init({
+			// watch for any changes to HTML files
+			gulp.watch(
+				watch_paths.html,
+				{
+					cwd: $paths.html_source
+				},
+				function() {
+					return sequence("html:main");
+				}
+			);
 
-        browser: browser,
-        proxy: uri({
-            "appdir": APPDIR,
-            "filepath": INDEX,
-            "https": config_gulp_plugins.open.https
-        }), // "markdown/preview/README.html"
-        port: bs.__ports__[0],
-        ui: {
-            port: bs.__ports__[1]
-        },
-        notify: false,
-        open: true
+			// watch for any changes to CSS Source files
+			gulp.watch(
+				watch_paths.css.source,
+				{
+					cwd: $paths.css_source
+				},
+				function() {
+					return sequence("css:app");
+				}
+			);
 
-    }, function() {
+			// watch for any changes to CSS Lib files
+			gulp.watch(
+				watch_paths.css.vendor,
+				{
+					cwd: $paths.css_vendor
+				},
+				function() {
+					return sequence("css:vendor");
+				}
+			);
 
-        // gulp watcher paths
-        var watch_paths = bundle_gulp.watch;
+			// watch for any changes to JS Source files
+			gulp.watch(
+				watch_paths.js.source,
+				{
+					cwd: $paths.js_source
+				},
+				function() {
+					return sequence("js:app");
+				}
+			);
 
-        // watch for any changes to HTML files
-        gulp.watch(watch_paths.html, {
-            cwd: __PATHS_HTML_SOURCE
-        }, function() {
-            return sequence("html:main");
-        });
+			// watch for any changes to JS Lib files
+			gulp.watch(
+				watch_paths.js.vendor,
+				{
+					cwd: $paths.js_vendor
+				},
+				function() {
+					return sequence("js:vendor");
+				}
+			);
 
-        // watch for any changes to CSS Source files
-        gulp.watch(watch_paths.css.source, {
-            cwd: __PATHS_CSS_SOURCE
-        }, function() {
-            return sequence("css:app");
-        });
+			// watch for any changes to IMG files
+			gulp.watch(
+				watch_paths.img,
+				{
+					cwd: $paths.img_source
+				},
+				function() {
+					return sequence("img:main");
+				}
+			);
 
-        // watch for any changes to CSS Lib files
-        gulp.watch(watch_paths.css.vendor, {
-            cwd: __PATHS_CSS_VENDOR
-        }, function() {
-            return sequence("css:vendor");
-        });
+			// watch for any changes to config files
+			gulp.watch(
+				$paths.config_settings_json_files,
+				{
+					cwd: $paths.base
+				},
+				function() {
+					return sequence("settings");
+				}
+			);
 
-        // watch for any changes to JS Source files
-        gulp.watch(watch_paths.js.source, {
-            cwd: __PATHS_JS_SOURCE
-        }, function() {
-            return sequence("js:app");
-        });
+			// is the following watcher needed?
 
-        // watch for any changes to JS Lib files
-        gulp.watch(watch_paths.js.vendor, {
-            cwd: __PATHS_JS_VENDOR
-        }, function() {
-            return sequence("js:vendor");
-        });
+			// // watch for any changes to README.md
+			// gulp.watch([$paths.readme], {
+			//     cwd: $paths.base
+			// }, function() {
+			//     return sequence("tohtml", function() {
+			//         bs.reload();
+			//     });
+			// });
 
-        // watch for any changes to IMG files
-        gulp.watch(watch_paths.img, {
-            cwd: __PATHS_IMG_SOURCE
-        }, function() {
-            return sequence("img:main");
-        });
-
-        // is the following watcher needed?
-
-        // // watch for any changes to README.md
-        // gulp.watch([__PATHS_README], {
-        //     cwd: __PATHS_BASE
-        // }, function() {
-        //     return sequence("tohtml", function() {
-        //         bs.reload();
-        //     });
-        // });
-
-        done();
-
-    });
+			done();
+		}
+	);
 });
 
 //#! html.js -- ./gulp/source/tasks/html.js
@@ -830,19 +924,23 @@ gulp.task("watch:main", function(done) {
 // init HTML files + minify
 // @internal
 gulp.task("html:main", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_html.source.files, {
-            cwd: __PATHS_HTML_SOURCE
-        }),
-    	$.debug(),
-		$.concat(bundle_html.source.names.main),
-		$.injection.pre(html_injection),
-		$.beautify(config_jsbeautify),
-		$.injection.post(html_injection),
-		gulp.dest(__PATHS_BASE),
-		$.debug.edit(),
-		bs.stream()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_html.source.files, {
+				cwd: $paths.html_source
+			}),
+			$.debug(),
+			$.concat(bundle_html.source.names.main),
+			$.injection.pre(html_injection),
+			$.beautify($jsbeautify),
+			$.injection.post(html_injection),
+			gulp.dest($paths.base),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 //#! css.js -- ./gulp/source/tasks/css.js
@@ -850,65 +948,65 @@ gulp.task("html:main", function(done) {
 // build app.css + autoprefix + minify
 // @internal
 gulp.task("css:app", function(done) {
+	var unprefix = require("postcss-unprefix");
+	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
+	var shorthand = require("postcss-merge-longhand");
 
-    var unprefix = require("postcss-unprefix");
-    var autoprefixer = require("autoprefixer");
-    var shorthand = require("postcss-merge-longhand");
+	var task = this;
 
-    var task = this;
-
-    pump([gulp.src(bundle_css.source.files, {
-            cwd: __PATHS_CSS_SOURCE
-        }),
-    	$.debug(),
-        $.concat(bundle_css.source.names.main),
-        $.postcss([
-        		unprefix(),
-        		shorthand(),
-        		autoprefixer(opts_ap)
-        ]),
-        // run csscomb outside of postcss plugin to be able to use a
-        // custom config file. gulp-csscomb plugin allows the use of a
-        // custom config file. the regular csscomb plugin says it does
-        // but it does not work.
-		$.csscomb(__PATHS_CONFIG_CSSCOMB),
-        gulp.dest(__PATHS_CSS_BUNDLES),
-    	$.debug.edit(),
-        bs.stream()
-    ], done);
+	pump(
+		[
+			gulp.src(bundle_css.source.files, {
+				cwd: $paths.css_source
+			}),
+			$.debug(),
+			$.concat(bundle_css.source.names.main),
+			$.postcss([
+				unprefix(),
+				shorthand(),
+				autoprefixer($ap),
+				perfectionist($perfectionist)
+			]),
+			gulp.dest($paths.css_bundles),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 // build vendor bundle + minify + beautify
 // @internal
 gulp.task("css:vendor", function(done) {
+	var unprefix = require("postcss-unprefix");
+	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
+	var shorthand = require("postcss-merge-longhand");
 
-    var unprefix = require("postcss-unprefix");
-    var autoprefixer = require("autoprefixer");
-    var shorthand = require("postcss-merge-longhand");
+	var task = this;
 
-    var task = this;
+	// NOTE: absolute vendor library file paths should be used.
+	// The paths should be supplied in ./configs/bundles.json
+	// within the css.vendor.files array.
 
-    // NOTE: absolute vendor library file paths should be used.
-    // The paths should be supplied in ./configs/bundles.json
-    // within the css.vendor.files array.
-
-    pump([gulp.src(bundle_css.vendor.files),
-    	$.debug(),
-        $.concat(bundle_css.vendor.names.main),
-        $.postcss([
-        		unprefix(),
-        		shorthand(),
-        		autoprefixer(opts_ap)
-        ]),
-        // run csscomb outside of postcss plugin to be able to use a
-        // custom config file. gulp-csscomb plugin allows the use of a
-        // custom config file. the regular csscomb plugin says it does
-        // but it does not work.
-		$.csscomb(__PATHS_CONFIG_CSSCOMB),
-		gulp.dest(__PATHS_CSS_BUNDLES),
-    	$.debug.edit(),
-        bs.stream()
-    ], done);
+	pump(
+		[
+			gulp.src(bundle_css.vendor.files),
+			$.debug(),
+			$.concat(bundle_css.vendor.names.main),
+			$.postcss([
+				unprefix(),
+				shorthand(),
+				autoprefixer($ap),
+				perfectionist($perfectionist)
+			]),
+			gulp.dest($paths.css_bundles),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 //#! js.js -- ./gulp/source/tasks/js.js
@@ -916,36 +1014,44 @@ gulp.task("css:vendor", function(done) {
 // build app.js + minify + beautify
 // @internal
 gulp.task("js:app", function(done) {
-    var task = this;
-    pump([gulp.src(bundle_js.source.files, {
-            cwd: __PATHS_JS_SOURCE
-        }),
-    	$.debug(),
-        $.concat(bundle_js.source.names.main),
-        $.beautify(config_jsbeautify),
-        gulp.dest(__PATHS_JS_BUNDLES),
-    	$.debug.edit(),
-        bs.stream()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src(bundle_js.source.files, {
+				cwd: $paths.js_source
+			}),
+			$.debug(),
+			$.concat(bundle_js.source.names.main),
+			$.prettier($prettier),
+			gulp.dest($paths.js_bundles),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 // build vendor bundle + minify + beautify
 // @internal
 gulp.task("js:vendor", function(done) {
-    var task = this;
+	var task = this;
 
-    // NOTE: absolute vendor library file paths should be used.
-    // The paths should be supplied in ./configs/bundles.json
-    // within the js.vendor.files array.
+	// NOTE: absolute vendor library file paths should be used.
+	// The paths should be supplied in ./configs/bundles.json
+	// within the js.vendor.files array.
 
-    pump([gulp.src(bundle_js.vendor.files),
-    	$.debug(),
-        $.concat(bundle_js.vendor.names.main),
-        $.beautify(config_jsbeautify),
-        gulp.dest(__PATHS_JS_BUNDLES),
-    	$.debug.edit(),
-        bs.stream()
-    ], done);
+	pump(
+		[
+			gulp.src(bundle_js.vendor.files),
+			$.debug(),
+			$.concat(bundle_js.vendor.names.main),
+			$.prettier($prettier),
+			gulp.dest($paths.js_bundles),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 //#! img.js -- ./gulp/source/tasks/img.js
@@ -953,13 +1059,10 @@ gulp.task("js:vendor", function(done) {
 // just trigger a browser-sync stream
 // @internal
 gulp.task("img:main", function(done) {
-    var task = this;
-    // need to copy hidden files/folders?
-    // [https://github.com/klaascuvelier/gulp-copy/issues/5]
-    pump([gulp.src(__PATHS_IMG_SOURCE),
-		$.debug(),
-        bs.stream()
-    ], done);
+	var task = this;
+	// need to copy hidden files/folders?
+	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
+	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], done);
 });
 
 //#! modernizr.js -- ./gulp/source/helpers/modernizr.js
@@ -972,113 +1075,54 @@ gulp.task("img:main", function(done) {
  * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
  */
 gulp.task("modernizr", function(done) {
+	var modernizr = require("modernizr");
 
-    var modernizr = require("modernizr");
-
-    modernizr.build(config_modernizr, function(build) {
-        var file_location = __PATHS_VENDOR_MODERNIZR + __PATHS_MODERNIZR_FILE;
-        // create missing folders
-        mkdirp(__PATHS_VENDOR_MODERNIZR, function(err) {
-            if (err) throw err;
-            // save the file to vendor
-            fs.writeFile(file_location, build, function() {
-                var message = chalk.blue("Modernizr build complete. Placed in");
-                var location = chalk.green(file_location);
-                log(`${message} ${location}`);
-                done();
-            });
-        });
-    });
-});
-
-//#! purify.js -- ./gulp/source/helpers/purify.js
-
-/**
- * Purge potentially unused CSS style definitions.
- *
- * Options
- *
- * (no options)  ---------  Creates pure.css which contains only used styles.
- * -r, --remove  [boolean]  Deletes pure.css and removes unused CSS.
- * -D, --delete  [boolean]  Deletes pure.css.
- *
- * Usage
- *
- * $ gulp purify # Creates pure.css which contains only used styles.
- * $ gulp purify --remove # Deletes pure.css and removes unused CSS.
- * $ gulp purify --delete # Deletes pure.css.
- */
-gulp.task("purify", function(done) {
-    var task = this;
-    // run yargs
-    var _args = yargs.option("remove", {
-            alias: "r",
-            default: false,
-            describe: "Removes pure.css.",
-            type: "boolean"
-        })
-        .option("delete", {
-            alias: "D",
-            default: false,
-            describe: "Removes pure.css and removed unused CSS.",
-            type: "boolean"
-        })
-        .argv;
-    // get the command line arguments from yargs
-    var remove = _args.r || _args.remove;
-    var delete_file = _args.D || _args.delete;
-    // remove pure.css
-    if (remove || delete_file) del([__PATHS_PURE_FILE]);
-    // don't run gulp just delete the file.
-    if (delete_file) return done();
-    pump([gulp.src(__PATHS_USERS_CSS_FILE, {
-            cwd: __PATHS_CSS_SOURCE
-        }),
-        // modify debug to take a flag to skip the use of the cli-spinner
-		// $.debug(),
-		$.purify([__PATHS_PURIFY_JS_SOURCE_FILES, INDEX], {
-            info: true,
-            rejected: true
-        }),
-		$.gulpif(!remove, $.rename(__PATHS_PURE_FILE_NAME)),
-        $.csscomb(__PATHS_CONFIG_CSSCOMB),
-		gulp.dest(__PATHS_PURE_CSS + (remove ? __PATHS_PURE_SOURCE : "")),
-		// $.debug.edit()
-	], done);
+	modernizr.build($modernizr, function(build) {
+		var file_location = $paths.vendor_modernizr + $paths.modernizr_file;
+		// create missing folders
+		mkdirp($paths.vendor_modernizr, function(err) {
+			if (err) throw err;
+			// save the file to vendor
+			fs.writeFile(file_location, build + EOL_ENDING, function() {
+				var message = chalk.blue("Modernizr build complete. Placed in");
+				var location = chalk.green(file_location);
+				log(`${message} ${location}`);
+				done();
+			});
+		});
+	});
 });
 
 //#! tohtml.js -- ./gulp/source/helpers/tohtml.js
 
-var __markdown_styles__;
+var _markdown_styles_;
 // get the CSS markdown + prismjs styles
 // @internal
 gulp.task("tohtml:prepcss", function(done) {
-    var task = this;
+	var task = this;
 
-    var __PATHS_MARKDOWN_STYLES_GITHUB = "github-markdown.css";
-    var __PATHS_MARKDOWN_STYLES_PRISMJS = "prism-github.css";
-    var __PATHS_MARKDOWN_ASSETS = "./markdown/assets/css/";
-    var __PATHS_MARKDOWN_CONCAT_NAME = "markdown.css";
-
-    // run gulp process
-    pump([
-    	gulp.src([
-    		__PATHS_MARKDOWN_STYLES_GITHUB,
-    		__PATHS_MARKDOWN_STYLES_PRISMJS
-    	], {
-            cwd: __PATHS_MARKDOWN_ASSETS
-        }),
-        $.debug(),
-        $.concat(__PATHS_MARKDOWN_CONCAT_NAME),
-		$.modify({
-            fileModifier: function(file, contents) {
-                // store the contents in variable
-                __markdown_styles__ = contents;
-                return contents;
-            }
-        }),
-    	$.debug.edit()
-        ], done);
+	// run gulp process
+	pump(
+		[
+			gulp.src(
+				[$paths.markdown_styles_github, $paths.markdown_styles_prismjs],
+				{
+					cwd: $paths.markdown_assets
+				}
+			),
+			$.debug(),
+			$.concat($paths.markdown_concat_name),
+			$.modify({
+				fileModifier: function(file, contents) {
+					// store the contents in variable
+					_markdown_styles_ = contents;
+					return contents;
+				}
+			}),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 /**
@@ -1090,58 +1134,57 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * Notes
  *
- * - Files will get placed in ./markdown/previews/
+ * • Files will get placed in ./markdown/previews/
  *
  * Usage
  *
  * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
+	var prism = require("prismjs");
+	var prism_langs = require("prism-languages");
 
-    var prism = require("prismjs");
-    var prism_langs = require("prism-languages");
+	var task = this;
 
-    var task = this;
+	// run yargs
+	var _args = yargs.option("file", {
+		alias: "f",
+		default: "./README.md",
+		describe: "The file to convert.",
+		type: "string"
+	}).argv;
+	// get the command line arguments from yargs
+	var file_name = _args.f || _args.file;
 
-    // run yargs
-    var _args = yargs.option("file", {
-            alias: "f",
-            default: "./README.md",
-            describe: "The file to convert.",
-            type: "string"
-        })
-        .argv;
-    // get the command line arguments from yargs
-    var file_name = _args.f || _args.file;
+	// get file markdown file contents
+	// convert contents into HTML via marked
+	// inject HTML fragment into HTML markdown template
+	// save file in markdown/previews/
 
-    // get file markdown file contents
-    // convert contents into HTML via marked
-    // inject HTML fragment into HTML markdown template
-    // save file in markdown/previews/
+	// [https://github.com/krasimir/techy/issues/30]
+	// make marked use prism for syntax highlighting
+	$.marked.marked.setOptions({
+		highlight: function(code, language) {
+			// default to markup when language is undefined
+			return prism.highlight(code, prism.languages[language || "markup"]);
+		}
+	});
 
-    // [https://github.com/krasimir/techy/issues/30]
-    // make marked use prism for syntax highlighting
-    $.marked.marked.setOptions({
-        highlight: function(code, language) {
-            // default to markup when language is undefined
-            return prism.highlight(code, prism.languages[language || "markup"]);
-        }
-    });
+	// run gulp process
+	pump(
+		[
+			gulp.src(file_name),
+			$.debug(),
+			$.marked(),
+			$.modify({
+				fileModifier: function(file, contents) {
+					// path offsets
+					var fpath = "../../favicon/";
+					// get file name
+					var file_name = path.basename(file.path);
 
-    // run gulp process
-    pump([gulp.src(file_name),
-    	$.debug(),
-		$.marked(),
-		$.modify({
-            fileModifier: function(file, contents) {
-
-                // path offsets
-                var fpath = "../../favicon/";
-                // get file name
-                var file_name = path.basename(file.path);
-
-                // return filled in template
-                return `
+					// return filled in template
+					return `
 <!doctype html>
 <html lang="en">
 <head>
@@ -1161,17 +1204,19 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <meta name="msapplication-config" content="${fpath}/browserconfig.xml">
     <meta name="theme-color" content="#f6f5dd">
     <!-- https://github.com/sindresorhus/github-markdown-css -->
-	<style>${__markdown_styles__}</style>
+	<style>${_markdown_styles_}</style>
 </head>
     <body class="markdown-body">${contents}</body>
 </html>`;
-            }
-        }),
-        $.beautify(config_jsbeautify),
-		gulp.dest(__PATHS_MARKDOWN_PREVIEW),
-		$.debug.edit(),
-		bs.stream()
-        ], done);
+				}
+			}),
+			$.beautify($jsbeautify),
+			gulp.dest($paths.markdown_preview),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 //#! open.js -- ./gulp/source/helpers/open.js
@@ -1184,9 +1229,9 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  * -f, --file  <file>    The path of the file to open.
  * -p, --port  [number]  The port to open in. (Defaults to browser-sync port if available or no port)
  *
- * Note
+ * Notes
  *
- * - New tabs should be opened via the terminal using `open`. Doing so will
+ * • New tabs should be opened via the terminal using `open`. Doing so will
  * ensure the generated tab will auto-close when Gulp is closed/existed. Opening
  * tabs by typing/copy-pasting the project URL into the browser address bar will
  * not auto-close the tab(s) due to security issues as noted here:
@@ -1198,35 +1243,36 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  * $ gulp open -f index.html # Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
-    var task = this;
+	var task = this;
 
-    // run yargs
-    var _args = yargs
-        .option("file", {
-            alias: "f",
-            demandOption: true,
-            describe: "The file to open.",
-            type: "string"
-        })
-        .option("port", {
-            alias: "p",
-            demandOption: false,
-            describe: "The port to open browser in.",
-            type: "number"
-        })
-        .argv;
+	// run yargs
+	var _args = yargs
+		.option("file", {
+			alias: "f",
+			demandOption: true,
+			describe: "The file to open.",
+			type: "string"
+		})
+		.option("port", {
+			alias: "p",
+			demandOption: false,
+			describe: "The port to open browser in.",
+			type: "number"
+		}).argv;
 
-    // get the command line arguments from yargs
-    var file = _args.f || _args.file;
-    // check for explicitly provided port...if none is provided
-    // check the internally fetched free ports and get the local port
-    var port = _args.p || _args.port || (config_internal.get("ports") || {
-            "local": null
-        })
-        .local;
+	// get the command line arguments from yargs
+	var file = _args.f || _args.file;
+	// check for explicitly provided port...if none is provided
+	// check the internally fetched free ports and get the local port
+	var port =
+		_args.p ||
+		_args.port ||
+		($internal.get("ports") || {
+			local: null
+		}).local;
 
-    // run the open function
-    return open_file_in_browser(file, port, done, task);
+	// run the open function
+	return open_file_in_browser(file, port, done, task);
 });
 
 //#! instance.js -- ./gulp/source/helpers/instance.js
@@ -1239,9 +1285,13 @@ gulp.task("open", function(done) {
  * $ gulp status # Print Gulp status.
  */
 gulp.task("status", function(done) {
-    var pid = config_internal.get("pid");
-    log((pid) ? "Gulp is running. " + chalk.green(`(pid: ${pid})`) : chalk.yellow("Gulp is not running."));
-    done();
+	var pid = $internal.get("pid");
+	log(
+		pid
+			? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
+			: chalk.yellow("Gulp is not running.")
+	);
+	done();
 });
 
 /**
@@ -1252,16 +1302,19 @@ gulp.task("status", function(done) {
  * $ gulp ports # Print uses ports.
  */
 gulp.task("ports", function(done) {
-    // get the ports
-    var ports = config_internal.get("ports");
-    // if file is empty
-    if (!ports) {
-        log(chalk.yellow("No ports are in use."));
-        return done();
-    }
-    // ports exist...
-    log(chalk.green("(local, ui)"), chalk.magenta("(" + ports.local + ", " + ports.ui + ")"));
-    done();
+	// get the ports
+	var ports = $internal.get("ports");
+	// if file is empty
+	if (!ports) {
+		log(chalk.yellow("No ports are in use."));
+		return done();
+	}
+	// ports exist...
+	log(
+		chalk.green("(local, ui)"),
+		chalk.magenta("(" + ports.local + ", " + ports.ui + ")")
+	);
+	done();
 });
 
 //#! pretty.js -- ./gulp/source/helpers/pretty.js
@@ -1269,81 +1322,321 @@ gulp.task("ports", function(done) {
 /**
  * Beautify all HTML, JS, CSS, and JSON project files.
  *
- * Note
- *
- * - Ignores ./node_modules/, ./git/ and vendor/ files.
- *
  * Options
  *
- * -t, --type    [string]  The optional extension types to clean.
+ * -t, --type     [string]   The optional extension types to clean.
+ * -g, --glob     [array]    Use glob to find files to prettify.
+ * -s, --show     [boolean]  Show the used globs before prettifying.
+ * -e, --empty    [boolean]  Empty default globs array. Careful as this can prettify
+ *                           all project files. By default the node_modules/ is ignored,
+ *                           for example. Be sure to exclude files that don't need to be
+ *                           prettified.
+ *
+ * Notes
+ *
+ * • By default files in the following directories or containing the following
+ *          sub-extensions are ignored: ./node_modules/, ./git/, vendor/, .ig.,
+ *          and .min. files.
+ * • Special characters in globs provided via the CLI (--glob) might need to be
+ *          escaped if getting an error.
  *
  * Usage
  *
  * $ gulp pretty # Prettify all HTML, CSS, JS, JSON files.
  * $ gulp pretty --type "js, json" # Only prettify JS and JSON files.
+ * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
+ * $ gulp pretty --show # Halts prettifying to show the globs to be used for prettifying.
+ * $ gulp pretty --empty --glob "**\/*.js" # Flag indicating to remove default globs.
+ * $ gulp pretty --line-ending "\n" # Make files have "\n" line-ending.
  */
 gulp.task("pretty", function(done) {
-    var task = this;
-    // this task can only run when gulp is not running as gulps watchers
-    // can run too many times as many files are potentially being beautified
-    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
-        gulp_check_warn();
-        return done();
-    }
+	var unprefix = require("postcss-unprefix");
+	var autoprefixer = require("autoprefixer");
+	var perfectionist = require("perfectionist");
+	var shorthand = require("postcss-merge-longhand");
 
-    // run yargs
-    var _args = yargs.option("type", {
-            alias: "t",
-            demandOption: false,
-            describe: "The file type extensions to clean.",
-            type: "string"
-        })
-        .argv;
-    // get the command line arguments from yargs
-    var type = _args.t || _args.type;
+	var task = this;
+	// this task can only run when gulp is not running as gulps watchers
+	// can run too many times as many files are potentially being beautified
+	if ($internal.get("pid")) {
+		// Gulp instance exists so cleanup
+		gulp_check_warn();
+		return done();
+	}
 
-    // default files to clean:
-    // HTML, CSS, JS, and JSON files. exclude files containing
-    // a ".min." as this is the convention used for minified files.
-    // the node_modules/, .git/, and all vendor/ files are also excluded.
-    var files = [
-	    	__PATHS_FILES_BEAUTIFY,
-	    	__PATHS_FILES_BEAUTIFY_EXCLUDE_MIN,
-	    	bangify(globall(__PATHS_NODE_MODULES_NAME)),
-	    	bangify(globall(__PATHS_GIT)),
-    		__PATHS_NOT_VENDOR
-    	];
+	// run yargs
+	var _args = yargs
+		.option("type", {
+			alias: "t",
+			demandOption: false,
+			describe: "The file type extensions to clean.",
+			type: "string"
+		})
+		.option("glob", {
+			alias: "g",
+			demandOption: false,
+			describe: "Use glob to find files to prettify.",
+			type: "array"
+		})
+		.option("show", {
+			alias: "s",
+			demandOption: false,
+			describe: "Show the used globs before prettifying.",
+			type: "boolean"
+		})
+		.option("empty", {
+			alias: "e",
+			demandOption: false,
+			describe: "Empty default globs array.",
+			type: "boolean"
+		})
+		.option("line-ending", {
+			alias: "l",
+			demandOption: false,
+			describe: "The type of line-ending to use.",
+			type: "string"
+		}).argv;
+	// get the command line arguments from yargs
+	var type = _args.t || _args.type;
+	var globs = _args.g || _args.glob;
+	var show = _args.s || _args.show;
+	var empty = _args.e || _args.empty;
+	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
-    // reset the files array when extension types are provided
-    if (type) {
-        // remove all spaces from provided types string
-        type = type.replace(/\s+?/g, "");
+	// default files to clean:
+	// HTML, CSS, JS, and JSON files. exclude files containing
+	// a ".min." as this is the convention used for minified files.
+	// the node_modules/, .git/, and all vendor/ files are also excluded.
+	var files = [
+		$paths.files_beautify,
+		$paths.files_beautify_exclude_min,
+		bangify(globall($paths.node_modules_name)),
+		bangify(globall($paths.git)),
+		$paths.not_vendor,
+		$paths.not_ignore
+	];
 
-        // ...when using globs and there is only 1 file
-        // type in .{js} for example, it will not work.
-        // if only 1 file type is provided the {} must
-        // not be present. they only seem to work when
-        // multiple options are used like .{js,css,html}.
-        // this is normalized below.
-        if (-~type.indexOf(",")) type = "{" + type + "}";
-        // finally, reset the files array
-        files[0] = `**/*.${type}`;
-    }
+	// empty the files array?
+	if (empty) {
+		files.length = 0;
+	}
 
-    // get needed files
-    pump([gulp.src(files, {
-            dot: true
-        }),
-		$.sort(opts_sort),
-		// run css files through csscomb, everything else through jsbeautify
-		$.gulpif(ext.iscss, $.csscomb(__PATHS_CONFIG_CSSCOMB), $.beautify(config_jsbeautify)),
-		$.gulpif(ext.isjson, $.json_sort({
-            "space": json_spaces
-        })),
-		$.eol(),
-		$.debug.edit(),
-		gulp.dest(__PATHS_BASE)
-    ], done);
+	// reset the files array when extension types are provided
+	if (type) {
+		// remove all spaces from provided types string
+		type = type.replace(/\s+?/g, "");
+
+		// ...when using globs and there is only 1 file
+		// type in .{js} for example, it will not work.
+		// if only 1 file type is provided the {} must
+		// not be present. they only seem to work when
+		// multiple options are used like .{js,css,html}.
+		// this is normalized below.
+		if (-~type.indexOf(",")) type = "{" + type + "}";
+		// finally, reset the files array
+		files[0] = `**/*.${type}`;
+	}
+
+	if (globs) {
+		// only do changes when the type flag is not provided
+		// therefore, in other words, respect the type flag.
+		if (!type) {
+			files.shift();
+		}
+
+		// add the globs
+		globs.forEach(function(glob) {
+			files.push(glob);
+		});
+	}
+
+	if (show) {
+		log(chalk.green("Using globs:"));
+		var prefix = " ".repeat(10);
+		files.forEach(function(glob) {
+			log(prefix, chalk.blue(glob));
+		});
+		return done();
+	}
+
+	// get needed files
+	pump(
+		[
+			gulp.src(files, {
+				dot: true,
+				base: $paths.base_dot
+			}),
+			$.sort(opts_sort),
+			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
+			$.gulpif(
+				function(file) {
+					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
+					// to be sortable as comments are not allowed in JSON files.
+					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
+						? true
+						: false;
+				},
+				$.json_sort({
+					space: jindent
+				})
+			),
+			$.gulpif(function(file) {
+				// exclude HTML and CSS files
+				return ext(file, ["html", "css"]) ? false : true;
+			}, $.prettier($prettier)),
+			$.gulpif(
+				ext.iscss,
+				$.postcss([
+					unprefix(),
+					shorthand(),
+					autoprefixer($ap),
+					perfectionist($perfectionist)
+				])
+			),
+			$.eol(ending),
+			$.debug.edit(),
+			gulp.dest($paths.base)
+		],
+		done
+	);
+});
+
+//#! eol.js -- ./gulp/source/helpers/eol.js
+
+/**
+ * Correct file line endings.
+ *
+ * Usage
+ *
+ * $ gulp eol # Check file line endings.
+ */
+gulp.task("eol", function(done) {
+	var task = this;
+
+	// run yargs
+	var _args = yargs.option("line-ending", {
+		alias: "l",
+		demandOption: false,
+		describe: "The type of line-ending to use.",
+		type: "string"
+	}).argv;
+	// get the command line arguments from yargs
+	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
+
+	// check:
+	// HTML, CSS, JS, JSON, TXT, TEXT, and MD files.
+	// exclude files containing a ".min." as this is the convention used for minified files.
+	// the node_modules/, .git/, img/ files are also excluded.
+	var files = [
+		$paths.codefiles,
+		$paths.files_beautify_exclude_min,
+		bangify($paths.img_source),
+		bangify(globall($paths.node_modules_name)),
+		bangify(globall($paths.git))
+	];
+
+	// get needed files
+	pump(
+		[
+			gulp.src(files, {
+				dot: true,
+				base: $paths.base_dot
+			}),
+			$.sort(opts_sort),
+			$.eol(ending),
+			$.debug.edit(),
+			gulp.dest($paths.base)
+		],
+		done
+	);
+});
+
+//#! stats.js -- ./gulp/source/helpers/stats.js
+
+/**
+ * Return a breakdown of the types of files contained in project.
+ *
+ * Notes
+ *
+ * • Depending on the project size, this task might take a while to run.
+ *
+ * Usage
+ *
+ * $ gulp stats # Print a table containing project files type information.
+ */
+gulp.task("stats", function(done) {
+	var Table = require("cli-table2");
+
+	var task = this;
+	// get all files excluding the following: node_modules/, .git/, and img/.
+	var files = [
+		$paths.codefiles,
+		bangify($paths.img_source),
+		bangify(globall($paths.node_modules_name)),
+		bangify(globall($paths.git))
+	];
+
+	var file_count = 0;
+	var extensions = {};
+
+	// get needed files
+	pump(
+		[
+			gulp.src(files, {
+				dot: true,
+				read: false
+			}),
+			$.fn(function(file) {
+				// get the extension type
+				var ext = path
+					.extname(file.path)
+					.toLowerCase()
+					.slice(1);
+
+				// exclude any extension-less files
+				if (!ext) return;
+
+				var ext_count = extensions[ext];
+
+				file_count++;
+
+				if (ext_count === undefined) {
+					// does not exist, so start extension count
+					extensions[ext] = 1;
+				} else {
+					// already exists just increment the value
+					extensions[ext] = ++ext_count;
+				}
+			})
+		],
+		function() {
+			// instantiate
+			var table = new Table({
+				head: ["Extensions", `Count (${file_count})`, "% Of Project"],
+				style: { head: ["green"] }
+			});
+
+			// add data to table
+			for (var ext in extensions) {
+				if (extensions.hasOwnProperty(ext)) {
+					var count = +extensions[ext];
+					table.push([
+						ext.toUpperCase(),
+						count,
+						Math.round(count / file_count * 100)
+					]);
+				}
+			}
+
+			table.sort(function(a, b) {
+				return b[2] - a[2];
+			});
+
+			console.log(table.toString());
+
+			done();
+		}
+	);
 });
 
 //#! files.js -- ./gulp/source/helpers/files.js
@@ -1363,93 +1656,109 @@ gulp.task("pretty", function(done) {
  * $ gulp files --type "js html" # Only list HTML and JS files.
  * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in basename.
  * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
+ * $ gulp files -w ".ig." -e # Turn off fuzzy search & find all files containing ".ig." (ignored).
  */
 gulp.task("files", function(done) {
+	var fuzzy = require("fuzzy");
 
-    var fuzzy = require("fuzzy");
+	// run yargs
+	var _args = yargs
+		.option("type", {
+			alias: "t",
+			demandOption: false,
+			type: "string"
+		})
+		.option("min", {
+			alias: "m",
+			demandOption: false,
+			type: "boolean"
+		})
+		.option("whereis", {
+			alias: "w",
+			demandOption: false,
+			type: "string"
+		})
+		.option("exact", {
+			alias: "e",
+			demandOption: false,
+			type: "boolean"
+		}).argv;
 
-    // run yargs
-    var _args = yargs.option("type", {
-            alias: "t",
-            demandOption: false,
-            type: "string"
-        })
-        .option("min", {
-            alias: "m",
-            demandOption: false,
-            type: "boolean"
-        })
-        .option("whereis", {
-            alias: "w",
-            demandOption: false,
-            type: "string"
-        })
-        .argv;
+	// get the command line arguments from yargs
+	var types = _args.t || _args.type;
+	var min = _args.m || _args.min;
+	var whereis = _args.w || _args.whereis;
+	var no_fuzzy = _args.e || _args.exact;
+	// turn to an array when present
+	if (types) types = types.split(/\s+/);
 
-    // get the command line arguments from yargs
-    var types = (_args.t || _args.type);
-    var min = (_args.m || _args.min);
-    var whereis = (_args.w || _args.whereis);
-    // turn to an array when present
-    if (types) types = types.split(/\s+/);
+	// where files will be contained
+	var files = [];
 
-    // where files will be contained
-    var files = [];
+	// get all project files
+	dir.files(__dirname, function(err, paths) {
+		if (err) throw err;
 
-    // get all project files
-    dir.files(__dirname, function(err, paths) {
-        if (err) throw err;
+		loop1: for (var i = 0, l = paths.length; i < l; i++) {
+			var filepath = paths[i];
 
-        loop1: for (var i = 0, l = paths.length; i < l; i++) {
-            var filepath = paths[i];
+			// skip .git/, node_modules/
+			var ignores = [$paths.node_modules_name, $paths.git];
+			for (var j = 0, ll = ignores.length; j < ll; j++) {
+				var ignore = ignores[j];
+				if (-~filepath.indexOf(ignore)) continue loop1;
+			}
+			// add to files array
+			files.push(filepath);
+		}
 
-            // skip .git/, node_modules/
-            var ignores = [__PATHS_NODE_MODULES_NAME, __PATHS_GIT];
-            for (var j = 0, ll = ignores.length; j < ll; j++) {
-                var ignore = ignores[j];
-                if (-~filepath.indexOf(ignore)) continue loop1;
-            }
-            // add to files array
-            files.push(filepath);
-        }
+		// filter the files based on their file extensions
+		// when the type argument is provided
+		if (types) {
+			files = files.filter(function(filepath) {
+				return -~types.indexOf(
+					path
+						.extname(filepath)
+						.toLowerCase()
+						.slice(1)
+				);
+			});
+		}
 
-        // filter the files based on their file extensions
-        // when the type argument is provided
-        if (types) {
-            files = files.filter(function(filepath) {
-                return (-~types.indexOf(path.extname(filepath)
-                    .toLowerCase()
-                    .slice(1)));
-            });
-        }
+		// filter the files based on their whether its a minified (.min.) file
+		if (min) {
+			files = files.filter(function(filepath) {
+				return -~path.basename(filepath).indexOf(".min.");
+			});
+		}
 
-        // filter the files based on their whether its a minified (.min.) file
-        if (min) {
-            files = files.filter(function(filepath) {
-                return (-~path.basename(filepath)
-                    .indexOf(".min."));
-            });
-        }
+		// if whereis parameter is provided run a search on files
+		if (whereis) {
+			// contain filtered files
+			var results = [];
 
-        // if whereis parameter is provided run a fuzzy search on files
-        if (whereis) {
-            var fuzzy_results = fuzzy.filter(whereis, files, {});
-            // turn into an array
-            var results = [];
-            fuzzy_results.forEach(function(result) {
-                results.push(result.string);
-            });
-            // reset var
-            files = results;
-        }
+			// run a non fuzzy search
+			if (no_fuzzy) {
+				// loop over files
+				var results = [];
+				files.forEach(function(file) {
+					if (-~file.indexOf(whereis)) results.push(file);
+				});
+			} else {
+				// default to a fuzzy search
+				var fuzzy_results = fuzzy.filter(whereis, files, {});
+				// turn into an array
+				fuzzy_results.forEach(function(result) {
+					results.push(result.string);
+				});
+			}
+			// reset var
+			files = results;
+		}
 
-        // log files
-        pump([gulp.src(files),
-			$.sort(opts_sort),
-			$.debug()
-	    ], done);
-
-    });
+		// log files
+		pump([gulp.src(files), $.sort(opts_sort), $.debug()], done);
+	});
 });
 
 //#! dependency.js -- ./gulp/source/helpers/dependency.js
@@ -1470,74 +1779,86 @@ gulp.task("files", function(done) {
  * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS vendor directory.
  */
 gulp.task("dependency", function(done) {
-    var task = this;
-    // run yargs
-    var _args = yargs.option("name", {
-            alias: "n",
-            demandOption: true,
-            describe: "The module name.",
-            type: "string"
-        })
-        .option("type", {
-            alias: "t",
-            demandOption: true,
-            describe: "js or css dependency?",
-            choices: ["js", "css"],
-            type: "string"
-        })
-        .option("action", {
-            alias: "a",
-            demandOption: true,
-            describe: "Add or remove dependency?",
-            choices: ["add", "remove"],
-            type: "string"
-        })
-        .argv;
-    // get the command line arguments from yargs
-    var name = _args.n || _args.name;
-    var type = _args.t || _args.type;
-    var action = _args.a || _args.action;
-    // get needed paths
-    var dest = (type === "js") ? __PATHS_JS_VENDOR : __PATHS_CSS_VENDOR;
-    var delete_path = dest + name;
-    var module_path = __PATHS_NODE_MODULES + name;
-    // check that the module exists
-    if (action === "add" && !de.sync(module_path)) {
-        log("The module", chalk.magenta(`${module_path}`), "does not exist.");
-        log(`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`);
-        return done();
-    } else if (action === "remove" && !de.sync(delete_path)) {
-        log("The module", chalk.magenta(`${delete_path}`), "does not exist. Removal aborted.");
-        return done();
-    }
-    // delete the old module folder
-    del([delete_path])
-        .then(function(paths) {
-            var message = `Dependency (${name}) ` + (action === "add" ? "added" : "removed" + ".");
-            if (action === "add") {
-                // copy module to location
-                pump([gulp.src(name + __PATHS_DEL + __PATHS_ALLFILES, {
-                        dot: true,
-                        cwd: __PATHS_NODE_MODULES,
-                        base: __PATHS_BASE_DOT
-                    }),
-                    $.rename(function(path) {
-                        // [https://stackoverflow.com/a/36347297]
-                        // remove the node_modules/ parent folder
-                        var regexp = new RegExp("^" + __PATHS_NODE_MODULES_NAME);
-                        path.dirname = path.dirname.replace(regexp, "");
-                    }),
+	var task = this;
+	// run yargs
+	var _args = yargs
+		.option("name", {
+			alias: "n",
+			demandOption: true,
+			describe: "The module name.",
+			type: "string"
+		})
+		.option("type", {
+			alias: "t",
+			demandOption: true,
+			describe: "js or css dependency?",
+			choices: ["js", "css"],
+			type: "string"
+		})
+		.option("action", {
+			alias: "a",
+			demandOption: true,
+			describe: "Add or remove dependency?",
+			choices: ["add", "remove"],
+			type: "string"
+		}).argv;
+	// get the command line arguments from yargs
+	var name = _args.n || _args.name;
+	var type = _args.t || _args.type;
+	var action = _args.a || _args.action;
+	// get needed paths
+	var dest = type === "js" ? $paths.js_vendor : $paths.css_vendor;
+	var delete_path = dest + name;
+	var module_path = $paths.node_modules + name;
+	// check that the module exists
+	if (action === "add" && !de.sync(module_path)) {
+		log("The module", chalk.magenta(`${module_path}`), "does not exist.");
+		log(
+			`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`
+		);
+		return done();
+	} else if (action === "remove" && !de.sync(delete_path)) {
+		log(
+			"The module",
+			chalk.magenta(`${delete_path}`),
+			"does not exist. Removal aborted."
+		);
+		return done();
+	}
+	// delete the old module folder
+	del([delete_path]).then(function(paths) {
+		var message =
+			`Dependency (${name}) ` +
+			(action === "add" ? "added" : "removed" + ".");
+		if (action === "add") {
+			// copy module to location
+			pump(
+				[
+					gulp.src(name + $paths.del + $paths.allfiles, {
+						dot: true,
+						cwd: $paths.node_modules,
+						base: $paths.base_dot
+					}),
+					$.rename(function(path) {
+						// [https://stackoverflow.com/a/36347297]
+						// remove the node_modules/ parent folder
+						var regexp = new RegExp("^" + $paths.node_modules_name);
+						path.dirname = path.dirname.replace(regexp, "");
+					}),
 					gulp.dest(dest),
 					$.debug.edit()
-	    	], function() {
-                    log(message);
-                    done();
-                });
-            } else { // remove
-                log(message);
-                done();
-            }
-        });
+				],
+				function() {
+					log(message);
+					done();
+				}
+			);
+		} else {
+			// remove
+			log(message);
+			done();
+		}
+	});
 });
 
 //#! make.js -- ./gulp/source/helpers/make.js
@@ -1550,26 +1871,151 @@ gulp.task("dependency", function(done) {
  * $ gulp make # Re-build gulpfile
  */
 gulp.task("make", function(done) {
-    var task = this;
-    // get concat file names to use
-    var names = bundle_gulp.source.names;
-    var setup_name = names.setup;
-    var main_name = names.main;
-    pump([gulp.src(bundle_gulp.source.files, {
-            cwd: __PATHS_GULP_SOURCE
-        }),
-		$.debug(),
-		$.foreach(function(stream, file) {
-            var filename = path.basename(file.path);
-            var filename_rel = path.relative(process.cwd(), file.path);
-            return stream.pipe($.insert.prepend(`//#! ${filename} -- ./${filename_rel}\n\n`));
-        }),
-		// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-		$.gulpif((fe.sync(__PATHS_BASE + main_name)), $.concat(main_name), $.concat(setup_name)),
-		$.beautify(config_jsbeautify),
-		gulp.dest(__PATHS_BASE),
-		$.debug.edit()
-	], done);
+	var task = this;
+	// get concat file names to use
+	var names = bundle_gulp.source.names;
+	var setup_name = names.setup;
+	var main_name = names.main;
+	pump(
+		[
+			gulp.src(bundle_gulp.source.files, {
+				cwd: $paths.gulp_source
+			}),
+			$.debug(),
+			$.foreach(function(stream, file) {
+				var filename = path.basename(file.path);
+				var filename_rel = path.relative(process.cwd(), file.path);
+				return stream.pipe(
+					$.insert.prepend(
+						`//#! ${filename} -- ./${filename_rel}\n\n`
+					)
+				);
+			}),
+			// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
+			$.gulpif(
+				fe.sync($paths.base + main_name),
+				$.concat(main_name),
+				$.concat(setup_name)
+			),
+			$.prettier($prettier),
+			gulp.dest($paths.base),
+			$.debug.edit()
+		],
+		done
+	);
+});
+
+//#! settings.js -- ./gulp/source/helpers/settings.js
+
+/**
+ * Re-build ./configs/._settings.json.
+ *
+ * Usage
+ *
+ * $ gulp settings # Re-build ._settings.json.
+ */
+gulp.task("settings", function(done) {
+	var task = this;
+
+	pump(
+		[
+			gulp.src($paths.config_settings_json_files, {
+				cwd: $paths.base
+			}),
+			$.debug(),
+			$.strip_jsonc(), // remove any json comments
+			$.jsoncombine($paths.config_settings_name, function(data, meta) {
+				return new Buffer(JSON.stringify(data, null, jindent));
+			}),
+			gulp.dest($paths.config_home),
+			$.debug.edit()
+		],
+		done
+	);
+});
+
+//#! indent.js -- ./gulp/source/helpers/indent.js
+
+/**
+ * Indent all JS files with tabs or spaces.
+ *
+ * Options
+ *
+ * --style    [string]  Indent using spaces or tabs. Defaults to tabs.
+ * --size     [string]  The amount of spaces to use. Defaults to 4.
+ *
+ * Notes
+ *
+ * • @experimental: This task is currently experimental.
+ * • Ignores ./node_modules/, ./git/ and vendor/ files.
+ *
+ * Usage
+ *
+ * $ gulp indent --style tabs # Turn all 4 starting spaces into tabs.
+ * $ gulp indent --style spaces # Expand all line starting tabs into 4 spaces.
+ */
+gulp.task("indent", function(done) {
+	// run yargs
+	var _args = yargs
+		.option("style", {
+			demandOption: false,
+			type: "string"
+		})
+		.option("size", {
+			demandOption: false,
+			type: "number"
+		}).argv;
+
+	// get the command line arguments from yargs
+	var style = _args.style || "tabs";
+	var size = _args.size || 4; // spaces to use
+
+	// print the indentation information
+	log("Using:", chalk.green(style), "Size:", chalk.green(size));
+
+	pump(
+		[
+			gulp.src(
+				[
+					$paths.allfiles.replace(/\*$/, "js"), // only JS FILES
+					bangify(globall($paths.node_modules_name)),
+					bangify(globall($paths.git)),
+					$paths.not_vendor
+				],
+				{
+					base: $paths.base_dot
+				}
+			),
+			$.gulpif(
+				// convert tabs to spaces
+				style === "tabs",
+				$.replace(/^( )+/gm, function(match) {
+					// split on the amount size provided [https://stackoverflow.com/a/6259543]
+					var chunks = match.match(new RegExp(`.\{1,${size}\}`, "g"));
+
+					// modify the chunks
+					chunks = chunks.map(function(chunk) {
+						return !(chunk.length % size) ? "\t" : chunk;
+					});
+
+					// join and return new indentation
+					return chunks.join("");
+				})
+			),
+			$.gulpif(
+				// convert spaces to tabs
+				style === "spaces",
+				$.replace(/^([\t ])+/gm, function(match) {
+					// replace all tabs with spaces
+					match = match.replace(/\t/g, " ".repeat(size));
+					return match;
+				})
+			),
+			gulp.dest("./"),
+			$.debug.edit()
+		],
+		done
+	);
 });
 
 //#! help.js -- ./gulp/source/helpers/help.js
@@ -1590,55 +2036,56 @@ gulp.task("make", function(done) {
  * $ gulp help --name "open default dependency" # Show documentation for specific tasks.
  */
 gulp.task("help", function() {
-    var task = this;
-    // run yargs
-    var _args = yargs.option("name", {
-            alias: "n",
-            default: false,
-            describe: "Name of task to show documentation for.",
-            type: "string"
-        })
-        .argv;
-    var task_name = (_args.n || _args.name);
-    // contain printer in a variable rather than an anonymous function
-    // to attach the provided task_name for later use. this is a bit hacky
-    // but its a workaround to provide the name.
-    var printer = function(tasks, verbose) { // custom print function
-        var task_name = this.task_name;
-        if (task_name) { // custom sort
-            // split into an array
-            var names = task_name.trim()
-                .split(/\s+/);
-            // add the help task to always show it
-            names.push("help");
-            // set verbose to true to show all documentation
-            verbose = true;
-            // turn all but the provided task name to internal
-            // this will essentially "hide" them from being printed
-            tasks.tasks.forEach(function(item) {
-                // if (item.name !== task_name) {
-                if (!-~names.indexOf(item.name)) {
-                    item.comment.tags = [{
-                        "name": "internal",
-                        "value": true
-				}];
-                }
-            });
-        }
-        tasks = tasks.filterHidden(verbose)
-            .sort();
-        // filter will change the documentation header in the print_tasks function
-        var filter = (task_name ? true : false)
-        return print_tasks(tasks, verbose, filter);
-    };
-    // attach the task name to the printer function
-    printer.task_name = task_name;
-    // re-assign the printer as the "this" to have access to the task name
-    // within the function (printer) itself
-    printer = printer.bind(printer);
-    gulp.help({
-        "print": printer
-    })(task);
+	var task = this;
+	// run yargs
+	var _args = yargs.option("name", {
+		alias: "n",
+		default: false,
+		describe: "Name of task to show documentation for.",
+		type: "string"
+	}).argv;
+	var task_name = _args.n || _args.name;
+	// contain printer in a variable rather than an anonymous function
+	// to attach the provided task_name for later use. this is a bit hacky
+	// but its a workaround to provide the name.
+	var printer = function(tasks, verbose) {
+		// custom print function
+		var task_name = this.task_name;
+		if (task_name) {
+			// custom sort
+			// split into an array
+			var names = task_name.trim().split(/\s+/);
+			// add the help task to always show it
+			names.push("help");
+			// set verbose to true to show all documentation
+			verbose = true;
+			// turn all but the provided task name to internal
+			// this will essentially "hide" them from being printed
+			tasks.tasks.forEach(function(item) {
+				// if (item.name !== task_name) {
+				if (!-~names.indexOf(item.name)) {
+					item.comment.tags = [
+						{
+							name: "internal",
+							value: true
+						}
+					];
+				}
+			});
+		}
+		tasks = tasks.filterHidden(verbose).sort();
+		// filter will change the documentation header in the print_tasks function
+		var filter = task_name ? true : false;
+		return print_tasks(tasks, verbose, filter);
+	};
+	// attach the task name to the printer function
+	printer.task_name = task_name;
+	// re-assign the printer as the "this" to have access to the task name
+	// within the function (printer) itself
+	printer = printer.bind(printer);
+	gulp.help({
+		print: printer
+	})(task);
 });
 
 //#! favicon.js -- ./gulp/source/helpers/favicon.js
@@ -1649,120 +2096,141 @@ gulp.task("help", function() {
 // package (see the check-for-favicon-update task below).
 // @internal
 gulp.task("favicon:generate", function(done) {
-    $.real_favicon.generateFavicon({
-        masterPicture: __PATHS_FAVICON_MASTER_PIC,
-        dest: __PATHS_FAVICON_DEST,
-        iconsPath: __PATHS_FAVICON_DEST,
-        design: {
-            ios: {
-                pictureAspect: "backgroundAndMargin",
-                backgroundColor: "#f6f5dd",
-                margin: "53%",
-                assets: {
-                    ios6AndPriorIcons: true,
-                    ios7AndLaterIcons: true,
-                    precomposedIcons: true,
-                    declareOnlyDefaultIcon: true
-                }
-            },
-            desktopBrowser: {},
-            windows: {
-                pictureAspect: "whiteSilhouette",
-                backgroundColor: "#00a300",
-                onConflict: "override",
-                assets: {
-                    windows80Ie10Tile: true,
-                    windows10Ie11EdgeTiles: {
-                        small: true,
-                        medium: true,
-                        big: true,
-                        rectangle: true
-                    }
-                }
-            },
-            androidChrome: {
-                pictureAspect: "backgroundAndMargin",
-                margin: "42%",
-                backgroundColor: "#f6f5dd",
-                themeColor: "#f6f5dd",
-                manifest: {
-                    display: "standalone",
-                    orientation: "notSet",
-                    onConflict: "override",
-                    declared: true
-                },
-                assets: {
-                    legacyIcon: false,
-                    lowResolutionIcons: false
-                }
-            },
-            safariPinnedTab: {
-                pictureAspect: "silhouette",
-                themeColor: "#699935"
-            }
-        },
-        settings: {
-            scalingAlgorithm: "Mitchell",
-            errorOnImageTooSmall: false
-        },
-        markupFile: __PATHS_CONFIG_FAVICONDATA
-    }, function() {
-        done();
-    });
+	$.real_favicon.generateFavicon(
+		{
+			masterPicture: $paths.favicon_master_pic,
+			dest: $paths.favicon_dest,
+			iconsPath: $paths.favicon_dest,
+			design: {
+				ios: {
+					pictureAspect: "backgroundAndMargin",
+					backgroundColor: "#f6f5dd",
+					margin: "53%",
+					assets: {
+						ios6AndPriorIcons: true,
+						ios7AndLaterIcons: true,
+						precomposedIcons: true,
+						declareOnlyDefaultIcon: true
+					}
+				},
+				desktopBrowser: {},
+				windows: {
+					pictureAspect: "whiteSilhouette",
+					backgroundColor: "#00a300",
+					onConflict: "override",
+					assets: {
+						windows80Ie10Tile: true,
+						windows10Ie11EdgeTiles: {
+							small: true,
+							medium: true,
+							big: true,
+							rectangle: true
+						}
+					}
+				},
+				androidChrome: {
+					pictureAspect: "backgroundAndMargin",
+					margin: "42%",
+					backgroundColor: "#f6f5dd",
+					themeColor: "#f6f5dd",
+					manifest: {
+						display: "standalone",
+						orientation: "notSet",
+						onConflict: "override",
+						declared: true
+					},
+					assets: {
+						legacyIcon: false,
+						lowResolutionIcons: false
+					}
+				},
+				safariPinnedTab: {
+					pictureAspect: "silhouette",
+					themeColor: "#699935"
+				}
+			},
+			settings: {
+				scalingAlgorithm: "Mitchell",
+				errorOnImageTooSmall: false
+			},
+			markupFile: $paths.config_favicondata
+		},
+		function() {
+			done();
+		}
+	);
 });
 
 // update manifest.json
 // @internal
 gulp.task("favicon:edit-manifest", function(done) {
-    var manifest = json.read(__PATHS_FAVICON_ROOT_MANIFEST);
-    manifest.set("name", "wa-devkit");
-    manifest.set("short_name", "WADK");
-    manifest.write(function() {
-        done();
-    }, null, json_spaces);
+	var manifest = json.read($paths.favicon_root_manifest);
+	manifest.set("name", "wa-devkit");
+	manifest.set("short_name", "WADK");
+	manifest.write(
+		function() {
+			done();
+		},
+		null,
+		jindent
+	);
 });
 
 // copy favicon.ico and apple-touch-icon.png to the root
 // @internal
 gulp.task("favicon:root", function(done) {
-    var task = this;
-    pump([gulp.src([
-	    	__PATHS_FAVICON_ROOT_ICO,
-	    	__PATHS_FAVICON_ROOT_PNG,
-	    	__PATHS_FAVICON_ROOT_CONFIG,
-	    	__PATHS_FAVICON_ROOT_MANIFEST
-    	]),
-    	$.debug(),
-        gulp.dest(__PATHS_BASE),
-    	$.debug.edit(),
-        bs.stream()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src([
+				$paths.favicon_root_ico,
+				$paths.favicon_root_png,
+				$paths.favicon_root_config,
+				$paths.favicon_root_manifest
+			]),
+			$.debug(),
+			gulp.dest($paths.base),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 // copy delete unneeded files
 // @internal
 gulp.task("favicon:delete", function(done) {
-    var task = this;
-    pump([gulp.src([
-    		__PATHS_FAVICON_ROOT_CONFIG,
-    		__PATHS_FAVICON_ROOT_MANIFEST
-    	]),
-    	$.debug.clean(),
-    	$.clean()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src([
+				$paths.favicon_root_config,
+				$paths.favicon_root_manifest
+			]),
+			$.debug.clean(),
+			$.clean()
+		],
+		done
+	);
 });
 
 // inject new favicon html
 // @internal
 gulp.task("favicon:html", function(done) {
-    var task = this;
-    pump([gulp.src(__PATHS_FAVICON_HTML),
-        $.real_favicon.injectFaviconMarkups(JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
-            .favicon.html_code),
-        gulp.dest(__PATHS_FAVICON_HTML_DEST),
-        $.debug.edit(),
-        bs.stream()
-    ], done);
+	var task = this;
+	pump(
+		[
+			gulp.src($paths.favicon_html),
+			$.real_favicon.injectFaviconMarkups(
+				JSON.parse(fs.readFileSync($paths.config_favicondata)).favicon
+					.html_code
+			),
+			gulp.dest($paths.favicon_html_dest),
+			$.debug.edit(),
+			bs.stream()
+		],
+		done
+	);
 });
 
 /**
@@ -1773,28 +2241,29 @@ gulp.task("favicon:html", function(done) {
  * $ gulp favicon # Re-build favicons.
  */
 gulp.task("favicon", function(done) {
-    var task = this;
-    // this task can only run when gulp is not running as gulps watchers
-    // can run too many times as many files are potentially being beautified
-    if (config_internal.get("pid")) { // Gulp instance exists so cleanup
-        gulp_check_warn();
-        return done();
-    }
-    var tasks = [
-    	"favicon:generate",
-    	"favicon:edit-manifest",
-    	"favicon:root",
-    	"favicon:delete",
-    	"favicon:html",
-    	"html:main",
-    	"tohtml",
-    	"pretty"
-    ];
-    tasks.push(function(err) {
-        log("Favicons generated.");
-        done();
-    });
-    return sequence.apply(task, tasks);
+	var task = this;
+	// this task can only run when gulp is not running as gulps watchers
+	// can run too many times as many files are potentially being beautified
+	if ($internal.get("pid")) {
+		// Gulp instance exists so cleanup
+		gulp_check_warn();
+		return done();
+	}
+	var tasks = [
+		"favicon:generate",
+		"favicon:edit-manifest",
+		"favicon:root",
+		"favicon:delete",
+		"favicon:html",
+		"html:main",
+		"tohtml",
+		"pretty"
+	];
+	tasks.push(function(err) {
+		log("Favicons generated.");
+		done();
+	});
+	return sequence.apply(task, tasks);
 });
 
 // Check for updates on RealFaviconGenerator (think: Apple has just
@@ -1804,11 +2273,11 @@ gulp.task("favicon", function(done) {
 // Check for RealFaviconGenerator updates.
 // @internal
 gulp.task("favicon-updates", function(done) {
-    var currentVersion = JSON.parse(fs.readFileSync(__PATHS_CONFIG_FAVICONDATA))
-        .version;
-    $.real_favicon.checkForUpdates(currentVersion, function(err) {
-        if (err) {
-            throw err;
-        }
-    });
+	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
+		.version;
+	$.real_favicon.checkForUpdates(currentVersion, function(err) {
+		if (err) {
+			throw err;
+		}
+	});
 });
