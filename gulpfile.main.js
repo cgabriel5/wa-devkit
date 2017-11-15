@@ -1870,7 +1870,7 @@ gulp.task("dependency", function(done) {
 			// copy module to location
 			pump(
 				[
-					gulp.src(name + $paths.del + $paths.allfiles, {
+					gulp.src(name + $paths.del + $paths.files_all, {
 						dot: true,
 						cwd: $paths.node_modules,
 						base: $paths.base_dot
@@ -2013,7 +2013,7 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					$paths.allfiles.replace(/\*$/, "js"), // only JS FILES
+					$paths.files_all.replace(/\*$/, "js"), // only JS FILES
 					bangify(globall($paths.node_modules_name)),
 					bangify(globall($paths.git)),
 					$paths.not_vendor

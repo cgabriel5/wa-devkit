@@ -69,7 +69,7 @@ gulp.task("dependency", function(done) {
 			// copy module to location
 			pump(
 				[
-					gulp.src(name + $paths.del + $paths.allfiles, {
+					gulp.src(name + $paths.del + $paths.files_all, {
 						dot: true,
 						cwd: $paths.node_modules,
 						base: $paths.base_dot

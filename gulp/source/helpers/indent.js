@@ -39,7 +39,7 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					$paths.allfiles.replace(/\*$/, "js"), // only JS FILES
+					$paths.files_all.replace(/\*$/, "js"), // only JS FILES
 					bangify(globall($paths.node_modules_name)),
 					bangify(globall($paths.git)),
 					$paths.not_vendor
