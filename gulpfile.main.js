@@ -1820,32 +1820,75 @@ gulp.task("dependency", function(done) {
 	var _args = yargs
 		.option("name", {
 			alias: "n",
-			demandOption: true,
 			describe: "The module name.",
 			type: "string"
 		})
 		.option("type", {
 			alias: "t",
-			demandOption: true,
 			describe: "js or css dependency?",
 			choices: ["js", "css"],
 			type: "string"
 		})
 		.option("action", {
 			alias: "a",
-			demandOption: true,
 			describe: "Add or remove dependency?",
 			choices: ["add", "remove"],
 			type: "string"
+		})
+		.group(
+			["name", "type", "action"],
+			"Options: Vendor dependency information (all required when any is provided)"
+		)
+		// name, type, and action must all be provided when one is provided
+		.implies({
+			name: "type",
+			name: "action",
+			type: "name",
+			type: "action",
+			action: "name",
+			action: "type"
+		})
+		.option("list", {
+			alias: "l",
+			describe: "List vendor dependencies.",
+			type: "boolean"
 		}).argv;
 	// get the command line arguments from yargs
 	var name = _args.n || _args.name;
 	var type = _args.t || _args.type;
 	var action = _args.a || _args.action;
+	var list = _args.l || _args.list;
+
 	// get needed paths
 	var dest = type === "js" ? $paths.js_vendor : $paths.css_vendor;
 	var delete_path = dest + name;
 	var module_path = $paths.node_modules + name;
+
+	// print used vendor dependencies if flag provided
+	if (list) {
+		// get the vendor dependencies
+		var css_dependencies = bundle_css.vendor.files;
+		var js_dependencies = bundle_js.vendor.files;
+
+		// printer function
+		var printer = function(dependency) {
+			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/)[2];
+			log(" ".repeat(10), chalk.magenta(dependency), `(${name})`);
+		};
+
+		// get the config path for the bundles file
+		var bundles_path = $paths.config_home + $paths.config_bundles + ".json";
+		var header = `${bundles_path} > $.vendor.files[...]`;
+
+		// print the dependencies
+		log(chalk.green(header.replace("$", "css")));
+		css_dependencies.forEach(printer);
+		log(chalk.green(header.replace("$", "js")));
+		js_dependencies.forEach(printer);
+
+		return done();
+	}
+
 	// check that the module exists
 	if (action === "add" && !de.sync(module_path)) {
 		log("The module", chalk.magenta(`${module_path}`), "does not exist.");
