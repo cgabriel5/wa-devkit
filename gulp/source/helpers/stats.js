@@ -15,7 +15,7 @@ gulp.task("stats", function(done) {
 	var task = this;
 	// get all files excluding the following: node_modules/, .git/, and img/.
 	var files = [
-		$paths.codefiles,
+		$paths.files_code,
 		bangify($paths.img_source),
 		bangify(globall($paths.node_modules_name)),
 		bangify(globall($paths.git))
