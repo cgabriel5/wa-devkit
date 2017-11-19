@@ -1,17 +1,42 @@
 /**
- * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS vendor folder.
+ * task: dependency
+ * Add/remove front-end dependencies.
  *
- * Options
  *
- * -n, --name    <string>  The module name.
- * -t, --type    <string>  Dependency type (js/css).
- * -a, --action  <string>  Action to take (add/remove).
+ * Notes
+ *
+ * • Dependencies are grabbed from ./node_modules/<name> and moved
+ *   to its corresponding ./<type>/vendor/ folder.
+ * • name, type, and action options are grouped. This means when one
+ *   is used they must all be provided.
+ *
+ * Flags
+ *
+ * -n, --name
+ *     <string>  The module name.
+ *
+ * -t, --type
+ *     <string>  Dependency type (js/css).
+ *
+ * -a, --action
+ *     <string>  Action to take (add/remove).
+ *
+ * -l, --list
+ *     <boolean> Show all CSS/JS dependencies.
  *
  * Usage
  *
- * $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS vendor directory.
- * $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS vendor directory.
- * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS vendor directory.
+ * $ gulp dependency --name fastclick --type js --action add
+ *     Copy fastclick to JS vendor directory.
+ *
+ * $ gulp dependency --name fastclick --type js --action remove
+ *     Remove fastclick from JS vendor directory.
+ *
+ * $ gulp dependency --name font-awesome --type css --action add
+ *     Add font-awesome to CSS vendor directory.
+ *
+ * $ gulp dependency --list
+ *     Show all CSS/JS dependencies.
  */
 gulp.task("dependency", function(done) {
 	var task = this;

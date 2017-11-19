@@ -1,34 +1,55 @@
 /**
+ * task: pretty
  * Beautify all HTML, JS, CSS, and JSON project files.
  *
- * Options
- *
- * -t, --type         [string]   The optional extension types to clean.
- * -g, --glob         [array]    Use glob to find files to prettify.
- * -s, --show         [boolean]  Show the used globs before prettifying.
- * -e, --empty        [boolean]  => Empty default globs array. Careful as this can prettify
- *                               / all project files. By default the node_modules/ is ignored,
- *                               / for example. Be sure to exclude files that don't need to be
- *                               / prettified.
- * -l, --line-ending  [string]   => If provided, the file ending will get changed to to provided
- * 								 / character(s). Line endings default to LF (\n).
  *
  * Notes
  *
- * • => By default files in the following directories or containing the following
- *   / sub-extensions are ignored: ./node_modules/, ./git/, vendor/, .ig.,
- *   / and .min. files.
- * • => Special characters in globs provided via the CLI (--glob) might need to be
- *   / escaped if getting an error.
+ * • By default files in the following directories or containing the
+ *   following sub-extensions are ignored: ./node_modules/, ./git/,
+ *   vendor/, .ig., and .min. files.
+ * • Special characters in globs provided via the CLI (--glob) might
+ *   need to be escaped if getting an error.
+ *
+ * Flags
+ *
+ * -t, --type
+ *     [string] The optional extension types to clean.
+ *
+ * -g, --glob
+ *     [array] Use glob to find files to prettify.
+ *
+ * -s, --show
+ *     [boolean] Show the used globs before prettifying.
+ *
+ * -e, --empty
+ *     [boolean] Empty default globs array. Careful as this can prettify
+ *     all project files. By default the node_modules/ is ignored, for
+ *     example. Be sure to exclude files that don't need to be prettified.
+ *
+ * -l, --line-ending
+ *     [string] If provided, the file ending will get changed to provided
+ *     character(s). Line endings default to LF (\n).
  *
  * Usage
  *
- * $ gulp pretty # Prettify all HTML, CSS, JS, JSON files.
- * $ gulp pretty --type "js, json" # Only prettify JS and JSON files.
- * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
- * $ gulp pretty --show # Halts prettifying to show the globs to be used for prettifying.
- * $ gulp pretty --empty --glob "**\/*.js" # Flag indicating to remove default globs.
- * $ gulp pretty --line-ending "\n" # Make files have "\n" line-ending.
+ * $ gulp pretty
+ *     Prettify all HTML, CSS, JS, JSON files.
+ *
+ * $ gulp pretty --type "js, json"
+ *     Only prettify JS and JSON files.
+ *
+ * $ gulp pretty --glob "some/folder/*.js"
+ *     Prettify default files and all JS files.
+ *
+ * $ gulp pretty --show
+ *     Halts prettifying to show the globs to be used for prettifying.
+ *
+ * $ gulp pretty --empty --glob "some/folder/*.js"
+ *     Flag indicating to remove default globs.
+ *
+ * $ gulp pretty --line-ending "\n"
+ *     Make files have "\n" line-ending.
  */
 gulp.task("pretty", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -151,8 +172,9 @@ gulp.task("pretty", function(done) {
 			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
 			$.gulpif(
 				function(file) {
-					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
-					// to be sortable as comments are not allowed in JSON files.
+					// file must be a JSON file and cannot contain the
+					// comment (.cm.) sub-extension to be sortable as
+					// comments are not allowed in JSON files.
 					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
 						? true
 						: false;

@@ -1,20 +1,28 @@
 /**
+ * task: indent
  * Indent all JS files with tabs or spaces.
  *
- * Options
- *
- * --style    [string]  Indent using spaces or tabs. Defaults to tabs.
- * --size     [string]  The amount of spaces to use. Defaults to 4.
  *
  * Notes
  *
- * • @experimental: This task is currently experimental.
+ * • This task is currently experimental.
  * • Ignores ./node_modules/, ./git/ and vendor/ files.
+ *
+ * Flags
+ *
+ * --style
+ *     [string] Indent using spaces or tabs. Defaults to tabs.
+ *
+ * --size
+ *     [string] The amount of spaces to use. Defaults to 4.
  *
  * Usage
  *
- * $ gulp indent --style tabs # Turn all 4 starting spaces into tabs.
- * $ gulp indent --style spaces # Expand all line starting tabs into 4 spaces.
+ * $ gulp indent --style tabs
+ *     Turn all 4 starting spaces into tabs.
+ *
+ * $ gulp indent --style spaces --size 2
+ *     Expand all line starting tabs into 2 spaces.
  */
 gulp.task("indent", function(done) {
 	// run yargs
@@ -52,7 +60,8 @@ gulp.task("indent", function(done) {
 				// convert tabs to spaces
 				style === "tabs",
 				$.replace(/^( )+/gm, function(match) {
-					// split on the amount size provided [https://stackoverflow.com/a/6259543]
+					// split on the amount size provided
+					// [https://stackoverflow.com/a/6259543]
 					var chunks = match.match(new RegExp(`.\{1,${size}\}`, "g"));
 
 					// modify the chunks

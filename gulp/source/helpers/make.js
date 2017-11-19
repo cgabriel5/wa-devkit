@@ -1,9 +1,12 @@
 /**
- * Build gulpfile from source files. Useful after making changes to source files.
+ * task: make
+ * Build gulpfile from source files.
+ *
  *
  * Usage
  *
- * $ gulp make # Re-build gulpfile
+ * $ gulp make
+ *     Re-build gulpfile.
  */
 gulp.task("make", function(done) {
 	var task = this;
@@ -26,7 +29,8 @@ gulp.task("make", function(done) {
 					)
 				);
 			}),
-			// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
+			// if gulpfile.js exists use that name,
+			// else fallback to gulpfile.main.js
 			$.gulpif(
 				fe.sync($paths.base + main_name),
 				$.concat(main_name),

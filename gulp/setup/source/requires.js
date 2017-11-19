@@ -45,3 +45,16 @@ var jsonc = require("comment-json");
 var sequence = require("run-sequence");
 var license = require("create-license");
 var alphabetize = require("alphabetize-object-keys");
+
+// project utils
+var utils = require("./gulp/assets/utils/utils.js");
+var log = utils.log;
+var time = utils.time;
+var notify = utils.notify;
+var gulp = utils.gulp;
+var format = utils.format;
+var bangify = utils.bangify;
+var globall = utils.globall;
+var ext = utils.ext;
+var expand_paths = utils.expand_paths;
+var opts_sort = utils.opts_sort;

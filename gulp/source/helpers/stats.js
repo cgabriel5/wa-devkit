@@ -1,5 +1,7 @@
 /**
- * Return a breakdown of the types of files contained in project.
+ * task: stats
+ * Prints table containing project file type breakdown.
+ *
  *
  * Notes
  *
@@ -7,7 +9,8 @@
  *
  * Usage
  *
- * $ gulp stats # Print a table containing project files type information.
+ * $ gulp stats
+ *     Print a table containing project files type information.
  */
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");

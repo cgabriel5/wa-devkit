@@ -19,7 +19,8 @@ gulp.task("default", function(done) {
 
 		// set the application type
 		$internal.apptype = type;
-		// pick js bundle based on provided project type + reset the config js bundle
+		// pick js bundle based on provided project type + reset the
+		// config js bundle
 		$bundles.data.js = $jsconfigs[type];
 
 		// remove distribution configuration if type is library

@@ -1,9 +1,11 @@
 /**
- * Re-build ./configs/._settings.json.
+ * task: settings
+ * Re-build ./configs/._settings.json
+ *
  *
  * Usage
  *
- * $ gulp settings # Re-build ._settings.json.
+ * $ gulp settings # Re-build ._settings.json
  */
 gulp.task("settings", function(done) {
 	var task = this;

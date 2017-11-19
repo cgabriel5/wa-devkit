@@ -125,11 +125,14 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
+ * task: dist
  * Build the dist/ folder. (only for webapp projects).
+ *
  *
  * Usage
  *
- * $ gulp dist # Create dist/ folder.
+ * $ gulp dist
+ *     Create dist/ folder.
  */
 gulp.task("dist", function(done) {
 	var task = this;

@@ -1,10 +1,11 @@
 /**
- * @description [Opens the provided file in the user's browser.]
- * @param  {String}   filepath  [The path of the file to open.]
- * @param  {Number}   port     	[The port to open on.]
- * @param  {Function} callback  [The Gulp task callback to run.]
- * @param  {Object} task  		[The Gulp task.]
- * @return {Undefined}          [Nothing is returned.]
+ * Opens the provided file in the user's browser.
+ *
+ * @param {string} filepath - The path of the file to open.
+ * @param {number} port - The port to open on.
+ * @param {function} callback - The Gulp task callback to run.
+ * @param {object} task - The Gulp task.
+ * @return {undefined} Nothing.
  */
 function open_file_in_browser(filepath, port, callback, task) {
 	pump(
@@ -33,8 +34,9 @@ function open_file_in_browser(filepath, port, callback, task) {
 }
 
 /**
- * @description [Print that an active Gulp instance exists.]
- * @return {Undefined} 			[Nothing is returned.]
+ * Print that an active Gulp instance exists.
+ *
+ * @return {undefined} Nothing.
  */
 function gulp_check_warn() {
 	log(
@@ -42,207 +44,4 @@ function gulp_check_warn() {
 			"Task cannot be performed while Gulp is running. Close Gulp then try again."
 		)
 	);
-}
-
-/**
- * @description [Render output from tasks.]
- * @param {TaskList} tasks 			[The Gulp tasks.]
- * @param {Boolean}  verbose=false  [Flag indicating whether to show hide tasks with the verbose flag.]
- * @returns {String} [The text to print.]
- * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
- */
-function print_tasks(tasks, verbose, filter) {
-	tasks = tasks.filterHidden(verbose).sort();
-
-	// determine the header
-	var header = filter ? "Filtered" : "Tasks";
-	var results = ["", chalk.underline.bold(header), ""];
-	var help_doc = ["", chalk.underline.bold("Help"), ""];
-
-	var field_task_len = tasks.getLongestNameLength();
-
-	tasks.forEach(function(task) {
-		// help task will always be placed before all other tasks
-		// to always have its documentation present.
-		var is_help_task = task.name === "help";
-		// determine the correct array to reference
-		var array_ref = is_help_task ? help_doc : results;
-
-		var comment = task.comment || {};
-		var lines = comment.lines || [];
-
-		/* HACK-START: Modify long comment indentation */
-		// reset the starting indentation for long explanations
-		var indentation = false;
-		var indentation_index = -1;
-		var indentation_length;
-		lines.forEach(function(line, i) {
-			// check whether its a long explanation
-			indentation_index = line.indexOf("=>");
-			// if => is found set the flag and calculate the indentation length
-			// also reset the line by removing the "=>".
-			if (-~indentation_index) {
-				indentation = true;
-				indentation_length = indentation_index - 1;
-				// reset the line, remove "=>"
-				lines[i] = line.replace(/\=>\s+/, "");
-			}
-			// if the line starts with "/" it needs to be indented
-			if (/^\//.test(line) && indentation) {
-				// add the previous indentation to it
-				lines[i] =
-					" ".repeat(indentation_length) +
-					line.replace(/^\/\s+/, " ");
-			}
-			// reset the vars after the final loop run
-			if (lines.length - 1 === i) {
-				// reset the vars
-				indentation = false;
-				indentation_index = -1;
-				indentation_length = null;
-			}
-		});
-		/* HACK-END */
-
-		array_ref.push(
-			format_column(task.name, field_task_len) + (lines[0] || "")
-		);
-		// only print verbose documentation when flag is provided
-		if (verbose || is_help_task) {
-			for (var i = 1; i < lines.length; i++) {
-				array_ref.push(
-					format_column("", field_task_len) + "  " + lines[i]
-				);
-				if (verbose && i === lines.length - 1) array_ref.push("\n");
-			}
-		}
-	});
-
-	if (!verbose) results.push("\n");
-
-	return help_doc.concat(results).join("\n");
-}
-
-/**
- * @description [Return a text surrounded by space.]
- * @param {String} text
- * @param {Number} width	   [Width Column width without offsets.]
- * @param {Number} offset_left  [Space count before text.]
- * @param {Number} offset_right [Space count after text.]
- * @returns {String} [The formated text.]
- * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
- */
-function format_column(text, width, offset_left, offset_right) {
-	offset_left = undefined !== offset_left ? offset_left : 3;
-	offset_right = undefined !== offset_right ? offset_right : 3;
-	return (
-		new Array(offset_left + 1).join(" ") +
-		chalk.magenta(text) +
-		new Array(Math.max(width - text.length, 0) + 1).join(" ") +
-		new Array(offset_right + 1).join(" ")
-	);
-}
-
-/**
- * @description [Add a bang to the start of the string.]
- * @param  {String} string [The string to add the bang to.]
- * @return {String}        [The new string with bang added.]
- */
-function bangify(string) {
-	return "!" + (string || "");
-}
-
-/**
- * @description [Appends the ** pattern to string.]
- * @param  {String} string [The string to add pattern to.]
- * @return {String}        [The new string with added pattern.]
- */
-function globall(string) {
-	return (string || "") + "**";
-}
-
-/**
- * @description [Returns the provided file's extension or checks it against the provided extension type.]
- * @param  {Object} file [The Gulp file object.]
- * @param  {Array} types [The optional extension type(s) to check against.]
- * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
- */
-function ext(file, types) {
-	// when no file exists return an empty string
-	if (!file) return "";
-
-	// get the file extname
-	var extname = path
-		.extname(file.path)
-		.toLowerCase()
-		.replace(/^\./, "");
-
-	// simply return the extname when no type is
-	// provided to check against.
-	if (!types) return extname;
-
-	// else when a type is provided check against it
-	return Boolean(-~types.indexOf(extname));
-}
-
-// check for the usual file types
-ext.ishtml = function(file) {
-	return ext(file, ["html"]);
-};
-ext.iscss = function(file) {
-	return ext(file, ["css"]);
-};
-ext.isjs = function(file) {
-	return ext(file, ["js"]);
-};
-ext.isjson = function(file) {
-	return ext(file, ["json"]);
-};
-
-/**
- * @description  [Recursively fill-in the placeholders in each path contained
- *               in the provided paths object.]
- * @param  {Object} $paths [Object containing the paths.]
- * @return {Object}           [The object with paths filled-in.]
- */
-function expand_paths($paths) {
-	// path placeholders substitutes. these paths will also get added to the
-	// paths object after substitution down below.
-	var paths_subs_ = {
-		// paths::BASES
-		del: "/",
-		base: "./",
-		base_dot: ".",
-		dirname: __dirname,
-		cwd: process.cwd(),
-		homedir: "" // "assets/"
-	};
-
-	var replacer = function(match) {
-		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
-		return replacement !== undefined ? replacement : undefined;
-	};
-	// recursively replace all the placeholders
-	for (var key in $paths) {
-		if ($paths.hasOwnProperty(key)) {
-			var __path = $paths[key];
-
-			// find all the placeholders
-			while (/\$\{.*?\}/g.test(__path)) {
-				__path = __path.replace(/\$\{.*?\}/g, replacer);
-			}
-			// reset the substituted string back in the $paths object
-			$paths[key] = __path;
-		}
-	}
-
-	// add the subs to the paths object
-	for (var key in paths_subs_) {
-		if (paths_subs_.hasOwnProperty(key)) {
-			$paths[key] = paths_subs_[key];
-		}
-	}
-
-	// filled-in paths
-	return $paths;
 }

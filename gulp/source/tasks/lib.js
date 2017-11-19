@@ -34,11 +34,14 @@ gulp.task("lib:js", function(done) {
 });
 
 /**
+ * task: lib
  * Build the lib/ folder. (only for library projects).
+ *
  *
  * Usage
  *
- * $ gulp lib # Create lib/ folder.
+ * $ gulp lib
+ *     Create lib/ folder.
  */
 gulp.task("lib", function(done) {
 	var task = this;

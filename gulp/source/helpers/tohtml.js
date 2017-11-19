@@ -29,19 +29,23 @@ gulp.task("tohtml:prepcss", function(done) {
 });
 
 /**
- * Converts MarkDown (.md) file to its HTML counterpart (with GitHub style/layout).
+ * task: tohtml
+ * Converts Markdown (.md) file to .html.
  *
- * Options
- *
- * -f, --file   [string]  Path of file to convert. Defaults to ./README.md
  *
  * Notes
  *
  * • Files will get placed in ./markdown/previews/
  *
+ * Flags
+ *
+ * -f, --file
+ *     [string] Path of file to convert. Defaults to ./README.md
+ *
  * Usage
  *
- * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
+ * $ gulp tohtml --file ./README.md
+ *     Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	var prism = require("prismjs");

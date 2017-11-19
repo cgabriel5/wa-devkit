@@ -770,12 +770,6 @@ comment-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/comment-regex/-/comment-regex-1.0.0.tgz#7dd70268c83648a9c4cc19bf472d52e64f63918d"
 
-comments-parser@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/comments-parser/-/comments-parser-1.0.0.tgz#ec5486c2247249b89980864a380ac4d5fc84707a"
-  dependencies:
-    esprima "^2.7"
-
 component-bind@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/component-bind/-/component-bind-1.0.0.tgz#00c608ab7dcd93897c0009651b1d3a8e1e73bbd1"
@@ -1387,7 +1381,7 @@ escape-string-regexp@^1.0.0, escape-string-regexp@^1.0.2, escape-string-regexp@^
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
-esprima@^2.6.0, esprima@^2.7, esprima@^2.7.0:
+esprima@^2.6.0, esprima@^2.7.0:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-2.7.3.tgz#96e3b70d5779f6ad49cd032673d1c312767ba581"
 
@@ -2287,13 +2281,6 @@ gulp-strip-json-comments@^2.1.0:
     gulp-util "^3.0.0"
     strip-json-comments "^2.0.0"
     through2 "^2.0.0"
-
-gulp-task-doc@^1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/gulp-task-doc/-/gulp-task-doc-1.0.11.tgz#072a6c3fc9e81b3d02bba94fb6f6c08e05ece245"
-  dependencies:
-    comments-parser "^1.0.0"
-    stack-trace "0.0.9"
 
 gulp-uglify@^3.0.0:
   version "3.0.0"
@@ -4816,10 +4803,6 @@ sshpk@^1.7.0:
     ecc-jsbn "~0.1.1"
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
-
-stack-trace@0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.9.tgz#a8f6eaeca90674c333e7c43953f275b451510695"
 
 stat-mode@^0.2.0:
   version "0.2.2"

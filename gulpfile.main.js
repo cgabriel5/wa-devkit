@@ -51,6 +51,19 @@ var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var bs_autoclose = require("browser-sync-close-hook");
 
+// project utils
+var utils = require("./gulp/assets/utils/utils.js");
+var log = utils.log;
+var notify = utils.notify;
+var gulp = utils.gulp;
+var uri = utils.uri;
+var browser = utils.browser;
+var bangify = utils.bangify;
+var globall = utils.globall;
+var ext = utils.ext;
+var expand_paths = utils.expand_paths;
+var opts_sort = utils.opts_sort;
+
 //#! paths.js -- ./gulp/source/paths.js
 
 // get and fill in path placeholders
@@ -104,20 +117,14 @@ var INDEX = $app.index;
 var BASE = $app.base;
 var ROOTDIR = path.basename(path.resolve($paths.dirname)) + "/";
 var APPDIR = BASE + ROOTDIR;
+
+// line ending information
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
 var EOL_STYLE = EOL.style;
 
 // internal information
 var APPTYPE = $internal.get("apptype");
-
-// project utils
-var utils = require($paths.gulp_utils);
-var log = utils.log;
-var notify = utils.notify;
-var gulp = utils.gulp;
-var uri = utils.uri;
-var browser = utils.browser;
 
 // create browsersync server
 var bs = browser_sync.create($browsersync.server_name);
@@ -129,18 +136,6 @@ var branch_name;
 var opts_remove = {
 	read: false,
 	cwd: $paths.base
-};
-
-// gulp-sort custom sort function
-var opts_sort = {
-	// sort based on dirname alphabetically
-	comparator: function(file1, file2) {
-		var dir1 = path.dirname(file1.path);
-		var dir2 = path.dirname(file2.path);
-		if (dir1 > dir2) return 1;
-		if (dir1 < dir2) return -1;
-		return 0;
-	}
 };
 
 //#! injection.js -- ./gulp/source/injection.js
@@ -156,12 +151,13 @@ var html_injection = {
 //#! functions.js -- ./gulp/source/functions.js
 
 /**
- * @description [Opens the provided file in the user's browser.]
- * @param  {String}   filepath  [The path of the file to open.]
- * @param  {Number}   port     	[The port to open on.]
- * @param  {Function} callback  [The Gulp task callback to run.]
- * @param  {Object} task  		[The Gulp task.]
- * @return {Undefined}          [Nothing is returned.]
+ * Opens the provided file in the user's browser.
+ *
+ * @param {string} filepath - The path of the file to open.
+ * @param {number} port - The port to open on.
+ * @param {function} callback - The Gulp task callback to run.
+ * @param {object} task - The Gulp task.
+ * @return {undefined} Nothing.
  */
 function open_file_in_browser(filepath, port, callback, task) {
 	pump(
@@ -190,8 +186,9 @@ function open_file_in_browser(filepath, port, callback, task) {
 }
 
 /**
- * @description [Print that an active Gulp instance exists.]
- * @return {Undefined} 			[Nothing is returned.]
+ * Print that an active Gulp instance exists.
+ *
+ * @return {undefined} Nothing.
  */
 function gulp_check_warn() {
 	log(
@@ -201,212 +198,10 @@ function gulp_check_warn() {
 	);
 }
 
-/**
- * @description [Render output from tasks.]
- * @param {TaskList} tasks 			[The Gulp tasks.]
- * @param {Boolean}  verbose=false  [Flag indicating whether to show hide tasks with the verbose flag.]
- * @returns {String} [The text to print.]
- * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
- */
-function print_tasks(tasks, verbose, filter) {
-	tasks = tasks.filterHidden(verbose).sort();
-
-	// determine the header
-	var header = filter ? "Filtered" : "Tasks";
-	var results = ["", chalk.underline.bold(header), ""];
-	var help_doc = ["", chalk.underline.bold("Help"), ""];
-
-	var field_task_len = tasks.getLongestNameLength();
-
-	tasks.forEach(function(task) {
-		// help task will always be placed before all other tasks
-		// to always have its documentation present.
-		var is_help_task = task.name === "help";
-		// determine the correct array to reference
-		var array_ref = is_help_task ? help_doc : results;
-
-		var comment = task.comment || {};
-		var lines = comment.lines || [];
-
-		/* HACK-START: Modify long comment indentation */
-		// reset the starting indentation for long explanations
-		var indentation = false;
-		var indentation_index = -1;
-		var indentation_length;
-		lines.forEach(function(line, i) {
-			// check whether its a long explanation
-			indentation_index = line.indexOf("=>");
-			// if => is found set the flag and calculate the indentation length
-			// also reset the line by removing the "=>".
-			if (-~indentation_index) {
-				indentation = true;
-				indentation_length = indentation_index - 1;
-				// reset the line, remove "=>"
-				lines[i] = line.replace(/\=>\s+/, "");
-			}
-			// if the line starts with "/" it needs to be indented
-			if (/^\//.test(line) && indentation) {
-				// add the previous indentation to it
-				lines[i] =
-					" ".repeat(indentation_length) +
-					line.replace(/^\/\s+/, " ");
-			}
-			// reset the vars after the final loop run
-			if (lines.length - 1 === i) {
-				// reset the vars
-				indentation = false;
-				indentation_index = -1;
-				indentation_length = null;
-			}
-		});
-		/* HACK-END */
-
-		array_ref.push(
-			format_column(task.name, field_task_len) + (lines[0] || "")
-		);
-		// only print verbose documentation when flag is provided
-		if (verbose || is_help_task) {
-			for (var i = 1; i < lines.length; i++) {
-				array_ref.push(
-					format_column("", field_task_len) + "  " + lines[i]
-				);
-				if (verbose && i === lines.length - 1) array_ref.push("\n");
-			}
-		}
-	});
-
-	if (!verbose) results.push("\n");
-
-	return help_doc.concat(results).join("\n");
-}
-
-/**
- * @description [Return a text surrounded by space.]
- * @param {String} text
- * @param {Number} width	   [Width Column width without offsets.]
- * @param {Number} offset_left  [Space count before text.]
- * @param {Number} offset_right [Space count after text.]
- * @returns {String} [The formated text.]
- * @source [https://github.com/megahertz/gulp-task-doc/blob/master/lib/printer.js]
- */
-function format_column(text, width, offset_left, offset_right) {
-	offset_left = undefined !== offset_left ? offset_left : 3;
-	offset_right = undefined !== offset_right ? offset_right : 3;
-	return (
-		new Array(offset_left + 1).join(" ") +
-		chalk.magenta(text) +
-		new Array(Math.max(width - text.length, 0) + 1).join(" ") +
-		new Array(offset_right + 1).join(" ")
-	);
-}
-
-/**
- * @description [Add a bang to the start of the string.]
- * @param  {String} string [The string to add the bang to.]
- * @return {String}        [The new string with bang added.]
- */
-function bangify(string) {
-	return "!" + (string || "");
-}
-
-/**
- * @description [Appends the ** pattern to string.]
- * @param  {String} string [The string to add pattern to.]
- * @return {String}        [The new string with added pattern.]
- */
-function globall(string) {
-	return (string || "") + "**";
-}
-
-/**
- * @description [Returns the provided file's extension or checks it against the provided extension type.]
- * @param  {Object} file [The Gulp file object.]
- * @param  {Array} types [The optional extension type(s) to check against.]
- * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
- */
-function ext(file, types) {
-	// when no file exists return an empty string
-	if (!file) return "";
-
-	// get the file extname
-	var extname = path
-		.extname(file.path)
-		.toLowerCase()
-		.replace(/^\./, "");
-
-	// simply return the extname when no type is
-	// provided to check against.
-	if (!types) return extname;
-
-	// else when a type is provided check against it
-	return Boolean(-~types.indexOf(extname));
-}
-
-// check for the usual file types
-ext.ishtml = function(file) {
-	return ext(file, ["html"]);
-};
-ext.iscss = function(file) {
-	return ext(file, ["css"]);
-};
-ext.isjs = function(file) {
-	return ext(file, ["js"]);
-};
-ext.isjson = function(file) {
-	return ext(file, ["json"]);
-};
-
-/**
- * @description  [Recursively fill-in the placeholders in each path contained
- *               in the provided paths object.]
- * @param  {Object} $paths [Object containing the paths.]
- * @return {Object}           [The object with paths filled-in.]
- */
-function expand_paths($paths) {
-	// path placeholders substitutes. these paths will also get added to the
-	// paths object after substitution down below.
-	var paths_subs_ = {
-		// paths::BASES
-		del: "/",
-		base: "./",
-		base_dot: ".",
-		dirname: __dirname,
-		cwd: process.cwd(),
-		homedir: "" // "assets/"
-	};
-
-	var replacer = function(match) {
-		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
-		return replacement !== undefined ? replacement : undefined;
-	};
-	// recursively replace all the placeholders
-	for (var key in $paths) {
-		if ($paths.hasOwnProperty(key)) {
-			var __path = $paths[key];
-
-			// find all the placeholders
-			while (/\$\{.*?\}/g.test(__path)) {
-				__path = __path.replace(/\$\{.*?\}/g, replacer);
-			}
-			// reset the substituted string back in the $paths object
-			$paths[key] = __path;
-		}
-	}
-
-	// add the subs to the paths object
-	for (var key in paths_subs_) {
-		if (paths_subs_.hasOwnProperty(key)) {
-			$paths[key] = paths_subs_[key];
-		}
-	}
-
-	// filled-in paths
-	return $paths;
-}
-
 //#! init.js -- ./gulp/source/tasks/init.js
 
-// when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
+// when gulp is closed, either on error, crash, or intentionally,
+// do a quick cleanup
 var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
 	var alphabetize = require("alphabetize-object-keys");
@@ -416,7 +211,7 @@ cleanup(function(exit_code, signal) {
 
 	// only perform this cleanup when the Gulp instance is closed.
 	// when any other task is run the cleanup should not be done.
-	// [https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html]
+	// [https://goo.gl/rJNKNZ]
 
 	if (pid && signal) {
 		// Gulp instance exists so cleanup
@@ -525,16 +320,28 @@ gulp.task("init:build", function(done) {
 });
 
 /**
- * Runs Gulp. (builds project files, watches files, & runs browser-sync)
+ * task: default
+ * Runs Gulp.
  *
- * Options
  *
- * -s, --stop  [boolean]  Flag indicating to stop Gulp.
+ * Notes
+ *
+ * • This is the default task that will builds project files, watches
+ *   files, run browser-sync, etc.
+ * • Only one instance can be run at a time.
+ *
+ * Flags
+ *
+ * -s, --stop
+ *     [boolean] Flag indicating to stop Gulp.
  *
  * Usage
  *
- * $ gulp # Run Gulp.
- * $ gulp --stop # Stops active Gulp process, if running.
+ * $ gulp
+ *     Run Gulp.
+ *
+ * $ gulp --stop
+ *     Stops active Gulp process, if running.
  */
 gulp.task("default", function(done) {
 	var find_free_port = require("find-free-port");
@@ -567,8 +374,8 @@ gulp.task("default", function(done) {
 			function(err, p1, p2) {
 				// get pid, if any
 				var pid = $internal.get("pid");
-				// if there is a pid present it means a Gulp instance has already started.
-				// therefore, prevent another from starting.
+				// if there is a pid present it means a Gulp instance has
+				// already started. therefore, prevent another from starting.
 				if (pid) {
 					log(
 						chalk.yellow(
@@ -591,7 +398,8 @@ gulp.task("default", function(done) {
 					function() {
 						// store ports on the browser-sync object itself
 						bs._ports_ = [p1, p2]; // [app, ui]
-						// after getting the free ports, finally run the build task
+						// after getting the free ports, finally run the
+						// build task
 						return sequence(
 							"init:save-pid",
 							"init:watch-git-branch",
@@ -739,11 +547,14 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
+ * task: dist
  * Build the dist/ folder. (only for webapp projects).
+ *
  *
  * Usage
  *
- * $ gulp dist # Create dist/ folder.
+ * $ gulp dist
+ *     Create dist/ folder.
  */
 gulp.task("dist", function(done) {
 	var task = this;
@@ -801,11 +612,14 @@ gulp.task("lib:js", function(done) {
 });
 
 /**
+ * task: lib
  * Build the lib/ folder. (only for library projects).
+ *
  *
  * Usage
  *
- * $ gulp lib # Create lib/ folder.
+ * $ gulp lib
+ *     Create lib/ folder.
  */
 gulp.task("lib", function(done) {
 	var task = this;
@@ -1101,11 +915,14 @@ gulp.task("img:main", function(done) {
 //#! modernizr.js -- ./gulp/source/helpers/modernizr.js
 
 /**
+ * task: modernizr
  * Build Modernizr file.
+ *
  *
  * Usage
  *
- * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
+ * $ gulp modernizr
+ *     Build modernizr.js. (uses ./modernizr.config.json)
  */
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
@@ -1160,19 +977,23 @@ gulp.task("tohtml:prepcss", function(done) {
 });
 
 /**
- * Converts MarkDown (.md) file to its HTML counterpart (with GitHub style/layout).
+ * task: tohtml
+ * Converts Markdown (.md) file to .html.
  *
- * Options
- *
- * -f, --file   [string]  Path of file to convert. Defaults to ./README.md
  *
  * Notes
  *
  * • Files will get placed in ./markdown/previews/
  *
+ * Flags
+ *
+ * -f, --file
+ *     [string] Path of file to convert. Defaults to ./README.md
+ *
  * Usage
  *
- * $ gulp tohtml --file ./README.md # Convert README.md to README.html.
+ * $ gulp tohtml --file ./README.md
+ *     Convert README.md to README.html.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	var prism = require("prismjs");
@@ -1256,25 +1077,32 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 //#! open.js -- ./gulp/source/helpers/open.js
 
 /**
+ * task: open
  * Opens provided file in browser.
- *
- * Options
- *
- * -f, --file  <file>    The path of the file to open.
- * -p, --port  [number]  The port to open in. (Defaults to browser-sync port if available or no port)
  *
  * Notes
  *
- * • => New tabs should be opened via the terminal using `open`. Doing so will
- * / ensure the generated tab will auto-close when Gulp is closed/existed. Opening
- * / tabs by typing/copy-pasting the project URL into the browser address bar will
- * / not auto-close the tab(s) due to security issues as noted here:
- * / https://stackoverflow.com/q/19761241.
+ * • New tabs should be opened via the terminal using `open`. Doing
+ *   so will ensure the generated tab will auto-close when Gulp is
+ *   closed. Opening tabs by typing/copy-pasting the project URL
+ *   into the browser address bar will not auto-close the tab(s)
+ *   due to security issues as noted here:
+ *   [https://stackoverflow.com/q/19761241].
+ *
+ * Flags
+ *
+ * -f, --file
+ *     <file> The path of the file to open.
+ * -p, --port
+ *     [number] The port to open in. (Defaults to browser-sync port if
+ *     available or no port)
  *
  * Usage
  *
- * $ gulp open --file index.html --port 3000 # Open index.html in port 3000.
- * $ gulp open -f index.html # Open index.html in browser-sync port is available or no port.
+ * $ gulp open --file index.html --port 3000
+ *     Open index.html in port 3000.
+ * $ gulp open -f index.html
+ *     Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
 	var task = this;
@@ -1312,11 +1140,14 @@ gulp.task("open", function(done) {
 //#! instance.js -- ./gulp/source/helpers/instance.js
 
 /**
+ * task: status
  * Print whether there is an active Gulp instance.
+ *
  *
  * Usage
  *
- * $ gulp status # Print Gulp status.
+ * $ gulp status
+ *     Print Gulp status.
  */
 gulp.task("status", function(done) {
 	var pid = $internal.get("pid");
@@ -1329,11 +1160,14 @@ gulp.task("status", function(done) {
 });
 
 /**
+ * task: ports
  * Print the currently used ports for browser-sync.
+ *
  *
  * Usage
  *
- * $ gulp ports # Print uses ports.
+ * $ gulp ports
+ *     Print uses ports.
  */
 gulp.task("ports", function(done) {
 	// get the ports
@@ -1354,36 +1188,57 @@ gulp.task("ports", function(done) {
 //#! pretty.js -- ./gulp/source/helpers/pretty.js
 
 /**
+ * task: pretty
  * Beautify all HTML, JS, CSS, and JSON project files.
  *
- * Options
- *
- * -t, --type         [string]   The optional extension types to clean.
- * -g, --glob         [array]    Use glob to find files to prettify.
- * -s, --show         [boolean]  Show the used globs before prettifying.
- * -e, --empty        [boolean]  => Empty default globs array. Careful as this can prettify
- *                               / all project files. By default the node_modules/ is ignored,
- *                               / for example. Be sure to exclude files that don't need to be
- *                               / prettified.
- * -l, --line-ending  [string]   => If provided, the file ending will get changed to to provided
- * 								 / character(s). Line endings default to LF (\n).
  *
  * Notes
  *
- * • => By default files in the following directories or containing the following
- *   / sub-extensions are ignored: ./node_modules/, ./git/, vendor/, .ig.,
- *   / and .min. files.
- * • => Special characters in globs provided via the CLI (--glob) might need to be
- *   / escaped if getting an error.
+ * • By default files in the following directories or containing the
+ *   following sub-extensions are ignored: ./node_modules/, ./git/,
+ *   vendor/, .ig., and .min. files.
+ * • Special characters in globs provided via the CLI (--glob) might
+ *   need to be escaped if getting an error.
+ *
+ * Flags
+ *
+ * -t, --type
+ *     [string] The optional extension types to clean.
+ *
+ * -g, --glob
+ *     [array] Use glob to find files to prettify.
+ *
+ * -s, --show
+ *     [boolean] Show the used globs before prettifying.
+ *
+ * -e, --empty
+ *     [boolean] Empty default globs array. Careful as this can prettify
+ *     all project files. By default the node_modules/ is ignored, for
+ *     example. Be sure to exclude files that don't need to be prettified.
+ *
+ * -l, --line-ending
+ *     [string] If provided, the file ending will get changed to provided
+ *     character(s). Line endings default to LF (\n).
  *
  * Usage
  *
- * $ gulp pretty # Prettify all HTML, CSS, JS, JSON files.
- * $ gulp pretty --type "js, json" # Only prettify JS and JSON files.
- * $ gulp pretty --glob "**\/*.js" # Prettify default files and all JS files.
- * $ gulp pretty --show # Halts prettifying to show the globs to be used for prettifying.
- * $ gulp pretty --empty --glob "**\/*.js" # Flag indicating to remove default globs.
- * $ gulp pretty --line-ending "\n" # Make files have "\n" line-ending.
+ * $ gulp pretty
+ *     Prettify all HTML, CSS, JS, JSON files.
+ *
+ * $ gulp pretty --type "js, json"
+ *     Only prettify JS and JSON files.
+ *
+ * $ gulp pretty --glob "some/folder/*.js"
+ *     Prettify default files and all JS files.
+ *
+ * $ gulp pretty --show
+ *     Halts prettifying to show the globs to be used for prettifying.
+ *
+ * $ gulp pretty --empty --glob "some/folder/*.js"
+ *     Flag indicating to remove default globs.
+ *
+ * $ gulp pretty --line-ending "\n"
+ *     Make files have "\n" line-ending.
  */
 gulp.task("pretty", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -1506,8 +1361,9 @@ gulp.task("pretty", function(done) {
 			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
 			$.gulpif(
 				function(file) {
-					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
-					// to be sortable as comments are not allowed in JSON files.
+					// file must be a JSON file and cannot contain the
+					// comment (.cm.) sub-extension to be sortable as
+					// comments are not allowed in JSON files.
 					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
 						? true
 						: false;
@@ -1540,11 +1396,22 @@ gulp.task("pretty", function(done) {
 //#! eol.js -- ./gulp/source/helpers/eol.js
 
 /**
+ * task: eol
  * Correct file line endings.
+ *
+ *
+ * Flags
+ *
+ * -l, --line-ending
+ *     [string] The line ending to use. Defauls to "\n".
  *
  * Usage
  *
- * $ gulp eol # Check file line endings.
+ * $ gulp eol
+ *     Check file line endings.
+ *
+ * $ gulp eol --line-ending "\n"
+ *     Enforce "\n" line endings.
  */
 gulp.task("eol", function(done) {
 	var task = this;
@@ -1561,8 +1428,9 @@ gulp.task("eol", function(done) {
 
 	// check:
 	// HTML, CSS, JS, JSON, TXT, TEXT, and MD files.
-	// exclude files containing a ".min." as this is the convention used for minified files.
-	// the node_modules/, .git/, img/ files are also excluded.
+	// exclude files containing a ".min." as this is the convention used
+	// for minified files. the node_modules/, .git/, img/ files are also
+	// excluded.
 	var files = [
 		$paths.files_code,
 		$paths.not_min,
@@ -1590,7 +1458,9 @@ gulp.task("eol", function(done) {
 //#! stats.js -- ./gulp/source/helpers/stats.js
 
 /**
- * Return a breakdown of the types of files contained in project.
+ * task: stats
+ * Prints table containing project file type breakdown.
+ *
  *
  * Notes
  *
@@ -1598,7 +1468,8 @@ gulp.task("eol", function(done) {
  *
  * Usage
  *
- * $ gulp stats # Print a table containing project files type information.
+ * $ gulp stats
+ *     Print a table containing project files type information.
  */
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
@@ -1678,21 +1549,43 @@ gulp.task("stats", function(done) {
 //#! files.js -- ./gulp/source/helpers/files.js
 
 /**
+ * task: files
  * List project files.
  *
- * Options
  *
- * -t, --type     [string]  The optional extensions of files to list.
- * -m, --min      [string]  Flag indicating whether to show .min. files.
- * -w, --whereis  [string]  File to look for. (Uses fuzzy search, Ignores ./node_modules/)
+ * Flags
+ *
+ * -t, --type
+ *     [string] The optional extensions of files to list.
+ *
+ * -m, --min
+ *     [string] Flag indicating whether to show .min. files.
+ *
+ * -w, --whereis
+ *     [string] File to look for. Uses fuzzy search and
+ *     Ignores ./node_modules/).
  *
  * Usage
  *
- * $ gulp files # Default shows all files excluding files in ./node_modules/ & .git/.
- * $ gulp files --type "js html" # Only list HTML and JS files.
- * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in basename.
- * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
- * $ gulp files -w ".ig." -e # Turn off fuzzy search & find all files containing ".ig." (ignored).
+ * $ gulp files
+ *     Shows all files excluding files in ./node_modules/ &
+ *     .git/.
+ *
+ * $ gulp files --type "js html"
+ *     Only list HTML and JS files.
+ *
+ * $ gulp files --type "js" --whereis "jquery"
+ *     Print JS files with "jquery" in basename.
+ *
+ * $ gulp files --whereis "fastclick.js"
+ *     Prints files containing fastclick.js in basename.
+ *
+ * $ gulp files --whereis ".ig." --exact
+ *     Turn off fuzzy search & find all files containing
+ *     ".ig." (ignored).
+ *
+ * $ gulp files --min
+ *     Print files containing ".min." in their name.
  */
 gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");
@@ -1800,19 +1693,44 @@ gulp.task("files", function(done) {
 //#! dependency.js -- ./gulp/source/helpers/dependency.js
 
 /**
- * Add/remove front-end dependencies from ./node_modules/ to its JS/CSS vendor folder.
+ * task: dependency
+ * Add/remove front-end dependencies.
  *
- * Options
  *
- * -n, --name    <string>  The module name.
- * -t, --type    <string>  Dependency type (js/css).
- * -a, --action  <string>  Action to take (add/remove).
+ * Notes
+ *
+ * • Dependencies are grabbed from ./node_modules/<name> and moved
+ *   to its corresponding ./<type>/vendor/ folder.
+ * • name, type, and action options are grouped. This means when one
+ *   is used they must all be provided.
+ *
+ * Flags
+ *
+ * -n, --name
+ *     <string>  The module name.
+ *
+ * -t, --type
+ *     <string>  Dependency type (js/css).
+ *
+ * -a, --action
+ *     <string>  Action to take (add/remove).
+ *
+ * -l, --list
+ *     <boolean> Show all CSS/JS dependencies.
  *
  * Usage
  *
- * $ gulp dependency -n fastclick -t js -a add # Copy fastclick to JS vendor directory.
- * $ gulp dependency -n fastclick -t js -a remove # Remove fastclick from JS vendor directory.
- * $ gulp dependency -n font-awesome -t css -a add # Add font-awesome to CSS vendor directory.
+ * $ gulp dependency --name fastclick --type js --action add
+ *     Copy fastclick to JS vendor directory.
+ *
+ * $ gulp dependency --name fastclick --type js --action remove
+ *     Remove fastclick from JS vendor directory.
+ *
+ * $ gulp dependency --name font-awesome --type css --action add
+ *     Add font-awesome to CSS vendor directory.
+ *
+ * $ gulp dependency --list
+ *     Show all CSS/JS dependencies.
  */
 gulp.task("dependency", function(done) {
 	var task = this;
@@ -1943,11 +1861,14 @@ gulp.task("dependency", function(done) {
 //#! make.js -- ./gulp/source/helpers/make.js
 
 /**
- * Build gulpfile from source files. Useful after making changes to source files.
+ * task: make
+ * Build gulpfile from source files.
+ *
  *
  * Usage
  *
- * $ gulp make # Re-build gulpfile
+ * $ gulp make
+ *     Re-build gulpfile.
  */
 gulp.task("make", function(done) {
 	var task = this;
@@ -1970,7 +1891,8 @@ gulp.task("make", function(done) {
 					)
 				);
 			}),
-			// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
+			// if gulpfile.js exists use that name,
+			// else fallback to gulpfile.main.js
 			$.gulpif(
 				fe.sync($paths.base + main_name),
 				$.concat(main_name),
@@ -1987,11 +1909,13 @@ gulp.task("make", function(done) {
 //#! settings.js -- ./gulp/source/helpers/settings.js
 
 /**
- * Re-build ./configs/._settings.json.
+ * task: settings
+ * Re-build ./configs/._settings.json
+ *
  *
  * Usage
  *
- * $ gulp settings # Re-build ._settings.json.
+ * $ gulp settings # Re-build ._settings.json
  */
 gulp.task("settings", function(done) {
 	var task = this;
@@ -2016,22 +1940,30 @@ gulp.task("settings", function(done) {
 //#! indent.js -- ./gulp/source/helpers/indent.js
 
 /**
+ * task: indent
  * Indent all JS files with tabs or spaces.
  *
- * Options
- *
- * --style    [string]  Indent using spaces or tabs. Defaults to tabs.
- * --size     [string]  The amount of spaces to use. Defaults to 4.
  *
  * Notes
  *
- * • @experimental: This task is currently experimental.
+ * • This task is currently experimental.
  * • Ignores ./node_modules/, ./git/ and vendor/ files.
+ *
+ * Flags
+ *
+ * --style
+ *     [string] Indent using spaces or tabs. Defaults to tabs.
+ *
+ * --size
+ *     [string] The amount of spaces to use. Defaults to 4.
  *
  * Usage
  *
- * $ gulp indent --style tabs # Turn all 4 starting spaces into tabs.
- * $ gulp indent --style spaces # Expand all line starting tabs into 4 spaces.
+ * $ gulp indent --style tabs
+ *     Turn all 4 starting spaces into tabs.
+ *
+ * $ gulp indent --style spaces --size 2
+ *     Expand all line starting tabs into 2 spaces.
  */
 gulp.task("indent", function(done) {
 	// run yargs
@@ -2069,7 +2001,8 @@ gulp.task("indent", function(done) {
 				// convert tabs to spaces
 				style === "tabs",
 				$.replace(/^( )+/gm, function(match) {
-					// split on the amount size provided [https://stackoverflow.com/a/6259543]
+					// split on the amount size provided
+					// [https://stackoverflow.com/a/6259543]
 					var chunks = match.match(new RegExp(`.\{1,${size}\}`, "g"));
 
 					// modify the chunks
@@ -2100,71 +2033,191 @@ gulp.task("indent", function(done) {
 //#! help.js -- ./gulp/source/helpers/help.js
 
 /**
+ * task: help
  * Provides Gulp task documentation (this documentation).
  *
- * Options
  *
- * (no options)   --------   List tasks and their descriptions.
- * --verbose      [boolean]  Flag indicating whether to show all documentation.
- * -n, --name     [string]   Names of tasks to show documentation for.
+ * Notes
+ *
+ * • Help documentation will always show even when verbose flag
+ *   is not provided.
+ *
+ * Flags
+ *
+ * -v, --verbose
+ *     [boolean] Shows all documentation.
+ *
+ * -f, --filter
+ *     [string] Names of tasks to show documentation for.
  *
  * Usage
  *
- * $ gulp help # Show list of tasks and their descriptions.
- * $ gulp help --verbose # Show all documentation for all tasks.
- * $ gulp help --name "open default dependency" # Show documentation for specific tasks.
+ * $ gulp help
+ *     Show a list of tasks and their short descriptions.
+ *
+ * $ gulp help --verbose
+ *     Show full documentation (flags, usage, notes...).
+ *
+ * $ gulp help --filter "open default dependency"
+ *     Show documentation for specific tasks.
  */
-gulp.task("help", function() {
+gulp.task("help", function(done) {
 	var task = this;
+
 	// run yargs
-	var _args = yargs.option("name", {
-		alias: "n",
-		default: false,
-		describe: "Name of task to show documentation for.",
-		type: "string"
-	}).argv;
-	var task_name = _args.n || _args.name;
-	// contain printer in a variable rather than an anonymous function
-	// to attach the provided task_name for later use. this is a bit hacky
-	// but its a workaround to provide the name.
-	var printer = function(tasks, verbose) {
-		// custom print function
-		var task_name = this.task_name;
-		if (task_name) {
-			// custom sort
-			// split into an array
-			var names = task_name.trim().split(/\s+/);
-			// add the help task to always show it
-			names.push("help");
-			// set verbose to true to show all documentation
-			verbose = true;
-			// turn all but the provided task name to internal
-			// this will essentially "hide" them from being printed
-			tasks.tasks.forEach(function(item) {
-				// if (item.name !== task_name) {
-				if (!-~names.indexOf(item.name)) {
-					item.comment.tags = [
-						{
-							name: "internal",
-							value: true
+	var _args = yargs
+		.option("verbose", {
+			alias: "v",
+			type: "boolean"
+		})
+		.option("filter", {
+			alias: "f",
+			type: "string"
+		}).argv;
+	var verbose = _args.v || _args.verbose;
+	var filter = _args.f || _args.filter;
+
+	// get the gulpfile.js content
+	var content = "";
+	pump(
+		[
+			gulp.src("gulpfile.main.js", {
+				cwd: $paths.base
+			}),
+			$.fn(function(file) {
+				content = file.contents.toString();
+			})
+		],
+		function() {
+			// get all the docblocks from the file
+			var blocks = content.match(/^\/\*\*[\s\S]*?\*\/$/gm);
+
+			var formatted = [];
+			var help;
+			var newline = "\n";
+			var tasks_names_lengths = [];
+			var headers = ["Flags", "Usage", "Notes"];
+
+			// [https://stackoverflow.com/a/9175783]
+			// sort alphabetically fallback to a length
+			var cmp = function(a, b) {
+				if (a > b) return +1;
+				if (a < b) return -1;
+				return 0;
+			};
+
+			var replacer = function(match) {
+				return chalk.cyan(match);
+			};
+
+			var remove_comment_syntax = function(string) {
+				return string
+					.replace(/(^\/\*\*)|( \*\/$)|( \* ?)/gm, "")
+					.trim();
+			};
+
+			var get_task_name = function(string) {
+				return (string.match(/\* task\: ([a-z]+)$/m) || "")[1];
+			};
+
+			console.log(newline);
+			console.log(chalk.bold("Tasks"));
+			console.log("\n");
+
+			var tasks = {};
+			var names = [];
+			var lengths = [];
+
+			// loop over every match get needed data
+			blocks.forEach(function(block) {
+				// get task name
+				var name = get_task_name(block);
+
+				// skip if no name is found
+				if (!name) return;
+
+				// reset name
+				block = block.replace(
+					new RegExp("task: " + name + "$", "m"),
+					""
+				);
+
+				// remove doc comment syntax
+				block = remove_comment_syntax(block);
+
+				// get the description
+				var desc = block.substring(0, block.indexOf("\n\n"));
+
+				tasks[name] = { text: block, desc: desc };
+				if (name !== "help") names.push(name);
+				lengths.push(name.length);
+			});
+
+			// sort the array names
+			names.sort(function(a, b) {
+				return cmp(a, b) || cmp(a.length, b.length);
+			});
+
+			// get the task max length
+			var max_length = Math.max.apply(null, lengths);
+
+			// filter if flag present
+			if (filter) {
+				filter = filter.split(" ");
+				names = names.filter(function(name) {
+					return -~filter.indexOf(name);
+				});
+			}
+
+			// add the help task to the front of the array
+			names.unshift("help");
+
+			// loop over to print this time
+			names.forEach(function(name) {
+				// get the block
+				var task = tasks[name];
+				var block = task.text;
+				var desc = task.desc;
+
+				// loop over lines
+				if (verbose || name === "help") {
+					// bold the tasks
+					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
+
+					// print the task name
+					console.log("   " + chalk.cyan(name));
+
+					var lines = block.split("\n");
+					lines.forEach(function(line) {
+						if (-~headers.indexOf(line.trim())) {
+							line = " ".repeat(6) + (line + ":");
+						} else {
+							line = "\t" + line;
 						}
-					];
+						console.log(line);
+					});
+
+					// bottom padding
+					console.log("\n");
+				} else {
+					// only show the name and its description
+					console.log(
+						"   " +
+							chalk.cyan(name) +
+							" ".repeat(max_length - name.length + 3) +
+							desc
+					);
 				}
 			});
+
+			if (!verbose) {
+				// bottom padding
+				console.log("\n");
+			}
+
+			done();
 		}
-		tasks = tasks.filterHidden(verbose).sort();
-		// filter will change the documentation header in the print_tasks function
-		var filter = task_name ? true : false;
-		return print_tasks(tasks, verbose, filter);
-	};
-	// attach the task name to the printer function
-	printer.task_name = task_name;
-	// re-assign the printer as the "this" to have access to the task name
-	// within the function (printer) itself
-	printer = printer.bind(printer);
-	gulp.help({
-		print: printer
-	})(task);
+	);
 });
 
 //#! favicon.js -- ./gulp/source/helpers/favicon.js
@@ -2313,11 +2366,14 @@ gulp.task("favicon:html", function(done) {
 });
 
 /**
+ * task: favicon
  * Re-build project favicons.
+ *
  *
  * Usage
  *
- * $ gulp favicon # Re-build favicons.
+ * $ gulp favicon
+ *     Re-build favicons.
  */
 gulp.task("favicon", function(done) {
 	var task = this;

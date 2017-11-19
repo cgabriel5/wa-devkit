@@ -142,11 +142,14 @@ gulp.task("favicon:html", function(done) {
 });
 
 /**
+ * task: favicon
  * Re-build project favicons.
+ *
  *
  * Usage
  *
- * $ gulp favicon # Re-build favicons.
+ * $ gulp favicon
+ *     Re-build favicons.
  */
 gulp.task("favicon", function(done) {
 	var task = this;

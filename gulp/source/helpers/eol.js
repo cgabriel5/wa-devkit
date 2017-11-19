@@ -1,9 +1,20 @@
 /**
+ * task: eol
  * Correct file line endings.
+ *
+ *
+ * Flags
+ *
+ * -l, --line-ending
+ *     [string] The line ending to use. Defauls to "\n".
  *
  * Usage
  *
- * $ gulp eol # Check file line endings.
+ * $ gulp eol
+ *     Check file line endings.
+ *
+ * $ gulp eol --line-ending "\n"
+ *     Enforce "\n" line endings.
  */
 gulp.task("eol", function(done) {
 	var task = this;
@@ -20,8 +31,9 @@ gulp.task("eol", function(done) {
 
 	// check:
 	// HTML, CSS, JS, JSON, TXT, TEXT, and MD files.
-	// exclude files containing a ".min." as this is the convention used for minified files.
-	// the node_modules/, .git/, img/ files are also excluded.
+	// exclude files containing a ".min." as this is the convention used
+	// for minified files. the node_modules/, .git/, img/ files are also
+	// excluded.
 	var files = [
 		$paths.files_code,
 		$paths.not_min,

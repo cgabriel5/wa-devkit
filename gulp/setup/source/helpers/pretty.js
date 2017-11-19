@@ -32,8 +32,9 @@ gulp.task("pretty", function(done) {
 			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
 			$.gulpif(
 				function(file) {
-					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
-					// to be sortable as comments are not allowed in JSON files.
+					// file must be a JSON file and cannot contain the
+					// comment (.cm.) sub-extension to be sortable as
+					// comments are not allowed in JSON files.
 					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
 						? true
 						: false;

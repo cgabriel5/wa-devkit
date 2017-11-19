@@ -18,7 +18,6 @@
 	// paths.gulp
 	// "gulp_home": "${homedir}gulp/",
 	"gulp_source": "${homedir}gulp/source/",
-	"gulp_utils": "./${homedir}gulp/assets/utils/utils.js",
 	// paths.markdown (tohtml:prepcss)
 	"markdown_preview": "${homedir}markdown/previews/",
 	"markdown_styles_github": "github-markdown.css",

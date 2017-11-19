@@ -1,4 +1,5 @@
-// when gulp is closed, either on error, crash, or intentionally, do a quick cleanup
+// when gulp is closed, either on error, crash, or intentionally,
+// do a quick cleanup
 var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
 	var alphabetize = require("alphabetize-object-keys");
@@ -8,7 +9,7 @@ cleanup(function(exit_code, signal) {
 
 	// only perform this cleanup when the Gulp instance is closed.
 	// when any other task is run the cleanup should not be done.
-	// [https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html]
+	// [https://goo.gl/rJNKNZ]
 
 	if (pid && signal) {
 		// Gulp instance exists so cleanup
@@ -117,16 +118,28 @@ gulp.task("init:build", function(done) {
 });
 
 /**
- * Runs Gulp. (builds project files, watches files, & runs browser-sync)
+ * task: default
+ * Runs Gulp.
  *
- * Options
  *
- * -s, --stop  [boolean]  Flag indicating to stop Gulp.
+ * Notes
+ *
+ * • This is the default task that will builds project files, watches
+ *   files, run browser-sync, etc.
+ * • Only one instance can be run at a time.
+ *
+ * Flags
+ *
+ * -s, --stop
+ *     [boolean] Flag indicating to stop Gulp.
  *
  * Usage
  *
- * $ gulp # Run Gulp.
- * $ gulp --stop # Stops active Gulp process, if running.
+ * $ gulp
+ *     Run Gulp.
+ *
+ * $ gulp --stop
+ *     Stops active Gulp process, if running.
  */
 gulp.task("default", function(done) {
 	var find_free_port = require("find-free-port");
@@ -159,8 +172,8 @@ gulp.task("default", function(done) {
 			function(err, p1, p2) {
 				// get pid, if any
 				var pid = $internal.get("pid");
-				// if there is a pid present it means a Gulp instance has already started.
-				// therefore, prevent another from starting.
+				// if there is a pid present it means a Gulp instance has
+				// already started. therefore, prevent another from starting.
 				if (pid) {
 					log(
 						chalk.yellow(
@@ -183,7 +196,8 @@ gulp.task("default", function(done) {
 					function() {
 						// store ports on the browser-sync object itself
 						bs._ports_ = [p1, p2]; // [app, ui]
-						// after getting the free ports, finally run the build task
+						// after getting the free ports, finally run the
+						// build task
 						return sequence(
 							"init:save-pid",
 							"init:watch-git-branch",

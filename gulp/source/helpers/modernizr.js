@@ -1,9 +1,12 @@
 /**
+ * task: modernizr
  * Build Modernizr file.
+ *
  *
  * Usage
  *
- * $ gulp modernizr # Build modernizr.js. Make changes to ./modernizr.config.json
+ * $ gulp modernizr
+ *     Build modernizr.js. (uses ./modernizr.config.json)
  */
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");

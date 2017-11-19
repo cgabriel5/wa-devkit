@@ -48,3 +48,16 @@ var de = require("directory-exists");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var bs_autoclose = require("browser-sync-close-hook");
+
+// project utils
+var utils = require("./gulp/assets/utils/utils.js");
+var log = utils.log;
+var notify = utils.notify;
+var gulp = utils.gulp;
+var uri = utils.uri;
+var browser = utils.browser;
+var bangify = utils.bangify;
+var globall = utils.globall;
+var ext = utils.ext;
+var expand_paths = utils.expand_paths;
+var opts_sort = utils.opts_sort;

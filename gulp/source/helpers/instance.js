@@ -1,9 +1,12 @@
 /**
+ * task: status
  * Print whether there is an active Gulp instance.
+ *
  *
  * Usage
  *
- * $ gulp status # Print Gulp status.
+ * $ gulp status
+ *     Print Gulp status.
  */
 gulp.task("status", function(done) {
 	var pid = $internal.get("pid");
@@ -16,11 +19,14 @@ gulp.task("status", function(done) {
 });
 
 /**
+ * task: ports
  * Print the currently used ports for browser-sync.
+ *
  *
  * Usage
  *
- * $ gulp ports # Print uses ports.
+ * $ gulp ports
+ *     Print uses ports.
  */
 gulp.task("ports", function(done) {
 	// get the ports

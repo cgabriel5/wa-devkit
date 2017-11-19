@@ -7,7 +7,7 @@ var path_offset = "../../../";
 var modules_path = path_offset + "node_modules/";
 
 var url = require(modules_path + "url-parse");
-var gulp = require(modules_path + "gulp-task-doc");
+var gulp = require(modules_path + "gulp");
 var notifier = require(modules_path + "node-notifier");
 var format_date = require(modules_path + "dateformat");
 var gutil = require(modules_path + "gulp-util");
@@ -15,9 +15,11 @@ var log = gutil.log;
 var chalk = gutil.colors;
 
 /**
- * @description [Detects the default Google Chrome browser based on OS. Falls back to "firefox".]
- * @source [Lifted from https://github.com/stevelacy/gulp-open]
- * @return {String} [The browser name.]
+ * Detects the default Google Chrome browser based on OS. Falls
+ *     back to "firefox".
+ *
+ * @link [https://github.com/stevelacy/gulp-open]
+ * @return {string} The browser name.
  */
 var browser = function() {
 	var platform = os.platform();
@@ -30,8 +32,9 @@ var browser = function() {
 };
 
 /**
- * @description [Creates a Gulp like time formated, colored string.]
- * @return {String} [The time formated, colored, Gulp like string.]
+ * Creates a Gulp like time formated, colored string.
+ *
+ * @return {string} The time formated, colored, Gulp like string.
  */
 var time = function() {
 	// return the formated/colored time
@@ -39,10 +42,11 @@ var time = function() {
 };
 
 /**
- * @description [Creates an OS notifcation.]
- * @param  {String} message [The notifcation message to display.]
- * @param  {Boolean} error   [Flag indicating what image to use.]
- * @return {Undefined} [Nothing is returned.]
+ * Creates an OS notifcation.
+ *
+ * @param {string} message - The notifcation message to display.
+ * @param {boolean} error - Flag indicating what image to use.
+ * @return {undefined} Nothing.
  */
 var notify = function(message, error) {
 	// determine what image to show
@@ -57,9 +61,10 @@ var notify = function(message, error) {
 };
 
 /**
- * @description [Modifies Gulp by adding a currentTask.name property. To access in a task.]
- * @param  {Object} gulp [Gulp itself.]
- * @return {Object}      [Modified Gulp.]
+ * Modifies Gulp by adding a currentTask.name property. To access in a task.
+ *
+ * @param {object} gulp - Gulp itself.
+ * @return {object} Modified Gulp.
  */
 var current_task = function(gulp) {
 	// Get the current task name inside task itself
@@ -80,9 +85,10 @@ var current_task = function(gulp) {
 };
 
 /**
- * @description [Builds the project "localhost" URL.]
- * @param  {Object} params 	   [The parameters used to build the URL.]
- * @return {String}       	   [The URL.]
+ * Builds the project "localhost" URL.
+ *
+ * @param {object} params - The parameters used to build the URL.
+ * @return {string} The URL.
  */
 var uri = function(params) {
 	// get provided arguments
@@ -101,35 +107,141 @@ var uri = function(params) {
 };
 
 /**
- * @description [Formats template with provided data object.]
- * @param  {String} template [The template to use.]
- * @param  {Object} data     [The object containing the data to replace placeholders with.]
- * @return {Undefined}  [Nothing is returned.]
+ * Formats template with provided data object.
+ *
+ * @param {string} template - The template to use.
+ * @param {object} data - The object containing the data to replace
+ *     placeholders with.
+ * @return {undefined} Nothing.
  */
-function format(template, data) {
+var format = function(template, data) {
 	return template.replace(/\{\{\#(.*?)\}\}/g, function(match) {
 		match = match.replace(/^\{\{\#|\}\}$/g, "");
 		return data[match] ? data[match] : match;
 	});
-}
+};
 
 /**
- * @description [Stream pipe error handler.]
- * @return {Undefined}       [Nothing is returned.]
+ * Add a bang to the start of the string.
+ *
+ * @param {string} string - The string to add the bang to.
+ * @return {string} The new string with bang added.
  */
-// var pipe_error = function() {
-//     notify("Error with `" + this.currentTask.name + "` task.", true);
-//     this.emit("end");
-// };
+var bangify = function(string) {
+	return "!" + (string || "");
+};
 
 /**
- * @description [Custom Gulp pipe error wrapper for pipe_error function.]
- * @param  {Object} error [Gulp task object.]
- * @return {Function}       [Returns new pipe_error function with property thsis bound to it.]
+ * Appends the "**" pattern to string.
+ *
+ * @param {string} string - The string to add pattern to.
+ * @return {string} The new string with added pattern.
  */
-// var error = function(task) {
-//     return pipe_error.bind(task);
-// };
+var globall = function(string) {
+	return (string || "") + "**";
+};
+
+/**
+ * Returns the provided file's extension or checks it against the provided
+ *     extension type.
+ *
+ * @param {object} file - The Gulp file object.
+ * @param {array} types - The optional extension type(s) to check against.
+ * @return {string|boolean} - The file's extension or boolean indicating
+ *     compare result.
+ */
+var ext = function(file, types) {
+	// when no file exists return an empty string
+	if (!file) return "";
+
+	// get the file extname
+	var extname = path
+		.extname(file.path)
+		.toLowerCase()
+		.replace(/^\./, "");
+
+	// simply return the extname when no type is
+	// provided to check against.
+	if (!types) return extname;
+
+	// else when a type is provided check against it
+	return Boolean(-~types.indexOf(extname));
+};
+
+// check for the usual file types
+ext.ishtml = function(file) {
+	return ext(file, ["html"]);
+};
+ext.iscss = function(file) {
+	return ext(file, ["css"]);
+};
+ext.isjs = function(file) {
+	return ext(file, ["js"]);
+};
+ext.isjson = function(file) {
+	return ext(file, ["json"]);
+};
+
+/**
+ * Recursively fill-in the placeholders in each path contained
+ *     in the provided paths object.
+ *
+ * @param {object} $paths - Object containing the paths.
+ * @return {object} - The object with paths filled-in.
+ */
+var expand_paths = function($paths) {
+	// path placeholders substitutes. these paths will also get added to the
+	// paths object after substitution down below.
+	var paths_subs_ = {
+		// paths::BASES
+		del: "/",
+		base: "./",
+		base_dot: ".",
+		dirname: __dirname,
+		cwd: process.cwd(),
+		homedir: "" // "assets/"
+	};
+
+	var replacer = function(match) {
+		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
+		return replacement !== undefined ? replacement : undefined;
+	};
+	// recursively replace all the placeholders
+	for (var key in $paths) {
+		if ($paths.hasOwnProperty(key)) {
+			var __path = $paths[key];
+
+			// find all the placeholders
+			while (/\$\{.*?\}/g.test(__path)) {
+				__path = __path.replace(/\$\{.*?\}/g, replacer);
+			}
+			// reset the substituted string back in the $paths object
+			$paths[key] = __path;
+		}
+	}
+
+	// add the subs to the paths object
+	for (var key in paths_subs_) {
+		if (paths_subs_.hasOwnProperty(key)) {
+			$paths[key] = paths_subs_[key];
+		}
+	}
+
+	// filled-in paths
+	return $paths;
+};
+
+// gulp-sort custom sort function
+var opts_sort = {
+	// sort based on dirname alphabetically
+	comparator: function(file1, file2) {
+		var dir1 = path.dirname(file1.path);
+		var dir2 = path.dirname(file2.path);
+		if (dir1 > dir2) return 1;
+		if (dir1 < dir2) return -1;
+		return 0;
+	}
+};
 
 // export functions
 exports.browser = browser();
@@ -138,5 +250,9 @@ exports.log = log;
 exports.notify = notify;
 exports.gulp = current_task(gulp);
 exports.uri = uri;
-// exports.error = error;
 exports.format = format;
+exports.bangify = bangify;
+exports.globall = globall;
+exports.ext = ext;
+exports.expand_paths = expand_paths;
+exports.opts_sort = opts_sort;

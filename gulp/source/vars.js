@@ -15,20 +15,14 @@ var INDEX = $app.index;
 var BASE = $app.base;
 var ROOTDIR = path.basename(path.resolve($paths.dirname)) + "/";
 var APPDIR = BASE + ROOTDIR;
+
+// line ending information
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
 var EOL_STYLE = EOL.style;
 
 // internal information
 var APPTYPE = $internal.get("apptype");
-
-// project utils
-var utils = require($paths.gulp_utils);
-var log = utils.log;
-var notify = utils.notify;
-var gulp = utils.gulp;
-var uri = utils.uri;
-var browser = utils.browser;
 
 // create browsersync server
 var bs = browser_sync.create($browsersync.server_name);
@@ -40,16 +34,4 @@ var branch_name;
 var opts_remove = {
 	read: false,
 	cwd: $paths.base
-};
-
-// gulp-sort custom sort function
-var opts_sort = {
-	// sort based on dirname alphabetically
-	comparator: function(file1, file2) {
-		var dir1 = path.dirname(file1.path);
-		var dir2 = path.dirname(file2.path);
-		if (dir1 > dir2) return 1;
-		if (dir1 < dir2) return -1;
-		return 0;
-	}
 };

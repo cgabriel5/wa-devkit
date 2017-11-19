@@ -1,19 +1,41 @@
 /**
+ * task: files
  * List project files.
  *
- * Options
  *
- * -t, --type     [string]  The optional extensions of files to list.
- * -m, --min      [string]  Flag indicating whether to show .min. files.
- * -w, --whereis  [string]  File to look for. (Uses fuzzy search, Ignores ./node_modules/)
+ * Flags
+ *
+ * -t, --type
+ *     [string] The optional extensions of files to list.
+ *
+ * -m, --min
+ *     [string] Flag indicating whether to show .min. files.
+ *
+ * -w, --whereis
+ *     [string] File to look for. Uses fuzzy search and
+ *     Ignores ./node_modules/).
  *
  * Usage
  *
- * $ gulp files # Default shows all files excluding files in ./node_modules/ & .git/.
- * $ gulp files --type "js html" # Only list HTML and JS files.
- * $ gulp files --type "js" --whereis "jquery" # List JS files with jquery in basename.
- * $ gulp files --whereis "fastclick.js" # Lists files containing fastclick.js in basename.
- * $ gulp files -w ".ig." -e # Turn off fuzzy search & find all files containing ".ig." (ignored).
+ * $ gulp files
+ *     Shows all files excluding files in ./node_modules/ &
+ *     .git/.
+ *
+ * $ gulp files --type "js html"
+ *     Only list HTML and JS files.
+ *
+ * $ gulp files --type "js" --whereis "jquery"
+ *     Print JS files with "jquery" in basename.
+ *
+ * $ gulp files --whereis "fastclick.js"
+ *     Prints files containing fastclick.js in basename.
+ *
+ * $ gulp files --whereis ".ig." --exact
+ *     Turn off fuzzy search & find all files containing
+ *     ".ig." (ignored).
+ *
+ * $ gulp files --min
+ *     Print files containing ".min." in their name.
  */
 gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");

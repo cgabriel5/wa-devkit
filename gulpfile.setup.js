@@ -48,6 +48,19 @@ var sequence = require("run-sequence");
 var license = require("create-license");
 var alphabetize = require("alphabetize-object-keys");
 
+// project utils
+var utils = require("./gulp/assets/utils/utils.js");
+var log = utils.log;
+var time = utils.time;
+var notify = utils.notify;
+var gulp = utils.gulp;
+var format = utils.format;
+var bangify = utils.bangify;
+var globall = utils.globall;
+var ext = utils.ext;
+var expand_paths = utils.expand_paths;
+var opts_sort = utils.opts_sort;
+
 //#! paths.js -- ./gulp/setup/source/paths.js
 
 // get and fill in path placeholders
@@ -76,132 +89,18 @@ var $jsconfigs = require($paths.gulp_setup_jsconfigs);
 
 //#! vars.js -- ./gulp/setup/source/vars.js
 
-var utils = require($paths.gulp_utils);
-var log = utils.log;
-var time = utils.time;
-var notify = utils.notify;
-var gulp = utils.gulp;
-var format = utils.format;
+// placeholder fillers
+var __data__ = {};
 
-var __data__ = {}; // placeholder fillers
+// app directory information
 var INDEX = $app.index;
 
-var opts_sort = {
-	// sort based on dirname alphabetically
-	comparator: function(file1, file2) {
-		var dir1 = path.dirname(file1.path);
-		var dir2 = path.dirname(file2.path);
-		if (dir1 > dir2) return 1;
-		if (dir1 < dir2) return -1;
-		return 0;
-	}
-};
+// line ending information
+var EOL = $app.eol;
+var EOL_ENDING = EOL.ending;
+var EOL_STYLE = EOL.style;
 
 //#! functions.js -- ./gulp/setup/source/functions.js
-
-/**
- * @description [Add a bang to the start of the string.]
- * @param  {String} string [The string to add the bang to.]
- * @return {String}        [The new string with bang added.]
- */
-function bangify(string) {
-	return "!" + (string || "");
-}
-
-/**
- * @description [Appends the ** pattern to string.]
- * @param  {String} string [The string to add pattern to.]
- * @return {String}        [The new string with added pattern.]
- */
-function globall(string) {
-	return (string || "") + "**";
-}
-
-/**
- * @description [Returns the provided file's extension or checks it against the provided extension type.]
- * @param  {Object} file [The Gulp file object.]
- * @param  {Array} types [The optional extension type(s) to check against.]
- * @return {String|Boolean}      [The file's extension or boolean indicating compare result.]
- */
-function ext(file, types) {
-	// when no file exists return an empty string
-	if (!file) return "";
-
-	// get the file extname
-	var extname = path
-		.extname(file.path)
-		.toLowerCase()
-		.replace(/^\./, "");
-
-	// simply return the extname when no type is
-	// provided to check against.
-	if (!types) return extname;
-
-	// else when a type is provided check against it
-	return Boolean(-~types.indexOf(extname));
-}
-
-// check for the usual file types
-ext.ishtml = function(file) {
-	return ext(file, ["html"]);
-};
-ext.iscss = function(file) {
-	return ext(file, ["css"]);
-};
-ext.isjs = function(file) {
-	return ext(file, ["js"]);
-};
-ext.isjson = function(file) {
-	return ext(file, ["json"]);
-};
-
-/**
- * @description  [Recursively fill-in the placeholders in each path contained
- *               in the provided paths object.]
- * @param  {Object} $paths [Object containing the paths.]
- * @return {Object}           [The object with paths filled-in.]
- */
-function expand_paths($paths) {
-	// path placeholders substitutes. these paths will also get added to the
-	// paths object after substitution down below.
-	var __paths_subs__ = {
-		// paths::BASES
-		del: "/",
-		base: "./",
-		base_dot: ".",
-		dirname: __dirname,
-		cwd: process.cwd(),
-		homedir: "" // "assets/"
-	};
-
-	var replacer = function(match) {
-		var replacement = __paths_subs__[match.replace(/^\$\{|\}$/g, "")];
-		return replacement !== undefined ? replacement : undefined;
-	};
-	// recursively replace all the placeholders
-	for (var key in $paths) {
-		if ($paths.hasOwnProperty(key)) {
-			var __path = $paths[key];
-
-			// find all the placeholders
-			while (/\$\{.*?\}/g.test(__path)) {
-				__path = __path.replace(/\$\{.*?\}/g, replacer);
-			}
-			// reset the substituted string back in the $paths object
-			$paths[key] = __path;
-		}
-	}
-
-	// add the subs to the paths object
-	for (var key in __paths_subs__) {
-		if (__paths_subs__.hasOwnProperty(key)) {
-			$paths[key] = __paths_subs__[key];
-		}
-	}
-
-	// filled-in paths
-	return $paths;
-}
 
 //#! init.js -- ./gulp/setup/source/tasks/init.js
 
@@ -226,7 +125,8 @@ gulp.task("default", function(done) {
 
 		// set the application type
 		$internal.apptype = type;
-		// pick js bundle based on provided project type + reset the config js bundle
+		// pick js bundle based on provided project type + reset the
+		// config js bundle
 		$bundles.data.js = $jsconfigs[type];
 
 		// remove distribution configuration if type is library
@@ -589,8 +489,9 @@ gulp.task("pretty", function(done) {
 			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
 			$.gulpif(
 				function(file) {
-					// file must be a JSON file and cannot contain the comment (.cm.) sub-extension
-					// to be sortable as comments are not allowed in JSON files.
+					// file must be a JSON file and cannot contain the
+					// comment (.cm.) sub-extension to be sortable as
+					// comments are not allowed in JSON files.
 					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
 						? true
 						: false;

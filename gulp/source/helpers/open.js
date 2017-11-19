@@ -1,23 +1,30 @@
 /**
+ * task: open
  * Opens provided file in browser.
- *
- * Options
- *
- * -f, --file  <file>    The path of the file to open.
- * -p, --port  [number]  The port to open in. (Defaults to browser-sync port if available or no port)
  *
  * Notes
  *
- * • => New tabs should be opened via the terminal using `open`. Doing so will
- * / ensure the generated tab will auto-close when Gulp is closed/existed. Opening
- * / tabs by typing/copy-pasting the project URL into the browser address bar will
- * / not auto-close the tab(s) due to security issues as noted here:
- * / https://stackoverflow.com/q/19761241.
+ * • New tabs should be opened via the terminal using `open`. Doing
+ *   so will ensure the generated tab will auto-close when Gulp is
+ *   closed. Opening tabs by typing/copy-pasting the project URL
+ *   into the browser address bar will not auto-close the tab(s)
+ *   due to security issues as noted here:
+ *   [https://stackoverflow.com/q/19761241].
+ *
+ * Flags
+ *
+ * -f, --file
+ *     <file> The path of the file to open.
+ * -p, --port
+ *     [number] The port to open in. (Defaults to browser-sync port if
+ *     available or no port)
  *
  * Usage
  *
- * $ gulp open --file index.html --port 3000 # Open index.html in port 3000.
- * $ gulp open -f index.html # Open index.html in browser-sync port is available or no port.
+ * $ gulp open --file index.html --port 3000
+ *     Open index.html in port 3000.
+ * $ gulp open -f index.html
+ *     Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
 	var task = this;
