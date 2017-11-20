@@ -42,7 +42,6 @@ var dir = require("node-dir");
 var mkdirp = require("mkdirp");
 var fe = require("file-exists");
 var json = require("json-file");
-var Table = require("cli-table2");
 var jsonc = require("comment-json");
 var de = require("directory-exists");
 var sequence = require("run-sequence");

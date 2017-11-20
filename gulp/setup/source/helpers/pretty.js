@@ -6,8 +6,6 @@ gulp.task("pretty", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	var task = this;
-
 	// default files to clean:
 	// HTML, CSS, JS, and JSON files. exclude files containing
 	// a ".min." as this is the convention used for minified files.
@@ -56,7 +54,7 @@ gulp.task("pretty", function(done) {
 					perfectionist($perfectionist)
 				])
 			),
-			$.eol(),
+			$.eol(EOL_ENDING),
 			$.debug.edit(),
 			gulp.dest($paths.base)
 		],

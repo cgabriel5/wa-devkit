@@ -57,7 +57,6 @@ gulp.task("pretty", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	var task = this;
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
 	if ($internal.get("pid")) {

@@ -28,8 +28,6 @@
  *     Show documentation for specific tasks.
  */
 gulp.task("help", function(done) {
-	var task = this;
-
 	// run yargs
 	var _args = yargs
 		.option("verbose", {
@@ -58,10 +56,7 @@ gulp.task("help", function(done) {
 			// get all the docblocks from the file
 			var blocks = content.match(/^\/\*\*[\s\S]*?\*\/$/gm);
 
-			var formatted = [];
-			var help;
 			var newline = "\n";
-			var tasks_names_lengths = [];
 			var headers = ["Flags", "Usage", "Notes"];
 
 			// [https://stackoverflow.com/a/9175783]

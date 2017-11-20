@@ -15,7 +15,6 @@
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
 
-	var task = this;
 	// get all files excluding the following: node_modules/, .git/, and img/.
 	var files = [
 		$paths.files_code,

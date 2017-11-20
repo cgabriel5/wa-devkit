@@ -6,8 +6,6 @@ gulp.task("css:app", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	var task = this;
-
 	pump(
 		[
 			gulp.src(bundle_css.source.files, {
@@ -36,8 +34,6 @@ gulp.task("css:vendor", function(done) {
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
-
-	var task = this;
 
 	// NOTE: absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json

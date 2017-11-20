@@ -8,8 +8,6 @@
  * $ gulp settings # Re-build ._settings.json
  */
 gulp.task("settings", function(done) {
-	var task = this;
-
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {

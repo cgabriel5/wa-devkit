@@ -1,12 +1,12 @@
 // @internal
 gulp.task("default", function(done) {
-	var task = this;
 	// show the user the init message
 	log('Run "$ gulp init" before running Gulp\'s default command.');
 	done();
 });
 
-gulp.task("default", function(done) {
+gulp.task("init", function(done) {
+	// cache task
 	var task = this;
 
 	inquirer.prompt($questions).then(function(answers) {

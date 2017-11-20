@@ -87,7 +87,6 @@ gulp.task("favicon:edit-manifest", function(done) {
 // copy favicon.ico and apple-touch-icon.png to the root
 // @internal
 gulp.task("favicon:root", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src([
@@ -108,7 +107,6 @@ gulp.task("favicon:root", function(done) {
 // copy delete unneeded files
 // @internal
 gulp.task("favicon:delete", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src([
@@ -125,7 +123,6 @@ gulp.task("favicon:delete", function(done) {
 // inject new favicon html
 // @internal
 gulp.task("favicon:html", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src($paths.favicon_html),
@@ -152,7 +149,9 @@ gulp.task("favicon:html", function(done) {
  *     Re-build favicons.
  */
 gulp.task("favicon", function(done) {
+	// cache task
 	var task = this;
+
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
 	if ($internal.get("pid")) {

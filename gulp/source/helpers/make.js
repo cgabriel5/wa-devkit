@@ -9,7 +9,6 @@
  *     Re-build gulpfile.
  */
 gulp.task("make", function(done) {
-	var task = this;
 	// get concat file names to use
 	var names = bundle_gulp.source.names;
 	var setup_name = names.setup;

@@ -1,7 +1,6 @@
 // build gulpfile.setup.js
 // @internal
 gulp.task("make", function(done) {
-	var task = this;
 	var files = [
 		"requires.js",
 		"paths.js",

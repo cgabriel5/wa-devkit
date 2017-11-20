@@ -1,7 +1,6 @@
 // remove old lib/ folder
 // @internal
 gulp.task("lib:clean", function(done) {
-	var task = this;
 	pump(
 		[gulp.src($paths.lib_home, opts_remove), $.debug.clean(), $.clean()],
 		done
@@ -10,7 +9,6 @@ gulp.task("lib:clean", function(done) {
 
 // @internal
 gulp.task("lib:js", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
@@ -44,7 +42,9 @@ gulp.task("lib:js", function(done) {
  *     Create lib/ folder.
  */
 gulp.task("lib", function(done) {
+	// cache task
 	var task = this;
+
 	if (APPTYPE !== "library") {
 		log("This helper task is only available for library projects.");
 		return done();

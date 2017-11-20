@@ -35,11 +35,8 @@ var $ = require("gulp-load-plugins")({
 
 // universal modules
 var pump = require("pump");
-var yargs = require("yargs");
 var chalk = require("chalk");
 var cmd = require("node-cmd");
-var marked = require("marked");
-var prism = require("prismjs");
 var json = require("json-file");
 var git = require("simple-git")();
 var inquirer = require("inquirer");
@@ -51,7 +48,6 @@ var alphabetize = require("alphabetize-object-keys");
 // project utils
 var utils = require("./gulp/assets/utils/utils.js");
 var log = utils.log;
-var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
@@ -106,13 +102,13 @@ var EOL_STYLE = EOL.style;
 
 // @internal
 gulp.task("default", function(done) {
-	var task = this;
 	// show the user the init message
 	log('Run "$ gulp init" before running Gulp\'s default command.');
 	done();
 });
 
-gulp.task("default", function(done) {
+gulp.task("init", function(done) {
+	// cache task
 	var task = this;
 
 	inquirer.prompt($questions).then(function(answers) {
@@ -204,8 +200,6 @@ gulp.task("default", function(done) {
 // initialization step
 // @internal
 gulp.task("init:settings-internal", function(done) {
-	var task = this;
-
 	// save the $internal JSON object
 	fs.writeFile(
 		$paths.config_home + $paths.gulp_setup_settings_internal_name,
@@ -219,8 +213,6 @@ gulp.task("init:settings-internal", function(done) {
 // initialization step
 // @internal
 gulp.task("init:settings-main", function(done) {
-	var task = this;
-
 	// make the main settings file
 	pump(
 		[
@@ -247,8 +239,6 @@ gulp.task("init:remove-webapp-files", function(done) {
 	// project files, i.e. ./js/vendor/__init__.js and
 	// ./js/bundles/.
 
-	var task = this;
-
 	pump(
 		[
 			gulp.src($paths.js_source, {
@@ -269,8 +259,6 @@ gulp.task("init:add-library-files", function(done) {
 	// directory into the ./js/ directory. this will
 	// also overwrite needed files, like the bundle files.
 
-	var task = this;
-
 	pump(
 		[
 			gulp.src($paths.js_options_dynamic, {
@@ -288,8 +276,6 @@ gulp.task("init:add-library-files", function(done) {
 // initialization step
 // @internal
 gulp.task("init:create-license", function(done) {
-	var task = this;
-
 	// generate the license
 	license($paths.base, __data__.license, {
 		author: __data__.fullname,
@@ -329,7 +315,6 @@ gulp.task("init:create-license", function(done) {
 // initialization step
 // @internal
 gulp.task("init:fill-placeholders", function(done) {
-	var task = this;
 	// replace placeholder with real data
 	pump(
 		[
@@ -354,7 +339,6 @@ gulp.task("init:fill-placeholders", function(done) {
 // initialization step
 // @internal
 gulp.task("init:setup-readme", function(done) {
-	var task = this;
 	// move templates to new locations
 	pump(
 		[
@@ -370,7 +354,6 @@ gulp.task("init:setup-readme", function(done) {
 // initialization step
 // @internal
 gulp.task("init:rename-gulpfile", function(done) {
-	var task = this;
 	// rename the gulpfile.main.js to gulpfile.js
 	pump(
 		[
@@ -390,7 +373,6 @@ gulp.task("init:rename-gulpfile", function(done) {
 // initialization step
 // @internal
 gulp.task("init:remove-setup", function(done) {
-	var task = this;
 	// remove the setup files/folders/old .git folder
 	pump(
 		[
@@ -409,8 +391,6 @@ gulp.task("init:remove-setup", function(done) {
 // initialization step
 // @internal
 gulp.task("init:git", function(done) {
-	var task = this;
-
 	// git init new project
 	git.init("", function() {
 		// set gitconfig values
@@ -463,8 +443,6 @@ gulp.task("pretty", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	var task = this;
-
 	// default files to clean:
 	// HTML, CSS, JS, and JSON files. exclude files containing
 	// a ".min." as this is the convention used for minified files.
@@ -513,7 +491,7 @@ gulp.task("pretty", function(done) {
 					perfectionist($perfectionist)
 				])
 			),
-			$.eol(),
+			$.eol(EOL_ENDING),
 			$.debug.edit(),
 			gulp.dest($paths.base)
 		],
@@ -530,7 +508,6 @@ gulp.task("init:pretty", ["pretty"]);
 // build gulpfile.setup.js
 // @internal
 gulp.task("make", function(done) {
-	var task = this;
 	var files = [
 		"requires.js",
 		"paths.js",

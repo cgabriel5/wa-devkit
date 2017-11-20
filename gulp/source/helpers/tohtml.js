@@ -2,8 +2,6 @@ var _markdown_styles_;
 // get the CSS markdown + prismjs styles
 // @internal
 gulp.task("tohtml:prepcss", function(done) {
-	var task = this;
-
 	// run gulp process
 	pump(
 		[
@@ -49,9 +47,8 @@ gulp.task("tohtml:prepcss", function(done) {
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	var prism = require("prismjs");
-	var prism_langs = require("prism-languages");
-
-	var task = this;
+	// extend the default prismjs languages.
+	require("prism-languages");
 
 	// run yargs
 	var _args = yargs.option("file", {

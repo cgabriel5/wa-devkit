@@ -1,7 +1,6 @@
 // remove old dist / folder
 // @internal
 gulp.task("dist:clean", function(done) {
-	var task = this;
 	pump(
 		[gulp.src($paths.dist_home, opts_remove), $.debug.clean(), $.clean()],
 		done
@@ -11,7 +10,6 @@ gulp.task("dist:clean", function(done) {
 // copy new file/folders
 // @internal
 gulp.task("dist:favicon", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.favicon, {
@@ -30,7 +28,6 @@ gulp.task("dist:favicon", function(done) {
 
 // @internal
 gulp.task("dist:css", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.css, {
@@ -49,7 +46,6 @@ gulp.task("dist:css", function(done) {
 
 // @internal
 gulp.task("dist:img", function(done) {
-	var task = this;
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
 	pump(
@@ -88,7 +84,6 @@ gulp.task("dist:img", function(done) {
 
 // @internal
 gulp.task("dist:js", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.js, {
@@ -107,7 +102,6 @@ gulp.task("dist:js", function(done) {
 
 // @internal
 gulp.task("dist:root", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.root, {
@@ -135,7 +129,9 @@ gulp.task("dist:root", function(done) {
  *     Create dist/ folder.
  */
 gulp.task("dist", function(done) {
+	// cache task
 	var task = this;
+
 	if (APPTYPE !== "webapp") {
 		log("This helper task is only available for webapp projects.");
 		return done();

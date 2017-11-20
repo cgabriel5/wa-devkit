@@ -17,8 +17,6 @@
  *     Enforce "\n" line endings.
  */
 gulp.task("eol", function(done) {
-	var task = this;
-
 	// run yargs
 	var _args = yargs.option("line-ending", {
 		alias: "l",

@@ -1,8 +1,6 @@
 // initialization step
 // @internal
 gulp.task("init:settings-internal", function(done) {
-	var task = this;
-
 	// save the $internal JSON object
 	fs.writeFile(
 		$paths.config_home + $paths.gulp_setup_settings_internal_name,
@@ -16,8 +14,6 @@ gulp.task("init:settings-internal", function(done) {
 // initialization step
 // @internal
 gulp.task("init:settings-main", function(done) {
-	var task = this;
-
 	// make the main settings file
 	pump(
 		[
@@ -44,8 +40,6 @@ gulp.task("init:remove-webapp-files", function(done) {
 	// project files, i.e. ./js/vendor/__init__.js and
 	// ./js/bundles/.
 
-	var task = this;
-
 	pump(
 		[
 			gulp.src($paths.js_source, {
@@ -66,8 +60,6 @@ gulp.task("init:add-library-files", function(done) {
 	// directory into the ./js/ directory. this will
 	// also overwrite needed files, like the bundle files.
 
-	var task = this;
-
 	pump(
 		[
 			gulp.src($paths.js_options_dynamic, {
@@ -85,8 +77,6 @@ gulp.task("init:add-library-files", function(done) {
 // initialization step
 // @internal
 gulp.task("init:create-license", function(done) {
-	var task = this;
-
 	// generate the license
 	license($paths.base, __data__.license, {
 		author: __data__.fullname,
@@ -126,7 +116,6 @@ gulp.task("init:create-license", function(done) {
 // initialization step
 // @internal
 gulp.task("init:fill-placeholders", function(done) {
-	var task = this;
 	// replace placeholder with real data
 	pump(
 		[
@@ -151,7 +140,6 @@ gulp.task("init:fill-placeholders", function(done) {
 // initialization step
 // @internal
 gulp.task("init:setup-readme", function(done) {
-	var task = this;
 	// move templates to new locations
 	pump(
 		[
@@ -167,7 +155,6 @@ gulp.task("init:setup-readme", function(done) {
 // initialization step
 // @internal
 gulp.task("init:rename-gulpfile", function(done) {
-	var task = this;
 	// rename the gulpfile.main.js to gulpfile.js
 	pump(
 		[
@@ -187,7 +174,6 @@ gulp.task("init:rename-gulpfile", function(done) {
 // initialization step
 // @internal
 gulp.task("init:remove-setup", function(done) {
-	var task = this;
 	// remove the setup files/folders/old .git folder
 	pump(
 		[
@@ -206,8 +192,6 @@ gulp.task("init:remove-setup", function(done) {
 // initialization step
 // @internal
 gulp.task("init:git", function(done) {
-	var task = this;
-
 	// git init new project
 	git.init("", function() {
 		// set gitconfig values

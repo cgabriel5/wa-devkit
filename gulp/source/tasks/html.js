@@ -1,7 +1,6 @@
 // init HTML files + minify
 // @internal
 gulp.task("html:main", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {

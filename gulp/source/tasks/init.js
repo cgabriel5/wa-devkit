@@ -105,7 +105,9 @@ gulp.task("init:watch-git-branch", function(done) {
 // build app files
 // @internal
 gulp.task("init:build", function(done) {
+	// cache task
 	var task = this;
+
 	// get the gulp build tasks
 	var tasks = bundle_gulp.tasks;
 	// add callback to the sequence

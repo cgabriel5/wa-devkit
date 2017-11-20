@@ -118,8 +118,6 @@ gulp.task("files", function(done) {
 
 			// run a non fuzzy search
 			if (no_fuzzy) {
-				// loop over files
-				var results = [];
 				files.forEach(function(file) {
 					if (-~file.indexOf(whereis)) results.push(file);
 				});

@@ -44,7 +44,6 @@ var dir = require("node-dir");
 var mkdirp = require("mkdirp");
 var fe = require("file-exists");
 var json = require("json-file");
-var Table = require("cli-table2");
 var jsonc = require("comment-json");
 var de = require("directory-exists");
 var sequence = require("run-sequence");
@@ -307,7 +306,9 @@ gulp.task("init:watch-git-branch", function(done) {
 // build app files
 // @internal
 gulp.task("init:build", function(done) {
+	// cache task
 	var task = this;
+
 	// get the gulp build tasks
 	var tasks = bundle_gulp.tasks;
 	// add callback to the sequence
@@ -423,7 +424,6 @@ gulp.task("default", function(done) {
 // remove old dist / folder
 // @internal
 gulp.task("dist:clean", function(done) {
-	var task = this;
 	pump(
 		[gulp.src($paths.dist_home, opts_remove), $.debug.clean(), $.clean()],
 		done
@@ -433,7 +433,6 @@ gulp.task("dist:clean", function(done) {
 // copy new file/folders
 // @internal
 gulp.task("dist:favicon", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.favicon, {
@@ -452,7 +451,6 @@ gulp.task("dist:favicon", function(done) {
 
 // @internal
 gulp.task("dist:css", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.css, {
@@ -471,7 +469,6 @@ gulp.task("dist:css", function(done) {
 
 // @internal
 gulp.task("dist:img", function(done) {
-	var task = this;
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
 	pump(
@@ -510,7 +507,6 @@ gulp.task("dist:img", function(done) {
 
 // @internal
 gulp.task("dist:js", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.js, {
@@ -529,7 +525,6 @@ gulp.task("dist:js", function(done) {
 
 // @internal
 gulp.task("dist:root", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.root, {
@@ -557,7 +552,9 @@ gulp.task("dist:root", function(done) {
  *     Create dist/ folder.
  */
 gulp.task("dist", function(done) {
+	// cache task
 	var task = this;
+
 	if (APPTYPE !== "webapp") {
 		log("This helper task is only available for webapp projects.");
 		return done();
@@ -579,7 +576,6 @@ gulp.task("dist", function(done) {
 // remove old lib/ folder
 // @internal
 gulp.task("lib:clean", function(done) {
-	var task = this;
 	pump(
 		[gulp.src($paths.lib_home, opts_remove), $.debug.clean(), $.clean()],
 		done
@@ -588,7 +584,6 @@ gulp.task("lib:clean", function(done) {
 
 // @internal
 gulp.task("lib:js", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
@@ -622,7 +617,9 @@ gulp.task("lib:js", function(done) {
  *     Create lib/ folder.
  */
 gulp.task("lib", function(done) {
+	// cache task
 	var task = this;
+
 	if (APPTYPE !== "library") {
 		log("This helper task is only available for library projects.");
 		return done();
@@ -771,7 +768,6 @@ gulp.task("watch:main", function(done) {
 // init HTML files + minify
 // @internal
 gulp.task("html:main", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {
@@ -799,8 +795,6 @@ gulp.task("css:app", function(done) {
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
-
-	var task = this;
 
 	pump(
 		[
@@ -831,8 +825,6 @@ gulp.task("css:vendor", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	var task = this;
-
 	// NOTE: absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json
 	// within the css.vendor.files array.
@@ -861,7 +853,6 @@ gulp.task("css:vendor", function(done) {
 // build app.js + minify + beautify
 // @internal
 gulp.task("js:app", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
@@ -881,8 +872,6 @@ gulp.task("js:app", function(done) {
 // build vendor bundle + minify + beautify
 // @internal
 gulp.task("js:vendor", function(done) {
-	var task = this;
-
 	// NOTE: absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json
 	// within the js.vendor.files array.
@@ -906,7 +895,6 @@ gulp.task("js:vendor", function(done) {
 // just trigger a browser-sync stream
 // @internal
 gulp.task("img:main", function(done) {
-	var task = this;
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
 	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], done);
@@ -950,8 +938,6 @@ var _markdown_styles_;
 // get the CSS markdown + prismjs styles
 // @internal
 gulp.task("tohtml:prepcss", function(done) {
-	var task = this;
-
 	// run gulp process
 	pump(
 		[
@@ -997,9 +983,8 @@ gulp.task("tohtml:prepcss", function(done) {
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	var prism = require("prismjs");
-	var prism_langs = require("prism-languages");
-
-	var task = this;
+	// extend the default prismjs languages.
+	require("prism-languages");
 
 	// run yargs
 	var _args = yargs.option("file", {
@@ -1105,6 +1090,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *     Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
+	// cache task
 	var task = this;
 
 	// run yargs
@@ -1246,7 +1232,6 @@ gulp.task("pretty", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	var task = this;
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
 	if ($internal.get("pid")) {
@@ -1414,8 +1399,6 @@ gulp.task("pretty", function(done) {
  *     Enforce "\n" line endings.
  */
 gulp.task("eol", function(done) {
-	var task = this;
-
 	// run yargs
 	var _args = yargs.option("line-ending", {
 		alias: "l",
@@ -1474,7 +1457,6 @@ gulp.task("eol", function(done) {
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
 
-	var task = this;
 	// get all files excluding the following: node_modules/, .git/, and img/.
 	var files = [
 		$paths.files_code,
@@ -1668,8 +1650,6 @@ gulp.task("files", function(done) {
 
 			// run a non fuzzy search
 			if (no_fuzzy) {
-				// loop over files
-				var results = [];
 				files.forEach(function(file) {
 					if (-~file.indexOf(whereis)) results.push(file);
 				});
@@ -1733,7 +1713,6 @@ gulp.task("files", function(done) {
  *     Show all CSS/JS dependencies.
  */
 gulp.task("dependency", function(done) {
-	var task = this;
 	// run yargs
 	var _args = yargs
 		.option("name", {
@@ -1760,11 +1739,8 @@ gulp.task("dependency", function(done) {
 		// name, type, and action must all be provided when one is provided
 		.implies({
 			name: "type",
-			name: "action",
-			type: "name",
 			type: "action",
-			action: "name",
-			action: "type"
+			action: "name"
 		})
 		.option("list", {
 			alias: "l",
@@ -1871,7 +1847,6 @@ gulp.task("dependency", function(done) {
  *     Re-build gulpfile.
  */
 gulp.task("make", function(done) {
-	var task = this;
 	// get concat file names to use
 	var names = bundle_gulp.source.names;
 	var setup_name = names.setup;
@@ -1918,8 +1893,6 @@ gulp.task("make", function(done) {
  * $ gulp settings # Re-build ._settings.json
  */
 gulp.task("settings", function(done) {
-	var task = this;
-
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
@@ -2062,8 +2035,6 @@ gulp.task("indent", function(done) {
  *     Show documentation for specific tasks.
  */
 gulp.task("help", function(done) {
-	var task = this;
-
 	// run yargs
 	var _args = yargs
 		.option("verbose", {
@@ -2092,10 +2063,7 @@ gulp.task("help", function(done) {
 			// get all the docblocks from the file
 			var blocks = content.match(/^\/\*\*[\s\S]*?\*\/$/gm);
 
-			var formatted = [];
-			var help;
 			var newline = "\n";
-			var tasks_names_lengths = [];
 			var headers = ["Flags", "Usage", "Notes"];
 
 			// [https://stackoverflow.com/a/9175783]
@@ -2311,7 +2279,6 @@ gulp.task("favicon:edit-manifest", function(done) {
 // copy favicon.ico and apple-touch-icon.png to the root
 // @internal
 gulp.task("favicon:root", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src([
@@ -2332,7 +2299,6 @@ gulp.task("favicon:root", function(done) {
 // copy delete unneeded files
 // @internal
 gulp.task("favicon:delete", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src([
@@ -2349,7 +2315,6 @@ gulp.task("favicon:delete", function(done) {
 // inject new favicon html
 // @internal
 gulp.task("favicon:html", function(done) {
-	var task = this;
 	pump(
 		[
 			gulp.src($paths.favicon_html),
@@ -2376,7 +2341,9 @@ gulp.task("favicon:html", function(done) {
  *     Re-build favicons.
  */
 gulp.task("favicon", function(done) {
+	// cache task
 	var task = this;
+
 	// this task can only run when gulp is not running as gulps watchers
 	// can run too many times as many files are potentially being beautified
 	if ($internal.get("pid")) {

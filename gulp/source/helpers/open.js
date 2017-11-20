@@ -27,6 +27,7 @@
  *     Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {
+	// cache task
 	var task = this;
 
 	// run yargs

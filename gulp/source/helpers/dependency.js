@@ -39,7 +39,6 @@
  *     Show all CSS/JS dependencies.
  */
 gulp.task("dependency", function(done) {
-	var task = this;
 	// run yargs
 	var _args = yargs
 		.option("name", {
@@ -66,11 +65,8 @@ gulp.task("dependency", function(done) {
 		// name, type, and action must all be provided when one is provided
 		.implies({
 			name: "type",
-			name: "action",
-			type: "name",
 			type: "action",
-			action: "name",
-			action: "type"
+			action: "name"
 		})
 		.option("list", {
 			alias: "l",

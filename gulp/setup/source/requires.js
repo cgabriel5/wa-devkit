@@ -33,11 +33,8 @@ var $ = require("gulp-load-plugins")({
 
 // universal modules
 var pump = require("pump");
-var yargs = require("yargs");
 var chalk = require("chalk");
 var cmd = require("node-cmd");
-var marked = require("marked");
-var prism = require("prismjs");
 var json = require("json-file");
 var git = require("simple-git")();
 var inquirer = require("inquirer");
@@ -49,7 +46,6 @@ var alphabetize = require("alphabetize-object-keys");
 // project utils
 var utils = require("./gulp/assets/utils/utils.js");
 var log = utils.log;
-var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
