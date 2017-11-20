@@ -17,13 +17,13 @@
  *     <file> The path of the file to open.
  * -p, --port
  *     [number] The port to open in. (Defaults to browser-sync port if
- *     available or no port)
+ *     available or no port at all.)
  *
  * Usage
  *
  * $ gulp open --file index.html --port 3000
  *     Open index.html in port 3000.
- * $ gulp open -f index.html
+ * $ gulp open --file index.html
  *     Open index.html in browser-sync port is available or no port.
  */
 gulp.task("open", function(done) {

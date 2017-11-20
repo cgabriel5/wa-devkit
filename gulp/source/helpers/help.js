@@ -10,7 +10,7 @@
  *
  * Flags
  *
- * -v, --verbose
+ * --verbose
  *     [boolean] Shows all documentation.
  *
  * -f, --filter
