@@ -197,9 +197,7 @@ var expand_paths = function($paths) {
 		del: "/",
 		base: "./",
 		base_dot: ".",
-		dirname: __dirname,
-		cwd: process.cwd(),
-		homedir: "" // "assets/"
+		homedir: ""
 	};
 
 	var replacer = function(match) {

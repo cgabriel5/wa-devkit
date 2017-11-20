@@ -67,10 +67,19 @@ var opts_sort = utils.opts_sort;
 
 // get and fill in path placeholders
 var $paths = expand_paths(
-	jsonc.parse(
-		fs.readFileSync(`./configs/paths.cm.json`).toString(),
-		null,
-		true
+	Object.assign(
+		jsonc.parse(
+			fs.readFileSync(`./configs/paths.cm.json`).toString(),
+			null,
+			true
+		),
+		{
+			// add in the following paths
+			dirname: __dirname,
+			cwd: process.cwd(),
+			// store the project folder name
+			rootdir: path.basename(process.cwd())
+		}
 	)
 );
 
@@ -113,9 +122,7 @@ var bundle_lib = $bundles.lib;
 
 // app directory information
 var INDEX = $app.index;
-var BASE = $app.base;
-var ROOTDIR = path.basename(path.resolve($paths.dirname)) + "/";
-var APPDIR = BASE + ROOTDIR;
+var APPDIR = path.join($app.base, $paths.rootdir);
 
 // line ending information
 var EOL = $app.eol;

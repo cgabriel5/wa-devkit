@@ -12,9 +12,7 @@ var bundle_lib = $bundles.lib;
 
 // app directory information
 var INDEX = $app.index;
-var BASE = $app.base;
-var ROOTDIR = path.basename(path.resolve($paths.dirname)) + "/";
-var APPDIR = BASE + ROOTDIR;
+var APPDIR = path.join($app.base, $paths.rootdir);
 
 // line ending information
 var EOL = $app.eol;
