@@ -83,7 +83,7 @@ gulp.task("help", function(done) {
 
 			console.log(newline);
 			console.log(chalk.bold("Tasks"));
-			console.log("\n");
+			console.log(newline);
 
 			var tasks = {};
 			var names = [];
@@ -148,7 +148,7 @@ gulp.task("help", function(done) {
 					// print the task name
 					console.log("   " + chalk.cyan(name));
 
-					var lines = block.split("\n");
+					var lines = block.split(newline);
 					lines.forEach(function(line) {
 						if (-~headers.indexOf(line.trim())) {
 							line = " ".repeat(6) + (line + ":");
@@ -159,7 +159,7 @@ gulp.task("help", function(done) {
 					});
 
 					// bottom padding
-					console.log("\n");
+					console.log(newline);
 				} else {
 					// only show the name and its description
 					console.log(
@@ -173,7 +173,7 @@ gulp.task("help", function(done) {
 
 			if (!verbose) {
 				// bottom padding
-				console.log("\n");
+				console.log(newline);
 			}
 
 			done();
