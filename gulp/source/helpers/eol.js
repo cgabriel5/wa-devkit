@@ -6,7 +6,7 @@
  * Flags
  *
  * -l, --line-ending
- *     [string] The line ending to use. Defauls to "\n".
+ *     [string] The type of line ending to use. Defauls to "\n".
  *
  * Usage
  *
@@ -21,7 +21,6 @@ gulp.task("eol", function(done) {
 	var _args = yargs.option("line-ending", {
 		alias: "l",
 		demandOption: false,
-		describe: "The type of line-ending to use.",
 		type: "string"
 	}).argv;
 	// get the command line arguments from yargs

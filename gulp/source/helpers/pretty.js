@@ -14,10 +14,10 @@
  * Flags
  *
  * -t, --type
- *     [string] The optional extension types to clean.
+ *     [string] The file extensions types to clean.
  *
  * -g, --glob
- *     [array] Use glob to find files to prettify.
+ *     [array] Use a glob to find files to prettify.
  *
  * -s, --show
  *     [boolean] Show the used globs before prettifying.
@@ -25,11 +25,12 @@
  * -e, --empty
  *     [boolean] Empty default globs array. Careful as this can prettify
  *     all project files. By default the node_modules/ is ignored, for
- *     example. Be sure to exclude files that don't need to be prettified.
+ *     example. Be sure to exclude files that don't need to be prettified
+ *     by adding the necessary globs with the --glob option.
  *
  * -l, --line-ending
  *     [string] If provided, the file ending will get changed to provided
- *     character(s). Line endings default to LF (\n).
+ *     character(s). Line endings default to LF ("\n").
  *
  * Usage
  *
@@ -70,31 +71,26 @@ gulp.task("pretty", function(done) {
 		.option("type", {
 			alias: "t",
 			demandOption: false,
-			describe: "The file type extensions to clean.",
 			type: "string"
 		})
 		.option("glob", {
 			alias: "g",
 			demandOption: false,
-			describe: "Use glob to find files to prettify.",
 			type: "array"
 		})
 		.option("show", {
 			alias: "s",
 			demandOption: false,
-			describe: "Show the used globs before prettifying.",
 			type: "boolean"
 		})
 		.option("empty", {
 			alias: "e",
 			demandOption: false,
-			describe: "Empty default globs array.",
 			type: "boolean"
 		})
 		.option("line-ending", {
 			alias: "l",
 			demandOption: false,
-			describe: "The type of line-ending to use.",
 			type: "string"
 		}).argv;
 	// get the command line arguments from yargs

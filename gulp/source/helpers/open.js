@@ -35,13 +35,11 @@ gulp.task("open", function(done) {
 		.option("file", {
 			alias: "f",
 			demandOption: true,
-			describe: "The file to open.",
 			type: "string"
 		})
 		.option("port", {
 			alias: "p",
 			demandOption: false,
-			describe: "The port to open browser in.",
 			type: "number"
 		}).argv;
 

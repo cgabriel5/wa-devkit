@@ -22,7 +22,7 @@
  *     <string>  Action to take (add/remove).
  *
  * -l, --list
- *     <boolean> Show all CSS/JS dependencies.
+ *     <boolean> Print all CSS/JS dependencies.
  *
  * Usage
  *
@@ -43,18 +43,15 @@ gulp.task("dependency", function(done) {
 	var _args = yargs
 		.option("name", {
 			alias: "n",
-			describe: "The module name.",
 			type: "string"
 		})
 		.option("type", {
 			alias: "t",
-			describe: "js or css dependency?",
 			choices: ["js", "css"],
 			type: "string"
 		})
 		.option("action", {
 			alias: "a",
-			describe: "Add or remove dependency?",
 			choices: ["add", "remove"],
 			type: "string"
 		})
@@ -70,7 +67,6 @@ gulp.task("dependency", function(done) {
 		})
 		.option("list", {
 			alias: "l",
-			describe: "List vendor dependencies.",
 			type: "boolean"
 		}).argv;
 	// get the command line arguments from yargs

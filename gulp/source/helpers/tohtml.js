@@ -54,7 +54,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	var _args = yargs.option("file", {
 		alias: "f",
 		default: "./README.md",
-		describe: "The file to convert.",
 		type: "string"
 	}).argv;
 	// get the command line arguments from yargs
