@@ -1,5 +1,12 @@
 //#! requires.js -- ./gulp/source/requires.js
 
+/*jshint esversion: 6 */
+/*jshint bitwise: false*/
+/*jshint browser: false*/
+/*jshint node: true*/
+/*jshint -W018 */
+/*jshint -W014 */
+
 "use strict";
 
 // node modules
@@ -25,7 +32,7 @@ var $ = require("gulp-load-plugins")({
 		json_sort: function(plugin) {
 			return plugin.default;
 		},
-		uglify: function(plugin) {
+		uglify: function() {
 			// [https://stackoverflow.com/a/45554108]
 			// By default es-uglify is used to uglify JS.
 			var uglifyjs = require("uglify-es");
@@ -127,7 +134,7 @@ var APPDIR = path.join($app.base, $paths.rootdir);
 // line ending information
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
-var EOL_STYLE = EOL.style;
+// var EOL_STYLE = EOL.style;
 
 // internal information
 var APPTYPE = $internal.get("apptype");
@@ -162,10 +169,9 @@ var html_injection = {
  * @param {string} filepath - The path of the file to open.
  * @param {number} port - The port to open on.
  * @param {function} callback - The Gulp task callback to run.
- * @param {object} task - The Gulp task.
  * @return {undefined} Nothing.
  */
-function open_file_in_browser(filepath, port, callback, task) {
+function open_file_in_browser(filepath, port, callback) {
 	pump(
 		[
 			gulp.src(filepath, {
@@ -228,10 +234,14 @@ cleanup(function(exit_code, signal) {
 		$internal.writeSync(null, jindent);
 		// cleanup vars, process
 		branch_name = undefined;
-		if (bs) bs.exit();
+		if (bs) {
+			bs.exit();
+		}
 		if (process) {
 			process.exit();
-			if (signal) process.kill(pid, signal);
+			if (signal) {
+				process.kill(pid, signal);
+			}
 		}
 		cleanup.uninstall(); // don't call cleanup handler again
 		return false;
@@ -266,9 +276,13 @@ gulp.task("init:watch-git-branch", function(done) {
 
 	git.isGit($paths.dirname, function(exists) {
 		// if no .git exists simply ignore and return done
-		if (!exists) return done();
+		if (!exists) {
+			return done();
+		}
 		git.check($paths.dirname, function(err, result) {
-			if (err) throw err;
+			if (err) {
+				throw err;
+			}
 			// record branch name
 			branch_name = result.branch;
 			// set the gulp watcher as .git exists
@@ -280,13 +294,14 @@ gulp.task("init:watch-git-branch", function(done) {
 				},
 				function() {
 					var brn_current = git.checkSync($paths.dirname).branch;
-					if (branch_name)
+					if (branch_name) {
 						log(
 							chalk.yellow("(pid:" + process.pid + ")"),
 							"Gulp monitoring",
 							chalk.green(branch_name),
 							"branch."
 						);
+					}
 					if (brn_current !== branch_name) {
 						// message + exit
 						log(
@@ -927,7 +942,9 @@ gulp.task("modernizr", function(done) {
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
 		// create missing folders
 		mkdirp($paths.vendor_modernizr, function(err) {
-			if (err) throw err;
+			if (err) {
+				throw err;
+			}
 			// save the file to vendor
 			fs.writeFile(file_location, build + EOL_ENDING, function() {
 				var message = chalk.blue("Modernizr build complete. Placed in");
@@ -1308,7 +1325,9 @@ gulp.task("pretty", function(done) {
 		// not be present. they only seem to work when
 		// multiple options are used like .{js,css,html}.
 		// this is normalized below.
-		if (-~type.indexOf(",")) type = "{" + type + "}";
+		if (-~type.indexOf(",")) {
+			type = "{" + type + "}";
+		}
 		// finally, reset the files array
 		files[0] = `**/*.${type}`;
 	}
@@ -1482,7 +1501,9 @@ gulp.task("stats", function(done) {
 					.slice(1);
 
 				// exclude any extension-less files
-				if (!ext) return;
+				if (!ext) {
+					return;
+				}
 
 				var ext_count = extensions[ext];
 
@@ -1600,14 +1621,18 @@ gulp.task("files", function(done) {
 	var whereis = _args.w || _args.whereis;
 	var no_fuzzy = _args.e || _args.exact;
 	// turn to an array when present
-	if (types) types = types.split(/\s+/);
+	if (types) {
+		types = types.split(/\s+/);
+	}
 
 	// where files will be contained
 	var files = [];
 
 	// get all project files
 	dir.files(__dirname, function(err, paths) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 
 		loop1: for (var i = 0, l = paths.length; i < l; i++) {
 			var filepath = paths[i];
@@ -1616,7 +1641,9 @@ gulp.task("files", function(done) {
 			var ignores = [$paths.node_modules_name, $paths.git];
 			for (var j = 0, ll = ignores.length; j < ll; j++) {
 				var ignore = ignores[j];
-				if (-~filepath.indexOf(ignore)) continue loop1;
+				if (-~filepath.indexOf(ignore)) {
+					continue loop1;
+				}
 			}
 			// add to files array
 			files.push(filepath);
@@ -1650,7 +1677,9 @@ gulp.task("files", function(done) {
 			// run a non fuzzy search
 			if (no_fuzzy) {
 				files.forEach(function(file) {
-					if (-~file.indexOf(whereis)) results.push(file);
+					if (-~file.indexOf(whereis)) {
+						results.push(file);
+					}
 				});
 			} else {
 				// default to a fuzzy search
@@ -1794,7 +1823,7 @@ gulp.task("dependency", function(done) {
 		return done();
 	}
 	// delete the old module folder
-	del([delete_path]).then(function(paths) {
+	del([delete_path]).then(function() {
 		var message =
 			`Dependency (${name}) ` +
 			(action === "add" ? "added" : "removed" + ".");
@@ -1876,6 +1905,52 @@ gulp.task("make", function(done) {
 	);
 });
 
+//#! jshint.js -- ./gulp/source/helpers/jshint.js
+
+/**
+ * task: jshint
+ * Add/remove front-end dependencies.
+ *
+ *
+ * Notes
+ *
+ * • Dependencies are grabbed from ./node_modules/<name> and moved
+ *   to its corresponding ./<type>/vendor/ folder.
+ *
+ * Flags
+ *
+ * -f, --file
+ *     <string>  The JS file to lint.
+ *
+ * Usage
+ *
+ * $ gulp jshint --file ./gulpfile.main.js
+ *     Lint gulpfile.main.js
+ *
+ */
+gulp.task("jshint", function(done) {
+	// run yargs
+	var _args = yargs.option("file", {
+		alias: "f",
+		type: "string",
+		demandOption: true
+	}).argv;
+	// get the command line arguments from yargs
+	var file = _args.f || _args.file || "";
+
+	pump(
+		[
+			gulp.src(file, {
+				cwd: $paths.base
+			}),
+			$.debug(),
+			$.jshint($paths.config_jshint),
+			$.jshint.reporter("jshint-stylish")
+		],
+		done
+	);
+});
+
 //#! settings.js -- ./gulp/source/helpers/settings.js
 
 /**
@@ -1895,7 +1970,7 @@ gulp.task("settings", function(done) {
 			}),
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
-			$.jsoncombine($paths.config_settings_name, function(data, meta) {
+			$.jsoncombine($paths.config_settings_name, function(data) {
 				return new Buffer(JSON.stringify(data, null, jindent));
 			}),
 			gulp.dest($paths.config_home),
@@ -2064,8 +2139,12 @@ gulp.task("help", function(done) {
 			// [https://stackoverflow.com/a/9175783]
 			// sort alphabetically fallback to a length
 			var cmp = function(a, b) {
-				if (a > b) return +1;
-				if (a < b) return -1;
+				if (a > b) {
+					return +1;
+				}
+				if (a < b) {
+					return -1;
+				}
 				return 0;
 			};
 
@@ -2097,7 +2176,9 @@ gulp.task("help", function(done) {
 				var name = get_task_name(block);
 
 				// skip if no name is found
-				if (!name) return;
+				if (!name) {
+					return;
+				}
 
 				// reset name
 				block = block.replace(
@@ -2112,7 +2193,9 @@ gulp.task("help", function(done) {
 				var desc = block.substring(0, block.indexOf("\n\n"));
 
 				tasks[name] = { text: block, desc: desc };
-				if (name !== "help") names.push(name);
+				if (name !== "help") {
+					names.push(name);
+				}
 				lengths.push(name.length);
 			});
 
@@ -2356,7 +2439,7 @@ gulp.task("favicon", function(done) {
 		"tohtml",
 		"pretty"
 	];
-	tasks.push(function(err) {
+	tasks.push(function() {
 		log("Favicons generated.");
 		done();
 	});
@@ -2375,6 +2458,8 @@ gulp.task("favicon-updates", function(done) {
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
 		if (err) {
 			throw err;
+		} else {
+			return done();
 		}
 	});
 });

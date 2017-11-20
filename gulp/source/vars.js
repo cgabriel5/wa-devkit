@@ -17,7 +17,7 @@ var APPDIR = path.join($app.base, $paths.rootdir);
 // line ending information
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
-var EOL_STYLE = EOL.style;
+// var EOL_STYLE = EOL.style;
 
 // internal information
 var APPTYPE = $internal.get("apptype");

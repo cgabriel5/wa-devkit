@@ -69,14 +69,18 @@ gulp.task("files", function(done) {
 	var whereis = _args.w || _args.whereis;
 	var no_fuzzy = _args.e || _args.exact;
 	// turn to an array when present
-	if (types) types = types.split(/\s+/);
+	if (types) {
+		types = types.split(/\s+/);
+	}
 
 	// where files will be contained
 	var files = [];
 
 	// get all project files
 	dir.files(__dirname, function(err, paths) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 
 		loop1: for (var i = 0, l = paths.length; i < l; i++) {
 			var filepath = paths[i];
@@ -85,7 +89,9 @@ gulp.task("files", function(done) {
 			var ignores = [$paths.node_modules_name, $paths.git];
 			for (var j = 0, ll = ignores.length; j < ll; j++) {
 				var ignore = ignores[j];
-				if (-~filepath.indexOf(ignore)) continue loop1;
+				if (-~filepath.indexOf(ignore)) {
+					continue loop1;
+				}
 			}
 			// add to files array
 			files.push(filepath);
@@ -119,7 +125,9 @@ gulp.task("files", function(done) {
 			// run a non fuzzy search
 			if (no_fuzzy) {
 				files.forEach(function(file) {
-					if (-~file.indexOf(whereis)) results.push(file);
+					if (-~file.indexOf(whereis)) {
+						results.push(file);
+					}
 				});
 			} else {
 				// default to a fuzzy search

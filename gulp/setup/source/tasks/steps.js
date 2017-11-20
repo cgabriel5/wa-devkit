@@ -22,7 +22,7 @@ gulp.task("init:settings-main", function(done) {
 			}),
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
-			$.jsoncombine($paths.config_settings_name, function(data, meta) {
+			$.jsoncombine($paths.config_settings_name, function(data) {
 				return new Buffer(JSON.stringify(data, null, jindent));
 			}),
 			gulp.dest($paths.config_home),
@@ -201,7 +201,11 @@ gulp.task("init:git", function(done) {
 		git config --local core.autocrlf input
 		git config --local user.email ${__data__.email}
 		git config --local user.name ${__data__.git_id}`,
-			function(err, data, stderr) {
+			function(err) {
+				if (err) {
+					throw err;
+				}
+
 				// make the first commit
 				git
 					.add("./*")

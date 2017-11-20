@@ -1,3 +1,12 @@
+/*jshint esversion: 6 */
+/*jshint bitwise: false*/
+/*jshint browser: false*/
+/*jshint node: true*/
+/*jshint -W018 */
+/*jshint -W014 */
+
+"use strict";
+
 // node modules
 var fs = require("fs");
 var path = require("path");
@@ -21,7 +30,7 @@ var $ = require("gulp-load-plugins")({
 		json_sort: function(plugin) {
 			return plugin.default;
 		},
-		uglify: function(plugin) {
+		uglify: function() {
 			// [https://stackoverflow.com/a/45554108]
 			// By default es-uglify is used to uglify JS.
 			var uglifyjs = require("uglify-es");

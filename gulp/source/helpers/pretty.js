@@ -129,7 +129,9 @@ gulp.task("pretty", function(done) {
 		// not be present. they only seem to work when
 		// multiple options are used like .{js,css,html}.
 		// this is normalized below.
-		if (-~type.indexOf(",")) type = "{" + type + "}";
+		if (-~type.indexOf(",")) {
+			type = "{" + type + "}";
+		}
 		// finally, reset the files array
 		files[0] = `**/*.${type}`;
 	}

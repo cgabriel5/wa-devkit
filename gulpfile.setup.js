@@ -1,5 +1,14 @@
 //#! requires.js -- ./gulp/setup/source/requires.js
 
+/*jshint esversion: 6 */
+/*jshint bitwise: false*/
+/*jshint browser: false*/
+/*jshint node: true*/
+/*jshint -W018 */
+/*jshint -W014 */
+
+"use strict";
+
 // node modules
 var fs = require("fs");
 var path = require("path");
@@ -23,7 +32,7 @@ var $ = require("gulp-load-plugins")({
 		json_sort: function(plugin) {
 			return plugin.default;
 		},
-		uglify: function(plugin) {
+		uglify: function() {
 			// [https://stackoverflow.com/a/45554108]
 			// By default es-uglify is used to uglify JS.
 			var uglifyjs = require("uglify-es");
@@ -102,7 +111,7 @@ var INDEX = $app.index;
 // line ending information
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
-var EOL_STYLE = EOL.style;
+// var EOL_STYLE = EOL.style;
 
 //#! functions.js -- ./gulp/setup/source/functions.js
 
@@ -229,7 +238,7 @@ gulp.task("init:settings-main", function(done) {
 			}),
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
-			$.jsoncombine($paths.config_settings_name, function(data, meta) {
+			$.jsoncombine($paths.config_settings_name, function(data) {
 				return new Buffer(JSON.stringify(data, null, jindent));
 			}),
 			gulp.dest($paths.config_home),
@@ -408,7 +417,11 @@ gulp.task("init:git", function(done) {
 		git config --local core.autocrlf input
 		git config --local user.email ${__data__.email}
 		git config --local user.name ${__data__.git_id}`,
-			function(err, data, stderr) {
+			function(err) {
+				if (err) {
+					throw err;
+				}
+
 				// make the first commit
 				git
 					.add("./*")

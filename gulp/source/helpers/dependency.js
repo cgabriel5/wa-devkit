@@ -121,7 +121,7 @@ gulp.task("dependency", function(done) {
 		return done();
 	}
 	// delete the old module folder
-	del([delete_path]).then(function(paths) {
+	del([delete_path]).then(function() {
 		var message =
 			`Dependency (${name}) ` +
 			(action === "add" ? "added" : "removed" + ".");

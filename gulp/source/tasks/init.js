@@ -20,10 +20,14 @@ cleanup(function(exit_code, signal) {
 		$internal.writeSync(null, jindent);
 		// cleanup vars, process
 		branch_name = undefined;
-		if (bs) bs.exit();
+		if (bs) {
+			bs.exit();
+		}
 		if (process) {
 			process.exit();
-			if (signal) process.kill(pid, signal);
+			if (signal) {
+				process.kill(pid, signal);
+			}
 		}
 		cleanup.uninstall(); // don't call cleanup handler again
 		return false;
@@ -58,9 +62,13 @@ gulp.task("init:watch-git-branch", function(done) {
 
 	git.isGit($paths.dirname, function(exists) {
 		// if no .git exists simply ignore and return done
-		if (!exists) return done();
+		if (!exists) {
+			return done();
+		}
 		git.check($paths.dirname, function(err, result) {
-			if (err) throw err;
+			if (err) {
+				throw err;
+			}
 			// record branch name
 			branch_name = result.branch;
 			// set the gulp watcher as .git exists
@@ -72,13 +80,14 @@ gulp.task("init:watch-git-branch", function(done) {
 				},
 				function() {
 					var brn_current = git.checkSync($paths.dirname).branch;
-					if (branch_name)
+					if (branch_name) {
 						log(
 							chalk.yellow("(pid:" + process.pid + ")"),
 							"Gulp monitoring",
 							chalk.green(branch_name),
 							"branch."
 						);
+					}
 					if (brn_current !== branch_name) {
 						// message + exit
 						log(

@@ -62,8 +62,12 @@ gulp.task("help", function(done) {
 			// [https://stackoverflow.com/a/9175783]
 			// sort alphabetically fallback to a length
 			var cmp = function(a, b) {
-				if (a > b) return +1;
-				if (a < b) return -1;
+				if (a > b) {
+					return +1;
+				}
+				if (a < b) {
+					return -1;
+				}
 				return 0;
 			};
 
@@ -95,7 +99,9 @@ gulp.task("help", function(done) {
 				var name = get_task_name(block);
 
 				// skip if no name is found
-				if (!name) return;
+				if (!name) {
+					return;
+				}
 
 				// reset name
 				block = block.replace(
@@ -110,7 +116,9 @@ gulp.task("help", function(done) {
 				var desc = block.substring(0, block.indexOf("\n\n"));
 
 				tasks[name] = { text: block, desc: desc };
-				if (name !== "help") names.push(name);
+				if (name !== "help") {
+					names.push(name);
+				}
 				lengths.push(name.length);
 			});
 

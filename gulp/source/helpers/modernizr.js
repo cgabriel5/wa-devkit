@@ -16,7 +16,9 @@ gulp.task("modernizr", function(done) {
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
 		// create missing folders
 		mkdirp($paths.vendor_modernizr, function(err) {
-			if (err) throw err;
+			if (err) {
+				throw err;
+			}
 			// save the file to vendor
 			fs.writeFile(file_location, build + EOL_ENDING, function() {
 				var message = chalk.blue("Modernizr build complete. Placed in");

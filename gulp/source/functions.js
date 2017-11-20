@@ -4,10 +4,9 @@
  * @param {string} filepath - The path of the file to open.
  * @param {number} port - The port to open on.
  * @param {function} callback - The Gulp task callback to run.
- * @param {object} task - The Gulp task.
  * @return {undefined} Nothing.
  */
-function open_file_in_browser(filepath, port, callback, task) {
+function open_file_in_browser(filepath, port, callback) {
 	pump(
 		[
 			gulp.src(filepath, {

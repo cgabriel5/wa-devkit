@@ -29,6 +29,7 @@
 	"config_internal": "./${homedir}configs/._internal.json",
 	"config_settings": "./${homedir}configs/._settings.json",
 	"config_settings_json_files": "./${homedir}configs/**/*.json",
+	"config_jshint": "./${homedir}configs/.jshintrc",
 	"config_settings_name": "._settings.json",
 	"config_perfectionist": "perfectionist",
 	"config_findfreeport": "findfreeport",

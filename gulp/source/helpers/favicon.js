@@ -169,7 +169,7 @@ gulp.task("favicon", function(done) {
 		"tohtml",
 		"pretty"
 	];
-	tasks.push(function(err) {
+	tasks.push(function() {
 		log("Favicons generated.");
 		done();
 	});
@@ -188,6 +188,8 @@ gulp.task("favicon-updates", function(done) {
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
 		if (err) {
 			throw err;
+		} else {
+			return done();
 		}
 	});
 });

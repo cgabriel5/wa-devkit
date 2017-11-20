@@ -41,7 +41,9 @@ gulp.task("stats", function(done) {
 					.slice(1);
 
 				// exclude any extension-less files
-				if (!ext) return;
+				if (!ext) {
+					return;
+				}
 
 				var ext_count = extensions[ext];
 
