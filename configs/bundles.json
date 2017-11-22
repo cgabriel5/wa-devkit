@@ -77,6 +77,8 @@
 				"helpers/dependency.js",
 				"helpers/make.js",
 				"helpers/jshint.js",
+				"helpers/csslint.js",
+				"helpers/htmllint.js",
 				"helpers/settings.js",
 				"helpers/indent.js",
 				"helpers/help.js",

@@ -17,4 +17,7 @@ var $json_format = $settings[$paths.config_json_format];
 var $modernizr = $settings[$paths.config_modernizr];
 var $open = $settings[$paths.config_open];
 var $perfectionist = $settings[$paths.config_perfectionist];
+var $csslint = $settings[$paths.config_csslint];
+var $jshint = $settings[$paths.config_jshint];
+var $htmllint = $settings[$paths.config_htmllint];
 var $prettier = $settings[$paths.config_prettier];

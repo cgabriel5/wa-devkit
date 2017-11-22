@@ -111,6 +111,9 @@ var $json_format = $settings[$paths.config_json_format];
 var $modernizr = $settings[$paths.config_modernizr];
 var $open = $settings[$paths.config_open];
 var $perfectionist = $settings[$paths.config_perfectionist];
+var $csslint = $settings[$paths.config_csslint];
+var $jshint = $settings[$paths.config_jshint];
+var $htmllint = $settings[$paths.config_htmllint];
 var $prettier = $settings[$paths.config_prettier];
 
 //#! vars.js -- ./gulp/source/vars.js
@@ -1909,13 +1912,8 @@ gulp.task("make", function(done) {
 
 /**
  * task: jshint
- * Add/remove front-end dependencies.
+ * Run jshint on a file.
  *
- *
- * Notes
- *
- * • Dependencies are grabbed from ./node_modules/<name> and moved
- *   to its corresponding ./<type>/vendor/ folder.
  *
  * Flags
  *
@@ -1938,14 +1936,121 @@ gulp.task("jshint", function(done) {
 	// get the command line arguments from yargs
 	var file = _args.f || _args.file || "";
 
+	// don't search for a config file as a config object will be
+	// supplied instead.
+	$.jshint.lookup = false;
+
 	pump(
 		[
 			gulp.src(file, {
 				cwd: $paths.base
 			}),
 			$.debug(),
-			$.jshint($paths.config_jshint),
+			$.jshint($jshint),
 			$.jshint.reporter("jshint-stylish")
+		],
+		done
+	);
+});
+
+//#! csslint.js -- ./gulp/source/helpers/csslint.js
+
+/**
+ * task: csslint
+ * Run csslint on a file.
+ *
+ *
+ * Flags
+ *
+ * -f, --file
+ *     <string>  The CSS file to lint.
+ *
+ * Usage
+ *
+ * $ gulp csslint --file ./css/bundles/vendor.css
+ *     Lint ./css/bundles/vendor.css
+ *
+ */
+gulp.task("csslint", function(done) {
+	// run yargs
+	var _args = yargs.option("file", {
+		alias: "f",
+		type: "string",
+		demandOption: true
+	}).argv;
+	// get the command line arguments from yargs
+	var file = _args.f || _args.file || "";
+
+	// get the stylish logger
+	var stylish = require("csslint-stylish");
+
+	pump(
+		[
+			gulp.src(file, {
+				cwd: $paths.base
+			}),
+			$.debug(),
+			$.csslint($csslint),
+			$.csslint.formatter(stylish)
+		],
+		done
+	);
+});
+
+//#! htmllint.js -- ./gulp/source/helpers/htmllint.js
+
+/**
+ * task: hlint
+ * Run htmllint on a file.
+ *
+ *
+ * Flags
+ *
+ * -f, --file
+ *     <string>  The HTML file to lint.
+ *
+ * Usage
+ *
+ * $ gulp hlint --file ./index.html
+ *     Lint ./index.html
+ *
+ */
+gulp.task("hlint", function(done) {
+	// run yargs
+	var _args = yargs.option("file", {
+		alias: "f",
+		type: "string",
+		demandOption: true
+	}).argv;
+	// get the command line arguments from yargs
+	var file = _args.f || _args.file || "";
+
+	function reporter(filepath, issues) {
+		if (issues.length) {
+			filepath = path.relative(process.cwd(), filepath);
+			issues.forEach(function(issue) {
+				// make sure the first letter is always capitalized
+				var first_letter = issue.msg[0];
+				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
+				log(
+					chalk.magenta(filepath),
+					chalk.white(`line ${issue.line} char ${issue.column}`),
+					chalk.blue(`(${issue.code})`),
+					chalk.yellow(`${issue.msg}`)
+				);
+			});
+
+			process.exitCode = 1;
+		}
+	}
+
+	pump(
+		[
+			gulp.src(file, {
+				cwd: $paths.base
+			}),
+			// $.debug(),
+			$.htmllint({ rules: $htmllint }, reporter)
 		],
 		done
 	);

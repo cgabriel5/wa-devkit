@@ -1,12 +1,7 @@
 /**
  * task: jshint
- * Add/remove front-end dependencies.
+ * Run jshint on a file.
  *
- *
- * Notes
- *
- * • Dependencies are grabbed from ./node_modules/<name> and moved
- *   to its corresponding ./<type>/vendor/ folder.
  *
  * Flags
  *
@@ -29,13 +24,17 @@ gulp.task("jshint", function(done) {
 	// get the command line arguments from yargs
 	var file = _args.f || _args.file || "";
 
+	// don't search for a config file as a config object will be
+	// supplied instead.
+	$.jshint.lookup = false;
+
 	pump(
 		[
 			gulp.src(file, {
 				cwd: $paths.base
 			}),
 			$.debug(),
-			$.jshint($paths.config_jshint),
+			$.jshint($jshint),
 			$.jshint.reporter("jshint-stylish")
 		],
 		done
