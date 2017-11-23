@@ -189,9 +189,8 @@ function open_file_in_browser(filepath, port, callback) {
 					port: port,
 					https: $open.https
 				})
-			})
-			// modify debug to take a flag to skip the use of the cli-spinner
-			// $.debug()
+			}),
+			$.debug({ loader: false })
 		],
 		function() {
 			notify("File opened!");
@@ -2049,7 +2048,7 @@ gulp.task("hlint", function(done) {
 			gulp.src(file, {
 				cwd: $paths.base
 			}),
-			// $.debug(),
+			$.debug({ loader: false }),
 			$.htmllint({ rules: $htmllint }, reporter)
 		],
 		done
