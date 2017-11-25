@@ -18,7 +18,9 @@ if (fe.sync($paths.config_settings)) {
 			$paths.hasOwnProperty($config) &&
 			/^config_\$[a-z_.]+$/i.test($config)
 		) {
-			var config_name = $paths[$config];
+			// remove any file name sub-extensions. for example,
+			// for "csslint.cm" turn to "csslint"
+			var config_name = $paths[$config].split(".")[0];
 			// get the config settings and add to the settings object
 			$configs[config_name] = $settings[$paths[$config]];
 		}

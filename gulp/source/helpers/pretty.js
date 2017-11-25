@@ -189,7 +189,7 @@ gulp.task("pretty", function(done) {
 				$.postcss([
 					unprefix(),
 					shorthand(),
-					autoprefixer($configs.ap),
+					autoprefixer($configs.autoprefixer),
 					perfectionist($configs.perfectionist)
 				])
 			),
