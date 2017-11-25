@@ -50,18 +50,19 @@ var time = function() {
  */
 var notify = function(message, error) {
 	// determine what image to show
-	var image = (!error ? "success" : "error") + "_256.png";
+	var image = (error ? "error" : "success") + "_256.png";
 	// OS agnostic
 	notifier.notify({
 		title: "Gulp",
 		message: message,
-		icon: path.join(__dirname, "../img/node-notifier/" + image),
+		icon: path.join(__dirname, "../node-notifier/" + image),
 		sound: true
 	});
 };
 
 /**
- * Modifies Gulp by adding a currentTask.name property. To access in a task.
+ * Modifies Gulp by adding a debug property to hold information like
+ *     the tasks name.
  *
  * @param {object} gulp - Gulp itself.
  * @return {object} Modified Gulp.
@@ -73,10 +74,7 @@ var current_task = function(gulp) {
 	gulp.Gulp.prototype._runTask = function(task) {
 		this.__wadevkit = {
 			debug: {
-				names: {
-					full: task.name,
-					short: task.name.replace(/^(helper|task)\-/, "")
-				}
+				name: task.name
 			}
 		};
 		this.__runTask(task);
