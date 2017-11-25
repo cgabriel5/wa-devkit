@@ -75,6 +75,7 @@
 		"node-cmd": "^3.0.0",
 		"node-dir": "^0.1.17",
 		"node-notifier": "^5.1.2",
+		"object-path-get": "^1.0.0",
 		"perfectionist": "^2.4.0",
 		"postcss-merge-longhand": "^3.0.0",
 		"postcss-unprefix": "^2.1.1",

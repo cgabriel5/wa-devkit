@@ -35,7 +35,7 @@ gulp.task("make", function(done) {
 				$.concat(main_name),
 				$.concat(setup_name)
 			),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.base),
 			$.debug.edit()
 		],

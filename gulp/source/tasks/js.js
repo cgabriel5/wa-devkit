@@ -8,7 +8,7 @@ gulp.task("js:app", function(done) {
 			}),
 			$.debug(),
 			$.concat(bundle_js.source.names.main),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
 			bs.stream()
@@ -29,7 +29,7 @@ gulp.task("js:vendor", function(done) {
 			gulp.src(bundle_js.vendor.files),
 			$.debug(),
 			$.concat(bundle_js.vendor.names.main),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
 			bs.stream()

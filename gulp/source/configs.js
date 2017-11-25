@@ -1,23 +1,45 @@
 // dynamic configuration files (load via json-file to modify later)
 var $internal = json.read($paths.config_internal);
 
-// static configuration files (just need to read file)
-var $settings = jsonc.parse(fs.readFileSync($paths.config_settings).toString());
+// object will contain the all the config settings
+var $configs = {};
 
-// get individual plugin settings
-var $app = $settings[$paths.config_app];
-var $ap = $settings[$paths.config_autoprefixer];
-var $browsersync = $settings[$paths.config_browsersync];
-var $bundles = $settings[$paths.config_bundles];
-// var $csscomb = $settings[$paths.config_csscomb];
-// var $favicondata = $settings[$paths.config_favicondata];
-var $findfreeport = $settings[$paths.config_findfreeport];
-var $jsbeautify = $settings[$paths.config_jsbeautify];
-var $json_format = $settings[$paths.config_json_format];
-var $modernizr = $settings[$paths.config_modernizr];
-var $open = $settings[$paths.config_open];
-var $perfectionist = $settings[$paths.config_perfectionist];
-var $csslint = $settings[$paths.config_csslint];
-var $jshint = $settings[$paths.config_jshint];
-var $htmllint = $settings[$paths.config_htmllint];
-var $prettier = $settings[$paths.config_prettier];
+// settings config file must exist to populate the configs object
+if (fe.sync($paths.config_settings)) {
+	// static configuration files (just need to read file)
+	var $settings = jsonc.parse(
+		fs.readFileSync($paths.config_settings).toString()
+	);
+
+	// get individual plugin settings and store in an object
+	for (var $config in $paths) {
+		// path must match the following pattern to be a config path
+		if (
+			$paths.hasOwnProperty($config) &&
+			/^config_\$[a-z_.]+$/i.test($config)
+		) {
+			var config_name = $paths[$config];
+			// get the config settings and add to the settings object
+			$configs[config_name] = $settings[$paths[$config]];
+		}
+	}
+} else {
+	// config settings file does not exist so give a message and
+	// exit the node process.
+	log(
+		chalk.yellow("warning"),
+		chalk.magenta($paths.config_settings),
+		'is missing. Run "$ gulp settings --reconfig" to create the file.'
+	);
+
+	// run yargs
+	var _args = yargs.argv;
+	// get the command line arguments from yargs
+
+	// only continue when the reconfig flag is set. this will let the
+	// settings to run.
+
+	if (!_args.reconfig || !-~_args._.indexOf("settings")) {
+		process.exit();
+	}
+}

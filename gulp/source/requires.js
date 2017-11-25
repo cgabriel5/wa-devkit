@@ -51,6 +51,7 @@ var fe = require("file-exists");
 var json = require("json-file");
 var jsonc = require("comment-json");
 var de = require("directory-exists");
+var get = require("object-path-get");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var bs_autoclose = require("browser-sync-close-hook");

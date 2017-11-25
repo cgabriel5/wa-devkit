@@ -11,7 +11,7 @@
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
-	modernizr.build($modernizr, function(build) {
+	modernizr.build($configs.modernizr, function(build) {
 		var file_location =
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
 		// create missing folders

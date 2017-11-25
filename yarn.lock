@@ -3882,6 +3882,10 @@ object-keys@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-0.4.0.tgz#28a6aae7428dd2c3a92f3d95f21335dd204e0336"
 
+object-path-get@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/object-path-get/-/object-path-get-1.0.0.tgz#78c45b43c3cbf071582cfa32e655208cd2b950bb"
+
 object-path@^0.9.0:
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.9.2.tgz#0fd9a74fc5fad1ae3968b586bda5c632bd6c05a5"

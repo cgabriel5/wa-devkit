@@ -113,7 +113,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </html>`;
 				}
 			}),
-			$.beautify($jsbeautify),
+			$.beautify($configs.jsbeautify),
 			gulp.dest($paths.markdown_preview),
 			$.debug.edit(),
 			bs.stream()

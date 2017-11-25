@@ -166,7 +166,7 @@ gulp.task("pretty", function(done) {
 				base: $paths.base_dot
 			}),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
+			$.gulpif(ext.ishtml, $.beautify($configs.jsbeautify)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the
@@ -183,14 +183,14 @@ gulp.task("pretty", function(done) {
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
 				return ext(file, ["html", "css"]) ? false : true;
-			}, $.prettier($prettier)),
+			}, $.prettier($configs.prettier)),
 			$.gulpif(
 				ext.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
-					autoprefixer($ap),
-					perfectionist($perfectionist)
+					autoprefixer($configs.ap),
+					perfectionist($configs.perfectionist)
 				])
 			),
 			$.eol(ending),

@@ -19,7 +19,7 @@ function open_file_in_browser(filepath, port, callback) {
 					appdir: APPDIR,
 					filepath: filepath,
 					port: port,
-					https: $open.https
+					https: $configs.open.https
 				})
 			}),
 			$.debug({ loader: false })

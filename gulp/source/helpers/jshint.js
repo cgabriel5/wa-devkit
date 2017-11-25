@@ -34,7 +34,7 @@ gulp.task("jshint", function(done) {
 				cwd: $paths.base
 			}),
 			$.debug(),
-			$.jshint($jshint),
+			$.jshint($configs.jshint),
 			$.jshint.reporter("jshint-stylish")
 		],
 		done

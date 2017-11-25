@@ -176,10 +176,10 @@ gulp.task("default", function(done) {
 		// start up Gulp like normal
 
 		return find_free_port(
-			$findfreeport.range.start,
-			$findfreeport.range.end,
-			$findfreeport.ip,
-			$findfreeport.count,
+			$configs.findfreeport.range.start,
+			$configs.findfreeport.range.end,
+			$configs.findfreeport.ip,
+			$configs.findfreeport.count,
 			function(err, p1, p2) {
 				// get pid, if any
 				var pid = $internal.get("pid");

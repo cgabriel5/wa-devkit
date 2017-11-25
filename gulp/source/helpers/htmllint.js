@@ -49,7 +49,7 @@ gulp.task("hlint", function(done) {
 				cwd: $paths.base
 			}),
 			$.debug({ loader: false }),
-			$.htmllint({ rules: $htmllint }, reporter)
+			$.htmllint({ rules: $configs.htmllint }, reporter)
 		],
 		done
 	);

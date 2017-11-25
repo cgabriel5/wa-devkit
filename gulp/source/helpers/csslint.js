@@ -33,7 +33,7 @@ gulp.task("csslint", function(done) {
 				cwd: $paths.base
 			}),
 			$.debug(),
-			$.csslint($csslint),
+			$.csslint($configs.csslint),
 			$.csslint.formatter(stylish)
 		],
 		done

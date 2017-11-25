@@ -19,7 +19,7 @@ gulp.task("lib:js", function(done) {
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
 			$.uglify(),

@@ -53,6 +53,7 @@ var fe = require("file-exists");
 var json = require("json-file");
 var jsonc = require("comment-json");
 var de = require("directory-exists");
+var get = require("object-path-get");
 var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var bs_autoclose = require("browser-sync-close-hook");
@@ -95,55 +96,77 @@ var $paths = expand_paths(
 // dynamic configuration files (load via json-file to modify later)
 var $internal = json.read($paths.config_internal);
 
-// static configuration files (just need to read file)
-var $settings = jsonc.parse(fs.readFileSync($paths.config_settings).toString());
+// object will contain the all the config settings
+var $configs = {};
 
-// get individual plugin settings
-var $app = $settings[$paths.config_app];
-var $ap = $settings[$paths.config_autoprefixer];
-var $browsersync = $settings[$paths.config_browsersync];
-var $bundles = $settings[$paths.config_bundles];
-// var $csscomb = $settings[$paths.config_csscomb];
-// var $favicondata = $settings[$paths.config_favicondata];
-var $findfreeport = $settings[$paths.config_findfreeport];
-var $jsbeautify = $settings[$paths.config_jsbeautify];
-var $json_format = $settings[$paths.config_json_format];
-var $modernizr = $settings[$paths.config_modernizr];
-var $open = $settings[$paths.config_open];
-var $perfectionist = $settings[$paths.config_perfectionist];
-var $csslint = $settings[$paths.config_csslint];
-var $jshint = $settings[$paths.config_jshint];
-var $htmllint = $settings[$paths.config_htmllint];
-var $prettier = $settings[$paths.config_prettier];
+// settings config file must exist to populate the configs object
+if (fe.sync($paths.config_settings)) {
+	// static configuration files (just need to read file)
+	var $settings = jsonc.parse(
+		fs.readFileSync($paths.config_settings).toString()
+	);
+
+	// get individual plugin settings and store in an object
+	for (var $config in $paths) {
+		// path must match the following pattern to be a config path
+		if (
+			$paths.hasOwnProperty($config) &&
+			/^config_\$[a-z_.]+$/i.test($config)
+		) {
+			var config_name = $paths[$config];
+			// get the config settings and add to the settings object
+			$configs[config_name] = $settings[$paths[$config]];
+		}
+	}
+} else {
+	// config settings file does not exist so give a message and
+	// exit the node process.
+	log(
+		chalk.yellow("warning"),
+		chalk.magenta($paths.config_settings),
+		'is missing. Run "$ gulp settings --reconfig" to create the file.'
+	);
+
+	// run yargs
+	var _args = yargs.argv;
+	// get the command line arguments from yargs
+
+	// only continue when the reconfig flag is set. this will let the
+	// settings to run.
+
+	if (!_args.reconfig || !-~_args._.indexOf("settings")) {
+		process.exit();
+	}
+}
 
 //#! vars.js -- ./gulp/source/vars.js
 
 // get JSON indentation size
-var jindent = $json_format.indent_size;
+var jindent = get($configs, "json_format.indent_size", "\t");
 
 // bundles
-var bundle_html = $bundles.html;
-var bundle_css = $bundles.css;
-var bundle_js = $bundles.js;
-// var bundle_img = $bundles.img;
-var bundle_gulp = $bundles.gulp;
-var bundle_dist = $bundles.dist;
-var bundle_lib = $bundles.lib;
+var bundle_html = get($configs, "bundles.html", "");
+var bundle_css = get($configs, "bundles.css", "");
+var bundle_js = get($configs, "bundles.js", "");
+// var bundle_img = get($configs, "bundles.img", "");
+var bundle_gulp = get($configs, "bundles.gulp", "");
+var bundle_dist = get($configs, "bundles.dist", "");
+var bundle_lib = get($configs, "bundles.lib", "");
 
 // app directory information
-var INDEX = $app.index;
-var APPDIR = path.join($app.base, $paths.rootdir);
+var INDEX = get($configs, "app.index", "");
+var APPDIR = path.join(get($configs, "app.base", ""), $paths.rootdir);
 
 // line ending information
-var EOL = $app.eol;
-var EOL_ENDING = EOL.ending;
+var EOL = get($configs, "app.eol", "");
+var EOL_ENDING = get(EOL, "ending", "");
 // var EOL_STYLE = EOL.style;
 
 // internal information
 var APPTYPE = $internal.get("apptype");
 
 // create browsersync server
-var bs = browser_sync.create($browsersync.server_name);
+var bs = browser_sync.create(get($configs, "browsersync.server_name", ""));
 
 // get current branch name
 var branch_name;
@@ -158,10 +181,13 @@ var opts_remove = {
 
 // HTML injection variable object
 var html_injection = {
-	css_bundle_app: $paths.css_bundles + bundle_css.source.names.main,
-	css_bundle_vendor: $paths.css_bundles + bundle_css.vendor.names.main,
-	js_bundle_app: $paths.js_bundles + bundle_js.source.names.main,
-	js_bundle_vendor: $paths.js_bundles + bundle_js.vendor.names.main
+	css_bundle_app:
+		$paths.css_bundles + get(bundle_css, "source.names.main", ""),
+	css_bundle_vendor:
+		$paths.css_bundles + get(bundle_css, "vendor.names.main", ""),
+	js_bundle_app: $paths.js_bundles + get(bundle_js, "source.names.main", ""),
+	js_bundle_vendor:
+		$paths.js_bundles + get(bundle_js, "vendor.names.main", "")
 };
 
 //#! functions.js -- ./gulp/source/functions.js
@@ -187,7 +213,7 @@ function open_file_in_browser(filepath, port, callback) {
 					appdir: APPDIR,
 					filepath: filepath,
 					port: port,
-					https: $open.https
+					https: $configs.open.https
 				})
 			}),
 			$.debug({ loader: false })
@@ -392,10 +418,10 @@ gulp.task("default", function(done) {
 		// start up Gulp like normal
 
 		return find_free_port(
-			$findfreeport.range.start,
-			$findfreeport.range.end,
-			$findfreeport.ip,
-			$findfreeport.count,
+			$configs.findfreeport.range.start,
+			$configs.findfreeport.range.end,
+			$configs.findfreeport.ip,
+			$configs.findfreeport.count,
 			function(err, p1, p2) {
 				// get pid, if any
 				var pid = $internal.get("pid");
@@ -618,7 +644,7 @@ gulp.task("lib:js", function(done) {
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
 			$.uglify(),
@@ -681,7 +707,7 @@ gulp.task("watch:main", function(done) {
 			proxy: uri({
 				appdir: APPDIR,
 				filepath: INDEX,
-				https: $open.https
+				https: $configs.open.https
 			}), // "markdown/preview/README.html"
 			port: bs._ports_[0],
 			ui: {
@@ -800,7 +826,7 @@ gulp.task("html:main", function(done) {
 			$.debug(),
 			$.concat(bundle_html.source.names.main),
 			$.injection.pre(html_injection),
-			$.beautify($jsbeautify),
+			$.beautify($configs.jsbeautify),
 			$.injection.post(html_injection),
 			gulp.dest($paths.base),
 			$.debug.edit(),
@@ -830,8 +856,8 @@ gulp.task("css:app", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer($ap),
-				perfectionist($perfectionist)
+				autoprefixer($configs.ap),
+				perfectionist($configs.perfectionist)
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
@@ -861,8 +887,8 @@ gulp.task("css:vendor", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer($ap),
-				perfectionist($perfectionist)
+				autoprefixer($configs.ap),
+				perfectionist($configs.perfectionist)
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
@@ -884,7 +910,7 @@ gulp.task("js:app", function(done) {
 			}),
 			$.debug(),
 			$.concat(bundle_js.source.names.main),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
 			bs.stream()
@@ -905,7 +931,7 @@ gulp.task("js:vendor", function(done) {
 			gulp.src(bundle_js.vendor.files),
 			$.debug(),
 			$.concat(bundle_js.vendor.names.main),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
 			bs.stream()
@@ -939,7 +965,7 @@ gulp.task("img:main", function(done) {
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
-	modernizr.build($modernizr, function(build) {
+	modernizr.build($configs.modernizr, function(build) {
 		var file_location =
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
 		// create missing folders
@@ -1075,7 +1101,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </html>`;
 				}
 			}),
-			$.beautify($jsbeautify),
+			$.beautify($configs.jsbeautify),
 			gulp.dest($paths.markdown_preview),
 			$.debug.edit(),
 			bs.stream()
@@ -1364,7 +1390,7 @@ gulp.task("pretty", function(done) {
 				base: $paths.base_dot
 			}),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
+			$.gulpif(ext.ishtml, $.beautify($configs.jsbeautify)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the
@@ -1381,14 +1407,14 @@ gulp.task("pretty", function(done) {
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
 				return ext(file, ["html", "css"]) ? false : true;
-			}, $.prettier($prettier)),
+			}, $.prettier($configs.prettier)),
 			$.gulpif(
 				ext.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
-					autoprefixer($ap),
-					perfectionist($perfectionist)
+					autoprefixer($configs.ap),
+					perfectionist($configs.perfectionist)
 				])
 			),
 			$.eol(ending),
@@ -1899,7 +1925,7 @@ gulp.task("make", function(done) {
 				$.concat(main_name),
 				$.concat(setup_name)
 			),
-			$.prettier($prettier),
+			$.prettier($configs.prettier),
 			gulp.dest($paths.base),
 			$.debug.edit()
 		],
@@ -1945,7 +1971,7 @@ gulp.task("jshint", function(done) {
 				cwd: $paths.base
 			}),
 			$.debug(),
-			$.jshint($jshint),
+			$.jshint($configs.jshint),
 			$.jshint.reporter("jshint-stylish")
 		],
 		done
@@ -1989,7 +2015,7 @@ gulp.task("csslint", function(done) {
 				cwd: $paths.base
 			}),
 			$.debug(),
-			$.csslint($csslint),
+			$.csslint($configs.csslint),
 			$.csslint.formatter(stylish)
 		],
 		done
@@ -2049,7 +2075,7 @@ gulp.task("hlint", function(done) {
 				cwd: $paths.base
 			}),
 			$.debug({ loader: false }),
-			$.htmllint({ rules: $htmllint }, reporter)
+			$.htmllint({ rules: $configs.htmllint }, reporter)
 		],
 		done
 	);
@@ -2059,12 +2085,22 @@ gulp.task("hlint", function(done) {
 
 /**
  * task: settings
- * Re-build ./configs/._settings.json
+ * Build ./configs/._settings.json
  *
+ *
+ * Flags
+ *
+ * --reconfig
+ *     [boolean] Flag is used to rebuild the combined config file
+ *     when it was deleted for example. The gulpfile needs this
+ *     file and this will force its re-build when it gets deleted
+ *     for whatever reason.
  *
  * Usage
  *
  * $ gulp settings # Re-build ._settings.json
+ * $ gulp settings --reconfig # Force the re-build ._settings.json when
+ *     the file gets deleted for whatever reason.
  */
 gulp.task("settings", function(done) {
 	pump(
