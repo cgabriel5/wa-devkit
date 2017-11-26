@@ -4,5 +4,5 @@ app.module(
 		// app logic...
 	},
 	"complete",
-	"module handles app function utlities"
+	"module handles app function utilities"
 );
