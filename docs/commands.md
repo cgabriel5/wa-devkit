@@ -2,29 +2,28 @@
 
 Command documentation can be accessed by running `$ gulp help`. `help` command information is shown below.
 
-```bash
+```
 Tasks
-
 
    help
 	Provides Gulp task documentation (this documentation).
-	
-	
-      Notes:
-	
+
+
+	  Notes:
+
 		• Help documentation will always show even when verbose flag
 		  is not provided.
-	
-      Flags:
-	
+
+	  Flags:
+
 		--verbose
 		    [boolean] Shows all documentation.
 		
 		-f, --filter
 		    [string] Names of tasks to show documentation for.
-	
-      Usage:
-	
+
+	  Usage:
+
 		$ gulp help
 		    Show a list of tasks and their short descriptions.
 		
