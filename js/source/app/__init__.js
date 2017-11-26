@@ -1,3 +1,10 @@
+/**
+ * This script is used to initialize all the project modules found in
+ * ./js/source/modules. Essentially, it will loop over all modules and
+ * invoke them bases on the mode (complete|interactive) provided. When
+ * a mode is not provided it will default to "complete". For information
+ * about what mode to use see below.
+ */
 (function() {
 	// add to global scope for ease of use
 	// use global app var or create it if not present
@@ -13,7 +20,8 @@
 
 	// add a module to load
 	app.module = function(module_name, fn, mode) {
-		// determine what array the module needs to be added to
+		// determine what array the module needs to be added to.
+		// default to complete when nothing is provided.
 		var type = !mode || mode === "complete" ? "complete" : "interactive";
 		// add the module to the queue
 		queue[type].push([module_name, fn]);
@@ -59,22 +67,34 @@
 		delete app.invoke;
 	};
 
-	// https://developer.mozilla.org/en-US/docs/Web/Events/readystatechange
+	// [https://developer.mozilla.org/en-US/docs/Web/Events/readystatechange]
 	// the readystatechange event is fired when the readyState attribute of a
 	// document has changed
 	document.onreadystatechange = function() {
-		// https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
-		// loading === document still loading
-		// complete === document and all sub-resources have finished loading.
-		// same as the window.onload event
-		// interactive === document has finished loading & parsed but but
-		// sub-resources such as images, stylesheets and frames are still loading
-		// **Note: interactive === document.addEventListener("DOMContentLoaded",...
-		// **Note: complete    === window.addEventListener("load", function() {...
-		// [DOMContentLoaded](https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded)
-		// [load](https://developer.mozilla.org/en-US/docs/Web/Events/load)
-		// document loaded and parsed. however, still loading subresources
-		// user is able to interact with page.
+		// [https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState]
+
+		// [LOADING]:
+		// loading => the document still loading.
+
+		// [COMPLETE]:
+		// complete => the document and all sub-resources have finished
+		// loading (same as the window.onload event).
+		//
+		// Essentially the following...
+		// window.addEventListener("load", function() {...
+		// [https://developer.mozilla.org/en-US/docs/Web/Events/load]
+
+		// [INTERACTIVE]:
+		// interactive => the document has finished loading & parsed but
+		// sub-resources such as images, stylesheets and frames are still
+		// loading.
+		//
+		// Essentially the following...
+		// document.addEventListener("DOMContentLoaded",...
+		// [https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded]
+
+		// document loaded and parsed but still loading sub-resources,
+		// but user is able to interact with page.
 		if (document.readyState === "interactive") {
 			// invoke the modules set to mode interactive
 			invoke("interactive");
@@ -88,7 +108,7 @@
 			cleanup();
 		}
 
-		// good explanation with images:
-		// https://varvy.com/performance/document-ready-state.html
+		// explanation with images:
+		// [https://varvy.com/performance/document-ready-state.html]
 	};
 })();
