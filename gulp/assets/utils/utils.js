@@ -18,8 +18,9 @@ var chalk = gutil.colors;
  * Detects the default Google Chrome browser based on OS. Falls
  *     back to "firefox".
  *
- * @link [https://github.com/stevelacy/gulp-open]
  * @return {string} The browser name.
+ *
+ * @link [https://github.com/stevelacy/gulp-open]
  */
 var browser = function() {
 	var platform = os.platform();
