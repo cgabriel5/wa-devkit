@@ -20,18 +20,18 @@
  * a global `Modernizr` object, and as classes on the `<html>` element. This
  * information allows you to progressively enhance your pages with a granular level
  * of control over the experience.
- */
+*/
 
 (function(window, document, undefined) {
 	var tests = [];
 
 	/**
-     *
-     * ModernizrProto is the constructor for Modernizr
-     *
-     * @class
-     * @access public
-     */
+   *
+   * ModernizrProto is the constructor for Modernizr
+   *
+   * @class
+   * @access public
+   */
 
 	var ModernizrProto = {
 		// The current version, dummy
@@ -64,18 +64,11 @@
 		},
 
 		addTest: function(name, fn, options) {
-			tests.push({
-				name: name,
-				fn: fn,
-				options: options
-			});
+			tests.push({ name: name, fn: fn, options: options });
 		},
 
 		addAsyncTest: function(fn) {
-			tests.push({
-				name: null,
-				fn: fn
-			});
+			tests.push({ name: null, fn: fn });
 		}
 	};
 
@@ -90,24 +83,23 @@
 	var classes = [];
 
 	/**
-     * is returns a boolean if the typeof an obj is exactly type.
-     *
-     * @access private
-     * @function is
-     * @param {*} obj - A thing we want to check the type of
-     * @param {string} type - A string to compare the typeof against
-     * @returns {boolean}
-     */
+   * is returns a boolean if the typeof an obj is exactly type.
+   *
+   * @access private
+   * @function is
+   * @param {*} obj - A thing we want to check the type of
+   * @param {string} type - A string to compare the typeof against
+   * @returns {boolean}
+   */
 
 	function is(obj, type) {
 		return typeof obj === type;
 	}
-
 	/**
-     * Run through all tests and detect their support in the current UA.
-     *
-     * @access private
-     */
+   * Run through all tests and detect their support in the current UA.
+   *
+   * @access private
+   */
 
 	function testRunner() {
 		var featureNames;
@@ -189,32 +181,31 @@
 			}
 		}
 	}
-
 	/**
-     * docElement is a convenience wrapper to grab the root element of the document
-     *
-     * @access private
-     * @returns {HTMLElement|SVGElement} The root element of the document
-     */
+   * docElement is a convenience wrapper to grab the root element of the document
+   *
+   * @access private
+   * @returns {HTMLElement|SVGElement} The root element of the document
+   */
 
 	var docElement = document.documentElement;
 
 	/**
-     * A convenience helper to check if the document we are running in is an SVG document
-     *
-     * @access private
-     * @returns {boolean}
-     */
+   * A convenience helper to check if the document we are running in is an SVG document
+   *
+   * @access private
+   * @returns {boolean}
+   */
 
 	var isSVG = docElement.nodeName.toLowerCase() === "svg";
 
 	/**
-     * setClasses takes an array of class names and adds them to the root element
-     *
-     * @access private
-     * @function setClasses
-     * @param {string[]} classes - Array of class names
-     */
+   * setClasses takes an array of class names and adds them to the root element
+   *
+   * @access private
+   * @function setClasses
+   * @param {string[]} classes - Array of class names
+   */
 
 	// Pass in an and array of class names, e.g.:
 	//  ['no-webp', 'borderradius', ...]
@@ -245,40 +236,40 @@
 	}
 
 	/**
-     * If the browsers follow the spec, then they would expose vendor-specific styles as:
-     *   elem.style.WebkitBorderRadius
-     * instead of something like the following (which is technically incorrect):
-     *   elem.style.webkitBorderRadius
+   * If the browsers follow the spec, then they would expose vendor-specific styles as:
+   *   elem.style.WebkitBorderRadius
+   * instead of something like the following (which is technically incorrect):
+   *   elem.style.webkitBorderRadius
 
-     * WebKit ghosts their properties in lowercase but Opera & Moz do not.
-     * Microsoft uses a lowercase `ms` instead of the correct `Ms` in IE8+
-     *   erik.eae.net/archives/2008/03/10/21.48.10/
+   * WebKit ghosts their properties in lowercase but Opera & Moz do not.
+   * Microsoft uses a lowercase `ms` instead of the correct `Ms` in IE8+
+   *   erik.eae.net/archives/2008/03/10/21.48.10/
 
-     * More here: github.com/Modernizr/Modernizr/issues/issue/21
-     *
-     * @access private
-     * @returns {string} The string representing the vendor-specific style properties
-     */
+   * More here: github.com/Modernizr/Modernizr/issues/issue/21
+   *
+   * @access private
+   * @returns {string} The string representing the vendor-specific style properties
+   */
 
 	var omPrefixes = "Moz O ms Webkit";
 
 	/**
-     * List of JavaScript DOM values used for tests
-     *
-     * @memberof Modernizr
-     * @name Modernizr._domPrefixes
-     * @optionName Modernizr._domPrefixes
-     * @optionProp domPrefixes
-     * @access public
-     * @example
-     *
-     * Modernizr._domPrefixes is exactly the same as [_prefixes](#modernizr-_prefixes), but rather
-     * than kebab-case properties, all properties are their Capitalized variant
-     *
-     * ```js
-     * Modernizr._domPrefixes === [ "Moz", "O", "ms", "Webkit" ];
-     * ```
-     */
+   * List of JavaScript DOM values used for tests
+   *
+   * @memberof Modernizr
+   * @name Modernizr._domPrefixes
+   * @optionName Modernizr._domPrefixes
+   * @optionProp domPrefixes
+   * @access public
+   * @example
+   *
+   * Modernizr._domPrefixes is exactly the same as [_prefixes](#modernizr-_prefixes), but rather
+   * than kebab-case properties, all properties are their Capitalized variant
+   *
+   * ```js
+   * Modernizr._domPrefixes === [ "Moz", "O", "ms", "Webkit" ];
+   * ```
+   */
 
 	var domPrefixes = ModernizrProto._config.usePrefixes
 		? omPrefixes.toLowerCase().split(" ")
@@ -286,36 +277,36 @@
 	ModernizrProto._domPrefixes = domPrefixes;
 
 	/**
-     * List of property values to set for css tests. See ticket #21
-     * http://git.io/vUGl4
-     *
-     * @memberof Modernizr
-     * @name Modernizr._prefixes
-     * @optionName Modernizr._prefixes
-     * @optionProp prefixes
-     * @access public
-     * @example
-     *
-     * Modernizr._prefixes is the internal list of prefixes that we test against
-     * inside of things like [prefixed](#modernizr-prefixed) and [prefixedCSS](#-code-modernizr-prefixedcss). It is simply
-     * an array of kebab-case vendor prefixes you can use within your code.
-     *
-     * Some common use cases include
-     *
-     * Generating all possible prefixed version of a CSS property
-     * ```js
-     * var rule = Modernizr._prefixes.join('transform: rotate(20deg); ');
-     *
-     * rule === 'transform: rotate(20deg); webkit-transform: rotate(20deg); moz-transform: rotate(20deg); o-transform: rotate(20deg); ms-transform: rotate(20deg);'
-     * ```
-     *
-     * Generating all possible prefixed version of a CSS value
-     * ```js
-     * rule = 'display:' +  Modernizr._prefixes.join('flex; display:') + 'flex';
-     *
-     * rule === 'display:flex; display:-webkit-flex; display:-moz-flex; display:-o-flex; display:-ms-flex; display:flex'
-     * ```
-     */
+   * List of property values to set for css tests. See ticket #21
+   * http://git.io/vUGl4
+   *
+   * @memberof Modernizr
+   * @name Modernizr._prefixes
+   * @optionName Modernizr._prefixes
+   * @optionProp prefixes
+   * @access public
+   * @example
+   *
+   * Modernizr._prefixes is the internal list of prefixes that we test against
+   * inside of things like [prefixed](#modernizr-prefixed) and [prefixedCSS](#-code-modernizr-prefixedcss). It is simply
+   * an array of kebab-case vendor prefixes you can use within your code.
+   *
+   * Some common use cases include
+   *
+   * Generating all possible prefixed version of a CSS property
+   * ```js
+   * var rule = Modernizr._prefixes.join('transform: rotate(20deg); ');
+   *
+   * rule === 'transform: rotate(20deg); webkit-transform: rotate(20deg); moz-transform: rotate(20deg); o-transform: rotate(20deg); ms-transform: rotate(20deg);'
+   * ```
+   *
+   * Generating all possible prefixed version of a CSS value
+   * ```js
+   * rule = 'display:' +  Modernizr._prefixes.join('flex; display:') + 'flex';
+   *
+   * rule === 'display:flex; display:-webkit-flex; display:-moz-flex; display:-o-flex; display:-ms-flex; display:flex'
+   * ```
+   */
 
 	// we use ['',''] rather than an empty array in order to allow a pattern of .`join()`ing prefixes to test
 	// values in feature detects to continue to work
@@ -327,15 +318,15 @@
 	ModernizrProto._prefixes = prefixes;
 
 	/**
-     * hasOwnProp is a shim for hasOwnProperty that is needed for Safari 2.0 support
-     *
-     * @author kangax
-     * @access private
-     * @function hasOwnProp
-     * @param {object} object - The object to check for a property
-     * @param {string} property - The property to check for
-     * @returns {boolean}
-     */
+   * hasOwnProp is a shim for hasOwnProperty that is needed for Safari 2.0 support
+   *
+   * @author kangax
+   * @access private
+   * @function hasOwnProp
+   * @param {object} object - The object to check for a property
+   * @param {string} property - The property to check for
+   * @returns {boolean}
+   */
 
 	// hasOwnProperty shim by kangax needed for Safari 2.0 support
 	var hasOwnProp;
@@ -344,7 +335,7 @@
 		var _hasOwnProperty = {}.hasOwnProperty;
 		/* istanbul ignore else */
 		/* we have no way of testing IE 5.5 or safari 2,
-         * so just assume the else gets hit */
+     * so just assume the else gets hit */
 		if (
 			!is(_hasOwnProperty, "undefined") &&
 			!is(_hasOwnProperty.call, "undefined")
@@ -367,28 +358,28 @@
 	ModernizrProto._l = {};
 
 	/**
-     * Modernizr.on is a way to listen for the completion of async tests. Being
-     * asynchronous, they may not finish before your scripts run. As a result you
-     * will get a possibly false negative `undefined` value.
-     *
-     * @memberof Modernizr
-     * @name Modernizr.on
-     * @access public
-     * @function on
-     * @param {string} feature - String name of the feature detect
-     * @param {function} cb - Callback function returning a Boolean - true if feature is supported, false if not
-     * @example
-     *
-     * ```js
-     * Modernizr.on('flash', function( result ) {
-     *   if (result) {
-     *    // the browser has flash
-     *   } else {
-     *     // the browser does not have flash
-     *   }
-     * });
-     * ```
-     */
+   * Modernizr.on is a way to listen for the completion of async tests. Being
+   * asynchronous, they may not finish before your scripts run. As a result you
+   * will get a possibly false negative `undefined` value.
+   *
+   * @memberof Modernizr
+   * @name Modernizr.on
+   * @access public
+   * @function on
+   * @param {string} feature - String name of the feature detect
+   * @param {function} cb - Callback function returning a Boolean - true if feature is supported, false if not
+   * @example
+   *
+   * ```js
+   * Modernizr.on('flash', function( result ) {
+   *   if (result) {
+   *    // the browser has flash
+   *   } else {
+   *     // the browser does not have flash
+   *   }
+   * });
+   * ```
+   */
 
 	ModernizrProto.on = function(feature, cb) {
 		// Create the list of listeners if it doesn't exist
@@ -409,17 +400,17 @@
 	};
 
 	/**
-     * _trigger is the private function used to signal test completion and run any
-     * callbacks registered through [Modernizr.on](#modernizr-on)
-     *
-     * @memberof Modernizr
-     * @name Modernizr._trigger
-     * @access private
-     * @function _trigger
-     * @param {string} feature - string name of the feature detect
-     * @param {function|boolean} [res] - A feature detection function, or the boolean =
-     * result of a feature detection function
-     */
+   * _trigger is the private function used to signal test completion and run any
+   * callbacks registered through [Modernizr.on](#modernizr-on)
+   *
+   * @memberof Modernizr
+   * @name Modernizr._trigger
+   * @access private
+   * @function _trigger
+   * @param {string} feature - string name of the feature detect
+   * @param {function|boolean} [res] - A feature detection function, or the boolean =
+   * result of a feature detection function
+   */
 
 	ModernizrProto._trigger = function(feature, res) {
 		if (!this._l[feature]) {
@@ -442,73 +433,73 @@
 	};
 
 	/**
-     * addTest allows you to define your own feature detects that are not currently
-     * included in Modernizr (under the covers it's the exact same code Modernizr
-     * uses for its own [feature detections](https://github.com/Modernizr/Modernizr/tree/master/feature-detects)). Just like the offical detects, the result
-     * will be added onto the Modernizr object, as well as an appropriate className set on
-     * the html element when configured to do so
-     *
-     * @memberof Modernizr
-     * @name Modernizr.addTest
-     * @optionName Modernizr.addTest()
-     * @optionProp addTest
-     * @access public
-     * @function addTest
-     * @param {string|object} feature - The string name of the feature detect, or an
-     * object of feature detect names and test
-     * @param {function|boolean} test - Function returning true if feature is supported,
-     * false if not. Otherwise a boolean representing the results of a feature detection
-     * @example
-     *
-     * The most common way of creating your own feature detects is by calling
-     * `Modernizr.addTest` with a string (preferably just lowercase, without any
-     * punctuation), and a function you want executed that will return a boolean result
-     *
-     * ```js
-     * Modernizr.addTest('itsTuesday', function() {
-     *  var d = new Date();
-     *  return d.getDay() === 2;
-     * });
-     * ```
-     *
-     * When the above is run, it will set Modernizr.itstuesday to `true` when it is tuesday,
-     * and to `false` every other day of the week. One thing to notice is that the names of
-     * feature detect functions are always lowercased when added to the Modernizr object. That
-     * means that `Modernizr.itsTuesday` will not exist, but `Modernizr.itstuesday` will.
-     *
-     *
-     *  Since we only look at the returned value from any feature detection function,
-     *  you do not need to actually use a function. For simple detections, just passing
-     *  in a statement that will return a boolean value works just fine.
-     *
-     * ```js
-     * Modernizr.addTest('hasJquery', 'jQuery' in window);
-     * ```
-     *
-     * Just like before, when the above runs `Modernizr.hasjquery` will be true if
-     * jQuery has been included on the page. Not using a function saves a small amount
-     * of overhead for the browser, as well as making your code much more readable.
-     *
-     * Finally, you also have the ability to pass in an object of feature names and
-     * their tests. This is handy if you want to add multiple detections in one go.
-     * The keys should always be a string, and the value can be either a boolean or
-     * function that returns a boolean.
-     *
-     * ```js
-     * var detects = {
-     *  'hasjquery': 'jQuery' in window,
-     *  'itstuesday': function() {
-     *    var d = new Date();
-     *    return d.getDay() === 2;
-     *  }
-     * }
-     *
-     * Modernizr.addTest(detects);
-     * ```
-     *
-     * There is really no difference between the first methods and this one, it is
-     * just a convenience to let you write more readable code.
-     */
+   * addTest allows you to define your own feature detects that are not currently
+   * included in Modernizr (under the covers it's the exact same code Modernizr
+   * uses for its own [feature detections](https://github.com/Modernizr/Modernizr/tree/master/feature-detects)). Just like the offical detects, the result
+   * will be added onto the Modernizr object, as well as an appropriate className set on
+   * the html element when configured to do so
+   *
+   * @memberof Modernizr
+   * @name Modernizr.addTest
+   * @optionName Modernizr.addTest()
+   * @optionProp addTest
+   * @access public
+   * @function addTest
+   * @param {string|object} feature - The string name of the feature detect, or an
+   * object of feature detect names and test
+   * @param {function|boolean} test - Function returning true if feature is supported,
+   * false if not. Otherwise a boolean representing the results of a feature detection
+   * @example
+   *
+   * The most common way of creating your own feature detects is by calling
+   * `Modernizr.addTest` with a string (preferably just lowercase, without any
+   * punctuation), and a function you want executed that will return a boolean result
+   *
+   * ```js
+   * Modernizr.addTest('itsTuesday', function() {
+   *  var d = new Date();
+   *  return d.getDay() === 2;
+   * });
+   * ```
+   *
+   * When the above is run, it will set Modernizr.itstuesday to `true` when it is tuesday,
+   * and to `false` every other day of the week. One thing to notice is that the names of
+   * feature detect functions are always lowercased when added to the Modernizr object. That
+   * means that `Modernizr.itsTuesday` will not exist, but `Modernizr.itstuesday` will.
+   *
+   *
+   *  Since we only look at the returned value from any feature detection function,
+   *  you do not need to actually use a function. For simple detections, just passing
+   *  in a statement that will return a boolean value works just fine.
+   *
+   * ```js
+   * Modernizr.addTest('hasJquery', 'jQuery' in window);
+   * ```
+   *
+   * Just like before, when the above runs `Modernizr.hasjquery` will be true if
+   * jQuery has been included on the page. Not using a function saves a small amount
+   * of overhead for the browser, as well as making your code much more readable.
+   *
+   * Finally, you also have the ability to pass in an object of feature names and
+   * their tests. This is handy if you want to add multiple detections in one go.
+   * The keys should always be a string, and the value can be either a boolean or
+   * function that returns a boolean.
+   *
+   * ```js
+   * var detects = {
+   *  'hasjquery': 'jQuery' in window,
+   *  'itstuesday': function() {
+   *    var d = new Date();
+   *    return d.getDay() === 2;
+   *  }
+   * }
+   *
+   * Modernizr.addTest(detects);
+   * ```
+   *
+   * There is really no difference between the first methods and this one, it is
+   * just a convenience to let you write more readable code.
+   */
 
 	function addTest(feature, test) {
 		if (typeof feature == "object") {
@@ -574,15 +565,15 @@
 	});
 
 	/**
-     * createElement is a convenience wrapper around document.createElement. Since we
-     * use createElement all over the place, this allows for (slightly) smaller code
-     * as well as abstracting away issues with creating elements in contexts other than
-     * HTML documents (e.g. SVG documents).
-     *
-     * @access private
-     * @function createElement
-     * @returns {HTMLElement|SVGElement} An HTML or SVG element
-     */
+   * createElement is a convenience wrapper around document.createElement. Since we
+   * use createElement all over the place, this allows for (slightly) smaller code
+   * as well as abstracting away issues with creating elements in contexts other than
+   * HTML documents (e.g. SVG documents).
+   *
+   * @access private
+   * @function createElement
+   * @returns {HTMLElement|SVGElement} An HTML or SVG element
+   */
 
 	function createElement() {
 		if (typeof document.createElement !== "function") {
@@ -601,33 +592,33 @@
 	}
 
 	/**
-     * Modernizr.hasEvent() detects support for a given event
-     *
-     * @memberof Modernizr
-     * @name Modernizr.hasEvent
-     * @optionName Modernizr.hasEvent()
-     * @optionProp hasEvent
-     * @access public
-     * @function hasEvent
-     * @param  {string|*} eventName - the name of an event to test for (e.g. "resize")
-     * @param  {Element|string} [element=HTMLDivElement] - is the element|document|window|tagName to test on
-     * @returns {boolean}
-     * @example
-     *  `Modernizr.hasEvent` lets you determine if the browser supports a supplied event.
-     *  By default, it does this detection on a div element
-     *
-     * ```js
-     *  hasEvent('blur') // true;
-     * ```
-     *
-     * However, you are able to give an object as a second argument to hasEvent to
-     * detect an event on something other than a div.
-     *
-     * ```js
-     *  hasEvent('devicelight', window) // true;
-     * ```
-     *
-     */
+   * Modernizr.hasEvent() detects support for a given event
+   *
+   * @memberof Modernizr
+   * @name Modernizr.hasEvent
+   * @optionName Modernizr.hasEvent()
+   * @optionProp hasEvent
+   * @access public
+   * @function hasEvent
+   * @param  {string|*} eventName - the name of an event to test for (e.g. "resize")
+   * @param  {Element|string} [element=HTMLDivElement] - is the element|document|window|tagName to test on
+   * @returns {boolean}
+   * @example
+   *  `Modernizr.hasEvent` lets you determine if the browser supports a supplied event.
+   *  By default, it does this detection on a div element
+   *
+   * ```js
+   *  hasEvent('blur') // true;
+   * ```
+   *
+   * However, you are able to give an object as a second argument to hasEvent to
+   * detect an event on something other than a div.
+   *
+   * ```js
+   *  hasEvent('devicelight', window) // true;
+   * ```
+   *
+   */
 
 	var hasEvent = (function() {
 		// Detect whether event support can be detected via `in`. Test on a DOM element
@@ -675,14 +666,14 @@
 	ModernizrProto.hasEvent = hasEvent;
 
 	/**
-     * getBody returns the body of a document, or an element that can stand in for
-     * the body if a real body does not exist
-     *
-     * @access private
-     * @function getBody
-     * @returns {HTMLElement|SVGElement} Returns the real body of a document, or an
-     * artificially created element that stands in for the body
-     */
+   * getBody returns the body of a document, or an element that can stand in for
+   * the body if a real body does not exist
+   *
+   * @access private
+   * @function getBody
+   * @returns {HTMLElement|SVGElement} Returns the real body of a document, or an
+   * artificially created element that stands in for the body
+   */
 
 	function getBody() {
 		// After page load injecting a fake body doesn't work so check if body exists
@@ -698,16 +689,16 @@
 	}
 
 	/**
-     * injectElementWithStyles injects an element with style element and some CSS rules
-     *
-     * @access private
-     * @function injectElementWithStyles
-     * @param {string} rule - String representing a css rule
-     * @param {function} callback - A function that is used to test the injected element
-     * @param {number} [nodes] - An integer representing the number of additional nodes you want injected
-     * @param {string[]} [testnames] - An array of strings that are used as ids for the additional nodes
-     * @returns {boolean}
-     */
+   * injectElementWithStyles injects an element with style element and some CSS rules
+   *
+   * @access private
+   * @function injectElementWithStyles
+   * @param {string} rule - String representing a css rule
+   * @param {function} callback - A function that is used to test the injected element
+   * @param {number} [nodes] - An integer representing the number of additional nodes you want injected
+   * @param {string[]} [testnames] - An array of strings that are used as ids for the additional nodes
+   * @returns {boolean}
+   */
 
 	function injectElementWithStyles(rule, callback, nodes, testnames) {
 		var mod = "modernizr";
@@ -770,51 +761,51 @@
 	}
 
 	/**
-     * Modernizr.mq tests a given media query, live against the current state of the window
-     * adapted from matchMedia polyfill by Scott Jehl and Paul Irish
-     * gist.github.com/786768
-     *
-     * @memberof Modernizr
-     * @name Modernizr.mq
-     * @optionName Modernizr.mq()
-     * @optionProp mq
-     * @access public
-     * @function mq
-     * @param {string} mq - String of the media query we want to test
-     * @returns {boolean}
-     * @example
-     * Modernizr.mq allows for you to programmatically check if the current browser
-     * window state matches a media query.
-     *
-     * ```js
-     *  var query = Modernizr.mq('(min-width: 900px)');
-     *
-     *  if (query) {
-     *    // the browser window is larger than 900px
-     *  }
-     * ```
-     *
-     * Only valid media queries are supported, therefore you must always include values
-     * with your media query
-     *
-     * ```js
-     * // good
-     *  Modernizr.mq('(min-width: 900px)');
-     *
-     * // bad
-     *  Modernizr.mq('min-width');
-     * ```
-     *
-     * If you would just like to test that media queries are supported in general, use
-     *
-     * ```js
-     *  Modernizr.mq('only all'); // true if MQ are supported, false if not
-     * ```
-     *
-     *
-     * Note that if the browser does not support media queries (e.g. old IE) mq will
-     * always return false.
-     */
+   * Modernizr.mq tests a given media query, live against the current state of the window
+   * adapted from matchMedia polyfill by Scott Jehl and Paul Irish
+   * gist.github.com/786768
+   *
+   * @memberof Modernizr
+   * @name Modernizr.mq
+   * @optionName Modernizr.mq()
+   * @optionProp mq
+   * @access public
+   * @function mq
+   * @param {string} mq - String of the media query we want to test
+   * @returns {boolean}
+   * @example
+   * Modernizr.mq allows for you to programmatically check if the current browser
+   * window state matches a media query.
+   *
+   * ```js
+   *  var query = Modernizr.mq('(min-width: 900px)');
+   *
+   *  if (query) {
+   *    // the browser window is larger than 900px
+   *  }
+   * ```
+   *
+   * Only valid media queries are supported, therefore you must always include values
+   * with your media query
+   *
+   * ```js
+   * // good
+   *  Modernizr.mq('(min-width: 900px)');
+   *
+   * // bad
+   *  Modernizr.mq('min-width');
+   * ```
+   *
+   * If you would just like to test that media queries are supported in general, use
+   *
+   * ```js
+   *  Modernizr.mq('only all'); // true if MQ are supported, false if not
+   * ```
+   *
+   *
+   * Note that if the browser does not support media queries (e.g. old IE) mq will
+   * always return false.
+   */
 
 	var mq = (function() {
 		var matchMedia = window.matchMedia || window.msMatchMedia;
@@ -846,27 +837,27 @@
 	ModernizrProto.mq = mq;
 
 	/**
-     * prefixedCSSValue is a way test for prefixed css properties (e.g. display: -webkit-flex)
-     *
-     * @memberof Modernizr
-     * @name Modernizr.prefixedCSSValue
-     * @optionName Modernizr.prefixedCSSValue()
-     * @optionProp prefixedCSSValue
-     * @access public
-     * @function prefixedCSSValue
-     * @param {string} prop - String name of the property to test for
-     * @param {string} value - String value of the non prefixed version of the value you want to test for
-     * @returns {string|false} The string representing the (possibly prefixed)
-     * valid version of the property, or `false` when it is unsupported.
-     * @example
-     *
-     * `Modernizr.prefixedCSSValue` is a way test for prefixed css properties (e.g. display: -webkit-flex)
-     *
-     * ```js
-     * Modernizr.prefixedCSSValue('background', 'linear-gradient(left, red, red)')
-     * ```
-     *
-     */
+   * prefixedCSSValue is a way test for prefixed css properties (e.g. display: -webkit-flex)
+   *
+   * @memberof Modernizr
+   * @name Modernizr.prefixedCSSValue
+   * @optionName Modernizr.prefixedCSSValue()
+   * @optionProp prefixedCSSValue
+   * @access public
+   * @function prefixedCSSValue
+   * @param {string} prop - String name of the property to test for
+   * @param {string} value - String value of the non prefixed version of the value you want to test for
+   * @returns {string|false} The string representing the (possibly prefixed)
+   * valid version of the property, or `false` when it is unsupported.
+   * @example
+   *
+   * `Modernizr.prefixedCSSValue` is a way test for prefixed css properties (e.g. display: -webkit-flex)
+   *
+   * ```js
+   * Modernizr.prefixedCSSValue('background', 'linear-gradient(left, red, red)')
+   * ```
+   *
+   */
 
 	var prefixedCSSValue = function(prop, value) {
 		var result = false;
@@ -900,24 +891,24 @@
 	ModernizrProto._cssomPrefixes = cssomPrefixes;
 
 	/**
-     * contains checks to see if a string contains another string
-     *
-     * @access private
-     * @function contains
-     * @param {string} str - The string we want to check for substrings
-     * @param {string} substr - The substring we want to search the first string for
-     * @returns {boolean}
-     */
+   * contains checks to see if a string contains another string
+   *
+   * @access private
+   * @function contains
+   * @param {string} str - The string we want to check for substrings
+   * @param {string} substr - The substring we want to search the first string for
+   * @returns {boolean}
+   */
 
 	function contains(str, substr) {
 		return !!~("" + str).indexOf(substr);
 	}
 
 	/**
-     * Create our "modernizr" element that we do most feature tests on.
-     *
-     * @access private
-     */
+   * Create our "modernizr" element that we do most feature tests on.
+   *
+   * @access private
+   */
 
 	var modElem = {
 		elem: createElement("modernizr")
@@ -939,14 +930,14 @@
 	});
 
 	/**
-     * domToCSS takes a camelCase string and converts it to kebab-case
-     * e.g. boxSizing -> box-sizing
-     *
-     * @access private
-     * @function domToCSS
-     * @param {string} name - String name of camelCase prop we want to convert
-     * @returns {string} The kebab-case version of the supplied name
-     */
+   * domToCSS takes a camelCase string and converts it to kebab-case
+   * e.g. boxSizing -> box-sizing
+   *
+   * @access private
+   * @function domToCSS
+   * @param {string} name - String name of camelCase prop we want to convert
+   * @returns {string} The kebab-case version of the supplied name
+   */
 
 	function domToCSS(name) {
 		return name
@@ -955,17 +946,16 @@
 			})
 			.replace(/^ms-/, "-ms-");
 	}
-
 	/**
-     * wrapper around getComputedStyle, to fix issues with Firefox returning null when
-     * called inside of a hidden iframe
-     *
-     * @access private
-     * @function computedStyle
-     * @param {HTMLElement|SVGElement} - The element we want to find the computed styles of
-     * @param {string|null} [pseudoSelector]- An optional pseudo element selector (e.g. :before), of null if none
-     * @returns {CSSStyleDeclaration}
-     */
+   * wrapper around getComputedStyle, to fix issues with Firefox returning null when
+   * called inside of a hidden iframe
+   *
+   * @access private
+   * @function computedStyle
+   * @param {HTMLElement|SVGElement} - The element we want to find the computed styles of
+   * @param {string|null} [pseudoSelector]- An optional pseudo element selector (e.g. :before), of null if none
+   * @returns {CSSStyleDeclaration}
+   */
 
 	function computedStyle(elem, pseudo, prop) {
 		var result;
@@ -995,15 +985,15 @@
 	}
 
 	/**
-     * nativeTestProps allows for us to use native feature detection functionality if available.
-     * some prefixed form, or false, in the case of an unsupported rule
-     *
-     * @access private
-     * @function nativeTestProps
-     * @param {array} props - An array of property names
-     * @param {string} value - A string representing the value we want to check via @supports
-     * @returns {boolean|undefined} A boolean when @supports exists, undefined otherwise
-     */
+   * nativeTestProps allows for us to use native feature detection functionality if available.
+   * some prefixed form, or false, in the case of an unsupported rule
+   *
+   * @access private
+   * @function nativeTestProps
+   * @param {array} props - An array of property names
+   * @param {string} value - A string representing the value we want to check via @supports
+   * @returns {boolean|undefined} A boolean when @supports exists, undefined otherwise
+   */
 
 	// Accepts a list of property names and a single value
 	// Returns `undefined` if native detection not available
@@ -1039,16 +1029,15 @@
 		}
 		return undefined;
 	}
-
 	/**
-     * cssToDOM takes a kebab-case string and converts it to camelCase
-     * e.g. box-sizing -> boxSizing
-     *
-     * @access private
-     * @function cssToDOM
-     * @param {string} name - String name of kebab-case prop we want to convert
-     * @returns {string} The camelCase version of the supplied name
-     */
+   * cssToDOM takes a kebab-case string and converts it to camelCase
+   * e.g. box-sizing -> boxSizing
+   *
+   * @access private
+   * @function cssToDOM
+   * @param {string} name - String name of kebab-case prop we want to convert
+   * @returns {string} The camelCase version of the supplied name
+   */
 
 	function cssToDOM(name) {
 		return name
@@ -1057,7 +1046,6 @@
 			})
 			.replace(/^-/, "");
 	}
-
 	// testProps is a generic CSS / DOM property test.
 
 	// In testing support for a given CSS property, it's legit to test:
@@ -1148,14 +1136,14 @@
 	}
 
 	/**
-     * fnBind is a super small [bind](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind) polyfill.
-     *
-     * @access private
-     * @function fnBind
-     * @param {function} fn - a function you want to change `this` reference to
-     * @param {object} that - the `this` you want to call the function with
-     * @returns {function} The wrapped version of the supplied function
-     */
+   * fnBind is a super small [bind](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind) polyfill.
+   *
+   * @access private
+   * @function fnBind
+   * @param {function} fn - a function you want to change `this` reference to
+   * @param {object} that - the `this` you want to call the function with
+   * @returns {function} The wrapped version of the supplied function
+   */
 
 	function fnBind(fn, that) {
 		return function() {
@@ -1164,16 +1152,16 @@
 	}
 
 	/**
-     * testDOMProps is a generic DOM property test; if a browser supports
-     *   a certain property, it won't return undefined for it.
-     *
-     * @access private
-     * @function testDOMProps
-     * @param {array.<string>} props - An array of properties to test for
-     * @param {object} obj - An object or Element you want to use to test the parameters again
-     * @param {boolean|object} elem - An Element to bind the property lookup again. Use `false` to prevent the check
-     * @returns {false|*} returns false if the prop is unsupported, otherwise the value that is supported
-     */
+   * testDOMProps is a generic DOM property test; if a browser supports
+   *   a certain property, it won't return undefined for it.
+   *
+   * @access private
+   * @function testDOMProps
+   * @param {array.<string>} props - An array of properties to test for
+   * @param {object} obj - An object or Element you want to use to test the parameters again
+   * @param {boolean|object} elem - An Element to bind the property lookup again. Use `false` to prevent the check
+   * @returns {false|*} returns false if the prop is unsupported, otherwise the value that is supported
+   */
 	function testDOMProps(props, obj, elem) {
 		var item;
 
@@ -1200,20 +1188,20 @@
 	}
 
 	/**
-     * testPropsAll tests a list of DOM properties we want to check against.
-     * We specify literally ALL possible (known and/or likely) properties on
-     * the element including the non-vendor prefixed one, for forward-
-     * compatibility.
-     *
-     * @access private
-     * @function testPropsAll
-     * @param {string} prop - A string of the property to test for
-     * @param {string|object} [prefixed] - An object to check the prefixed properties on. Use a string to skip
-     * @param {HTMLElement|SVGElement} [elem] - An element used to test the property and value against
-     * @param {string} [value] - A string of a css value
-     * @param {boolean} [skipValueTest] - An boolean representing if you want to test if value sticks when set
-     * @returns {false|string} returns the string version of the property, or false if it is unsupported
-     */
+   * testPropsAll tests a list of DOM properties we want to check against.
+   * We specify literally ALL possible (known and/or likely) properties on
+   * the element including the non-vendor prefixed one, for forward-
+   * compatibility.
+   *
+   * @access private
+   * @function testPropsAll
+   * @param {string} prop - A string of the property to test for
+   * @param {string|object} [prefixed] - An object to check the prefixed properties on. Use a string to skip
+   * @param {HTMLElement|SVGElement} [elem] - An element used to test the property and value against
+   * @param {string} [value] - A string of a css value
+   * @param {boolean} [skipValueTest] - An boolean representing if you want to test if value sticks when set
+   * @returns {false|string} returns the string version of the property, or false if it is unsupported
+   */
 	function testPropsAll(prop, prefixed, elem, value, skipValueTest) {
 		var ucProp = prop.charAt(0).toUpperCase() + prop.slice(1),
 			props = (prop +
@@ -1245,41 +1233,41 @@
 	ModernizrProto.testAllProps = testPropsAll;
 
 	/**
-     * testAllProps determines whether a given CSS property is supported in the browser
-     *
-     * @memberof Modernizr
-     * @name Modernizr.testAllProps
-     * @optionName Modernizr.testAllProps()
-     * @optionProp testAllProps
-     * @access public
-     * @function testAllProps
-     * @param {string} prop - String naming the property to test (either camelCase or kebab-case)
-     * @param {string} [value] - String of the value to test
-     * @param {boolean} [skipValueTest=false] - Whether to skip testing that the value is supported when using non-native detection
-     * @example
-     *
-     * testAllProps determines whether a given CSS property, in some prefixed form,
-     * is supported by the browser.
-     *
-     * ```js
-     * testAllProps('boxSizing')  // true
-     * ```
-     *
-     * It can optionally be given a CSS value in string form to test if a property
-     * value is valid
-     *
-     * ```js
-     * testAllProps('display', 'block') // true
-     * testAllProps('display', 'penguin') // false
-     * ```
-     *
-     * A boolean can be passed as a third parameter to skip the value check when
-     * native detection (@supports) isn't available.
-     *
-     * ```js
-     * testAllProps('shapeOutside', 'content-box', true);
-     * ```
-     */
+   * testAllProps determines whether a given CSS property is supported in the browser
+   *
+   * @memberof Modernizr
+   * @name Modernizr.testAllProps
+   * @optionName Modernizr.testAllProps()
+   * @optionProp testAllProps
+   * @access public
+   * @function testAllProps
+   * @param {string} prop - String naming the property to test (either camelCase or kebab-case)
+   * @param {string} [value] - String of the value to test
+   * @param {boolean} [skipValueTest=false] - Whether to skip testing that the value is supported when using non-native detection
+   * @example
+   *
+   * testAllProps determines whether a given CSS property, in some prefixed form,
+   * is supported by the browser.
+   *
+   * ```js
+   * testAllProps('boxSizing')  // true
+   * ```
+   *
+   * It can optionally be given a CSS value in string form to test if a property
+   * value is valid
+   *
+   * ```js
+   * testAllProps('display', 'block') // true
+   * testAllProps('display', 'penguin') // false
+   * ```
+   *
+   * A boolean can be passed as a third parameter to skip the value check when
+   * native detection (@supports) isn't available.
+   *
+   * ```js
+   * testAllProps('shapeOutside', 'content-box', true);
+   * ```
+   */
 
 	function testAllProps(prop, value, skipValueTest) {
 		return testPropsAll(prop, undefined, undefined, value, skipValueTest);
@@ -1287,140 +1275,140 @@
 	ModernizrProto.testAllProps = testAllProps;
 
 	/**
-     * testProp() investigates whether a given style property is recognized
-     * Property names can be provided in either camelCase or kebab-case.
-     *
-     * @memberof Modernizr
-     * @name Modernizr.testProp
-     * @access public
-     * @optionName Modernizr.testProp()
-     * @optionProp testProp
-     * @function testProp
-     * @param {string} prop - Name of the CSS property to check
-     * @param {string} [value] - Name of the CSS value to check
-     * @param {boolean} [useValue] - Whether or not to check the value if @supports isn't supported
-     * @returns {boolean}
-     * @example
-     *
-     * Just like [testAllProps](#modernizr-testallprops), only it does not check any vendor prefixed
-     * version of the string.
-     *
-     * Note that the property name must be provided in camelCase (e.g. boxSizing not box-sizing)
-     *
-     * ```js
-     * Modernizr.testProp('pointerEvents')  // true
-     * ```
-     *
-     * You can also provide a value as an optional second argument to check if a
-     * specific value is supported
-     *
-     * ```js
-     * Modernizr.testProp('pointerEvents', 'none') // true
-     * Modernizr.testProp('pointerEvents', 'penguin') // false
-     * ```
-     */
+   * testProp() investigates whether a given style property is recognized
+   * Property names can be provided in either camelCase or kebab-case.
+   *
+   * @memberof Modernizr
+   * @name Modernizr.testProp
+   * @access public
+   * @optionName Modernizr.testProp()
+   * @optionProp testProp
+   * @function testProp
+   * @param {string} prop - Name of the CSS property to check
+   * @param {string} [value] - Name of the CSS value to check
+   * @param {boolean} [useValue] - Whether or not to check the value if @supports isn't supported
+   * @returns {boolean}
+   * @example
+   *
+   * Just like [testAllProps](#modernizr-testallprops), only it does not check any vendor prefixed
+   * version of the string.
+   *
+   * Note that the property name must be provided in camelCase (e.g. boxSizing not box-sizing)
+   *
+   * ```js
+   * Modernizr.testProp('pointerEvents')  // true
+   * ```
+   *
+   * You can also provide a value as an optional second argument to check if a
+   * specific value is supported
+   *
+   * ```js
+   * Modernizr.testProp('pointerEvents', 'none') // true
+   * Modernizr.testProp('pointerEvents', 'penguin') // false
+   * ```
+   */
 
 	var testProp = (ModernizrProto.testProp = function(prop, value, useValue) {
 		return testProps([prop], undefined, value, useValue);
 	});
 
 	/**
-     * testStyles injects an element with style element and some CSS rules
-     *
-     * @memberof Modernizr
-     * @name Modernizr.testStyles
-     * @optionName Modernizr.testStyles()
-     * @optionProp testStyles
-     * @access public
-     * @function testStyles
-     * @param {string} rule - String representing a css rule
-     * @param {function} callback - A function that is used to test the injected element
-     * @param {number} [nodes] - An integer representing the number of additional nodes you want injected
-     * @param {string[]} [testnames] - An array of strings that are used as ids for the additional nodes
-     * @returns {boolean}
-     * @example
-     *
-     * `Modernizr.testStyles` takes a CSS rule and injects it onto the current page
-     * along with (possibly multiple) DOM elements. This lets you check for features
-     * that can not be detected by simply checking the [IDL](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Interface_development_guide/IDL_interface_rules).
-     *
-     * ```js
-     * Modernizr.testStyles('#modernizr { width: 9px; color: papayawhip; }', function(elem, rule) {
-     *   // elem is the first DOM node in the page (by default #modernizr)
-     *   // rule is the first argument you supplied - the CSS rule in string form
-     *
-     *   addTest('widthworks', elem.style.width === '9px')
-     * });
-     * ```
-     *
-     * If your test requires multiple nodes, you can include a third argument
-     * indicating how many additional div elements to include on the page. The
-     * additional nodes are injected as children of the `elem` that is returned as
-     * the first argument to the callback.
-     *
-     * ```js
-     * Modernizr.testStyles('#modernizr {width: 1px}; #modernizr2 {width: 2px}', function(elem) {
-     *   document.getElementById('modernizr').style.width === '1px'; // true
-     *   document.getElementById('modernizr2').style.width === '2px'; // true
-     *   elem.firstChild === document.getElementById('modernizr2'); // true
-     * }, 1);
-     * ```
-     *
-     * By default, all of the additional elements have an ID of `modernizr[n]`, where
-     * `n` is its index (e.g. the first additional, second overall is `#modernizr2`,
-     * the second additional is `#modernizr3`, etc.).
-     * If you want to have more meaningful IDs for your function, you can provide
-     * them as the fourth argument, as an array of strings
-     *
-     * ```js
-     * Modernizr.testStyles('#foo {width: 10px}; #bar {height: 20px}', function(elem) {
-     *   elem.firstChild === document.getElementById('foo'); // true
-     *   elem.lastChild === document.getElementById('bar'); // true
-     * }, 2, ['foo', 'bar']);
-     * ```
-     *
-     */
+   * testStyles injects an element with style element and some CSS rules
+   *
+   * @memberof Modernizr
+   * @name Modernizr.testStyles
+   * @optionName Modernizr.testStyles()
+   * @optionProp testStyles
+   * @access public
+   * @function testStyles
+   * @param {string} rule - String representing a css rule
+   * @param {function} callback - A function that is used to test the injected element
+   * @param {number} [nodes] - An integer representing the number of additional nodes you want injected
+   * @param {string[]} [testnames] - An array of strings that are used as ids for the additional nodes
+   * @returns {boolean}
+   * @example
+   *
+   * `Modernizr.testStyles` takes a CSS rule and injects it onto the current page
+   * along with (possibly multiple) DOM elements. This lets you check for features
+   * that can not be detected by simply checking the [IDL](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Interface_development_guide/IDL_interface_rules).
+   *
+   * ```js
+   * Modernizr.testStyles('#modernizr { width: 9px; color: papayawhip; }', function(elem, rule) {
+   *   // elem is the first DOM node in the page (by default #modernizr)
+   *   // rule is the first argument you supplied - the CSS rule in string form
+   *
+   *   addTest('widthworks', elem.style.width === '9px')
+   * });
+   * ```
+   *
+   * If your test requires multiple nodes, you can include a third argument
+   * indicating how many additional div elements to include on the page. The
+   * additional nodes are injected as children of the `elem` that is returned as
+   * the first argument to the callback.
+   *
+   * ```js
+   * Modernizr.testStyles('#modernizr {width: 1px}; #modernizr2 {width: 2px}', function(elem) {
+   *   document.getElementById('modernizr').style.width === '1px'; // true
+   *   document.getElementById('modernizr2').style.width === '2px'; // true
+   *   elem.firstChild === document.getElementById('modernizr2'); // true
+   * }, 1);
+   * ```
+   *
+   * By default, all of the additional elements have an ID of `modernizr[n]`, where
+   * `n` is its index (e.g. the first additional, second overall is `#modernizr2`,
+   * the second additional is `#modernizr3`, etc.).
+   * If you want to have more meaningful IDs for your function, you can provide
+   * them as the fourth argument, as an array of strings
+   *
+   * ```js
+   * Modernizr.testStyles('#foo {width: 10px}; #bar {height: 20px}', function(elem) {
+   *   elem.firstChild === document.getElementById('foo'); // true
+   *   elem.lastChild === document.getElementById('bar'); // true
+   * }, 2, ['foo', 'bar']);
+   * ```
+   *
+   */
 
 	var testStyles = (ModernizrProto.testStyles = injectElementWithStyles);
 
 	/*!
-    {
-      "name": "Custom Elements API",
-      "property": "customelements",
-      "tags": ["customelements"],
-      "polyfills": ["customelements"],
-      "notes": [{
-        "name": "Specs for Custom Elements",
-        "href": "https://www.w3.org/TR/custom-elements/"
-      }]
-    }
-    !*/
+{
+  "name": "Custom Elements API",
+  "property": "customelements",
+  "tags": ["customelements"],
+  "polyfills": ["customelements"],
+  "notes": [{
+    "name": "Specs for Custom Elements",
+    "href": "https://www.w3.org/TR/custom-elements/"
+  }]
+}
+!*/
 	/* DOC
-    Detects support for the Custom Elements API, to create custom html elements via js
-    */
+Detects support for the Custom Elements API, to create custom html elements via js
+*/
 
 	Modernizr.addTest("customelements", "customElements" in window);
 
 	/*!
-    {
-      "name": "History API",
-      "property": "history",
-      "caniuse": "history",
-      "tags": ["history"],
-      "authors": ["Hay Kranen", "Alexander Farkas"],
-      "notes": [{
-        "name": "W3C Spec",
-        "href": "https://www.w3.org/TR/html51/browsers.html#the-history-interface"
-      }, {
-        "name": "MDN documentation",
-        "href": "https://developer.mozilla.org/en-US/docs/Web/API/window.history"
-      }],
-      "polyfills": ["historyjs", "html5historyapi"]
-    }
-    !*/
+{
+  "name": "History API",
+  "property": "history",
+  "caniuse": "history",
+  "tags": ["history"],
+  "authors": ["Hay Kranen", "Alexander Farkas"],
+  "notes": [{
+    "name": "W3C Spec",
+    "href": "https://www.w3.org/TR/html51/browsers.html#the-history-interface"
+  }, {
+    "name": "MDN documentation",
+    "href": "https://developer.mozilla.org/en-US/docs/Web/API/window.history"
+  }],
+  "polyfills": ["historyjs", "html5historyapi"]
+}
+!*/
 	/* DOC
-    Detects support for the History API for manipulating the browser session history.
-    */
+Detects support for the History API for manipulating the browser session history.
+*/
 
 	Modernizr.addTest("history", function() {
 		// Issue #733
@@ -1449,24 +1437,24 @@
 	});
 
 	/*!
+{
+  "name": "DOM Pointer Events API",
+  "property": "pointerevents",
+  "tags": ["input"],
+  "authors": ["Stu Cox"],
+  "notes": [
     {
-      "name": "DOM Pointer Events API",
-      "property": "pointerevents",
-      "tags": ["input"],
-      "authors": ["Stu Cox"],
-      "notes": [
-        {
-          "name": "W3C spec",
-          "href": "https://www.w3.org/TR/pointerevents/"
-        }
-      ],
-      "warnings": ["This property name now refers to W3C DOM PointerEvents: https://github.com/Modernizr/Modernizr/issues/548#issuecomment-12812099"],
-      "polyfills": ["handjs","pep"]
+      "name": "W3C spec",
+      "href": "https://www.w3.org/TR/pointerevents/"
     }
-    !*/
+  ],
+  "warnings": ["This property name now refers to W3C DOM PointerEvents: https://github.com/Modernizr/Modernizr/issues/548#issuecomment-12812099"],
+  "polyfills": ["handjs","pep"]
+}
+!*/
 	/* DOC
-    Detects support for the DOM Pointer Events API, which provides a unified event interface for pointing input devices, as implemented in IE10+.
-    */
+Detects support for the DOM Pointer Events API, which provides a unified event interface for pointing input devices, as implemented in IE10+.
+*/
 
 	// **Test name hijacked!**
 	// Now refers to W3C DOM PointerEvents spec rather than the CSS pointer-events property.
@@ -1487,32 +1475,32 @@
 	});
 
 	/*!
-    {
-      "name": "postMessage",
-      "property": "postmessage",
-      "caniuse": "x-doc-messaging",
-      "notes": [{
-        "name": "W3C Spec",
-        "href": "http://www.w3.org/TR/html5/comms.html#posting-messages"
-      }],
-      "polyfills": ["easyxdm", "postmessage-jquery"]
-    }
-    !*/
+{
+  "name": "postMessage",
+  "property": "postmessage",
+  "caniuse": "x-doc-messaging",
+  "notes": [{
+    "name": "W3C Spec",
+    "href": "http://www.w3.org/TR/html5/comms.html#posting-messages"
+  }],
+  "polyfills": ["easyxdm", "postmessage-jquery"]
+}
+!*/
 	/* DOC
-    Detects support for the `window.postMessage` protocol for cross-document messaging.
-    */
+Detects support for the `window.postMessage` protocol for cross-document messaging.
+*/
 
 	Modernizr.addTest("postmessage", "postMessage" in window);
 
 	/*!
-    {
-      "name": "WebGL",
-      "property": "webgl",
-      "caniuse": "webgl",
-      "tags": ["webgl", "graphics"],
-      "polyfills": ["jebgl", "cwebgl", "iewebgl"]
-    }
-    !*/
+{
+  "name": "WebGL",
+  "property": "webgl",
+  "caniuse": "webgl",
+  "tags": ["webgl", "graphics"],
+  "polyfills": ["jebgl", "cwebgl", "iewebgl"]
+}
+!*/
 
 	Modernizr.addTest("webgl", function() {
 		var canvas = createElement("canvas");
@@ -1530,31 +1518,31 @@
 	});
 
 	/*!
-    {
-      "name": "WebSockets Support",
-      "property": "websockets",
-      "authors": ["Phread [fearphage]", "Mike Sherov [mikesherov]", "Burak Yigit Kaya [BYK]"],
-      "caniuse": "websockets",
-      "tags": ["html5"],
-      "warnings": [
-        "This test will reject any old version of WebSockets even if it is not prefixed such as in Safari 5.1"
-      ],
-      "notes": [{
-        "name": "CLOSING State and Spec",
-        "href": "https://www.w3.org/TR/websockets/#the-websocket-interface"
-      }],
-      "polyfills": [
-        "sockjs",
-        "socketio",
-        "kaazing-websocket-gateway",
-        "websocketjs",
-        "atmosphere",
-        "graceful-websocket",
-        "portal",
-        "datachannel"
-      ]
-    }
-    !*/
+{
+  "name": "WebSockets Support",
+  "property": "websockets",
+  "authors": ["Phread [fearphage]", "Mike Sherov [mikesherov]", "Burak Yigit Kaya [BYK]"],
+  "caniuse": "websockets",
+  "tags": ["html5"],
+  "warnings": [
+    "This test will reject any old version of WebSockets even if it is not prefixed such as in Safari 5.1"
+  ],
+  "notes": [{
+    "name": "CLOSING State and Spec",
+    "href": "https://www.w3.org/TR/websockets/#the-websocket-interface"
+  }],
+  "polyfills": [
+    "sockjs",
+    "socketio",
+    "kaazing-websocket-gateway",
+    "websocketjs",
+    "atmosphere",
+    "graceful-websocket",
+    "portal",
+    "datachannel"
+  ]
+}
+!*/
 
 	var supports = false;
 	try {
@@ -1563,22 +1551,22 @@
 	Modernizr.addTest("websockets", supports);
 
 	/*!
-    {
-      "name": "CSS Animations",
-      "property": "cssanimations",
-      "caniuse": "css-animation",
-      "polyfills": ["transformie", "csssandpaper"],
-      "tags": ["css"],
-      "warnings": ["Android < 4 will pass this test, but can only animate a single property at a time"],
-      "notes": [{
-        "name" : "Article: 'Dispelling the Android CSS animation myths'",
-        "href": "https://goo.gl/OGw5Gm"
-      }]
-    }
-    !*/
+{
+  "name": "CSS Animations",
+  "property": "cssanimations",
+  "caniuse": "css-animation",
+  "polyfills": ["transformie", "csssandpaper"],
+  "tags": ["css"],
+  "warnings": ["Android < 4 will pass this test, but can only animate a single property at a time"],
+  "notes": [{
+    "name" : "Article: 'Dispelling the Android CSS animation myths'",
+    "href": "https://goo.gl/OGw5Gm"
+  }]
+}
+!*/
 	/* DOC
-    Detects whether or not elements can be animated using CSS
-    */
+Detects whether or not elements can be animated using CSS
+*/
 
 	Modernizr.addTest(
 		"cssanimations",
@@ -1586,14 +1574,14 @@
 	);
 
 	/*!
-    {
-      "name": "CSS Columns",
-      "property": "csscolumns",
-      "caniuse": "multicolumn",
-      "polyfills": ["css3multicolumnjs"],
-      "tags": ["css"]
-    }
-    !*/
+{
+  "name": "CSS Columns",
+  "property": "csscolumns",
+  "caniuse": "multicolumn",
+  "polyfills": ["css3multicolumnjs"],
+  "tags": ["css"]
+}
+!*/
 
 	(function() {
 		Modernizr.addTest("csscolumns", function() {
@@ -1642,63 +1630,63 @@
 	})();
 
 	/*!
-    {
-      "name": "Flexbox",
-      "property": "flexbox",
-      "caniuse": "flexbox",
-      "tags": ["css"],
-      "notes": [{
-        "name": "The _new_ flexbox",
-        "href": "http://dev.w3.org/csswg/css3-flexbox"
-      }],
-      "warnings": [
-        "A `true` result for this detect does not imply that the `flex-wrap` property is supported; see the `flexwrap` detect."
-      ]
-    }
-    !*/
+{
+  "name": "Flexbox",
+  "property": "flexbox",
+  "caniuse": "flexbox",
+  "tags": ["css"],
+  "notes": [{
+    "name": "The _new_ flexbox",
+    "href": "http://dev.w3.org/csswg/css3-flexbox"
+  }],
+  "warnings": [
+    "A `true` result for this detect does not imply that the `flex-wrap` property is supported; see the `flexwrap` detect."
+  ]
+}
+!*/
 	/* DOC
-    Detects support for the Flexible Box Layout model, a.k.a. Flexbox, which allows easy manipulation of layout order and sizing within a container.
-    */
+Detects support for the Flexible Box Layout model, a.k.a. Flexbox, which allows easy manipulation of layout order and sizing within a container.
+*/
 
 	Modernizr.addTest("flexbox", testAllProps("flexBasis", "1px", true));
 
 	/*!
-    {
-      "name": "picture Element",
-      "property": "picture",
-      "tags": ["elem"],
-      "authors": ["Scott Jehl", "Mat Marquis"],
-      "notes": [{
-        "name": "Specification",
-        "href": "http://picture.responsiveimages.org"
-      },{
-        "name": "Relevant spec issue",
-        "href": "https://github.com/ResponsiveImagesCG/picture-element/issues/87"
-      }]
-    }
-    !*/
+{
+  "name": "picture Element",
+  "property": "picture",
+  "tags": ["elem"],
+  "authors": ["Scott Jehl", "Mat Marquis"],
+  "notes": [{
+    "name": "Specification",
+    "href": "http://picture.responsiveimages.org"
+  },{
+    "name": "Relevant spec issue",
+    "href": "https://github.com/ResponsiveImagesCG/picture-element/issues/87"
+  }]
+}
+!*/
 
 	Modernizr.addTest("picture", "HTMLPictureElement" in window);
 
 	/*!
-    {
-      "name": "sizes attribute",
-      "async": true,
-      "property": "sizes",
-      "tags": ["image"],
-      "authors": ["Mat Marquis"],
-      "notes": [{
-        "name": "Spec",
-        "href": "http://picture.responsiveimages.org/#parse-sizes-attr"
-        },{
-        "name": "Usage Details",
-        "href": "http://ericportis.com/posts/2014/srcset-sizes/"
-        }]
-    }
-    !*/
+{
+  "name": "sizes attribute",
+  "async": true,
+  "property": "sizes",
+  "tags": ["image"],
+  "authors": ["Mat Marquis"],
+  "notes": [{
+    "name": "Spec",
+    "href": "http://picture.responsiveimages.org/#parse-sizes-attr"
+    },{
+    "name": "Usage Details",
+    "href": "http://ericportis.com/posts/2014/srcset-sizes/"
+    }]
+}
+!*/
 	/* DOC
-    Test for the `sizes` attribute on images
-    */
+Test for the `sizes` attribute on images
+*/
 
 	Modernizr.addAsyncTest(function() {
 		var width1, width2, test;
@@ -1729,47 +1717,47 @@
 	});
 
 	/*!
-    {
-      "name": "srcset attribute",
-      "property": "srcset",
-      "tags": ["image"],
-      "notes": [{
-        "name": "Smashing Magazine Article",
-        "href": "https://en.wikipedia.org/wiki/APNG"
-        },{
-        "name": "Generate multi-resolution images for srcset with Grunt",
-        "href": "https://addyosmani.com/blog/generate-multi-resolution-images-for-srcset-with-grunt/"
-        }]
-    }
-    !*/
+{
+  "name": "srcset attribute",
+  "property": "srcset",
+  "tags": ["image"],
+  "notes": [{
+    "name": "Smashing Magazine Article",
+    "href": "https://en.wikipedia.org/wiki/APNG"
+    },{
+    "name": "Generate multi-resolution images for srcset with Grunt",
+    "href": "https://addyosmani.com/blog/generate-multi-resolution-images-for-srcset-with-grunt/"
+    }]
+}
+!*/
 	/* DOC
-    Test for the srcset attribute of images
-    */
+Test for the srcset attribute of images
+*/
 
 	Modernizr.addTest("srcset", "srcset" in createElement("img"));
 
 	/*!
-    {
-      "name": "Web Workers",
-      "property": "webworkers",
-      "caniuse" : "webworkers",
-      "tags": ["performance", "workers"],
-      "notes": [{
-        "name": "W3C Reference",
-        "href": "https://www.w3.org/TR/workers/"
-      }, {
-        "name": "HTML5 Rocks article",
-        "href": "http://www.html5rocks.com/en/tutorials/workers/basics/"
-      }, {
-        "name": "MDN documentation",
-        "href": "https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers"
-      }],
-      "polyfills": ["fakeworker", "html5shims"]
-    }
-    !*/
+{
+  "name": "Web Workers",
+  "property": "webworkers",
+  "caniuse" : "webworkers",
+  "tags": ["performance", "workers"],
+  "notes": [{
+    "name": "W3C Reference",
+    "href": "https://www.w3.org/TR/workers/"
+  }, {
+    "name": "HTML5 Rocks article",
+    "href": "http://www.html5rocks.com/en/tutorials/workers/basics/"
+  }, {
+    "name": "MDN documentation",
+    "href": "https://developer.mozilla.org/en-US/docs/Web/Guide/Performance/Using_web_workers"
+  }],
+  "polyfills": ["fakeworker", "html5shims"]
+}
+!*/
 	/* DOC
-    Detects support for the basic `Worker` API from the Web Workers spec. Web Workers provide a simple means for web content to run scripts in background threads.
-    */
+Detects support for the basic `Worker` API from the Web Workers spec. Web Workers provide a simple means for web content to run scripts in background threads.
+*/
 
 	Modernizr.addTest("webworkers", "Worker" in window);
 
@@ -1790,6 +1778,7 @@
 	// Leak Modernizr namespace
 	window.Modernizr = Modernizr;
 })(window, document);
+
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -2331,15 +2320,15 @@
 	}
 	var Sizzle =
 		/*!
-         * Sizzle CSS Selector Engine v2.3.3
-         * https://sizzlejs.com/
-         *
-         * Copyright jQuery Foundation and other contributors
-         * Released under the MIT license
-         * http://jquery.org/license
-         *
-         * Date: 2016-08-08
-         */
+ * Sizzle CSS Selector Engine v2.3.3
+ * https://sizzlejs.com/
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license
+ * http://jquery.org/license
+ *
+ * Date: 2016-08-08
+ */
 		(function(window) {
 			var i,
 				support,
@@ -2559,10 +2548,7 @@
 							("form" in elem || "label" in elem)
 						);
 					},
-					{
-						dir: "parentNode",
-						next: "legend"
-					}
+					{ dir: "parentNode", next: "legend" }
 				);
 
 			// Optimize for push.apply( _, NodeList )
@@ -2756,11 +2742,11 @@
 			}
 
 			/**
-             * Create key-value caches of limited size
-             * @returns {function(string, object)} Returns the Object data after storing it on itself with
-             *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
-             *	deleting the oldest entry
-             */
+ * Create key-value caches of limited size
+ * @returns {function(string, object)} Returns the Object data after storing it on itself with
+ *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
+ *	deleting the oldest entry
+ */
 			function createCache() {
 				var keys = [];
 
@@ -2776,18 +2762,18 @@
 			}
 
 			/**
-             * Mark a function for special use by Sizzle
-             * @param {Function} fn The function to mark
-             */
+ * Mark a function for special use by Sizzle
+ * @param {Function} fn The function to mark
+ */
 			function markFunction(fn) {
 				fn[expando] = true;
 				return fn;
 			}
 
 			/**
-             * Support testing using an element
-             * @param {Function} fn Passed the created element and returns a boolean result
-             */
+ * Support testing using an element
+ * @param {Function} fn Passed the created element and returns a boolean result
+ */
 			function assert(fn) {
 				var el = document.createElement("fieldset");
 
@@ -2806,10 +2792,10 @@
 			}
 
 			/**
-             * Adds the same handler for all of the specified attrs
-             * @param {String} attrs Pipe-separated list of attributes
-             * @param {Function} handler The method that will be applied
-             */
+ * Adds the same handler for all of the specified attrs
+ * @param {String} attrs Pipe-separated list of attributes
+ * @param {Function} handler The method that will be applied
+ */
 			function addHandle(attrs, handler) {
 				var arr = attrs.split("|"),
 					i = arr.length;
@@ -2820,11 +2806,11 @@
 			}
 
 			/**
-             * Checks document order of two siblings
-             * @param {Element} a
-             * @param {Element} b
-             * @returns {Number} Returns less than 0 if a precedes b, greater than 0 if a follows b
-             */
+ * Checks document order of two siblings
+ * @param {Element} a
+ * @param {Element} b
+ * @returns {Number} Returns less than 0 if a precedes b, greater than 0 if a follows b
+ */
 			function siblingCheck(a, b) {
 				var cur = b && a,
 					diff =
@@ -2851,9 +2837,9 @@
 			}
 
 			/**
-             * Returns a function to use in pseudos for input types
-             * @param {String} type
-             */
+ * Returns a function to use in pseudos for input types
+ * @param {String} type
+ */
 			function createInputPseudo(type) {
 				return function(elem) {
 					var name = elem.nodeName.toLowerCase();
@@ -2862,9 +2848,9 @@
 			}
 
 			/**
-             * Returns a function to use in pseudos for buttons
-             * @param {String} type
-             */
+ * Returns a function to use in pseudos for buttons
+ * @param {String} type
+ */
 			function createButtonPseudo(type) {
 				return function(elem) {
 					var name = elem.nodeName.toLowerCase();
@@ -2876,9 +2862,9 @@
 			}
 
 			/**
-             * Returns a function to use in pseudos for :enabled/:disabled
-             * @param {Boolean} disabled true for :disabled; false for :enabled
-             */
+ * Returns a function to use in pseudos for :enabled/:disabled
+ * @param {Boolean} disabled true for :disabled; false for :enabled
+ */
 			function createDisabledPseudo(disabled) {
 				// Known :disabled false positives: fieldset[disabled] > legend:nth-of-type(n+2) :can-disable
 				return function(elem) {
@@ -2931,9 +2917,9 @@
 			}
 
 			/**
-             * Returns a function to use in pseudos for positionals
-             * @param {Function} fn
-             */
+ * Returns a function to use in pseudos for positionals
+ * @param {Function} fn
+ */
 			function createPositionalPseudo(fn) {
 				return markFunction(function(argument) {
 					argument = +argument;
@@ -2953,10 +2939,10 @@
 			}
 
 			/**
-             * Checks a node for validity as a Sizzle context
-             * @param {Element|Object=} context
-             * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
-             */
+ * Checks a node for validity as a Sizzle context
+ * @param {Element|Object=} context
+ * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
+ */
 			function testContext(context) {
 				return (
 					context &&
@@ -2969,10 +2955,10 @@
 			support = Sizzle.support = {};
 
 			/**
-             * Detects XML nodes
-             * @param {Element|Object} elem An element or a document
-             * @returns {Boolean} True iff elem is a non-HTML XML node
-             */
+ * Detects XML nodes
+ * @param {Element|Object} elem An element or a document
+ * @returns {Boolean} True iff elem is a non-HTML XML node
+ */
 			isXML = Sizzle.isXML = function(elem) {
 				// documentElement is verified for cases where it doesn't yet exist
 				// (such as loading iframes in IE - #4833)
@@ -2984,10 +2970,10 @@
 			};
 
 			/**
-             * Sets document-related variables once based on the current document
-             * @param {Element|Object} [doc] An element or document object to use to set the document
-             * @returns {Object} Returns the current document
-             */
+ * Sets document-related variables once based on the current document
+ * @param {Element|Object} [doc] An element or document object to use to set the document
+ * @returns {Object} Returns the current document
+ */
 			setDocument = Sizzle.setDocument = function(node) {
 				var hasCompare,
 					subWindow,
@@ -3029,7 +3015,7 @@
 				}
 
 				/* Attributes
-                ---------------------------------------------------------------------- */
+	---------------------------------------------------------------------- */
 
 				// Support: IE<8
 				// Verify that getAttribute really returns attributes and not properties
@@ -3040,7 +3026,7 @@
 				});
 
 				/* getElement(s)By*
-                ---------------------------------------------------------------------- */
+	---------------------------------------------------------------------- */
 
 				// Check if getElementsByTagName("*") returns only elements
 				support.getElementsByTagName = assert(function(el) {
@@ -3176,7 +3162,7 @@
 					};
 
 				/* QSA/matchesSelector
-                ---------------------------------------------------------------------- */
+	---------------------------------------------------------------------- */
 
 				// QSA and matchesSelector support
 
@@ -3320,7 +3306,7 @@
 					rbuggyMatches.length && new RegExp(rbuggyMatches.join("|"));
 
 				/* Contains
-                ---------------------------------------------------------------------- */
+	---------------------------------------------------------------------- */
 				hasCompare = rnative.test(docElem.compareDocumentPosition);
 
 				// Element contains another
@@ -3356,7 +3342,7 @@
 							};
 
 				/* Sorting
-                ---------------------------------------------------------------------- */
+	---------------------------------------------------------------------- */
 
 				// Document order sorting
 				sortOrder = hasCompare
@@ -3554,9 +3540,9 @@
 			};
 
 			/**
-             * Document sorting and removing duplicates
-             * @param {ArrayLike} results
-             */
+ * Document sorting and removing duplicates
+ * @param {ArrayLike} results
+ */
 			Sizzle.uniqueSort = function(results) {
 				var elem,
 					duplicates = [],
@@ -3587,9 +3573,9 @@
 			};
 
 			/**
-             * Utility function for retrieving the text value of an array of DOM nodes
-             * @param {Array|Element} elem
-             */
+ * Utility function for retrieving the text value of an array of DOM nodes
+ * @param {Array|Element} elem
+ */
 			getText = Sizzle.getText = function(elem) {
 				var node,
 					ret = "",
@@ -3642,20 +3628,10 @@
 				find: {},
 
 				relative: {
-					">": {
-						dir: "parentNode",
-						first: true
-					},
-					" ": {
-						dir: "parentNode"
-					},
-					"+": {
-						dir: "previousSibling",
-						first: true
-					},
-					"~": {
-						dir: "previousSibling"
-					}
+					">": { dir: "parentNode", first: true },
+					" ": { dir: "parentNode" },
+					"+": { dir: "previousSibling", first: true },
+					"~": { dir: "previousSibling" }
 				},
 
 				preFilter: {
@@ -3678,15 +3654,15 @@
 
 					CHILD: function(match) {
 						/* matches from matchExpr["CHILD"]
-                        	1 type (only|nth|...)
-                        	2 what (child|of-type)
-                        	3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
-                        	4 xn-component of xn+y argument ([+-]?\d*n|)
-                        	5 sign of xn-component
-                        	6 x of xn-component
-                        	7 sign of y-component
-                        	8 y of y-component
-                        */
+				1 type (only|nth|...)
+				2 what (child|of-type)
+				3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
+				4 xn-component of xn+y argument ([+-]?\d*n|)
+				5 sign of xn-component
+				6 x of xn-component
+				7 sign of y-component
+				8 y of y-component
+			*/
 						match[1] = match[1].toLowerCase();
 
 						if (match[1].slice(0, 3) === "nth") {
@@ -4327,10 +4303,7 @@
 			}) {
 				Expr.pseudos[i] = createInputPseudo(i);
 			}
-			for (i in {
-				submit: true,
-				reset: true
-			}) {
+			for (i in { submit: true, reset: true }) {
 				Expr.pseudos[i] = createButtonPseudo(i);
 			}
 
@@ -4918,14 +4891,14 @@
 			};
 
 			/**
-             * A low-level selection function that works with Sizzle's compiled
-             *  selector functions
-             * @param {String|Function} selector A selector or a pre-compiled
-             *  selector function built with Sizzle.compile
-             * @param {Element} context
-             * @param {Array} [results]
-             * @param {Array} [seed] A set of elements to match against
-             */
+ * A low-level selection function that works with Sizzle's compiled
+ *  selector functions
+ * @param {String|Function} selector A selector or a pre-compiled
+ *  selector function built with Sizzle.compile
+ * @param {Element} context
+ * @param {Array} [results]
+ * @param {Array} [seed] A set of elements to match against
+ */
 			select = Sizzle.select = function(
 				selector,
 				context,
@@ -5581,27 +5554,27 @@
 	}
 
 	/*
-     * Create a callback list using the following parameters:
-     *
-     *	options: an optional list of space-separated options that will change how
-     *			the callback list behaves or a more traditional option object
-     *
-     * By default a callback list will act like an event callback list and can be
-     * "fired" multiple times.
-     *
-     * Possible options:
-     *
-     *	once:			will ensure the callback list can only be fired once (like a Deferred)
-     *
-     *	memory:			will keep track of previous values and will call any callback added
-     *					after the list has been fired right away with the latest "memorized"
-     *					values (like a Deferred)
-     *
-     *	unique:			will ensure a callback can only be added once (no duplicate in the list)
-     *
-     *	stopOnFalse:	interrupt callings when a callback returns false
-     *
-     */
+ * Create a callback list using the following parameters:
+ *
+ *	options: an optional list of space-separated options that will change how
+ *			the callback list behaves or a more traditional option object
+ *
+ * By default a callback list will act like an event callback list and can be
+ * "fired" multiple times.
+ *
+ * Possible options:
+ *
+ *	once:			will ensure the callback list can only be fired once (like a Deferred)
+ *
+ *	memory:			will keep track of previous values and will call any callback added
+ *					after the list has been fired right away with the latest "memorized"
+ *					values (like a Deferred)
+ *
+ *	unique:			will ensure a callback can only be added once (no duplicate in the list)
+ *
+ *	stopOnFalse:	interrupt callings when a callback returns false
+ *
+ */
 	jQuery.Callbacks = function(options) {
 		// Convert options from String-formatted to Object-formatted if needed
 		// (we check in cache first)
@@ -5791,7 +5764,6 @@
 	function Identity(v) {
 		return v;
 	}
-
 	function Thrower(ex) {
 		throw ex;
 	}
@@ -5912,7 +5884,6 @@
 					},
 					then: function(onFulfilled, onRejected, onProgress) {
 						var maxDepth = 0;
-
 						function resolve(depth, deferred, handler, special) {
 							return function() {
 								var that = this,
@@ -7328,9 +7299,9 @@
 	}
 
 	/*
-     * Helper functions for managing events -- not part of the public interface.
-     * Props to Dean Edwards' addEvent library for many of the ideas.
-     */
+ * Helper functions for managing events -- not part of the public interface.
+ * Props to Dean Edwards' addEvent library for many of the ideas.
+ */
 	jQuery.event = {
 		global: {},
 
@@ -8092,7 +8063,6 @@
 		elem.type = (elem.getAttribute("type") !== null) + "/" + elem.type;
 		return elem;
 	}
-
 	function restoreScript(elem) {
 		var match = rscriptTypeMasked.exec(elem.type);
 
@@ -9127,15 +9097,9 @@
 				return (
 					(parseFloat(curCSS(elem, "marginLeft")) ||
 						elem.getBoundingClientRect().left -
-							swap(
-								elem,
-								{
-									marginLeft: 0
-								},
-								function() {
-									return elem.getBoundingClientRect().left;
-								}
-							)) + "px"
+							swap(elem, { marginLeft: 0 }, function() {
+								return elem.getBoundingClientRect().left;
+							})) + "px"
 				);
 			}
 		}
@@ -9367,9 +9331,7 @@
 	function genFx(type, includeWidth) {
 		var which,
 			i = 0,
-			attrs = {
-				height: type
-			};
+			attrs = { height: type };
 
 		// If we include width, step value is 1 to do all cssExpand values,
 		// otherwise step value is 2 to skip over Left and Right
@@ -9860,14 +9822,7 @@
 					.show()
 					// Animate to the value specified
 					.end()
-					.animate(
-						{
-							opacity: to
-						},
-						speed,
-						easing,
-						callback
-					)
+					.animate({ opacity: to }, speed, easing, callback)
 			);
 		},
 		animate: function(prop, speed, easing, callback) {
@@ -10006,15 +9961,9 @@
 			slideDown: genFx("show"),
 			slideUp: genFx("hide"),
 			slideToggle: genFx("toggle"),
-			fadeIn: {
-				opacity: "show"
-			},
-			fadeOut: {
-				opacity: "hide"
-			},
-			fadeToggle: {
-				opacity: "toggle"
-			}
+			fadeIn: { opacity: "show" },
+			fadeOut: { opacity: "hide" },
+			fadeToggle: { opacity: "toggle" }
 		},
 		function(name, props) {
 			jQuery.fn[name] = function(speed, easing, callback) {
@@ -10980,45 +10929,42 @@
 	// which is spec violation - http://www.w3.org/TR/DOM-Level-3-Events/#events-focusevent-event-order
 	// Related ticket - https://bugs.chromium.org/p/chromium/issues/detail?id=449857
 	if (!support.focusin) {
-		jQuery.each(
-			{
-				focus: "focusin",
-				blur: "focusout"
-			},
-			function(orig, fix) {
-				// Attach a single capturing handler on the document while someone wants focusin/focusout
-				var handler = function(event) {
-					jQuery.event.simulate(
-						fix,
-						event.target,
-						jQuery.event.fix(event)
-					);
-				};
+		jQuery.each({ focus: "focusin", blur: "focusout" }, function(
+			orig,
+			fix
+		) {
+			// Attach a single capturing handler on the document while someone wants focusin/focusout
+			var handler = function(event) {
+				jQuery.event.simulate(
+					fix,
+					event.target,
+					jQuery.event.fix(event)
+				);
+			};
 
-				jQuery.event.special[fix] = {
-					setup: function() {
-						var doc = this.ownerDocument || this,
-							attaches = dataPriv.access(doc, fix);
+			jQuery.event.special[fix] = {
+				setup: function() {
+					var doc = this.ownerDocument || this,
+						attaches = dataPriv.access(doc, fix);
 
-						if (!attaches) {
-							doc.addEventListener(orig, handler, true);
-						}
-						dataPriv.access(doc, fix, (attaches || 0) + 1);
-					},
-					teardown: function() {
-						var doc = this.ownerDocument || this,
-							attaches = dataPriv.access(doc, fix) - 1;
-
-						if (!attaches) {
-							doc.removeEventListener(orig, handler, true);
-							dataPriv.remove(doc, fix);
-						} else {
-							dataPriv.access(doc, fix, attaches);
-						}
+					if (!attaches) {
+						doc.addEventListener(orig, handler, true);
 					}
-				};
-			}
-		);
+					dataPriv.access(doc, fix, (attaches || 0) + 1);
+				},
+				teardown: function() {
+					var doc = this.ownerDocument || this,
+						attaches = dataPriv.access(doc, fix) - 1;
+
+					if (!attaches) {
+						doc.removeEventListener(orig, handler, true);
+						dataPriv.remove(doc, fix);
+					} else {
+						dataPriv.access(doc, fix, attaches);
+					}
+				}
+			};
+		});
 	}
 	var location = window.location;
 
@@ -11181,20 +11127,20 @@
 		rnoContent = /^(?:GET|HEAD)$/,
 		rprotocol = /^\/\//,
 		/* Prefilters
-         * 1) They are useful to introduce custom dataTypes (see ajax/jsonp.js for an example)
-         * 2) These are called:
-         *    - BEFORE asking for a transport
-         *    - AFTER param serialization (s.data is a string if s.processData is true)
-         * 3) key is the dataType
-         * 4) the catchall symbol "*" can be used
-         * 5) execution will start with transport dataType and THEN continue down to "*" if needed
-         */
+	 * 1) They are useful to introduce custom dataTypes (see ajax/jsonp.js for an example)
+	 * 2) These are called:
+	 *    - BEFORE asking for a transport
+	 *    - AFTER param serialization (s.data is a string if s.processData is true)
+	 * 3) key is the dataType
+	 * 4) the catchall symbol "*" can be used
+	 * 5) execution will start with transport dataType and THEN continue down to "*" if needed
+	 */
 		prefilters = {},
 		/* Transports bindings
-         * 1) key is the dataType
-         * 2) the catchall symbol "*" can be used
-         * 3) selection will start with transport dataType and THEN go to "*" if needed
-         */
+	 * 1) key is the dataType
+	 * 2) the catchall symbol "*" can be used
+	 * 3) selection will start with transport dataType and THEN go to "*" if needed
+	 */
 		transports = {},
 		// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
 		allTypes = "*/".concat("*"),
@@ -11300,9 +11246,9 @@
 	}
 
 	/* Handles responses to an ajax request:
-     * - finds the right dataType (mediates between content-type and expected dataType)
-     * - returns the corresponding response
-     */
+ * - finds the right dataType (mediates between content-type and expected dataType)
+ * - returns the corresponding response
+ */
 	function ajaxHandleResponses(s, jqXHR, responses) {
 		var ct,
 			type,
@@ -11360,8 +11306,8 @@
 	}
 
 	/* Chain conversions given the request and the original response
-     * Also sets the responseXXX fields on the jqXHR instance
-     */
+ * Also sets the responseXXX fields on the jqXHR instance
+ */
 	function ajaxConvert(s, response, jqXHR, isSuccess) {
 		var conv2,
 			current,
@@ -11458,10 +11404,7 @@
 			}
 		}
 
-		return {
-			state: "success",
-			data: response
-		};
+		return { state: "success", data: response };
 	}
 
 	jQuery.extend({
@@ -11482,16 +11425,16 @@
 			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 
 			/*
-            timeout: 0,
-            data: null,
-            dataType: null,
-            username: null,
-            password: null,
-            cache: null,
-            throws: false,
-            traditional: false,
-            headers: {},
-            */
+		timeout: 0,
+		data: null,
+		dataType: null,
+		username: null,
+		password: null,
+		cache: null,
+		throws: false,
+		traditional: false,
+		headers: {},
+		*/
 
 			accepts: {
 				"*": allTypes,
@@ -12249,12 +12192,8 @@
 										(xhr.responseType || "text") !==
 											"text" ||
 										typeof xhr.responseText !== "string"
-											? {
-													binary: xhr.response
-												}
-											: {
-													text: xhr.responseText
-												},
+											? { binary: xhr.response }
+											: { text: xhr.responseText },
 										xhr.getAllResponseHeaders()
 									);
 								}
@@ -12542,8 +12481,8 @@
 	};
 
 	/**
-     * Load a url into a page
-     */
+ * Load a url into a page
+ */
 	jQuery.fn.load = function(url, params, callback) {
 		var selector,
 			type,
@@ -12724,10 +12663,7 @@
 			// Running getBoundingClientRect on a
 			// disconnected node in IE throws an error
 			if (!elem.getClientRects().length) {
-				return {
-					top: 0,
-					left: 0
-				};
+				return { top: 0, left: 0 };
 			}
 
 			rect = elem.getBoundingClientRect();
@@ -12750,10 +12686,7 @@
 			var offsetParent,
 				offset,
 				elem = this[0],
-				parentOffset = {
-					top: 0,
-					left: 0
-				};
+				parentOffset = { top: 0, left: 0 };
 
 			// Fixed elements are offset from window (parentOffset = {top:0, left: 0},
 			// because it is its only offset parent
@@ -12822,10 +12755,7 @@
 
 	// Create scrollLeft and scrollTop methods
 	jQuery.each(
-		{
-			scrollLeft: "pageXOffset",
-			scrollTop: "pageYOffset"
-		},
+		{ scrollLeft: "pageXOffset", scrollTop: "pageYOffset" },
 		function(method, prop) {
 			var top = "pageYOffset" === prop;
 
@@ -12885,74 +12815,64 @@
 	});
 
 	// Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
-	jQuery.each(
-		{
-			Height: "height",
-			Width: "width"
-		},
-		function(name, type) {
-			jQuery.each(
-				{
-					padding: "inner" + name,
-					content: type,
-					"": "outer" + name
-				},
-				function(defaultExtra, funcName) {
-					// Margin is only for outerHeight, outerWidth
-					jQuery.fn[funcName] = function(margin, value) {
-						var chainable =
-								arguments.length &&
-								(defaultExtra || typeof margin !== "boolean"),
-							extra =
-								defaultExtra ||
-								(margin === true || value === true
-									? "margin"
-									: "border");
+	jQuery.each({ Height: "height", Width: "width" }, function(name, type) {
+		jQuery.each(
+			{ padding: "inner" + name, content: type, "": "outer" + name },
+			function(defaultExtra, funcName) {
+				// Margin is only for outerHeight, outerWidth
+				jQuery.fn[funcName] = function(margin, value) {
+					var chainable =
+							arguments.length &&
+							(defaultExtra || typeof margin !== "boolean"),
+						extra =
+							defaultExtra ||
+							(margin === true || value === true
+								? "margin"
+								: "border");
 
-						return access(
-							this,
-							function(elem, type, value) {
-								var doc;
+					return access(
+						this,
+						function(elem, type, value) {
+							var doc;
 
-								if (jQuery.isWindow(elem)) {
-									// $( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
-									return funcName.indexOf("outer") === 0
-										? elem["inner" + name]
-										: elem.document.documentElement[
-												"client" + name
-											];
-								}
+							if (jQuery.isWindow(elem)) {
+								// $( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
+								return funcName.indexOf("outer") === 0
+									? elem["inner" + name]
+									: elem.document.documentElement[
+											"client" + name
+										];
+							}
 
-								// Get document width or height
-								if (elem.nodeType === 9) {
-									doc = elem.documentElement;
+							// Get document width or height
+							if (elem.nodeType === 9) {
+								doc = elem.documentElement;
 
-									// Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
-									// whichever is greatest
-									return Math.max(
-										elem.body["scroll" + name],
-										doc["scroll" + name],
-										elem.body["offset" + name],
-										doc["offset" + name],
-										doc["client" + name]
-									);
-								}
+								// Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
+								// whichever is greatest
+								return Math.max(
+									elem.body["scroll" + name],
+									doc["scroll" + name],
+									elem.body["offset" + name],
+									doc["offset" + name],
+									doc["client" + name]
+								);
+							}
 
-								return value === undefined
-									? // Get width or height on the element, requesting but not forcing parseFloat
-										jQuery.css(elem, type, extra)
-									: // Set width or height on the element
-										jQuery.style(elem, type, value, extra);
-							},
-							type,
-							chainable ? margin : undefined,
-							chainable
-						);
-					};
-				}
-			);
-		}
-	);
+							return value === undefined
+								? // Get width or height on the element, requesting but not forcing parseFloat
+									jQuery.css(elem, type, extra)
+								: // Set width or height on the element
+									jQuery.style(elem, type, value, extra);
+						},
+						type,
+						chainable ? margin : undefined,
+						chainable
+					);
+				};
+			}
+		);
+	});
 
 	jQuery.fn.extend({
 		bind: function(types, data, fn) {
@@ -13034,96 +12954,96 @@
 	"use strict";
 
 	/**
-     * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
-     *
-     * @codingstandard ftlabs-jsv2
-     * @copyright The Financial Times Limited [All Rights Reserved]
-     * @license MIT License (see LICENSE.txt)
-     */
+	 * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
+	 *
+	 * @codingstandard ftlabs-jsv2
+	 * @copyright The Financial Times Limited [All Rights Reserved]
+	 * @license MIT License (see LICENSE.txt)
+	 */
 
 	/*jslint browser:true, node:true*/
 	/*global define, Event, Node*/
 
 	/**
-     * Instantiate fast-clicking listeners on the specified layer.
-     *
-     * @constructor
-     * @param {Element} layer The layer to listen on
-     * @param {Object} [options={}] The options to override the defaults
-     */
+	 * Instantiate fast-clicking listeners on the specified layer.
+	 *
+	 * @constructor
+	 * @param {Element} layer The layer to listen on
+	 * @param {Object} [options={}] The options to override the defaults
+	 */
 	function FastClick(layer, options) {
 		var oldOnClick;
 
 		options = options || {};
 
 		/**
-         * Whether a click is currently being tracked.
-         *
-         * @type boolean
-         */
+		 * Whether a click is currently being tracked.
+		 *
+		 * @type boolean
+		 */
 		this.trackingClick = false;
 
 		/**
-         * Timestamp for when click tracking started.
-         *
-         * @type number
-         */
+		 * Timestamp for when click tracking started.
+		 *
+		 * @type number
+		 */
 		this.trackingClickStart = 0;
 
 		/**
-         * The element being tracked for a click.
-         *
-         * @type EventTarget
-         */
+		 * The element being tracked for a click.
+		 *
+		 * @type EventTarget
+		 */
 		this.targetElement = null;
 
 		/**
-         * X-coordinate of touch start event.
-         *
-         * @type number
-         */
+		 * X-coordinate of touch start event.
+		 *
+		 * @type number
+		 */
 		this.touchStartX = 0;
 
 		/**
-         * Y-coordinate of touch start event.
-         *
-         * @type number
-         */
+		 * Y-coordinate of touch start event.
+		 *
+		 * @type number
+		 */
 		this.touchStartY = 0;
 
 		/**
-         * ID of the last touch, retrieved from Touch.identifier.
-         *
-         * @type number
-         */
+		 * ID of the last touch, retrieved from Touch.identifier.
+		 *
+		 * @type number
+		 */
 		this.lastTouchIdentifier = 0;
 
 		/**
-         * Touchmove boundary, beyond which a click will be cancelled.
-         *
-         * @type number
-         */
+		 * Touchmove boundary, beyond which a click will be cancelled.
+		 *
+		 * @type number
+		 */
 		this.touchBoundary = options.touchBoundary || 10;
 
 		/**
-         * The FastClick layer.
-         *
-         * @type Element
-         */
+		 * The FastClick layer.
+		 *
+		 * @type Element
+		 */
 		this.layer = layer;
 
 		/**
-         * The minimum time between tap(touchstart and touchend) events
-         *
-         * @type number
-         */
+		 * The minimum time between tap(touchstart and touchend) events
+		 *
+		 * @type number
+		 */
 		this.tapDelay = options.tapDelay || 200;
 
 		/**
-         * The maximum time for a tap
-         *
-         * @type number
-         */
+		 * The maximum time for a tap
+		 *
+		 * @type number
+		 */
 		this.tapTimeout = options.tapTimeout || 700;
 
 		if (FastClick.notNeeded(layer)) {
@@ -13220,57 +13140,57 @@
 	}
 
 	/**
-     * Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
-     *
-     * @type boolean
-     */
+	* Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
+	*
+	* @type boolean
+	*/
 	var deviceIsWindowsPhone =
 		navigator.userAgent.indexOf("Windows Phone") >= 0;
 
 	/**
-     * Android requires exceptions.
-     *
-     * @type boolean
-     */
+	 * Android requires exceptions.
+	 *
+	 * @type boolean
+	 */
 	var deviceIsAndroid =
 		navigator.userAgent.indexOf("Android") > 0 && !deviceIsWindowsPhone;
 
 	/**
-     * iOS requires exceptions.
-     *
-     * @type boolean
-     */
+	 * iOS requires exceptions.
+	 *
+	 * @type boolean
+	 */
 	var deviceIsIOS =
 		/iP(ad|hone|od)/.test(navigator.userAgent) && !deviceIsWindowsPhone;
 
 	/**
-     * iOS 4 requires an exception for select elements.
-     *
-     * @type boolean
-     */
+	 * iOS 4 requires an exception for select elements.
+	 *
+	 * @type boolean
+	 */
 	var deviceIsIOS4 = deviceIsIOS && /OS 4_\d(_\d)?/.test(navigator.userAgent);
 
 	/**
-     * iOS 6.0-7.* requires the target element to be manually derived
-     *
-     * @type boolean
-     */
+	 * iOS 6.0-7.* requires the target element to be manually derived
+	 *
+	 * @type boolean
+	 */
 	var deviceIsIOSWithBadTarget =
 		deviceIsIOS && /OS [6-7]_\d/.test(navigator.userAgent);
 
 	/**
-     * BlackBerry requires exceptions.
-     *
-     * @type boolean
-     */
+	 * BlackBerry requires exceptions.
+	 *
+	 * @type boolean
+	 */
 	var deviceIsBlackBerry10 = navigator.userAgent.indexOf("BB10") > 0;
 
 	/**
-     * Determine whether a given element requires a native click.
-     *
-     * @param {EventTarget|Element} target Target DOM element
-     * @returns {boolean} Returns true if the element needs a native click
-     */
+	 * Determine whether a given element requires a native click.
+	 *
+	 * @param {EventTarget|Element} target Target DOM element
+	 * @returns {boolean} Returns true if the element needs a native click
+	 */
 	FastClick.prototype.needsClick = function(target) {
 		switch (target.nodeName.toLowerCase()) {
 			// Don't send a synthetic click to disabled inputs (issue #62)
@@ -13302,11 +13222,11 @@
 	};
 
 	/**
-     * Determine whether a given element requires a call to focus to simulate click into element.
-     *
-     * @param {EventTarget|Element} target Target DOM element
-     * @returns {boolean} Returns true if the element requires a call to focus to simulate native click.
-     */
+	 * Determine whether a given element requires a call to focus to simulate click into element.
+	 *
+	 * @param {EventTarget|Element} target Target DOM element
+	 * @returns {boolean} Returns true if the element requires a call to focus to simulate native click.
+	 */
 	FastClick.prototype.needsFocus = function(target) {
 		switch (target.nodeName.toLowerCase()) {
 			case "textarea":
@@ -13332,11 +13252,11 @@
 	};
 
 	/**
-     * Send a click event to the specified element.
-     *
-     * @param {EventTarget|Element} targetElement
-     * @param {Event} event
-     */
+	 * Send a click event to the specified element.
+	 *
+	 * @param {EventTarget|Element} targetElement
+	 * @param {Event} event
+	 */
 	FastClick.prototype.sendClick = function(targetElement, event) {
 		var clickEvent, touch;
 
@@ -13386,8 +13306,8 @@
 	};
 
 	/**
-     * @param {EventTarget|Element} targetElement
-     */
+	 * @param {EventTarget|Element} targetElement
+	 */
 	FastClick.prototype.focus = function(targetElement) {
 		var length;
 
@@ -13407,10 +13327,10 @@
 	};
 
 	/**
-     * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
-     *
-     * @param {EventTarget|Element} targetElement
-     */
+	 * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
+	 *
+	 * @param {EventTarget|Element} targetElement
+	 */
 	FastClick.prototype.updateScrollParent = function(targetElement) {
 		var scrollParent, parentElement;
 
@@ -13438,9 +13358,9 @@
 	};
 
 	/**
-     * @param {EventTarget} targetElement
-     * @returns {Element|EventTarget}
-     */
+	 * @param {EventTarget} targetElement
+	 * @returns {Element|EventTarget}
+	 */
 	FastClick.prototype.getTargetElementFromEventTarget = function(
 		eventTarget
 	) {
@@ -13453,11 +13373,11 @@
 	};
 
 	/**
-     * On touch start, record the position and scroll offset.
-     *
-     * @param {Event} event
-     * @returns {boolean}
-     */
+	 * On touch start, record the position and scroll offset.
+	 *
+	 * @param {Event} event
+	 * @returns {boolean}
+	 */
 	FastClick.prototype.onTouchStart = function(event) {
 		var targetElement, touch, selection;
 
@@ -13521,11 +13441,11 @@
 	};
 
 	/**
-     * Based on a touchmove event object, check whether the touch has moved past a boundary since it started.
-     *
-     * @param {Event} event
-     * @returns {boolean}
-     */
+	 * Based on a touchmove event object, check whether the touch has moved past a boundary since it started.
+	 *
+	 * @param {Event} event
+	 * @returns {boolean}
+	 */
 	FastClick.prototype.touchHasMoved = function(event) {
 		var touch = event.changedTouches[0],
 			boundary = this.touchBoundary;
@@ -13541,11 +13461,11 @@
 	};
 
 	/**
-     * Update the last position.
-     *
-     * @param {Event} event
-     * @returns {boolean}
-     */
+	 * Update the last position.
+	 *
+	 * @param {Event} event
+	 * @returns {boolean}
+	 */
 	FastClick.prototype.onTouchMove = function(event) {
 		if (!this.trackingClick) {
 			return true;
@@ -13565,11 +13485,11 @@
 	};
 
 	/**
-     * Attempt to find the labelled control for the given label element.
-     *
-     * @param {EventTarget|HTMLLabelElement} labelElement
-     * @returns {Element|null}
-     */
+	 * Attempt to find the labelled control for the given label element.
+	 *
+	 * @param {EventTarget|HTMLLabelElement} labelElement
+	 * @returns {Element|null}
+	 */
 	FastClick.prototype.findControl = function(labelElement) {
 		// Fast path for newer browsers supporting the HTML5 control attribute
 		if (labelElement.control !== undefined) {
@@ -13589,11 +13509,11 @@
 	};
 
 	/**
-     * On touch end, determine whether to send a click event at once.
-     *
-     * @param {Event} event
-     * @returns {boolean}
-     */
+	 * On touch end, determine whether to send a click event at once.
+	 *
+	 * @param {Event} event
+	 * @returns {boolean}
+	 */
 	FastClick.prototype.onTouchEnd = function(event) {
 		var forElement,
 			trackingClickStart,
@@ -13701,21 +13621,21 @@
 	};
 
 	/**
-     * On touch cancel, stop tracking the click.
-     *
-     * @returns {void}
-     */
+	 * On touch cancel, stop tracking the click.
+	 *
+	 * @returns {void}
+	 */
 	FastClick.prototype.onTouchCancel = function() {
 		this.trackingClick = false;
 		this.targetElement = null;
 	};
 
 	/**
-     * Determine mouse events which should be permitted.
-     *
-     * @param {Event} event
-     * @returns {boolean}
-     */
+	 * Determine mouse events which should be permitted.
+	 *
+	 * @param {Event} event
+	 * @returns {boolean}
+	 */
 	FastClick.prototype.onMouse = function(event) {
 		// If a target element was never set (because a touch event was never fired) allow the event
 		if (!this.targetElement) {
@@ -13755,13 +13675,13 @@
 	};
 
 	/**
-     * On actual clicks, determine whether this is a touch-generated click, a click action occurring
-     * naturally after a delay after a touch (which needs to be cancelled to avoid duplication), or
-     * an actual click which should be permitted.
-     *
-     * @param {Event} event
-     * @returns {boolean}
-     */
+	 * On actual clicks, determine whether this is a touch-generated click, a click action occurring
+	 * naturally after a delay after a touch (which needs to be cancelled to avoid duplication), or
+	 * an actual click which should be permitted.
+	 *
+	 * @param {Event} event
+	 * @returns {boolean}
+	 */
 	FastClick.prototype.onClick = function(event) {
 		var permitted;
 
@@ -13789,10 +13709,10 @@
 	};
 
 	/**
-     * Remove all FastClick's event listeners.
-     *
-     * @returns {void}
-     */
+	 * Remove all FastClick's event listeners.
+	 *
+	 * @returns {void}
+	 */
 	FastClick.prototype.destroy = function() {
 		var layer = this.layer;
 
@@ -13810,10 +13730,10 @@
 	};
 
 	/**
-     * Check whether FastClick is needed.
-     *
-     * @param {Element} layer The layer to listen on
-     */
+	 * Check whether FastClick is needed.
+	 *
+	 * @param {Element} layer The layer to listen on
+	 */
 	FastClick.notNeeded = function(layer) {
 		var metaViewport;
 		var chromeVersion;
@@ -13926,11 +13846,11 @@
 	};
 
 	/**
-     * Factory method for creating a FastClick object
-     *
-     * @param {Element} layer The layer to listen on
-     * @param {Object} [options={}] The options to override the defaults
-     */
+	 * Factory method for creating a FastClick object
+	 *
+	 * @param {Element} layer The layer to listen on
+	 * @param {Object} [options={}] The options to override the defaults
+	 */
 	FastClick.attach = function(layer, options) {
 		return new FastClick(layer, options);
 	};
