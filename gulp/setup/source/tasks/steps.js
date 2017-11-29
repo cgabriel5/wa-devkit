@@ -228,7 +228,9 @@ gulp.task("init:git", function(done) {
 							);
 							log(`Git initialized and configured.\n`);
 							notify(
-								`Git initialized and configured (${__data__.apptype})`
+								`Git initialized and configured (${
+									__data__.apptype
+								})`
 							);
 							done();
 						}

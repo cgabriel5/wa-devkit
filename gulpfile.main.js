@@ -1086,9 +1086,15 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <meta name="description" content="Markdown to HTML preview.">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="180x180" href="${fpath}/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="${fpath}/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="${fpath}/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="${
+		fpath
+	}/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="${
+		fpath
+	}/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="${
+		fpath
+	}/favicon-16x16.png">
     <link rel="manifest" href="${fpath}/manifest.json">
     <link rel="mask-icon" href="${fpath}/safari-pinned-tab.svg" color="#699935">
     <link rel="shortcut icon" href="${fpath}/favicon.ico">
@@ -1166,9 +1172,11 @@ gulp.task("open", function(done) {
 	var port =
 		_args.p ||
 		_args.port ||
-		($internal.get("ports") || {
-			local: null
-		}).local;
+		(
+			$internal.get("ports") || {
+				local: null
+			}
+		).local;
 
 	// run the open function
 	return open_file_in_browser(file, port, done, task);
@@ -1841,7 +1849,9 @@ gulp.task("dependency", function(done) {
 	if (action === "add" && !de.sync(module_path)) {
 		log("The module", chalk.magenta(`${module_path}`), "does not exist.");
 		log(
-			`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`
+			`First install by running "$ yarn add ${
+				name
+			} --dev". Then try adding the dependency again.`
 		);
 		return done();
 	} else if (action === "remove" && !de.sync(delete_path)) {

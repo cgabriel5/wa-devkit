@@ -50,9 +50,11 @@ gulp.task("open", function(done) {
 	var port =
 		_args.p ||
 		_args.port ||
-		($internal.get("ports") || {
-			local: null
-		}).local;
+		(
+			$internal.get("ports") || {
+				local: null
+			}
+		).local;
 
 	// run the open function
 	return open_file_in_browser(file, port, done, task);
