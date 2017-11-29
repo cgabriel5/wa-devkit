@@ -180,6 +180,9 @@ ext.isjs = function(file) {
 ext.isjson = function(file) {
 	return ext(file, ["json"]);
 };
+ext.ismd = function(file) {
+	return ext(file, ["md"]);
+};
 
 /**
  * Recursively fill-in the placeholders in each path contained
