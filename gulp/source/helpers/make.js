@@ -11,8 +11,8 @@
 gulp.task("make", function(done) {
 	// get concat file names to use
 	var names = bundle_gulp.source.names;
-	var setup_name = names.setup;
-	var main_name = names.main;
+	var name_default = names.default;
+	var name_main = names.main;
 	pump(
 		[
 			gulp.src(bundle_gulp.source.files, {
@@ -31,9 +31,9 @@ gulp.task("make", function(done) {
 			// if gulpfile.js exists use that name,
 			// else fallback to gulpfile.main.js
 			$.gulpif(
-				fe.sync($paths.base + main_name),
-				$.concat(main_name),
-				$.concat(setup_name)
+				fe.sync($paths.base + name_default),
+				$.concat(name_default),
+				$.concat(name_main)
 			),
 			$.prettier($configs.prettier),
 			gulp.dest($paths.base),

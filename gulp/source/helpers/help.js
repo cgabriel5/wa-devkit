@@ -41,14 +41,26 @@ gulp.task("help", function(done) {
 	var verbose = _args.v || _args.verbose;
 	var filter = _args.f || _args.filter;
 
-	// get the gulpfile.js content
+	// get concat file names to use
+	var names = bundle_gulp.source.names;
+	var name_default = names.default;
+	var name_main = names.main;
+
+	// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
+	var gulpfile = fe.sync($paths.base + name_default)
+		? name_default
+		: name_main;
+
+	// store file content in a variable
 	var content = "";
+
 	pump(
 		[
-			gulp.src("gulpfile.main.js", {
+			gulp.src(gulpfile, {
 				cwd: $paths.base
 			}),
 			$.fn(function(file) {
+				// get the file content
 				content = file.contents.toString();
 			})
 		],

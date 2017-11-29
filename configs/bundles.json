@@ -85,8 +85,9 @@
 				"helpers/favicon.js"
 			],
 			"names": {
-				"main": "gulpfile.js",
-				"setup": "gulpfile.main.js"
+				"default": "gulpfile.js",
+				"main": "gulpfile.main.js",
+				"setup": "gulpfile.setup.js"
 			}
 		},
 		"tasks": [
