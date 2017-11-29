@@ -24,7 +24,7 @@ module.exports = {
 	config_settings_name: "._settings.json",
 	config_perfectionist: "./${homedir}configs/perfectionist.json",
 	config_autoprefixer: "./${homedir}configs/autoprefixer.json",
-	config_json_format: "./${homedir}configs/json.format.json",
+	config_json_format: "./${homedir}configs/json_format.json",
 	config_jsbeautify: "./${homedir}configs/jsbeautify.json",
 	config_prettier: "./${homedir}configs/prettier.json",
 	config_bundles: "./${homedir}configs/bundles.json",
