@@ -10,8 +10,8 @@
  *
  * Usage
  *
- * $ gulp jshint --file ./gulpfile.main.js
- *     Lint gulpfile.main.js
+ * $ gulp jshint --file ./gulpfile.js
+ *     Lint gulpfile.js
  *
  */
 gulp.task("jshint", function(done) {
