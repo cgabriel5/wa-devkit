@@ -1,7 +1,5 @@
 /**
- * task: pretty
  * Beautify all HTML, JS, CSS, and JSON project files.
- *
  *
  * Notes
  *

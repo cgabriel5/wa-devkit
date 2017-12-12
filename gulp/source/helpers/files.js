@@ -1,7 +1,5 @@
 /**
- * task: files
  * List project files.
- *
  *
  * Flags
  *

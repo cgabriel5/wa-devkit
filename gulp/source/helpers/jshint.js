@@ -1,7 +1,5 @@
 /**
- * task: jshint
  * Run jshint on a file.
- *
  *
  * Flags
  *

@@ -1,5 +1,6 @@
-// remove old dist / folder
-// @internal
+/**
+ * Remove old dist/ folder.
+ */
 gulp.task("dist:clean", function(done) {
 	pump(
 		[gulp.src($paths.dist_home, opts_remove), $.debug.clean(), $.clean()],
@@ -7,8 +8,9 @@ gulp.task("dist:clean", function(done) {
 	);
 });
 
-// copy new file/folders
-// @internal
+/**
+ * Copy new file/folders.
+ */
 gulp.task("dist:favicon", function(done) {
 	pump(
 		[
@@ -26,7 +28,9 @@ gulp.task("dist:favicon", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Build the distribution CSS files/folders.
+ */
 gulp.task("dist:css", function(done) {
 	pump(
 		[
@@ -44,7 +48,9 @@ gulp.task("dist:css", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Run images through imagemin to optimize them.
+ */
 gulp.task("dist:img", function(done) {
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
@@ -82,7 +88,9 @@ gulp.task("dist:img", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Build the distribution JS files/folders.
+ */
 gulp.task("dist:js", function(done) {
 	pump(
 		[
@@ -100,7 +108,9 @@ gulp.task("dist:js", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Copy over the root files to the distribution folder.
+ */
 gulp.task("dist:root", function(done) {
 	pump(
 		[
@@ -119,9 +129,7 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
- * task: dist
  * Build the dist/ folder. (only for webapp projects).
- *
  *
  * Usage
  *

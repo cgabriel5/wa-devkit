@@ -1,7 +1,5 @@
 /**
- * task: settings
  * Build ./configs/._settings.json
- *
  *
  * Flags
  *

@@ -1,5 +1,7 @@
-// when gulp is closed, either on error, crash, or intentionally,
-// do a quick cleanup
+/**
+ * When gulp is closed, either on error, crash, or intentionally, do
+ *     a quick cleanup.
+ */
 var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
 	var alphabetize = require("alphabetize-object-keys");
@@ -34,10 +36,15 @@ cleanup(function(exit_code, signal) {
 	}
 });
 
-// update the status of gulp to active. this will write the current gulp
-// process id to the internal gulp configuration file. this is done to
-// prevent another Gulp instance from being opened.
-// @internal
+/**
+ * Update the status of gulp to active.
+ *
+ * Notes
+ *
+ * • This will write the current gulp
+ *     process id to the internal gulp configuration file. this is done
+ *     to prevent another Gulp instance from being opened.
+ */
 gulp.task("init:save-pid", function(done) {
 	$internal.set("pid", process.pid); // set the status
 	$internal.write(
@@ -50,13 +57,18 @@ gulp.task("init:save-pid", function(done) {
 	);
 });
 
-// watch for git branch changes:
-// branch name checks are done to check whether the branch was changed after
-// the gulp command was used. this is done as when switching branches files
-// and file structure might be different. this can cause some problems with
-// the watch tasks and could perform gulp tasks when not necessarily wanted.
-// to resume gulp simply restart with the gulp command.
-// @internal
+/**
+ * Watch for git branch changes.
+ *
+ * Notes
+ *
+ * • Branch name checks are done to check
+ *     whether the branch was changed after the gulp command was used.
+ *     This is done as when switching branches files and file structure
+ *     might be different. this can cause some problems with the watch
+ *     tasks and could perform gulp tasks when not necessarily wanted.
+ *     To resume gulp simply restart with the gulp command.
+ */
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
@@ -111,8 +123,9 @@ gulp.task("init:watch-git-branch", function(done) {
 	});
 });
 
-// build app files
-// @internal
+/**
+ * Build app files.
+ */
 gulp.task("init:build", function(done) {
 	// cache task
 	var task = this;
@@ -131,7 +144,6 @@ gulp.task("init:build", function(done) {
 /**
  * task: default
  * Runs Gulp.
- *
  *
  * Notes
  *

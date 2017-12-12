@@ -1,5 +1,6 @@
-// watch for files changes
-// @internal
+/**
+ * Watch for files changes.
+ */
 gulp.task("watch:main", function(done) {
 	// add auto tab closing capability to browser-sync. this will
 	// auto close the used bs tabs when gulp closes.

@@ -1,7 +1,5 @@
 /**
- * task: make
  * Build gulpfile from source files.
- *
  *
  * Usage
  *

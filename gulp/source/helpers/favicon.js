@@ -1,8 +1,13 @@
-// Generate the icons. This task takes a few seconds to complete.
-// You should run it at least once to create the icons. Then,
-// you should run it whenever RealFaviconGenerator updates its
-// package (see the check-for-favicon-update task below).
-// @internal
+/**
+ * Generate the favicon icons.
+ *
+ * Notes
+ *
+ * • This task takes a few seconds to complete. You should run it at
+ *     least once to create the icons. Then, you should run it whenever
+ *     RealFaviconGenerator updates its package
+ *     (see the check-for-favicon-update task below).
+ */
 gulp.task("favicon:generate", function(done) {
 	$.real_favicon.generateFavicon(
 		{
@@ -69,8 +74,9 @@ gulp.task("favicon:generate", function(done) {
 	);
 });
 
-// update manifest.json
-// @internal
+/**
+ * Update manifest.json.
+ */
 gulp.task("favicon:edit-manifest", function(done) {
 	var manifest = json.read($paths.favicon_root_manifest);
 	manifest.set("name", "wa-devkit");
@@ -84,8 +90,9 @@ gulp.task("favicon:edit-manifest", function(done) {
 	);
 });
 
-// copy favicon.ico and apple-touch-icon.png to the root
-// @internal
+/**
+ * Copy favicon.ico and apple-touch-icon.png to the root.
+ */
 gulp.task("favicon:root", function(done) {
 	pump(
 		[
@@ -104,8 +111,9 @@ gulp.task("favicon:root", function(done) {
 	);
 });
 
-// copy delete unneeded files
-// @internal
+/**
+ * Copy delete unneeded files.
+ */
 gulp.task("favicon:delete", function(done) {
 	pump(
 		[
@@ -120,8 +128,9 @@ gulp.task("favicon:delete", function(done) {
 	);
 });
 
-// inject new favicon html
-// @internal
+/**
+ * Inject new favicon HTML.
+ */
 gulp.task("favicon:html", function(done) {
 	pump(
 		[
@@ -139,9 +148,7 @@ gulp.task("favicon:html", function(done) {
 });
 
 /**
- * task: favicon
  * Re-build project favicons.
- *
  *
  * Usage
  *
@@ -176,13 +183,17 @@ gulp.task("favicon", function(done) {
 	return sequence.apply(task, tasks);
 });
 
-// Check for updates on RealFaviconGenerator (think: Apple has just
-// released a new Touch icon along with the latest version of iOS).
-// Run this task from time to time. Ideally, make it part of your
-// continuous integration system.
-// Check for RealFaviconGenerator updates.
-// @internal
-gulp.task("favicon-updates", function(done) {
+/**
+ * Check for updates RealFaviconGenerator.
+ *
+ * Notes
+ *
+ * • Think: Apple has just released a new Touch icon along with the
+ *     latest version of iOS. Run this task from time to time. Ideally,
+ *     make it part of your continuous integration system. Check for
+ *     RealFaviconGenerator updates.
+ */
+gulp.task("favicon:updates", function(done) {
 	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
 		.version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {

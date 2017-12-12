@@ -1,5 +1,6 @@
-// remove old lib/ folder
-// @internal
+/**
+ * Remove old lib/ folder.
+ */
 gulp.task("lib:clean", function(done) {
 	pump(
 		[gulp.src($paths.lib_home, opts_remove), $.debug.clean(), $.clean()],
@@ -7,7 +8,9 @@ gulp.task("lib:clean", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Build the library JS files/folders.
+ */
 gulp.task("lib:js", function(done) {
 	pump(
 		[
@@ -32,10 +35,8 @@ gulp.task("lib:js", function(done) {
 });
 
 /**
- * task: lib
  * Build the lib/ folder. (only for library projects).
- *
- *
+
  * Usage
  *
  * $ gulp lib

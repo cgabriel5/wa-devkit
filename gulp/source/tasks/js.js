@@ -1,5 +1,6 @@
-// build app.js + minify + beautify
-// @internal
+/**
+ * Build app.js + minify + beautify.
+ */
 gulp.task("js:app", function(done) {
 	pump(
 		[
@@ -17,8 +18,9 @@ gulp.task("js:app", function(done) {
 	);
 });
 
-// build vendor bundle + minify + beautify
-// @internal
+/**
+ * Build vendor bundle + minify + beautify.
+ */
 gulp.task("js:vendor", function(done) {
 	// NOTE: absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json

@@ -1,7 +1,5 @@
 /**
- * task: stats
  * Prints table containing project file type breakdown.
- *
  *
  * Notes
  *

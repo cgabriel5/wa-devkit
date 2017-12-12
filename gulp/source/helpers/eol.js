@@ -1,7 +1,5 @@
 /**
- * task: eol
  * Correct file line endings.
- *
  *
  * Flags
  *

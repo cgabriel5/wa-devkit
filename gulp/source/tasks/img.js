@@ -1,5 +1,6 @@
-// just trigger a browser-sync stream
-// @internal
+/**
+ * Just trigger a browser-sync stream.
+ */
 gulp.task("img:main", function(done) {
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]

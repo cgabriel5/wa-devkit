@@ -1,5 +1,6 @@
-// build app.css + autoprefix + minify
-// @internal
+/**
+ * Build app.css + autoprefix + minify.
+ */
 gulp.task("css:app", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
@@ -27,8 +28,9 @@ gulp.task("css:app", function(done) {
 	);
 });
 
-// build vendor bundle + minify + beautify
-// @internal
+/**
+ * Build vendor bundle + minify + beautify.
+ */
 gulp.task("css:vendor", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");

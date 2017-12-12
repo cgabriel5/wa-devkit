@@ -1,5 +1,6 @@
-// init HTML files + minify
-// @internal
+/**
+ * Init HTML files + minify.
+ */
 gulp.task("html:main", function(done) {
 	pump(
 		[

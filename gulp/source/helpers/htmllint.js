@@ -1,7 +1,5 @@
 /**
- * task: hlint
  * Run htmllint on a file.
- *
  *
  * Flags
  *

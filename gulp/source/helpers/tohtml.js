@@ -1,6 +1,13 @@
+/**
+ * Variable is declared outside of tasks to use be able to use in
+ *     multiple tasks. The variable is populated in the tohtml:prepcss
+ *     task and used in the tohtml task.
+ */
 var _markdown_styles_;
-// get the CSS markdown + prismjs styles
-// @internal
+
+/**
+ * Get the CSS markdown + prismjs styles.
+ */
 gulp.task("tohtml:prepcss", function(done) {
 	// run gulp process
 	pump(
@@ -27,9 +34,7 @@ gulp.task("tohtml:prepcss", function(done) {
 });
 
 /**
- * task: tohtml
  * Converts Markdown (.md) file to .html.
- *
  *
  * Notes
  *

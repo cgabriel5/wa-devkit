@@ -1,7 +1,5 @@
 /**
- * task: dependency
  * Add/remove front-end dependencies.
- *
  *
  * Notes
  *

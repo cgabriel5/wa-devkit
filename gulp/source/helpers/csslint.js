@@ -1,7 +1,5 @@
 /**
- * task: csslint
  * Run csslint on a file.
- *
  *
  * Flags
  *

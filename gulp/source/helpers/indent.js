@@ -1,7 +1,5 @@
 /**
- * task: indent
  * Indent all JS files with tabs or spaces.
- *
  *
  * Notes
  *

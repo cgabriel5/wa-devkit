@@ -1,7 +1,5 @@
 /**
- * task: modernizr
  * Build Modernizr file.
- *
  *
  * Usage
  *
