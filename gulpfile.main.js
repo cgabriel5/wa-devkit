@@ -242,8 +242,10 @@ function gulp_check_warn() {
 
 //#! init.js -- ./gulp/source/tasks/init.js
 
-// when gulp is closed, either on error, crash, or intentionally,
-// do a quick cleanup
+/**
+ * When gulp is closed, either on error, crash, or intentionally, do
+ *     a quick cleanup.
+ */
 var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
 	var alphabetize = require("alphabetize-object-keys");
@@ -278,10 +280,15 @@ cleanup(function(exit_code, signal) {
 	}
 });
 
-// update the status of gulp to active. this will write the current gulp
-// process id to the internal gulp configuration file. this is done to
-// prevent another Gulp instance from being opened.
-// @internal
+/**
+ * Update the status of gulp to active.
+ *
+ * Notes
+ *
+ * • This will write the current gulp
+ *     process id to the internal gulp configuration file. this is done
+ *     to prevent another Gulp instance from being opened.
+ */
 gulp.task("init:save-pid", function(done) {
 	$internal.set("pid", process.pid); // set the status
 	$internal.write(
@@ -294,13 +301,18 @@ gulp.task("init:save-pid", function(done) {
 	);
 });
 
-// watch for git branch changes:
-// branch name checks are done to check whether the branch was changed after
-// the gulp command was used. this is done as when switching branches files
-// and file structure might be different. this can cause some problems with
-// the watch tasks and could perform gulp tasks when not necessarily wanted.
-// to resume gulp simply restart with the gulp command.
-// @internal
+/**
+ * Watch for git branch changes.
+ *
+ * Notes
+ *
+ * • Branch name checks are done to check
+ *     whether the branch was changed after the gulp command was used.
+ *     This is done as when switching branches files and file structure
+ *     might be different. this can cause some problems with the watch
+ *     tasks and could perform gulp tasks when not necessarily wanted.
+ *     To resume gulp simply restart with the gulp command.
+ */
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
@@ -355,8 +367,9 @@ gulp.task("init:watch-git-branch", function(done) {
 	});
 });
 
-// build app files
-// @internal
+/**
+ * Build app files.
+ */
 gulp.task("init:build", function(done) {
 	// cache task
 	var task = this;
@@ -375,7 +388,6 @@ gulp.task("init:build", function(done) {
 /**
  * task: default
  * Runs Gulp.
- *
  *
  * Notes
  *
@@ -473,8 +485,9 @@ gulp.task("default", function(done) {
 
 //#! dist.js -- ./gulp/source/tasks/dist.js
 
-// remove old dist / folder
-// @internal
+/**
+ * Remove old dist/ folder.
+ */
 gulp.task("dist:clean", function(done) {
 	pump(
 		[gulp.src($paths.dist_home, opts_remove), $.debug.clean(), $.clean()],
@@ -482,8 +495,9 @@ gulp.task("dist:clean", function(done) {
 	);
 });
 
-// copy new file/folders
-// @internal
+/**
+ * Copy new file/folders.
+ */
 gulp.task("dist:favicon", function(done) {
 	pump(
 		[
@@ -501,7 +515,9 @@ gulp.task("dist:favicon", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Build the distribution CSS files/folders.
+ */
 gulp.task("dist:css", function(done) {
 	pump(
 		[
@@ -519,7 +535,9 @@ gulp.task("dist:css", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Run images through imagemin to optimize them.
+ */
 gulp.task("dist:img", function(done) {
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
@@ -557,7 +575,9 @@ gulp.task("dist:img", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Build the distribution JS files/folders.
+ */
 gulp.task("dist:js", function(done) {
 	pump(
 		[
@@ -575,7 +595,9 @@ gulp.task("dist:js", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Copy over the root files to the distribution folder.
+ */
 gulp.task("dist:root", function(done) {
 	pump(
 		[
@@ -594,9 +616,7 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
- * task: dist
  * Build the dist/ folder. (only for webapp projects).
- *
  *
  * Usage
  *
@@ -625,8 +645,9 @@ gulp.task("dist", function(done) {
 
 //#! lib.js -- ./gulp/source/tasks/lib.js
 
-// remove old lib/ folder
-// @internal
+/**
+ * Remove old lib/ folder.
+ */
 gulp.task("lib:clean", function(done) {
 	pump(
 		[gulp.src($paths.lib_home, opts_remove), $.debug.clean(), $.clean()],
@@ -634,7 +655,9 @@ gulp.task("lib:clean", function(done) {
 	);
 });
 
-// @internal
+/**
+ * Build the library JS files/folders.
+ */
 gulp.task("lib:js", function(done) {
 	pump(
 		[
@@ -659,10 +682,8 @@ gulp.task("lib:js", function(done) {
 });
 
 /**
- * task: lib
  * Build the lib/ folder. (only for library projects).
- *
- *
+
  * Usage
  *
  * $ gulp lib
@@ -690,8 +711,9 @@ gulp.task("lib", function(done) {
 
 //#! watch.js -- ./gulp/source/tasks/watch.js
 
-// watch for files changes
-// @internal
+/**
+ * Watch for files changes.
+ */
 gulp.task("watch:main", function(done) {
 	// add auto tab closing capability to browser-sync. this will
 	// auto close the used bs tabs when gulp closes.
@@ -817,8 +839,9 @@ gulp.task("watch:main", function(done) {
 
 //#! html.js -- ./gulp/source/tasks/html.js
 
-// init HTML files + minify
-// @internal
+/**
+ * Init HTML files + minify.
+ */
 gulp.task("html:main", function(done) {
 	pump(
 		[
@@ -840,8 +863,9 @@ gulp.task("html:main", function(done) {
 
 //#! css.js -- ./gulp/source/tasks/css.js
 
-// build app.css + autoprefix + minify
-// @internal
+/**
+ * Build app.css + autoprefix + minify.
+ */
 gulp.task("css:app", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
@@ -869,8 +893,9 @@ gulp.task("css:app", function(done) {
 	);
 });
 
-// build vendor bundle + minify + beautify
-// @internal
+/**
+ * Build vendor bundle + minify + beautify.
+ */
 gulp.task("css:vendor", function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
@@ -902,8 +927,9 @@ gulp.task("css:vendor", function(done) {
 
 //#! js.js -- ./gulp/source/tasks/js.js
 
-// build app.js + minify + beautify
-// @internal
+/**
+ * Build app.js + minify + beautify.
+ */
 gulp.task("js:app", function(done) {
 	pump(
 		[
@@ -921,8 +947,9 @@ gulp.task("js:app", function(done) {
 	);
 });
 
-// build vendor bundle + minify + beautify
-// @internal
+/**
+ * Build vendor bundle + minify + beautify.
+ */
 gulp.task("js:vendor", function(done) {
 	// NOTE: absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json
@@ -944,8 +971,9 @@ gulp.task("js:vendor", function(done) {
 
 //#! img.js -- ./gulp/source/tasks/img.js
 
-// just trigger a browser-sync stream
-// @internal
+/**
+ * Just trigger a browser-sync stream.
+ */
 gulp.task("img:main", function(done) {
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
@@ -955,9 +983,7 @@ gulp.task("img:main", function(done) {
 //#! modernizr.js -- ./gulp/source/helpers/modernizr.js
 
 /**
- * task: modernizr
  * Build Modernizr file.
- *
  *
  * Usage
  *
@@ -988,9 +1014,16 @@ gulp.task("modernizr", function(done) {
 
 //#! tohtml.js -- ./gulp/source/helpers/tohtml.js
 
+/**
+ * Variable is declared outside of tasks to use be able to use in
+ *     multiple tasks. The variable is populated in the tohtml:prepcss
+ *     task and used in the tohtml task.
+ */
 var _markdown_styles_;
-// get the CSS markdown + prismjs styles
-// @internal
+
+/**
+ * Get the CSS markdown + prismjs styles.
+ */
 gulp.task("tohtml:prepcss", function(done) {
 	// run gulp process
 	pump(
@@ -1017,9 +1050,7 @@ gulp.task("tohtml:prepcss", function(done) {
 });
 
 /**
- * task: tohtml
  * Converts Markdown (.md) file to .html.
- *
  *
  * Notes
  *
@@ -1185,9 +1216,7 @@ gulp.task("open", function(done) {
 //#! instance.js -- ./gulp/source/helpers/instance.js
 
 /**
- * task: status
  * Print whether there is an active Gulp instance.
- *
  *
  * Usage
  *
@@ -1205,9 +1234,7 @@ gulp.task("status", function(done) {
 });
 
 /**
- * task: ports
  * Print the currently used ports for browser-sync.
- *
  *
  * Usage
  *
@@ -1233,9 +1260,7 @@ gulp.task("ports", function(done) {
 //#! pretty.js -- ./gulp/source/helpers/pretty.js
 
 /**
- * task: pretty
  * Beautify all HTML, JS, CSS, and JSON project files.
- *
  *
  * Notes
  *
@@ -1438,9 +1463,7 @@ gulp.task("pretty", function(done) {
 //#! eol.js -- ./gulp/source/helpers/eol.js
 
 /**
- * task: eol
  * Correct file line endings.
- *
  *
  * Flags
  *
@@ -1497,9 +1520,7 @@ gulp.task("eol", function(done) {
 //#! stats.js -- ./gulp/source/helpers/stats.js
 
 /**
- * task: stats
  * Prints table containing project file type breakdown.
- *
  *
  * Notes
  *
@@ -1589,9 +1610,7 @@ gulp.task("stats", function(done) {
 //#! files.js -- ./gulp/source/helpers/files.js
 
 /**
- * task: files
  * List project files.
- *
  *
  * Flags
  *
@@ -1739,9 +1758,7 @@ gulp.task("files", function(done) {
 //#! dependency.js -- ./gulp/source/helpers/dependency.js
 
 /**
- * task: dependency
  * Add/remove front-end dependencies.
- *
  *
  * Notes
  *
@@ -1901,9 +1918,7 @@ gulp.task("dependency", function(done) {
 //#! make.js -- ./gulp/source/helpers/make.js
 
 /**
- * task: make
  * Build gulpfile from source files.
- *
  *
  * Usage
  *
@@ -1948,9 +1963,7 @@ gulp.task("make", function(done) {
 //#! jshint.js -- ./gulp/source/helpers/jshint.js
 
 /**
- * task: jshint
  * Run jshint on a file.
- *
  *
  * Flags
  *
@@ -1993,9 +2006,7 @@ gulp.task("jshint", function(done) {
 //#! csslint.js -- ./gulp/source/helpers/csslint.js
 
 /**
- * task: csslint
  * Run csslint on a file.
- *
  *
  * Flags
  *
@@ -2037,9 +2048,7 @@ gulp.task("csslint", function(done) {
 //#! htmllint.js -- ./gulp/source/helpers/htmllint.js
 
 /**
- * task: hlint
  * Run htmllint on a file.
- *
  *
  * Flags
  *
@@ -2096,9 +2105,7 @@ gulp.task("hlint", function(done) {
 //#! settings.js -- ./gulp/source/helpers/settings.js
 
 /**
- * task: settings
  * Build ./configs/._settings.json
- *
  *
  * Flags
  *
@@ -2135,9 +2142,7 @@ gulp.task("settings", function(done) {
 //#! indent.js -- ./gulp/source/helpers/indent.js
 
 /**
- * task: indent
  * Indent all JS files with tabs or spaces.
- *
  *
  * Notes
  *
@@ -2228,9 +2233,7 @@ gulp.task("indent", function(done) {
 //#! help.js -- ./gulp/source/helpers/help.js
 
 /**
- * task: help
  * Provides Gulp task documentation (this documentation).
- *
  *
  * Notes
  *
@@ -2241,6 +2244,9 @@ gulp.task("indent", function(done) {
  *
  * --verbose
  *     [boolean] Shows all documentation.
+ *
+ * -i, --internal
+ *     [boolean] Shows all internal (yellow) tasks.
  *
  * -f, --filter
  *     [string] Names of tasks to show documentation for.
@@ -2255,6 +2261,9 @@ gulp.task("indent", function(done) {
  *
  * $ gulp help --filter "open default dependency"
  *     Show documentation for specific tasks.
+ *
+ * $ gulp help --internal
+ *     Show documentation for internally used tasks.
  */
 gulp.task("help", function(done) {
 	// run yargs
@@ -2266,9 +2275,14 @@ gulp.task("help", function(done) {
 		.option("filter", {
 			alias: "f",
 			type: "string"
+		})
+		.option("internal", {
+			alias: "i",
+			type: "boolean"
 		}).argv;
 	var verbose = _args.v || _args.verbose;
 	var filter = _args.f || _args.filter;
+	var internal = _args.i || _args.internal;
 
 	// get concat file names to use
 	var names = bundle_gulp.source.names;
@@ -2294,8 +2308,41 @@ gulp.task("help", function(done) {
 			})
 		],
 		function() {
-			// get all the docblocks from the file
-			var blocks = content.match(/^\/\*\*[\s\S]*?\*\/$/gm);
+			// loop over gulpfile content string and file all the docblocks
+			var blocks = [];
+			var string = content;
+			var docblock_pattern = /^\/\*\*[\s\S]*?\*\/$/m;
+			var task_name_pattern = /^gulp.task\(('|")([a-z:\-_]+)\1/;
+			var match = string.match(docblock_pattern);
+			while (match) {
+				var comment = match[0];
+				// get the match index
+				var index = match.index;
+				// get the match length
+				var length = comment.length;
+				// reset the string to exclude the match
+				string = string.substring(index + length, string.length).trim();
+
+				// now look for the task name
+				// the name needs to be at the front of the string
+				// to pertain to the current docblock comment. therefore,
+				// it must have an index of 0.
+				var task_name_match = string.match(task_name_pattern);
+
+				// if no task name match continue and skip, or...
+				// task name has to be at the front of the string
+				if (!task_name_match || task_name_match.index !== 0) {
+					// reset the match pattern
+					match = string.match(docblock_pattern);
+					continue;
+				}
+
+				// add the comment and task name to array
+				// [ task name , task docblock comment ]
+				blocks.push([task_name_match[2], comment]);
+				// reset the match pattern
+				match = string.match(docblock_pattern);
+			}
 
 			var newline = "\n";
 			var headers = ["Flags", "Usage", "Notes"];
@@ -2322,10 +2369,6 @@ gulp.task("help", function(done) {
 					.trim();
 			};
 
-			var get_task_name = function(string) {
-				return (string.match(/\* task\: ([a-z]+)$/m) || "")[1];
-			};
-
 			console.log(newline);
 			console.log(chalk.bold("Tasks"));
 			console.log(newline);
@@ -2337,7 +2380,9 @@ gulp.task("help", function(done) {
 			// loop over every match get needed data
 			blocks.forEach(function(block) {
 				// get task name
-				var name = get_task_name(block);
+				var name = block[0];
+				// reset the block var to the actual comment block
+				block = block[1];
 
 				// skip if no name is found
 				if (!name) {
@@ -2356,7 +2401,10 @@ gulp.task("help", function(done) {
 				// get the description
 				var desc = block.substring(0, block.indexOf("\n\n"));
 
-				tasks[name] = { text: block, desc: desc };
+				tasks[name] = {
+					text: block,
+					desc: desc
+				};
 				if (name !== "help") {
 					names.push(name);
 				}
@@ -2389,13 +2437,25 @@ gulp.task("help", function(done) {
 				var block = task.text;
 				var desc = task.desc;
 
+				var is_internal = -~name.indexOf(":");
+
+				// task name color will change based on whether its
+				// an internal task.
+				var color = is_internal ? "yellow" : "cyan";
+
+				// only print internal tasks when the internal flag
+				// is provided.
+				if (is_internal && !internal) {
+					return;
+				}
+
 				// loop over lines
 				if (verbose || name === "help") {
 					// bold the tasks
 					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
 
 					// print the task name
-					console.log("   " + chalk.cyan(name));
+					console.log("   " + chalk[color](name));
 
 					var lines = block.split(newline);
 					lines.forEach(function(line) {
@@ -2413,7 +2473,7 @@ gulp.task("help", function(done) {
 					// only show the name and its description
 					console.log(
 						"   " +
-							chalk.cyan(name) +
+							chalk[color](name) +
 							" ".repeat(max_length - name.length + 3) +
 							desc
 					);
@@ -2432,11 +2492,16 @@ gulp.task("help", function(done) {
 
 //#! favicon.js -- ./gulp/source/helpers/favicon.js
 
-// Generate the icons. This task takes a few seconds to complete.
-// You should run it at least once to create the icons. Then,
-// you should run it whenever RealFaviconGenerator updates its
-// package (see the check-for-favicon-update task below).
-// @internal
+/**
+ * Generate the favicon icons.
+ *
+ * Notes
+ *
+ * • This task takes a few seconds to complete. You should run it at
+ *     least once to create the icons. Then, you should run it whenever
+ *     RealFaviconGenerator updates its package
+ *     (see the check-for-favicon-update task below).
+ */
 gulp.task("favicon:generate", function(done) {
 	$.real_favicon.generateFavicon(
 		{
@@ -2503,8 +2568,9 @@ gulp.task("favicon:generate", function(done) {
 	);
 });
 
-// update manifest.json
-// @internal
+/**
+ * Update manifest.json.
+ */
 gulp.task("favicon:edit-manifest", function(done) {
 	var manifest = json.read($paths.favicon_root_manifest);
 	manifest.set("name", "wa-devkit");
@@ -2518,8 +2584,9 @@ gulp.task("favicon:edit-manifest", function(done) {
 	);
 });
 
-// copy favicon.ico and apple-touch-icon.png to the root
-// @internal
+/**
+ * Copy favicon.ico and apple-touch-icon.png to the root.
+ */
 gulp.task("favicon:root", function(done) {
 	pump(
 		[
@@ -2538,8 +2605,9 @@ gulp.task("favicon:root", function(done) {
 	);
 });
 
-// copy delete unneeded files
-// @internal
+/**
+ * Copy delete unneeded files.
+ */
 gulp.task("favicon:delete", function(done) {
 	pump(
 		[
@@ -2554,8 +2622,9 @@ gulp.task("favicon:delete", function(done) {
 	);
 });
 
-// inject new favicon html
-// @internal
+/**
+ * Inject new favicon HTML.
+ */
 gulp.task("favicon:html", function(done) {
 	pump(
 		[
@@ -2573,9 +2642,7 @@ gulp.task("favicon:html", function(done) {
 });
 
 /**
- * task: favicon
  * Re-build project favicons.
- *
  *
  * Usage
  *
@@ -2610,13 +2677,17 @@ gulp.task("favicon", function(done) {
 	return sequence.apply(task, tasks);
 });
 
-// Check for updates on RealFaviconGenerator (think: Apple has just
-// released a new Touch icon along with the latest version of iOS).
-// Run this task from time to time. Ideally, make it part of your
-// continuous integration system.
-// Check for RealFaviconGenerator updates.
-// @internal
-gulp.task("favicon-updates", function(done) {
+/**
+ * Check for updates RealFaviconGenerator.
+ *
+ * Notes
+ *
+ * • Think: Apple has just released a new Touch icon along with the
+ *     latest version of iOS. Run this task from time to time. Ideally,
+ *     make it part of your continuous integration system. Check for
+ *     RealFaviconGenerator updates.
+ */
+gulp.task("favicon:updates", function(done) {
 	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
 		.version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
