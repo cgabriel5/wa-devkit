@@ -1,7 +1,5 @@
 /**
- * task: help
  * Provides Gulp task documentation (this documentation).
- *
  *
  * Notes
  *
@@ -12,6 +10,9 @@
  *
  * --verbose
  *     [boolean] Shows all documentation.
+ *
+ * -i, --internal
+ *     [boolean] Shows all internal (yellow) tasks.
  *
  * -f, --filter
  *     [string] Names of tasks to show documentation for.
@@ -26,6 +27,9 @@
  *
  * $ gulp help --filter "open default dependency"
  *     Show documentation for specific tasks.
+ *
+ * $ gulp help --internal
+ *     Show documentation for internally used tasks.
  */
 gulp.task("help", function(done) {
 	// run yargs
@@ -37,9 +41,14 @@ gulp.task("help", function(done) {
 		.option("filter", {
 			alias: "f",
 			type: "string"
+		})
+		.option("internal", {
+			alias: "i",
+			type: "boolean"
 		}).argv;
 	var verbose = _args.v || _args.verbose;
 	var filter = _args.f || _args.filter;
+	var internal = _args.i || _args.internal;
 
 	// get concat file names to use
 	var names = bundle_gulp.source.names;
@@ -65,8 +74,41 @@ gulp.task("help", function(done) {
 			})
 		],
 		function() {
-			// get all the docblocks from the file
-			var blocks = content.match(/^\/\*\*[\s\S]*?\*\/$/gm);
+			// loop over gulpfile content string and file all the docblocks
+			var blocks = [];
+			var string = content;
+			var docblock_pattern = /^\/\*\*[\s\S]*?\*\/$/m;
+			var task_name_pattern = /^gulp.task\(('|")([a-z:\-_]+)\1/;
+			var match = string.match(docblock_pattern);
+			while (match) {
+				var comment = match[0];
+				// get the match index
+				var index = match.index;
+				// get the match length
+				var length = comment.length;
+				// reset the string to exclude the match
+				string = string.substring(index + length, string.length).trim();
+
+				// now look for the task name
+				// the name needs to be at the front of the string
+				// to pertain to the current docblock comment. therefore,
+				// it must have an index of 0.
+				var task_name_match = string.match(task_name_pattern);
+
+				// if no task name match continue and skip, or...
+				// task name has to be at the front of the string
+				if (!task_name_match || task_name_match.index !== 0) {
+					// reset the match pattern
+					match = string.match(docblock_pattern);
+					continue;
+				}
+
+				// add the comment and task name to array
+				// [ task name , task docblock comment ]
+				blocks.push([task_name_match[2], comment]);
+				// reset the match pattern
+				match = string.match(docblock_pattern);
+			}
 
 			var newline = "\n";
 			var headers = ["Flags", "Usage", "Notes"];
@@ -93,10 +135,6 @@ gulp.task("help", function(done) {
 					.trim();
 			};
 
-			var get_task_name = function(string) {
-				return (string.match(/\* task\: ([a-z]+)$/m) || "")[1];
-			};
-
 			console.log(newline);
 			console.log(chalk.bold("Tasks"));
 			console.log(newline);
@@ -108,7 +146,9 @@ gulp.task("help", function(done) {
 			// loop over every match get needed data
 			blocks.forEach(function(block) {
 				// get task name
-				var name = get_task_name(block);
+				var name = block[0];
+				// reset the block var to the actual comment block
+				block = block[1];
 
 				// skip if no name is found
 				if (!name) {
@@ -127,7 +167,10 @@ gulp.task("help", function(done) {
 				// get the description
 				var desc = block.substring(0, block.indexOf("\n\n"));
 
-				tasks[name] = { text: block, desc: desc };
+				tasks[name] = {
+					text: block,
+					desc: desc
+				};
 				if (name !== "help") {
 					names.push(name);
 				}
@@ -160,13 +203,25 @@ gulp.task("help", function(done) {
 				var block = task.text;
 				var desc = task.desc;
 
+				var is_internal = -~name.indexOf(":");
+
+				// task name color will change based on whether its
+				// an internal task.
+				var color = is_internal ? "yellow" : "cyan";
+
+				// only print internal tasks when the internal flag
+				// is provided.
+				if (is_internal && !internal) {
+					return;
+				}
+
 				// loop over lines
 				if (verbose || name === "help") {
 					// bold the tasks
 					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
 
 					// print the task name
-					console.log("   " + chalk.cyan(name));
+					console.log("   " + chalk[color](name));
 
 					var lines = block.split(newline);
 					lines.forEach(function(line) {
@@ -184,7 +239,7 @@ gulp.task("help", function(done) {
 					// only show the name and its description
 					console.log(
 						"   " +
-							chalk.cyan(name) +
+							chalk[color](name) +
 							" ".repeat(max_length - name.length + 3) +
 							desc
 					);
