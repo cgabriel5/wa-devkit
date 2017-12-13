@@ -1839,8 +1839,12 @@ gulp.task("dependency", function(done) {
 
 		// printer function
 		var printer = function(dependency) {
-			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/)[2];
-			log(" ".repeat(10), chalk.magenta(dependency), `(${name})`);
+			// get the name of the folder.
+			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/);
+			// when folder name is not present leave the name empty.
+			name = name ? `(${name[2]})` : "";
+
+			log(" ".repeat(10), chalk.magenta(dependency), name);
 		};
 
 		// get the config path for the bundles file
