@@ -15,7 +15,7 @@ gulp.task("init", function(done) {
 		var type = __data__.apptype;
 
 		// set the path for js option
-		$paths.js_options_dynamic = `gulp/setup/js/options/${type}/**/*.*`;
+		$paths.js_options_dynamic = `gulp/setup/${type}/**/*.*`;
 
 		// set the application type
 		$internal.apptype = type;
