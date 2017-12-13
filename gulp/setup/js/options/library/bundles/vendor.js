@@ -3318,7 +3318,9 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 					hasCompare || rnative.test(docElem.contains)
 						? function(a, b) {
 								var adown =
-										a.nodeType === 9 ? a.documentElement : a,
+										a.nodeType === 9
+											? a.documentElement
+											: a,
 									bup = b && b.parentNode;
 								return (
 									a === bup ||
@@ -3328,7 +3330,8 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 										(adown.contains
 											? adown.contains(bup)
 											: a.compareDocumentPosition &&
-												a.compareDocumentPosition(bup) & 16)
+												a.compareDocumentPosition(bup) &
+													16)
 									)
 								);
 							}
@@ -3365,7 +3368,8 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 
 							// Calculate position if both inputs belong to the same document
 							compare =
-								(a.ownerDocument || a) === (b.ownerDocument || b)
+								(a.ownerDocument || a) ===
+								(b.ownerDocument || b)
 									? a.compareDocumentPosition(b)
 									: // Otherwise we know they are disconnected
 										1;
@@ -3679,7 +3683,8 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 							match[4] = +(match[4]
 								? match[5] + (match[6] || 1)
 								: 2 *
-									(match[3] === "even" || match[3] === "odd"));
+									(match[3] === "even" ||
+										match[3] === "odd"));
 							match[5] = +(
 								match[7] + match[8] || match[3] === "odd"
 							);
@@ -3791,10 +3796,13 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 									: operator === "^="
 										? check && result.indexOf(check) === 0
 										: operator === "*="
-											? check && result.indexOf(check) > -1
+											? check &&
+												result.indexOf(check) > -1
 											: operator === "$="
 												? check &&
-													result.slice(-check.length) === check
+													result.slice(
+														-check.length
+													) === check
 												: operator === "~="
 													? (
 															" " +
@@ -3838,7 +3846,8 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 												: "previousSibling",
 										parent = elem.parentNode,
 										name =
-											ofType && elem.nodeName.toLowerCase(),
+											ofType &&
+											elem.nodeName.toLowerCase(),
 										useCache = !xml && !ofType,
 										diff = false;
 
@@ -3852,7 +3861,8 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 														ofType
 															? node.nodeName.toLowerCase() ===
 																name
-															: node.nodeType === 1
+															: node.nodeType ===
+																1
 													) {
 														return false;
 													}
@@ -3886,11 +3896,14 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 											// Defend against cloned attroperties (jQuery gh-1709)
 											uniqueCache =
 												outerCache[node.uniqueID] ||
-												(outerCache[node.uniqueID] = {});
+												(outerCache[
+													node.uniqueID
+												] = {});
 
 											cache = uniqueCache[type] || [];
 											nodeIndex =
-												cache[0] === dirruns && cache[1];
+												cache[0] === dirruns &&
+												cache[1];
 											diff = nodeIndex && cache[2];
 											node =
 												nodeIndex &&
@@ -3975,16 +3988,16 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 															// Defend against cloned attroperties (jQuery gh-1709)
 															uniqueCache =
 																outerCache[
-																	node.uniqueID
+																	node
+																		.uniqueID
 																] ||
 																(outerCache[
 																	node.uniqueID
 																] = {});
 
-															uniqueCache[type] = [
-																dirruns,
-																diff
-															];
+															uniqueCache[
+																type
+															] = [dirruns, diff];
 														}
 
 														if (node === elem) {
@@ -4067,7 +4080,12 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 									xml
 								) {
 									var elem,
-										unmatched = matcher(seed, null, xml, []),
+										unmatched = matcher(
+											seed,
+											null,
+											xml,
+											[]
+										),
 										i = seed.length;
 
 									// Match elements unmatched by `matcher`
@@ -4428,7 +4446,10 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 							// We can't set arbitrary data on XML nodes, so they don't benefit from combinator caching
 							if (xml) {
 								while ((elem = elem[dir])) {
-									if (elem.nodeType === 1 || checkNonElements) {
+									if (
+										elem.nodeType === 1 ||
+										checkNonElements
+									) {
 										if (matcher(elem, context, xml)) {
 											return true;
 										}
@@ -4436,9 +4457,13 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 								}
 							} else {
 								while ((elem = elem[dir])) {
-									if (elem.nodeType === 1 || checkNonElements) {
+									if (
+										elem.nodeType === 1 ||
+										checkNonElements
+									) {
 										outerCache =
-											elem[expando] || (elem[expando] = {});
+											elem[expando] ||
+											(elem[expando] = {});
 
 										// Support: IE <9 only
 										// Defend against cloned attroperties (jQuery gh-1709)
@@ -6015,7 +6040,9 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 													if (depth + 1 >= maxDepth) {
 														// Only substitute handlers pass on context
 														// and multiple values (non-spec behavior)
-														if (handler !== Thrower) {
+														if (
+															handler !== Thrower
+														) {
 															that = undefined;
 															args = [e];
 														}
@@ -11495,7 +11522,10 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 		ajaxSetup: function(target, settings) {
 			return settings
 				? // Building a settings object
-					ajaxExtend(ajaxExtend(target, jQuery.ajaxSettings), settings)
+					ajaxExtend(
+						ajaxExtend(target, jQuery.ajaxSettings),
+						settings
+					)
 				: // Extending ajaxSettings
 					ajaxExtend(jQuery.ajaxSettings, target);
 		},

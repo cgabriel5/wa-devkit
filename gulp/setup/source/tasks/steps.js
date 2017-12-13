@@ -191,6 +191,35 @@ gulp.task("init:remove-setup", function(done) {
 
 // initialization step
 // @internal
+gulp.task("init:create-bundles", function(done) {
+	// create the CSS/JS bundles before
+	cmd.get(
+		`gulp js:app && gulp js:vendor && gulp css:app && gulp css:vendor`,
+		function(err, data, test) {
+			if (err) {
+				throw err;
+			}
+			// all bundles made now end
+			done();
+		}
+	);
+});
+
+// initialization step
+// @internal
+gulp.task("init:pretty", function(done) {
+	// create the CSS/JS bundles before
+	cmd.get(`gulp pretty`, function(err, data) {
+		if (err) {
+			throw err;
+		}
+		// end the task
+		done();
+	});
+});
+
+// initialization step
+// @internal
 gulp.task("init:git", function(done) {
 	// git init new project
 	git.init("", function() {

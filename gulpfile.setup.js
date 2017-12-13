@@ -185,6 +185,7 @@ gulp.task("init", function(done) {
 					"init:setup-readme",
 					"init:rename-gulpfile",
 					"init:remove-setup",
+					"init:create-bundles",
 					"init:pretty",
 					"init:git"
 				];
@@ -407,6 +408,35 @@ gulp.task("init:remove-setup", function(done) {
 
 // initialization step
 // @internal
+gulp.task("init:create-bundles", function(done) {
+	// create the CSS/JS bundles before
+	cmd.get(
+		`gulp js:app && gulp js:vendor && gulp css:app && gulp css:vendor`,
+		function(err, data, test) {
+			if (err) {
+				throw err;
+			}
+			// all bundles made now end
+			done();
+		}
+	);
+});
+
+// initialization step
+// @internal
+gulp.task("init:pretty", function(done) {
+	// create the CSS/JS bundles before
+	cmd.get(`gulp pretty`, function(err, data) {
+		if (err) {
+			throw err;
+		}
+		// end the task
+		done();
+	});
+});
+
+// initialization step
+// @internal
 gulp.task("init:git", function(done) {
 	// git init new project
 	git.init("", function() {
@@ -456,76 +486,6 @@ gulp.task("init:git", function(done) {
 	});
 });
 
-//#! pretty.js -- ./gulp/setup/source/helpers/pretty.js
-
-// beautify html, js, css, & json files
-// @internal
-gulp.task("pretty", function(done) {
-	var unprefix = require("postcss-unprefix");
-	var autoprefixer = require("autoprefixer");
-	var perfectionist = require("perfectionist");
-	var shorthand = require("postcss-merge-longhand");
-
-	// default files to clean:
-	// HTML, CSS, JS, and JSON files. exclude files containing
-	// a ".min." as this is the convention used for minified files.
-	// the node_modules/, .git/, and all vendor/ files are also excluded.
-	var files = [
-		$paths.files_common,
-		$paths.not_min,
-		bangify(globall($paths.node_modules_name)),
-		bangify(globall($paths.git)),
-		$paths.not_vendor,
-		$paths.not_ignore
-	];
-
-	// get needed files
-	pump(
-		[
-			gulp.src(files, {
-				dot: true,
-				base: $paths.base_dot
-			}),
-			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify($jsbeautify)),
-			$.gulpif(
-				function(file) {
-					// file must be a JSON file and cannot contain the
-					// comment (.cm.) sub-extension to be sortable as
-					// comments are not allowed in JSON files.
-					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
-						? true
-						: false;
-				},
-				$.json_sort({
-					space: jindent
-				})
-			),
-			$.gulpif(function(file) {
-				// exclude HTML and CSS files
-				return ext(file, ["html", "css"]) ? false : true;
-			}, $.prettier($prettier)),
-			$.gulpif(
-				ext.iscss,
-				$.postcss([
-					unprefix(),
-					shorthand(),
-					autoprefixer($ap),
-					perfectionist($perfectionist)
-				])
-			),
-			$.eol(EOL_ENDING),
-			$.debug.edit(),
-			gulp.dest($paths.base)
-		],
-		done
-	);
-});
-
-// initialization step::alias
-// @internal
-gulp.task("init:pretty", ["pretty"]);
-
 //#! make.js -- ./gulp/setup/source/helpers/make.js
 
 // build gulpfile.setup.js
@@ -539,7 +499,6 @@ gulp.task("make", function(done) {
 		"functions.js",
 		"tasks/init.js",
 		"tasks/steps.js",
-		"helpers/pretty.js",
 		"helpers/make.js"
 	];
 	pump(

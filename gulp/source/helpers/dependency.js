@@ -107,9 +107,7 @@ gulp.task("dependency", function(done) {
 	if (action === "add" && !de.sync(module_path)) {
 		log("The module", chalk.magenta(`${module_path}`), "does not exist.");
 		log(
-			`First install by running "$ yarn add ${
-				name
-			} --dev". Then try adding the dependency again.`
+			`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`
 		);
 		return done();
 	} else if (action === "remove" && !de.sync(delete_path)) {

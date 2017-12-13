@@ -66,6 +66,7 @@ gulp.task("init", function(done) {
 					"init:setup-readme",
 					"init:rename-gulpfile",
 					"init:remove-setup",
+					"init:create-bundles",
 					"init:pretty",
 					"init:git"
 				];
