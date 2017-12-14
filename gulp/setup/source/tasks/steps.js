@@ -199,7 +199,9 @@ gulp.task("init:create-bundles", function(done) {
 			if (err) {
 				throw err;
 			}
-			// all bundles made now end
+			// highlight data string
+			console.log(cli_highlight(data));
+			// end the task
 			done();
 		}
 	);
@@ -213,6 +215,8 @@ gulp.task("init:pretty", function(done) {
 		if (err) {
 			throw err;
 		}
+		// highlight data string
+		console.log(cli_highlight(data));
 		// end the task
 		done();
 	});
