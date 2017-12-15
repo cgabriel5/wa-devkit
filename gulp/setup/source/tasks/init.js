@@ -1,10 +1,19 @@
-// @internal
+/**
+ * The default Gulp task. As this file is the Gulp setup file this task
+ *     does nothing but tell the user to run the init task before running
+ *     the default task. The init task will ask questions to setup the
+ *     project.
+ */
 gulp.task("default", function(done) {
 	// show the user the init message
 	log('Run "$ gulp init" before running Gulp\'s default command.');
 	done();
 });
 
+/**
+ * Ask user questions and setup the project based on the replies. The
+ *     initialization steps are shown down below.
+ */
 gulp.task("init", function(done) {
 	// cache task
 	var task = this;
@@ -59,8 +68,12 @@ gulp.task("init", function(done) {
 				var tasks = [
 					"init:settings-internal",
 					"init:settings-main",
+					// !-- The following 2 tasks are only ran
+					// for library type projects. They are
+					// removed for webapp projects.
 					"init:remove-webapp-files",
 					"init:add-library-files",
+					// --!
 					"init:create-license",
 					"init:fill-placeholders",
 					"init:setup-readme",

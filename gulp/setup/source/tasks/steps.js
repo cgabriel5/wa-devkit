@@ -1,5 +1,12 @@
-// initialization step
-// @internal
+/**
+ * This initialization step takes the internal JSON object export and saves
+ *     it into the configs/ directory.
+ *
+ * Notes
+ *
+ * • This file (._internal.json) is used internally and should not be
+ *     modified.
+ */
 gulp.task("init:settings-internal", function(done) {
 	// save the $internal JSON object
 	fs.writeFile(
@@ -11,8 +18,10 @@ gulp.task("init:settings-internal", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step combines all the config files under configs/
+ *     to generate the collective ._settings.js file.
+ */
 gulp.task("init:settings-main", function(done) {
 	// make the main settings file
 	pump(
@@ -32,8 +41,10 @@ gulp.task("init:settings-main", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step is only ran when setting up a library project.
+ *     It removes all webapp files as the project is defaulted to a webapp.
+ */
 gulp.task("init:remove-webapp-files", function(done) {
 	// only when apptype is library:
 	// replace ./js/source/ to later add the needed library
@@ -53,8 +64,11 @@ gulp.task("init:remove-webapp-files", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step is only ran when setting up a library project.
+ *     As the project is defaulted to a webapp it adds the needed library
+ *     project files.
+ */
 gulp.task("init:add-library-files", function(done) {
 	// copy the library project files from the setup
 	// directory into the ./js/ directory. this will
@@ -74,8 +88,10 @@ gulp.task("init:add-library-files", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step creates the user selected license and inserts
+ *     the provided data (year, name, etc.).
+ */
 gulp.task("init:create-license", function(done) {
 	// generate the license
 	license($paths.base, __data__.license, {
@@ -113,8 +129,10 @@ gulp.task("init:create-license", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step inserts any placeholders with the provided
+ *    data.
+ */
 gulp.task("init:fill-placeholders", function(done) {
 	// replace placeholder with real data
 	pump(
@@ -137,8 +155,10 @@ gulp.task("init:fill-placeholders", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step moves the readme template export to its setup
+ *     location to the root.
+ */
 gulp.task("init:setup-readme", function(done) {
 	// move templates to new locations
 	pump(
@@ -152,8 +172,10 @@ gulp.task("init:setup-readme", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step renames the main gulpfile to the conventional
+ *     Gulp file name.
+ */
 gulp.task("init:rename-gulpfile", function(done) {
 	// rename the gulpfile.main.js to gulpfile.js
 	pump(
@@ -171,8 +193,10 @@ gulp.task("init:rename-gulpfile", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step removes all setup files as they are no longer
+ *     needed in the further steps.
+ */
 gulp.task("init:remove-setup", function(done) {
 	// remove the setup files/folders/old .git folder
 	pump(
@@ -189,8 +213,11 @@ gulp.task("init:remove-setup", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step runs gulpfile.js, formerly gulpfile.main.js,
+ *     Gulp tasks. More specifically, it runs the tasks that generate the
+ *     project CSS/JS bundles.
+ */
 gulp.task("init:create-bundles", function(done) {
 	// create the CSS/JS bundles before
 	cmd.get(
@@ -207,8 +234,11 @@ gulp.task("init:create-bundles", function(done) {
 	);
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step runs the gulpfile.js, formerly gulpfile.main.js,
+ *     pretty task. This task runs through all the project files and pretty
+ *     prints them.
+ */
 gulp.task("init:pretty", function(done) {
 	// create the CSS/JS bundles before
 	cmd.get(`gulp pretty`, function(err, data) {
@@ -222,8 +252,10 @@ gulp.task("init:pretty", function(done) {
 	});
 });
 
-// initialization step
-// @internal
+/**
+ * This initialization step programmatically makes the first projecy Git
+ *     commit and lightly configures Git with useful settings.
+ */
 gulp.task("init:git", function(done) {
 	// git init new project
 	git.init("", function() {

@@ -1,5 +1,6 @@
-// build gulpfile.setup.js
-// @internal
+/**
+ * Build gulpfile.setup.js from source.
+ */
 gulp.task("make", function(done) {
 	var files = [
 		"requires.js",
