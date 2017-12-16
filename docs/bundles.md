@@ -6,24 +6,24 @@ Gulp use the file paths found in `./configs/gulp/bundles.json` when building bun
 
 Using the `css` bundle object as an example...
 
-```js
-css: {
-    source: {
-        files: [
+```json
+"css": {
+    "source": {
+        "files": [
             "helpers.css",
             "styles.css"
         ],
-        names: {
-            main: "app.css"
+        "names": {
+            "main": "app.css"
         }
     },
-    vendor: {
-        files: [
+    "vendor": {
+        "files": [
             "css/vendor/sanitize.css/sanitize.css",
             "css/vendor/font-awesome/css/font-awesome.css"
         ],
-        names: {
-            main: "vendor.css"
+        "names": {
+            "main": "vendor.css"
         }
     }
 }
