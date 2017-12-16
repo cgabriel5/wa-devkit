@@ -46,6 +46,7 @@ var pump = require("pump");
 var yargs = require("yargs");
 var chalk = require("chalk");
 var dir = require("node-dir");
+var cmd = require("node-cmd");
 var mkdirp = require("mkdirp");
 var fe = require("file-exists");
 var json = require("json-file");
