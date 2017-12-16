@@ -1,4 +1,4 @@
-//#! requires.js -- ./gulp/source/requires.js
+//#! requires.js -- ./gulp/main/source/requires.js
 
 /*jshint esversion: 6 */
 /*jshint bitwise: false*/
@@ -72,7 +72,7 @@ var ext = utils.ext;
 var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
 
-//#! paths.js -- ./gulp/source/paths.js
+//#! paths.js -- ./gulp/main/source/paths.js
 
 // get and fill in path placeholders
 var $paths = expand_paths(
@@ -92,7 +92,7 @@ var $paths = expand_paths(
 	)
 );
 
-//#! configs.js -- ./gulp/source/configs.js
+//#! configs.js -- ./gulp/main/source/configs.js
 
 // dynamic configuration files (load via json-file to modify later)
 var $internal = json.read($paths.config_internal);
@@ -142,7 +142,7 @@ if (fe.sync($paths.config_settings)) {
 	}
 }
 
-//#! vars.js -- ./gulp/source/vars.js
+//#! vars.js -- ./gulp/main/source/vars.js
 
 // get JSON indentation size
 var jindent = get($configs, "json_format.indent_size", "\t");
@@ -183,7 +183,7 @@ var opts_remove = {
 	cwd: $paths.base
 };
 
-//#! injection.js -- ./gulp/source/injection.js
+//#! injection.js -- ./gulp/main/source/injection.js
 
 // HTML injection variable object
 var html_injection = {
@@ -196,7 +196,7 @@ var html_injection = {
 		$paths.js_bundles + get(bundle_js, "vendor.names.main", "")
 };
 
-//#! functions.js -- ./gulp/source/functions.js
+//#! functions.js -- ./gulp/main/source/functions.js
 
 /**
  * Opens the provided file in the user's browser.
@@ -244,7 +244,7 @@ function gulp_check_warn() {
 	);
 }
 
-//#! init.js -- ./gulp/source/tasks/init.js
+//#! init.js -- ./gulp/main/source/tasks/init.js
 
 /**
  * When gulp is closed, either on error, crash, or intentionally, do
@@ -487,7 +487,7 @@ gulp.task("default", function(done) {
 	}
 });
 
-//#! dist.js -- ./gulp/source/tasks/dist.js
+//#! dist.js -- ./gulp/main/source/tasks/dist.js
 
 /**
  * Remove old dist/ folder.
@@ -647,7 +647,7 @@ gulp.task("dist", function(done) {
 	return sequence.apply(task, tasks);
 });
 
-//#! lib.js -- ./gulp/source/tasks/lib.js
+//#! lib.js -- ./gulp/main/source/tasks/lib.js
 
 /**
  * Remove old lib/ folder.
@@ -713,7 +713,7 @@ gulp.task("lib", function(done) {
 	return sequence.apply(task, tasks);
 });
 
-//#! watch.js -- ./gulp/source/tasks/watch.js
+//#! watch.js -- ./gulp/main/source/tasks/watch.js
 
 /**
  * Watch for files changes.
@@ -841,7 +841,7 @@ gulp.task("watch:main", function(done) {
 	);
 });
 
-//#! html.js -- ./gulp/source/tasks/html.js
+//#! html.js -- ./gulp/main/source/tasks/html.js
 
 /**
  * Init HTML files + minify.
@@ -865,7 +865,7 @@ gulp.task("html:main", function(done) {
 	);
 });
 
-//#! css.js -- ./gulp/source/tasks/css.js
+//#! css.js -- ./gulp/main/source/tasks/css.js
 
 /**
  * Build app.css + autoprefix + minify.
@@ -929,7 +929,7 @@ gulp.task("css:vendor", function(done) {
 	);
 });
 
-//#! js.js -- ./gulp/source/tasks/js.js
+//#! js.js -- ./gulp/main/source/tasks/js.js
 
 /**
  * Build app.js + minify + beautify.
@@ -973,7 +973,7 @@ gulp.task("js:vendor", function(done) {
 	);
 });
 
-//#! img.js -- ./gulp/source/tasks/img.js
+//#! img.js -- ./gulp/main/source/tasks/img.js
 
 /**
  * Just trigger a browser-sync stream.
@@ -984,7 +984,7 @@ gulp.task("img:main", function(done) {
 	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], done);
 });
 
-//#! modernizr.js -- ./gulp/source/helpers/modernizr.js
+//#! modernizr.js -- ./gulp/main/source/helpers/modernizr.js
 
 /**
  * Build Modernizr file.
@@ -1016,7 +1016,7 @@ gulp.task("modernizr", function(done) {
 	});
 });
 
-//#! tohtml.js -- ./gulp/source/helpers/tohtml.js
+//#! tohtml.js -- ./gulp/main/source/helpers/tohtml.js
 
 /**
  * Variable is declared outside of tasks to use be able to use in
@@ -1185,7 +1185,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	);
 });
 
-//#! open.js -- ./gulp/source/helpers/open.js
+//#! open.js -- ./gulp/main/source/helpers/open.js
 
 /**
  * task: open
@@ -1249,7 +1249,7 @@ gulp.task("open", function(done) {
 	return open_file_in_browser(file, port, done, task);
 });
 
-//#! instance.js -- ./gulp/source/helpers/instance.js
+//#! instance.js -- ./gulp/main/source/helpers/instance.js
 
 /**
  * Print whether there is an active Gulp instance.
@@ -1293,7 +1293,7 @@ gulp.task("ports", function(done) {
 	done();
 });
 
-//#! pretty.js -- ./gulp/source/helpers/pretty.js
+//#! pretty.js -- ./gulp/main/source/helpers/pretty.js
 
 /**
  * Beautify all HTML, JS, CSS, and JSON project files.
@@ -1496,7 +1496,7 @@ gulp.task("pretty", function(done) {
 	);
 });
 
-//#! eol.js -- ./gulp/source/helpers/eol.js
+//#! eol.js -- ./gulp/main/source/helpers/eol.js
 
 /**
  * Correct file line endings.
@@ -1553,7 +1553,7 @@ gulp.task("eol", function(done) {
 	);
 });
 
-//#! stats.js -- ./gulp/source/helpers/stats.js
+//#! stats.js -- ./gulp/main/source/helpers/stats.js
 
 /**
  * Prints table containing project file type breakdown.
@@ -1643,7 +1643,7 @@ gulp.task("stats", function(done) {
 	);
 });
 
-//#! files.js -- ./gulp/source/helpers/files.js
+//#! files.js -- ./gulp/main/source/helpers/files.js
 
 /**
  * List project files.
@@ -1791,7 +1791,7 @@ gulp.task("files", function(done) {
 	});
 });
 
-//#! dependency.js -- ./gulp/source/helpers/dependency.js
+//#! dependency.js -- ./gulp/main/source/helpers/dependency.js
 
 /**
  * Add/remove front-end dependencies.
@@ -1953,7 +1953,7 @@ gulp.task("dependency", function(done) {
 	});
 });
 
-//#! make.js -- ./gulp/source/helpers/make.js
+//#! make.js -- ./gulp/main/source/helpers/make.js
 
 /**
  * Build gulpfile from source files.
@@ -1998,7 +1998,7 @@ gulp.task("make", function(done) {
 	);
 });
 
-//#! jshint.js -- ./gulp/source/helpers/jshint.js
+//#! jshint.js -- ./gulp/main/source/helpers/jshint.js
 
 /**
  * Run jshint on a file.
@@ -2041,7 +2041,7 @@ gulp.task("jshint", function(done) {
 	);
 });
 
-//#! csslint.js -- ./gulp/source/helpers/csslint.js
+//#! csslint.js -- ./gulp/main/source/helpers/csslint.js
 
 /**
  * Run csslint on a file.
@@ -2083,7 +2083,7 @@ gulp.task("csslint", function(done) {
 	);
 });
 
-//#! htmllint.js -- ./gulp/source/helpers/htmllint.js
+//#! htmllint.js -- ./gulp/main/source/helpers/htmllint.js
 
 /**
  * Run htmllint on a file.
@@ -2140,7 +2140,7 @@ gulp.task("hlint", function(done) {
 	);
 });
 
-//#! settings.js -- ./gulp/source/helpers/settings.js
+//#! settings.js -- ./gulp/main/source/helpers/settings.js
 
 /**
  * Build ./configs/._settings.json
@@ -2177,7 +2177,7 @@ gulp.task("settings", function(done) {
 	);
 });
 
-//#! indent.js -- ./gulp/source/helpers/indent.js
+//#! indent.js -- ./gulp/main/source/helpers/indent.js
 
 /**
  * Indent all JS files with tabs or spaces.
@@ -2268,7 +2268,7 @@ gulp.task("indent", function(done) {
 	);
 });
 
-//#! help.js -- ./gulp/source/helpers/help.js
+//#! help.js -- ./gulp/main/source/helpers/help.js
 
 /**
  * Provides Gulp task documentation (this documentation).
@@ -2528,7 +2528,7 @@ gulp.task("help", function(done) {
 	);
 });
 
-//#! favicon.js -- ./gulp/source/helpers/favicon.js
+//#! favicon.js -- ./gulp/main/source/helpers/favicon.js
 
 /**
  * Generate the favicon icons.

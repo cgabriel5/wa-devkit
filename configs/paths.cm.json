@@ -17,7 +17,7 @@
 	"img_source": "${homedir}img/**/*.*",
 	// paths.gulp
 	// "gulp_home": "${homedir}gulp/",
-	"gulp_source": "${homedir}gulp/source/",
+	"gulp_source": "${homedir}gulp/main/source/",
 	// paths.markdown (tohtml:prepcss)
 	"markdown_preview": "${homedir}markdown/previews/",
 	"markdown_styles_github": "github-markdown.css",
