@@ -4,14 +4,14 @@
 
 ### Example
 
-In the following example the the `./README.md` is converted to `html` and stored under `markdown/previews/README.html`.
+In the following example [`./README.md`](/README.md) is converted to `README.html` and stored under `markdown/previews/README.html`.
 
-```bash
+```
 $ gulp tohtml --file "README.md"
 ```
 
 Once created the file can be manually opened in a browser or be opened by using the Gulp `open` task.
 
-```bash
+```
 $ gulp open --file "markdown/previews/tohtml.html"
 ```

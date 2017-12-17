@@ -12,14 +12,14 @@ If needed, the project can inject contents from a `file` or a Javascript `object
 ### Syntax
 
 ```
-$:pre{<file_name>}       <!-- pre file-content injection -->
-$:pre{$<variable_name>}  <!-- pre variable-injection -->
+$:pre{<file_name>}        # Pre file-content injection.
+$:pre{$<variable_name>}   # Pre variable-injection.
 
-$:post{<file_name>}      <!-- post file-content injection -->
-$:post{$<variable_name>} <!-- post variable-injection -->
+$:post{<file_name>}       # Post file-content injection.
+$:post{$<variable_name>}  # Post variable-injection.
 
-${<file_name>}      	 <!-- any time file-content injection -->
-${$<variable_name>} 	 <!-- any time variable-injection -->
+${<file_name>}            # Any time file-content injection.
+${$<variable_name>}       # Any time variable-injection.
 ```
 
 <a name="file-injection"></a>
@@ -65,7 +65,7 @@ gulp.task("my_task", function(done) {
 });
 ```
 
-**Note**: The project will look for a file under `./html/injection/`. In this case for `./html/injection/injection_example.text`. If found, it will inject the contents of the file into its injection placeholder. When a file is not found it will injection `undefined`.
+**Note**: The project will look for a file under [`./html/injection/`](/html/injection/). In this case for `./html/injection/injection_example.text`. If found, it will inject the contents of the file into its injection placeholder. When a file is not found it will injection `undefined`.
 
 After, `my_html_file.html` will look like this:
 

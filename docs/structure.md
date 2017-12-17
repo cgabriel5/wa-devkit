@@ -1,6 +1,6 @@
 # Project Structure
 
-**Note**: Directory structure can be modified to ones liking. Files can be broken up and modularized in any way or not at all. Whatever changes are made the paths in [`./configs/gulp/bundles.json`](`./configs/gulp/bundles.json`) _must_ also match the new file structure.
+**Note**: Directory structure can be modified to ones liking. Files can be broken up and modularized in any way or not at all. Whatever changes are made the paths in [`./configs/bundles.json`](/configs/bundles.json) _must_ also match the new file structure.
 
 ##### Table of Contents
 
@@ -45,10 +45,10 @@
 <a name="html-break-down"></a>
 ### Break-Down
 
-- `./html/injection/` where HTML injection files should go.
+- [`./html/injection/`](/html/injection/) where HTML injection files should go.
 	- More information on HTML content injection can be found [here](./injection.md).
-- `./html/source/` where source HTML files should go.
-	- Files will build `./index.html`.
+- [`./html/source/`](/html/source/) where source HTML files should go.
+	- Files will build [`./index.html`](/index.html).
 
 <a name="css-directory"></a>
 ## CSS Directory
@@ -79,17 +79,17 @@
 <a name="css-break-down"></a>
 ### Break-Down
 
-- `css/assets/` where all vendor and vendor specific assets go. 
-- `css/bundles/` where Gulp made bundled files will be placed.
-	- `app.css` source bundled CSS file.
-	- `vendor.css` vendor bundled CSS file.
-- `css/source/` where your project CSS files should go.
-	- `helpers.css` helper CSS file.
-	- `styles.css` app specific CSS file.
-	- Files will build `./css/bundles/app.css`.
-- `css/vendor/` where vendor CSS files should go.
-	- Files will build `./css/bundles/vendor.css`.
-	- Uses `sanitize.css` by default. Can be switched to `normalize.css`.
+- [`./css/assets/`](/css/assets/) where all vendor and vendor specific assets go. 
+- [`./css/bundles/`](/css/bundles/) where Gulp made bundled files will be placed.
+	- [`app.css`](css/bundles/app.css) source bundled CSS file.
+	- [`vendor.css`](css/bundles/vendor.css) vendor bundled CSS file.
+- [`./css/source/`](/css/source/) where your project CSS files should go.
+	- [`helpers.css`](/css/source/helpers.css) helper CSS file.
+	- [`styles.css`](/css/source/styles.css) app specific CSS file.
+	- Files will build [`./css/bundles/app.css`](/css/bundles/app.css).
+- [`./css/vendor/`](/css/vendor/) where vendor CSS files should go.
+	- Files will build [`./css/bundles/vendor.css`](/css/bundles/vendor.css).
+	- Uses [`sanitize.css`](http://jonathantneal.github.io/sanitize.css/) by default. Can be switched to [`normalize.css`](https://necolas.github.io/normalize.css/).
 
 <a name="js-directory"></a>
 ## JS Directory
@@ -133,15 +133,15 @@
 <a name="javascript-break-down"></a>
 ### Break-Down
 
-- `./js/assets/` where all vendor specific assets go. 
-- `./js/bundles/` where Gulp made bundled files will be placed.
-	- `app.js` source bundled JS file.
-	- `vendor.js` vendor bundled JS file.
-- `./js/source/` where your project JS files should go.
-	- Files will build `./js/bundles/app.js`.
-	- `modules/` are explained [here](/docs/modules.md)
-- `./js/vendor/` where vendor JS files should go.
-	- Files will build `./js/bundles/vendor.js`.
+- [`./js/assets/`](/js/assets/) where all vendor specific assets go. 
+- [`./js/bundles/`](/js/bundles/) where Gulp made bundled files will be placed.
+	- [`app.js`](/js/bundles/app.js) source bundled JS file.
+	- [`vendor.js`](/js/bundles/vendor.js) vendor bundled JS file.
+- [`./js/source/`](/js/source/) where your project JS files should go.
+	- Files will build [`./js/bundles/app.js`](/js/bundles/app.js).
+	- [`modules/`](/js/source/modules/) are explained [here](/docs/modules.md)
+- [`./js/vendor/`](/js/vendor/) where vendor JS files should go.
+	- Files will build [`./js/bundles/vendor.js`](/js/bundles/vendor.js).
 
 <a name="img-directory"></a>
 ## Img Directory
@@ -156,7 +156,7 @@
 <a name="img-break-down"></a>
 ### Break-Down
 
-- `img/` directory contains a `README.md` placeholder and is otherwise empty.
+- [`img/`](/img/) directory contains a [`README.md`](/img/README.md) placeholder and is otherwise empty.
 
 <a name="gulp-directory"></a>
 ## Gulp Directory
@@ -210,8 +210,8 @@
 <a name="gulp-break-down"></a>
 ### Break-Down
 
-- `./gulp/assets/` any assets needed for `gulpfile.js`.
-- `./gulp/source/` source files that build `./gulpfile.js`.
+- [`./gulp/assets/`](/gulp/assets/) any assets needed for [`./gulpfile.js`](/gulpfile.js).
+- [`./gulp/main/source/`](/gulp/main/source/) source files that build [`./gulpfile.js`](/gulpfile.js).
 
 <a name="configs-directory"></a>
 ## Configs Directory
@@ -246,9 +246,9 @@
 <a name="configs-break-down"></a>
 ### Break-Down
 
-- `./configs/` project configuration files.
-- `./configs/._settings.json` generated on project setup and should really not be modified.
-- `./configs/._internal.json` generated on project setup and should _not_ be modified.
+- [`./configs/`](/configs/) project configuration files.
+- [`./configs/._settings.json`](/configs/._settings.json) generated on project setup and should really not be modified.
+- [`./configs/._internal.json`](/configs/._internal.json) generated on project setup and should **not** be modified.
 
 <a name="markdown-directory"></a>
 ## Markdown Directory
@@ -268,8 +268,8 @@
 <a name="markdown-break-down"></a>
 ### Break-Down
 
-- `./markdown/assets/` assets needed for the Gulp `tohtml` task which converts `.md` files to `.html`.
-- `./markdown/previews/` `tohtml` file conversions will get placed here. File can be opened in your browser using the project's Gulp `open` command or right clicking opening/dragging file into your browser.
+- [`./markdown/assets/`](/markdown/assets/) assets needed for the Gulp `tohtml` task which converts `.md` files to `.html`.
+- [`./markdown/previews/`](/markdown/previews/) `tohtml` file conversions will get placed here. File can be opened in your browser using the project's Gulp `open` command or right clicking opening/dragging file into your browser.
 
 <a name="favicon-directory"></a>
 ## Favicon Directory
@@ -284,8 +284,8 @@
 <a name="favicon-break-down"></a>
 ### Break-Down
 
-- `./favicon/` generated favicons using the Gulp task `favicon` are placed here.
-- `favicon/` favicons are generated via [`gulp-real-favicon`](https://github.com/RealFaviconGenerator/gulp-real-favicon) and placed in this folder.
+- [`./favicon/`](/favicon/) generated favicons using the Gulp task `favicon` are placed here.
+- [`./favicon/`](/favicon/) favicons are generated via [`gulp-real-favicon`](https://github.com/RealFaviconGenerator/gulp-real-favicon) and placed in this folder.
 
 <a name="root-directory"></a>
 ## Root Directory
@@ -315,5 +315,5 @@
 <a name="root-break-down"></a>
 ### Break-Down
 
-- `./` list of `root` files.
-- `./` root files are self explanatory.
+- [`./`](/../../) list of `root` files.
+- [`./`](/../../) root files are self explanatory.
