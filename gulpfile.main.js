@@ -1,11 +1,11 @@
 //#! requires.js -- ./gulp/main/source/requires.js
 
-/*jshint esversion: 6 */
 /*jshint bitwise: false*/
 /*jshint browser: false*/
+/*jshint esversion: 6 */
 /*jshint node: true*/
-/*jshint -W018 */
 /*jshint -W014 */
+/*jshint -W018 */
 
 "use strict";
 
