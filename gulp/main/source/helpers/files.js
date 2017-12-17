@@ -42,22 +42,18 @@ gulp.task("files", function(done) {
 	var _args = yargs
 		.option("type", {
 			alias: "t",
-			demandOption: false,
 			type: "string"
 		})
 		.option("min", {
 			alias: "m",
-			demandOption: false,
 			type: "boolean"
 		})
 		.option("whereis", {
 			alias: "w",
-			demandOption: false,
 			type: "string"
 		})
 		.option("exact", {
 			alias: "e",
-			demandOption: false,
 			type: "boolean"
 		}).argv;
 

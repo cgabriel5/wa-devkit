@@ -68,27 +68,22 @@ gulp.task("pretty", function(done) {
 	var _args = yargs
 		.option("type", {
 			alias: "t",
-			demandOption: false,
 			type: "string"
 		})
 		.option("glob", {
 			alias: "g",
-			demandOption: false,
 			type: "array"
 		})
 		.option("show", {
 			alias: "s",
-			demandOption: false,
 			type: "boolean"
 		})
 		.option("empty", {
 			alias: "e",
-			demandOption: false,
 			type: "boolean"
 		})
 		.option("line-ending", {
 			alias: "l",
-			demandOption: false,
 			type: "string"
 		}).argv;
 	// get the command line arguments from yargs

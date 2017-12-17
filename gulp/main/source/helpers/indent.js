@@ -26,11 +26,9 @@ gulp.task("indent", function(done) {
 	// run yargs
 	var _args = yargs
 		.option("style", {
-			demandOption: false,
 			type: "string"
 		})
 		.option("size", {
-			demandOption: false,
 			type: "number"
 		}).argv;
 

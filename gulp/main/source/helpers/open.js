@@ -39,7 +39,6 @@ gulp.task("open", function(done) {
 		})
 		.option("port", {
 			alias: "p",
-			demandOption: false,
 			type: "number"
 		}).argv;
 

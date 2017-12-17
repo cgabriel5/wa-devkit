@@ -1226,7 +1226,6 @@ gulp.task("open", function(done) {
 		})
 		.option("port", {
 			alias: "p",
-			demandOption: false,
 			type: "number"
 		}).argv;
 
@@ -1363,27 +1362,22 @@ gulp.task("pretty", function(done) {
 	var _args = yargs
 		.option("type", {
 			alias: "t",
-			demandOption: false,
 			type: "string"
 		})
 		.option("glob", {
 			alias: "g",
-			demandOption: false,
 			type: "array"
 		})
 		.option("show", {
 			alias: "s",
-			demandOption: false,
 			type: "boolean"
 		})
 		.option("empty", {
 			alias: "e",
-			demandOption: false,
 			type: "boolean"
 		})
 		.option("line-ending", {
 			alias: "l",
-			demandOption: false,
 			type: "string"
 		}).argv;
 	// get the command line arguments from yargs
@@ -1516,7 +1510,6 @@ gulp.task("eol", function(done) {
 	// run yargs
 	var _args = yargs.option("line-ending", {
 		alias: "l",
-		demandOption: false,
 		type: "string"
 	}).argv;
 	// get the command line arguments from yargs
@@ -1687,22 +1680,18 @@ gulp.task("files", function(done) {
 	var _args = yargs
 		.option("type", {
 			alias: "t",
-			demandOption: false,
 			type: "string"
 		})
 		.option("min", {
 			alias: "m",
-			demandOption: false,
 			type: "boolean"
 		})
 		.option("whereis", {
 			alias: "w",
-			demandOption: false,
 			type: "string"
 		})
 		.option("exact", {
 			alias: "e",
-			demandOption: false,
 			type: "boolean"
 		}).argv;
 
@@ -2205,11 +2194,9 @@ gulp.task("indent", function(done) {
 	// run yargs
 	var _args = yargs
 		.option("style", {
-			demandOption: false,
 			type: "string"
 		})
 		.option("size", {
-			demandOption: false,
 			type: "number"
 		}).argv;
 

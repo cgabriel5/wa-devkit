@@ -18,7 +18,6 @@ gulp.task("eol", function(done) {
 	// run yargs
 	var _args = yargs.option("line-ending", {
 		alias: "l",
-		demandOption: false,
 		type: "string"
 	}).argv;
 	// get the command line arguments from yargs
