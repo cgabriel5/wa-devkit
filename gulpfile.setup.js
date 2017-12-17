@@ -159,7 +159,7 @@ function cli_highlight(string) {
 	output = output.replace(/(\d+ items?)/g, chalk.green("$1"));
 	// color symbols
 	output = output.replace(/(✎)/g, chalk.yellow("$1"));
-	output = output.replace(/(🗑 )/g, chalk.red("$1"));
+	output = output.replace(/(🗑)/g, chalk.red("$1"));
 
 	return output;
 }
