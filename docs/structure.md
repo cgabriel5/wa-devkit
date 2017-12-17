@@ -1,6 +1,6 @@
 # Project Structure
 
-**Note**: Directory structure can be modified to ones liking. Files can be broken up and modularized in any way or not at all. Whatever changes are made the paths in `./configs/gulp/bundles.json` _must_ also match the new file structure.
+**Note**: Directory structure can be modified to ones liking. Files can be broken up and modularized in any way or not at all. Whatever changes are made the paths in [`./configs/gulp/bundles.json`](`./configs/gulp/bundles.json`) _must_ also match the new file structure.
 
 ##### Table of Contents
 
@@ -170,40 +170,41 @@
 │   ├── node-notifier/
 │   └── utils/
 │       └── utils.js
-└── source/
-    ├── configs.js
-    ├── functions.js
-    ├── helpers/
-    │   ├── csslint.js
-    │   ├── dependency.js
-    │   ├── eol.js
-    │   ├── favicon.js
-    │   ├── files.js
-    │   ├── help.js
-    │   ├── htmllint.js
-    │   ├── indent.js
-    │   ├── instance.js
-    │   ├── jshint.js
-    │   ├── make.js
-    │   ├── modernizr.js
-    │   ├── open.js
-    │   ├── pretty.js
-    │   ├── settings.js
-    │   ├── stats.js
-    │   └── tohtml.js
-    ├── injection.js
-    ├── paths.js
-    ├── requires.js
-    ├── tasks/
-    │   ├── css.js
-    │   ├── dist.js
-    │   ├── html.js
-    │   ├── img.js
-    │   ├── init.js
-    │   ├── js.js
-    │   ├── lib.js
-    │   └── watch.js
-    └── vars.js
+└── main/
+    └── source/
+        ├── configs.js
+        ├── functions.js
+        ├── helpers/
+        │   ├── csslint.js
+        │   ├── dependency.js
+        │   ├── eol.js
+        │   ├── favicon.js
+        │   ├── files.js
+        │   ├── help.js
+        │   ├── htmllint.js
+        │   ├── indent.js
+        │   ├── instance.js
+        │   ├── jshint.js
+        │   ├── make.js
+        │   ├── modernizr.js
+        │   ├── open.js
+        │   ├── pretty.js
+        │   ├── settings.js
+        │   ├── stats.js
+        │   └── tohtml.js
+        ├── injection.js
+        ├── paths.js
+        ├── requires.js
+        ├── tasks/
+        │   ├── css.js
+        │   ├── dist.js
+        │   ├── html.js
+        │   ├── img.js
+        │   ├── init.js
+        │   ├── js.js
+        │   ├── lib.js
+        │   └── watch.js
+        └── vars.js
 ```
 
 <a name="gulp-break-down"></a>
