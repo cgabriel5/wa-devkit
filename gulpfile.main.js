@@ -85,6 +85,7 @@ var $paths = expand_paths(
 		{
 			// add in the following paths
 			dirname: __dirname,
+			filename: __filename,
 			cwd: process.cwd(),
 			// store the project folder name
 			rootdir: path.basename(process.cwd())
@@ -169,7 +170,7 @@ var EOL_ENDING = get(EOL, "ending", "");
 var APPTYPE = $internal.get("apptype");
 
 // get the current Gulp file name
-var GULPFILE = path.basename(__filename);
+var GULPFILE = path.basename($paths.filename);
 
 // create browsersync server
 var bs = browser_sync.create(get($configs, "browsersync.server_name", ""));
@@ -1159,10 +1160,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 				$.modify({
 					fileModifier: function(file, contents) {
 						// get the converted HTML file name
-						var filename_rel = path.relative(
-							process.cwd(),
-							file.path
-						);
+						var filename_rel = path.relative($paths.cwd, file.path);
 						// run the open command as a shell command to not
 						// re-write the open code here as well.
 						cmd.get(
@@ -1722,7 +1720,7 @@ gulp.task("files", function(done) {
 	var files = [];
 
 	// get all project files
-	dir.files(__dirname, function(err, paths) {
+	dir.files($paths.dirname, function(err, paths) {
 		if (err) {
 			throw err;
 		}
@@ -1976,7 +1974,7 @@ gulp.task("make", function(done) {
 			$.debug(),
 			$.foreach(function(stream, file) {
 				var filename = path.basename(file.path);
-				var filename_rel = path.relative(process.cwd(), file.path);
+				var filename_rel = path.relative($paths.cwd, file.path);
 				return stream.pipe(
 					$.insert.prepend(
 						`//#! ${filename} -- ./${filename_rel}\n\n`
@@ -2111,7 +2109,7 @@ gulp.task("hlint", function(done) {
 
 	function reporter(filepath, issues) {
 		if (issues.length) {
-			filepath = path.relative(process.cwd(), filepath);
+			filepath = path.relative($paths.cwd, filepath);
 			issues.forEach(function(issue) {
 				// make sure the first letter is always capitalized
 				var first_letter = issue.msg[0];

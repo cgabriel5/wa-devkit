@@ -20,7 +20,7 @@ gulp.task("make", function(done) {
 			$.debug(),
 			$.foreach(function(stream, file) {
 				var filename = path.basename(file.path);
-				var filename_rel = path.relative(process.cwd(), file.path);
+				var filename_rel = path.relative($paths.cwd, file.path);
 				return stream.pipe(
 					$.insert.prepend(
 						`//#! ${filename} -- ./${filename_rel}\n\n`

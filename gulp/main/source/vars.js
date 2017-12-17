@@ -23,7 +23,7 @@ var EOL_ENDING = get(EOL, "ending", "");
 var APPTYPE = $internal.get("apptype");
 
 // get the current Gulp file name
-var GULPFILE = path.basename(__filename);
+var GULPFILE = path.basename($paths.filename);
 
 // create browsersync server
 var bs = browser_sync.create(get($configs, "browsersync.server_name", ""));

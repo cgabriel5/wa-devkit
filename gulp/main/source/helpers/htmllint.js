@@ -24,7 +24,7 @@ gulp.task("hlint", function(done) {
 
 	function reporter(filepath, issues) {
 		if (issues.length) {
-			filepath = path.relative(process.cwd(), filepath);
+			filepath = path.relative($paths.cwd, filepath);
 			issues.forEach(function(issue) {
 				// make sure the first letter is always capitalized
 				var first_letter = issue.msg[0];

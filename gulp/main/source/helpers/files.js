@@ -75,7 +75,7 @@ gulp.task("files", function(done) {
 	var files = [];
 
 	// get all project files
-	dir.files(__dirname, function(err, paths) {
+	dir.files($paths.dirname, function(err, paths) {
 		if (err) {
 			throw err;
 		}

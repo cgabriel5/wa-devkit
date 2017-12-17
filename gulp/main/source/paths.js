@@ -9,6 +9,7 @@ var $paths = expand_paths(
 		{
 			// add in the following paths
 			dirname: __dirname,
+			filename: __filename,
 			cwd: process.cwd(),
 			// store the project folder name
 			rootdir: path.basename(process.cwd())

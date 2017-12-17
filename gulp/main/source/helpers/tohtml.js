@@ -139,10 +139,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 				$.modify({
 					fileModifier: function(file, contents) {
 						// get the converted HTML file name
-						var filename_rel = path.relative(
-							process.cwd(),
-							file.path
-						);
+						var filename_rel = path.relative($paths.cwd, file.path);
 						// run the open command as a shell command to not
 						// re-write the open code here as well.
 						cmd.get(
