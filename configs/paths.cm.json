@@ -26,10 +26,10 @@
 	"markdown_concat_name": "markdown.css",
 	// paths.config_files
 	"config_home": "./${homedir}configs/",
-	"config_internal": "./${homedir}configs/._internal.json",
-	"config_settings": "./${homedir}configs/._settings.json",
+	"config_internal": "./${homedir}configs/.__internal.json",
+	"config_settings": "./${homedir}configs/.__settings.json",
 	"config_settings_json_files": "./${homedir}configs/**/*.json",
-	"config_settings_name": "._settings.json",
+	"config_settings_name": ".__settings.json",
 	"config_$perfectionist": "perfectionist",
 	"config_$findfreeport": "findfreeport",
 	"config_$autoprefixer": "autoprefixer",

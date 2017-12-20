@@ -142,7 +142,7 @@
 		"source": {
 			"files": [
 				"app/iife/open.ig.js",
-				"app/__init__.js",
+				"app/__init.js",
 				"modules/libs.js",
 				"modules/globals.js",
 				"modules/utils.js",

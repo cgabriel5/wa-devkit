@@ -467,7 +467,7 @@ gulp.task("default", function(done) {
 				$internal.write(
 					function() {
 						// store ports on the browser-sync object itself
-						bs._ports_ = [p1, p2]; // [app, ui]
+						bs.__ports = [p1, p2]; // [app, ui]
 						// after getting the free ports, finally run the
 						// build task
 						return sequence(
@@ -738,9 +738,9 @@ gulp.task("watch:main", function(done) {
 				filepath: INDEX,
 				https: $configs.open.https
 			}), // "markdown/preview/README.html"
-			port: bs._ports_[0],
+			port: bs.__ports[0],
 			ui: {
-				port: bs._ports_[1]
+				port: bs.__ports[1]
 			},
 			notify: false,
 			open: true
@@ -2130,7 +2130,7 @@ gulp.task("hlint", function(done) {
 //#! settings.js -- ./gulp/main/source/helpers/settings.js
 
 /**
- * Build ./configs/._settings.json
+ * Build ./configs/.__settings.json
  *
  * Flags
  *
@@ -2142,8 +2142,8 @@ gulp.task("hlint", function(done) {
  *
  * Usage
  *
- * $ gulp settings # Re-build ._settings.json
- * $ gulp settings --reconfig # Force the re-build ._settings.json when
+ * $ gulp settings # Re-build the settings file.
+ * $ gulp settings --reconfig # Force settings file re-build when
  *     the file gets deleted for whatever reason.
  */
 gulp.task("settings", function(done) {

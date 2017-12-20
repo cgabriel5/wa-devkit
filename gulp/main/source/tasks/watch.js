@@ -20,9 +20,9 @@ gulp.task("watch:main", function(done) {
 				filepath: INDEX,
 				https: $configs.open.https
 			}), // "markdown/preview/README.html"
-			port: bs._ports_[0],
+			port: bs.__ports[0],
 			ui: {
-				port: bs._ports_[1]
+				port: bs.__ports[1]
 			},
 			notify: false,
 			open: true

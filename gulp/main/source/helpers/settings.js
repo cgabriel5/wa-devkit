@@ -1,5 +1,5 @@
 /**
- * Build ./configs/._settings.json
+ * Build ./configs/.__settings.json
  *
  * Flags
  *
@@ -11,8 +11,8 @@
  *
  * Usage
  *
- * $ gulp settings # Re-build ._settings.json
- * $ gulp settings --reconfig # Force the re-build ._settings.json when
+ * $ gulp settings # Re-build the settings file.
+ * $ gulp settings --reconfig # Force settings file re-build when
  *     the file gets deleted for whatever reason.
  */
 gulp.task("settings", function(done) {

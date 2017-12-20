@@ -284,7 +284,7 @@ gulp.task("init", function(done) {
  *
  * Notes
  *
- * • This file (._internal.json) is used internally and should not be
+ * • This file (.__internal.json) is used internally and should not be
  *     modified.
  */
 gulp.task("init:settings-internal", function(done) {
@@ -300,7 +300,7 @@ gulp.task("init:settings-internal", function(done) {
 
 /**
  * This initialization step combines all the config files under configs/
- *     to generate the collective ._settings.js file.
+ *     to generate the collective .__settings.js file.
  */
 gulp.task("init:settings-main", function(done) {
 	// make the main settings file

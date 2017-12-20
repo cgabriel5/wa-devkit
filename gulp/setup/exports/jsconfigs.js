@@ -29,7 +29,7 @@ module.exports = {
 				"js/vendor/modernizr/modernizr.js",
 				"js/vendor/jquery/jquery.js",
 				"js/vendor/fastclick/fastclick.js",
-				"js/vendor/__init__.js"
+				"js/vendor/__init.js"
 			],
 			names: {
 				main: "vendor.js"
@@ -40,7 +40,7 @@ module.exports = {
 		source: {
 			files: [
 				"app/iife/open.ig.js",
-				"app/__init__.js",
+				"app/__init.js",
 				"modules/libs.js",
 				"modules/globals.js",
 				"modules/utils.js",

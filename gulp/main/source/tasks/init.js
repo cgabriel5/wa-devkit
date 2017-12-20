@@ -218,7 +218,7 @@ gulp.task("default", function(done) {
 				$internal.write(
 					function() {
 						// store ports on the browser-sync object itself
-						bs._ports_ = [p1, p2]; // [app, ui]
+						bs.__ports = [p1, p2]; // [app, ui]
 						// after getting the free ports, finally run the
 						// build task
 						return sequence(
