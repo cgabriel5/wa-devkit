@@ -183,6 +183,47 @@ ext.isjson = function(file) {
 ext.ismd = function(file) {
 	return ext(file, ["md"]);
 };
+/**
+ * Returns all the sub-extensions found in the file path.
+ *
+ * @param {object} file - The Gulp file object.
+ * @return {array} - Array containing the found sub-extensions.
+ */
+ext.subs = function(file) {
+	// when no file exists return an empty string
+	if (!file) return [];
+
+	// cache the file path
+	var filepath = file.path;
+
+	// get the file extname
+	var extname = path.extname(filepath);
+
+	// sub extensions will be stored here
+	var extensions = [];
+
+	// get extension and all sub-extensions
+	while (extname && extname !== ".") {
+		// add the extension to the array
+		extensions.push(extname);
+		// remove the extname from the string
+		filepath = filepath.substring(0, filepath.length - extname.length);
+		// reset the extname
+		extname = path.extname(filepath);
+	}
+
+	// modify the extensions
+	extensions = extensions.map(function(extname) {
+		return extname.toLowerCase().replace(/^\./, "");
+	});
+
+	// remove the first item which is the extname, only sub-extensions
+	// will be returned.
+	extensions.shift();
+
+	// return sub extensions
+	return extensions;
+};
 
 /**
  * Recursively fill-in the placeholders in each path contained
