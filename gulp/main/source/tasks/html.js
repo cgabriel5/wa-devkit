@@ -9,9 +9,9 @@ gulp.task("html:main", function(done) {
 			}),
 			$.debug(),
 			$.concat(bundle_html.source.names.main),
-			$.injection.pre(html_injection),
+			$.injection.pre({ replacements: html_injection }),
 			$.beautify($configs.jsbeautify),
-			$.injection.post(html_injection),
+			$.injection.post({ replacements: html_injection }),
 			gulp.dest($paths.base),
 			$.debug.edit(),
 			bs.stream()
