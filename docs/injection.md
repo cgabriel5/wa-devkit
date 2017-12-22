@@ -4,12 +4,14 @@ If needed, the project can inject contents from a `file` or a Javascript `object
 
 ##### Table of Contents
 
-- [Syntax](#syntax)
+- [Placeholder Syntax](#placeholder-syntax)
+- [Methods](#methods)
+- [Options](#options)
 - [File Injection](#file-injection)
 - [Variable Injection](#variable-injection)
 
-<a name="syntax"></a>
-### Syntax
+<a name="placeholder-syntax"></a>
+### Placeholder Syntax
 
 ```
 $:pre{<file_name>}        # Pre file-content injection.
@@ -20,6 +22,43 @@ $:post{$<variable_name>}  # Post variable-injection.
 
 ${<file_name>}            # Any time file-content injection.
 ${$<variable_name>}       # Any time variable-injection.
+```
+
+<a name="methods"></a>
+### Methods
+
+```js
+var injection = require("gulp-inject-content");
+```
+
+- `injection.pre(options)` &mdash; Perform an injection before any file processing.
+- `injection.post(options)` &mdash; Perform an injection after any file processing.
+
+<a name="options"></a>
+### Options
+
+Each method, `pre` and `post`, can take in an options object. These are the following options with their defaults.
+
+```js
+var options = {
+	// the location of the injectable files
+	directory: "html/injection/",
+
+	replacements: {}, // the variable replacements
+
+	// match file name exactly as provided (take extension into consideration).
+	// for example, when $:post{hello_world.txt} is provided a file with the
+	// name of "hello_world.txt" will be looked for. when an extension-less
+	// file name needs to be used set this flag to false. therefore, when
+	// $:post{hello_world} is provided the first file found with the name
+	// "hello_world" will be used regardless of the file extension.
+	exact: true,
+
+	// cache file contents to speed up performance when the same placeholder
+	// is found throughout the file's contents. set this flag to false if this
+	// behavior is not needed.
+	cache: true
+};
 ```
 
 <a name="file-injection"></a>
@@ -33,7 +72,7 @@ Say we have some content that should maintain its structural integrity and shoul
 <div>
     <textarea>$:post{injection_content}</textarea>
 </div>
-``` 
+```
 
 `injection_content.text` (content file)
 
@@ -55,13 +94,21 @@ var pump = require("pump");
 var beautify = require("gulp-jsbeautifier");
 var injection = require("gulp-inject-content");
 
+// since the options object is empty it is not really needed and
+// is only shown for the purpose of example.
+var options = {}; // use defaults
+
 gulp.task("my_task", function(done) {
-    pump([gulp.src("my_html_file.html"),
-		injection.pre(), // any pre content injection
-		beautify(),
-		injection.post(), // any post content injection
-		gulp.dest("./")
-    ], done);
+	pump(
+		[
+			gulp.src("my_html_file.html"),
+			injection.pre(options), // any pre content injection
+			beautify(),
+			injection.post(options), // any post content injection
+			gulp.dest("./")
+		],
+		done
+	);
 });
 ```
 
@@ -79,7 +126,7 @@ div {
 	background: green;
 }</textarea>
 </div>
-``` 
+```
 
 <a name="variable-injection"></a>
 ### Variable Injection
@@ -91,7 +138,7 @@ Say we need to dynamically make paths for an `HTML` file. This can also be handl
 ```html
 <script src="$:post{$js_bundle_vendor}"></script>
 <script src="$:post{$js_bundle_app}"></script>
-``` 
+```
 
 `gulpfile.js`
 
@@ -102,14 +149,20 @@ var injection = require("gulp-inject-content");
 
 gulp.task("my_task", function(done) {
 	var replacements = {
-		"js_bundle_vendor": "some/path/to/js/vendor.js",
-		"js_bundle_app": "some/path/to/js/app.js"
+		js_bundle_vendor: "some/path/to/js/vendor.js",
+		js_bundle_app: "some/path/to/js/app.js"
 	};
 
-    pump([gulp.src("my_html_file.html"),
-		injection.post(replacements), // variable injection
-		gulp.dest("./")
-    ], done);
+	var options = { replacements: replacements };
+
+	pump(
+		[
+			gulp.src("my_html_file.html"),
+			injection.post(options), // variable injection
+			gulp.dest("./")
+		],
+		done
+	);
 });
 ```
 
@@ -120,4 +173,4 @@ After, `my_html_file.html` will look like this:
 ```html
 <script src="some/path/to/js/vendor.js"></script>
 <script src="some/path/to/js/app.js"></script>
-``` 
+```
