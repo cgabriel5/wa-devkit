@@ -33,6 +33,7 @@ var injection = require("gulp-inject-content");
 
 - `injection.pre(options)` &mdash; Perform an injection before any file processing.
 - `injection.post(options)` &mdash; Perform an injection after any file processing.
+- `injection(options)` &mdash; Main function performs an any injection on a file.
 
 <a name="options"></a>
 ### Options
