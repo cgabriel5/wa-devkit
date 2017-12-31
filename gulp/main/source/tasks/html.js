@@ -10,7 +10,7 @@ gulp.task("html:main", function(done) {
 			$.debug(),
 			$.concat(bundle_html.source.names.main),
 			$.injection.pre({ replacements: html_injection }),
-			$.beautify($configs.jsbeautify),
+			$.beautify(JSBEAUTIFY),
 			$.injection.post({ replacements: html_injection }),
 			gulp.dest($paths.base),
 			$.debug.edit(),

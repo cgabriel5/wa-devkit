@@ -135,9 +135,9 @@ gulp.task("help", function(done) {
 					.trim();
 			};
 
-			console.log(newline);
-			console.log(chalk.bold("Tasks"));
-			console.log(newline);
+			print(newline);
+			print(chalk.bold("Tasks"));
+			print(newline);
 
 			var tasks = {};
 			var names = [];
@@ -221,7 +221,7 @@ gulp.task("help", function(done) {
 					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
 
 					// print the task name
-					console.log("   " + chalk[color](name));
+					print("   " + chalk[color](name));
 
 					var lines = block.split(newline);
 					lines.forEach(function(line) {
@@ -230,14 +230,14 @@ gulp.task("help", function(done) {
 						} else {
 							line = "\t" + line;
 						}
-						console.log(line);
+						print(line);
 					});
 
 					// bottom padding
-					console.log(newline);
+					print(newline);
 				} else {
 					// only show the name and its description
-					console.log(
+					print(
 						"   " +
 							chalk[color](name) +
 							" ".repeat(max_length - name.length + 3) +
@@ -248,7 +248,7 @@ gulp.task("help", function(done) {
 
 			if (!verbose) {
 				// bottom padding
-				console.log(newline);
+				print(newline);
 			}
 
 			done();

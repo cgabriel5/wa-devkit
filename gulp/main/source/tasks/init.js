@@ -19,7 +19,7 @@ cleanup(function(exit_code, signal) {
 		$internal.set("pid", null);
 		$internal.set("ports", null);
 		$internal.data = alphabetize($internal.data);
-		$internal.writeSync(null, jindent);
+		$internal.writeSync(null, JINDENT);
 		// cleanup vars, process
 		branch_name = undefined;
 		if (bs) {
@@ -53,7 +53,7 @@ gulp.task("init:save-pid", function(done) {
 			done();
 		},
 		null,
-		jindent
+		JINDENT
 	);
 });
 
@@ -232,7 +232,7 @@ gulp.task("default", function(done) {
 						);
 					},
 					null,
-					jindent
+					JINDENT
 				);
 			}
 		);

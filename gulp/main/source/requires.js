@@ -59,7 +59,7 @@ var bs_autoclose = require("browser-sync-close-hook");
 
 // project utils
 var utils = require("./gulp/assets/utils/utils.js");
-var log = utils.log;
+var print = utils.print;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var uri = utils.uri;

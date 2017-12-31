@@ -24,7 +24,7 @@ gulp.task("settings", function(done) {
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
 			$.jsoncombine($paths.config_settings_name, function(data) {
-				return new Buffer(JSON.stringify(data, null, jindent));
+				return new Buffer(JSON.stringify(data, null, JINDENT));
 			}),
 			gulp.dest($paths.config_home),
 			$.debug.edit()

@@ -17,8 +17,8 @@ gulp.task("css:app", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer($configs.autoprefixer),
-				perfectionist($configs.perfectionist)
+				autoprefixer(AUTOPREFIXER),
+				perfectionist(PERFECTIONIST)
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
@@ -49,8 +49,8 @@ gulp.task("css:vendor", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer($configs.autoprefixer),
-				perfectionist($configs.perfectionist)
+				autoprefixer(AUTOPREFIXER),
+				perfectionist(PERFECTIONIST)
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),

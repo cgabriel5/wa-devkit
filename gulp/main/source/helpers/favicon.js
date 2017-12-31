@@ -86,7 +86,7 @@ gulp.task("favicon:edit-manifest", function(done) {
 			done();
 		},
 		null,
-		jindent
+		JINDENT
 	);
 });
 

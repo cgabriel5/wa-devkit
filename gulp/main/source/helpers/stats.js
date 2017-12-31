@@ -79,7 +79,7 @@ gulp.task("stats", function(done) {
 				return b[2] - a[2];
 			});
 
-			console.log(table.toString());
+			print(table.toString());
 
 			done();
 		}

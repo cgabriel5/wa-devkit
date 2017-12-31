@@ -33,7 +33,7 @@ gulp.task("make", function(done) {
 				$.concat(name_default),
 				$.concat(name_main)
 			),
-			$.prettier($configs.prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.base),
 			$.debug.edit()
 		],

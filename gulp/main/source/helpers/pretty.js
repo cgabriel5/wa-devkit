@@ -159,7 +159,7 @@ gulp.task("pretty", function(done) {
 				base: $paths.base_dot
 			}),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify($configs.jsbeautify)),
+			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the
@@ -170,20 +170,20 @@ gulp.task("pretty", function(done) {
 						: false;
 				},
 				$.json_sort({
-					space: jindent
+					space: JINDENT
 				})
 			),
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
 				return ext(file, ["html", "css"]) ? false : true;
-			}, $.prettier($configs.prettier)),
+			}, $.prettier(PRETTIER)),
 			$.gulpif(
 				ext.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
-					autoprefixer($configs.autoprefixer),
-					perfectionist($configs.perfectionist)
+					autoprefixer(AUTOPREFIXER),
+					perfectionist(PERFECTIONIST)
 				])
 			),
 			$.eol(ending),

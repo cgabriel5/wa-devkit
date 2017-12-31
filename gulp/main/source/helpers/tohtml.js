@@ -131,7 +131,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </html>`;
 				}
 			}),
-			$.beautify($configs.jsbeautify),
+			$.beautify(JSBEAUTIFY),
 			gulp.dest($paths.markdown_preview),
 			// open the file when the open flag is provided
 			$.gulpif(

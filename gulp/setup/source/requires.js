@@ -54,7 +54,7 @@ var alphabetize = require("alphabetize-object-keys");
 
 // project utils
 var utils = require("./gulp/assets/utils/utils.js");
-var log = utils.log;
+var print = utils.print;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
