@@ -15,6 +15,49 @@ var log = gutil.log;
 var chalk = gutil.colors;
 
 /**
+ * Wrapper function for console.log().
+ *     Prevents errors on console methods when no console present.
+ *     Exposes a global 'log' function that preserves line numbering and
+ *     formatting.
+ *
+ * @return {function} - The wrapped console.log() function.
+
+ * @link [https://gist.github.com/bgrins/5108712]
+ */
+var print = function() {
+	/* jshint -W021 */
+	if (console.log) {
+		// Only run on the first time through - reset this function to the
+		// appropriate console.log helper
+		if (Function.prototype.bind) {
+			log = Function.prototype.bind.call(console.log, console);
+		} else {
+			log = function() {
+				Function.prototype.apply.call(console.log, console, arguments);
+			};
+		}
+
+		log.apply(this, arguments);
+	}
+};
+
+/**
+ * A method to the print function that simply prints an empty line.
+ *
+ * @return {function} - The main print function.
+ */
+print.ln = function() {
+	return print("");
+};
+
+/**
+ * A method to the print function that references the gutil.log function.
+ *
+ * @return {function} - The main print function.
+ */
+print.gulp = log;
+
+/**
  * Detects the default Google Chrome browser based on OS. Falls
  *     back to "firefox".
  *
@@ -287,7 +330,7 @@ var opts_sort = {
 // export functions
 exports.browser = browser();
 exports.time = time;
-exports.log = log;
+exports.print = print;
 exports.notify = notify;
 exports.gulp = current_task(gulp);
 exports.uri = uri;
