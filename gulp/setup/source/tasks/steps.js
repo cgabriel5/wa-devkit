@@ -1,4 +1,64 @@
 /**
+ * This initialization step updates the app config file with the user
+ *     provided values.
+ */
+gulp.task("init:app-settings", function(done) {
+	// run gulp process
+	pump(
+		[
+			gulp.src($paths.config_app),
+			$.debug(),
+			$.modify({
+				fileModifier: function(file, contents) {
+					// since the app file has already been loaded we don't
+					// use the modifier's contents variable. we modify the
+					// app object and return the stringified text of the
+					// object. doing this will prevent the file from being
+					// re-opened again via jsonc and will also log the
+					// task in the terminal.
+
+					// update the app object
+					$app.index = __data.entry_point;
+					$app.base = __data.base;
+					$app.https = __data.https;
+					$app.port = __data.port;
+					$app.eol = {
+						ending: __data.eol[1],
+						style: __data.eol[0]
+					};
+
+					// hacky-method: comment-json removes all
+					// empty lines so the lines are added back
+					// to make the config file easier to read.
+					for (var key in $app) {
+						if ($app.hasOwnProperty(key)) {
+							// only modify the comments
+							if (key.charAt(0) === "/") {
+								// prepend a placeholder for the
+								// new lines.
+								$app[key][0].unshift("// $LINE");
+							}
+						}
+					}
+
+					// stringify the answers object and remove
+					// the placeholders with new lines.
+					var content = jsonc
+						.stringify($app, null, JINDENT)
+						.replace(/\/\/ \$LINE/gm, "\n")
+						.trim();
+
+					return content;
+				}
+			}),
+			$.debug.edit(),
+			gulp.dest($paths.base)
+		],
+		done
+	);
+});
+
+/**
  * This initialization step takes the internal JSON object export and saves
  *     it into the configs/ directory.
  *
@@ -8,12 +68,27 @@
  *     modified.
  */
 gulp.task("init:settings-internal", function(done) {
+	// get the internal filepath
+	var internal_filepath =
+		$paths.config_home + $paths.gulp_setup_settings_internal_name;
+
 	// save the $internal JSON object
 	fs.writeFile(
-		$paths.config_home + $paths.gulp_setup_settings_internal_name,
-		JSON.stringify(alphabetize($internal), null, jindent),
+		internal_filepath,
+		JSON.stringify(alphabetize($internal), null, JINDENT),
 		function() {
-			done();
+			// the following gulp code is really only needed to log the
+			// file.
+			pump(
+				[
+					gulp.src(internal_filepath, {
+						cwd: $paths.base
+					}),
+					$.debug(),
+					$.debug.edit()
+				],
+				done
+			);
 		}
 	);
 });
@@ -32,7 +107,7 @@ gulp.task("init:settings-main", function(done) {
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
 			$.jsoncombine($paths.config_settings_name, function(data) {
-				return new Buffer(JSON.stringify(data, null, jindent));
+				return new Buffer(JSON.stringify(data, null, JINDENT));
 			}),
 			gulp.dest($paths.config_home),
 			$.debug.edit()
@@ -42,14 +117,41 @@ gulp.task("init:settings-main", function(done) {
 });
 
 /**
+ * This initialization step removes unneeded doc files depending on whether
+ *     setting up a webapp or library.
+ */
+gulp.task("init:clean-docs", function(done) {
+	// get the correct file sub types to remove. this depends on the project
+	// setup.
+	var files =
+		$paths[
+			"gulp_setup_docs_" + (__data.apptype === "webapp" ? "lib" : "app")
+		];
+
+	// remove files
+	pump(
+		[
+			gulp.src(files, {
+				cwd: $paths.gulp_setup_docs_source
+			}),
+			$.debug(),
+			$.debug.clean(),
+			$.clean()
+		],
+		done
+	);
+});
+
+/**
  * This initialization step is only ran when setting up a library project.
  *     It removes all webapp files as the project is defaulted to a webapp.
  */
-gulp.task("init:remove-webapp-files", function(done) {
-	// only when apptype is library:
-	// replace ./js/source/ to later add the needed library
-	// project files, i.e. ./js/vendor/__init__.js and
-	// ./js/bundles/.
+gulp.task("init:--lib-remove-webapp-files", function(done) {
+	// When setting up a library project it will overwrite the
+	// ./js/source/ with the library setup folder equivalent.
+	// this will in effect combine the folders and add the needed
+	// files/folders for the library.
+	// (i.e. ./js/vendor/__init__.js and ./js/bundles/)
 
 	pump(
 		[
@@ -69,10 +171,10 @@ gulp.task("init:remove-webapp-files", function(done) {
  *     As the project is defaulted to a webapp it adds the needed library
  *     project files.
  */
-gulp.task("init:add-library-files", function(done) {
-	// copy the library project files from the setup
-	// directory into the ./js/ directory. this will
-	// also overwrite needed files, like the bundle files.
+gulp.task("init:--lib-add-library-files", function(done) {
+	// This will copy the library project files from the setup
+	// directory into the ./js/ directory. this will also
+	// overwrite needed files, like the bundle files.
 
 	pump(
 		[
@@ -94,10 +196,10 @@ gulp.task("init:add-library-files", function(done) {
  */
 gulp.task("init:create-license", function(done) {
 	// generate the license
-	license($paths.base, __data__.license, {
-		author: __data__.fullname,
-		year: __data__.year,
-		project: __data__.name
+	license($paths.base, __data.license, {
+		author: __data.fullname,
+		year: __data.year,
+		project: __data.name
 	});
 
 	// remove the ext from the path
@@ -147,7 +249,7 @@ gulp.task("init:fill-placeholders", function(done) {
 					base: $paths.base
 				}
 			),
-			$.injection(__data__),
+			$.injection({ replacements: __data }),
 			gulp.dest($paths.base),
 			$.debug.edit()
 		],
@@ -227,7 +329,7 @@ gulp.task("init:create-bundles", function(done) {
 				throw err;
 			}
 			// highlight data string
-			console.log(cli_highlight(data));
+			print(cli_highlight(data));
 			// end the task
 			done();
 		}
@@ -246,14 +348,14 @@ gulp.task("init:pretty", function(done) {
 			throw err;
 		}
 		// highlight data string
-		console.log(cli_highlight(data));
+		print(cli_highlight(data));
 		// end the task
 		done();
 	});
 });
 
 /**
- * This initialization step programmatically makes the first projecy Git
+ * This initialization step programmatically makes the first project Git
  *     commit and lightly configures Git with useful settings.
  */
 gulp.task("init:git", function(done) {
@@ -264,8 +366,8 @@ gulp.task("init:git", function(done) {
 			`
 		git config --local core.fileMode false
 		git config --local core.autocrlf input
-		git config --local user.email ${__data__.email}
-		git config --local user.name ${__data__.git_id}`,
+		git config --local user.email ${__data.email}
+		git config --local user.name ${__data.git_id}`,
 			function(err) {
 				if (err) {
 					throw err;
@@ -277,26 +379,29 @@ gulp.task("init:git", function(done) {
 					.commit(
 						"chore: Initial commit\n\nProject initialization.",
 						function() {
-							console.log("");
-							log(
+							print.gulp("");
+							print.gulp(
 								"Make sure to set your editor of choice with Git if not already set."
 							);
-							log(
-								"For example, if using Sublime Text run ",
+							print.gulp(
+								"For example, for Sublime Text run:",
 								chalk.green(
 									'$ git config core.editor "subl -n w"'
 								)
 							);
-							log("More information can be found here:");
-							log(
-								"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration\n"
+							print.gulp("More information can be found here:");
+							print.gulp(
+								"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
 							);
-							log(`Git initialized and configured.\n`);
-							notify(
-								`Git initialized and configured (${
-									__data__.apptype
-								})`
+							print.gulp("");
+							print.gulp(
+								chalk.green("✔"),
+								`Git initialized and configured.`,
+								"(" +
+									chalk.green("$ git config --list --local") +
+									")"
 							);
+							print.gulp("");
 							done();
 						}
 					);
