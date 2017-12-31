@@ -61,7 +61,7 @@ var bs_autoclose = require("browser-sync-close-hook");
 
 // project utils
 var utils = require("./gulp/assets/utils/utils.js");
-var log = utils.log;
+var print = utils.print;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var uri = utils.uri;
@@ -93,7 +93,7 @@ var $paths = expand_paths(
 	)
 );
 
-//#! configs.js -- ./gulp/main/source/configs.js
+//#! preconfig.js -- ./gulp/main/source/preconfig.js
 
 // dynamic configuration files (load via json-file to modify later)
 var $internal = json.read($paths.config_internal);
@@ -143,10 +143,9 @@ if (fe.sync($paths.config_settings)) {
 	}
 }
 
-//#! vars.js -- ./gulp/main/source/vars.js
+//#! configs.js -- ./gulp/main/source/configs.js
 
-// get JSON indentation size
-var jindent = get($configs, "json_format.indent_size", "\t");
+// get all needed configuration values
 
 // bundles
 var bundle_html = get($configs, "bundles.html", "");
@@ -157,20 +156,36 @@ var bundle_gulp = get($configs, "bundles.gulp", "");
 var bundle_dist = get($configs, "bundles.dist", "");
 var bundle_lib = get($configs, "bundles.lib", "");
 
+// app config information
+
 // app directory information
 var INDEX = get($configs, "app.index", "");
 var APPDIR = path.join(get($configs, "app.base", ""), $paths.rootdir);
 
-// line ending information
+// app line ending information
 var EOL = get($configs, "app.eol", "");
 var EOL_ENDING = get(EOL, "ending", "");
 // var EOL_STYLE = EOL.style;
+
+// use https or not?
+var HTTPS = get($configs, "app.https", false);
+
+// app JSON indentation
+var JINDENT = get($configs, "app.indent_char", "\t");
+
+// plugin configs
+var PRETTIER = get($configs, "prettier", {});
+var JSBEAUTIFY = get($configs, "jsbeautify", {});
+var AUTOPREFIXER = get($configs, "autoprefixer", {});
+var PERFECTIONIST = get($configs, "perfectionist", {});
 
 // internal information
 var APPTYPE = $internal.get("apptype");
 
 // get the current Gulp file name
 var GULPFILE = path.basename($paths.filename);
+
+//#! vars.js -- ./gulp/main/source/vars.js
 
 // create browsersync server
 var bs = browser_sync.create(get($configs, "browsersync.server_name", ""));
@@ -220,7 +235,7 @@ function open_file_in_browser(filepath, port, callback) {
 					appdir: APPDIR,
 					filepath: filepath,
 					port: port,
-					https: $configs.open.https
+					https: HTTPS
 				})
 			}),
 			$.debug({ loader: false })
@@ -268,7 +283,7 @@ cleanup(function(exit_code, signal) {
 		$internal.set("pid", null);
 		$internal.set("ports", null);
 		$internal.data = alphabetize($internal.data);
-		$internal.writeSync(null, jindent);
+		$internal.writeSync(null, JINDENT);
 		// cleanup vars, process
 		branch_name = undefined;
 		if (bs) {
@@ -302,7 +317,7 @@ gulp.task("init:save-pid", function(done) {
 			done();
 		},
 		null,
-		jindent
+		JINDENT
 	);
 });
 
@@ -481,7 +496,7 @@ gulp.task("default", function(done) {
 						);
 					},
 					null,
-					jindent
+					JINDENT
 				);
 			}
 		);
@@ -674,7 +689,7 @@ gulp.task("lib:js", function(done) {
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
-			$.prettier($configs.prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
 			$.uglify(),
@@ -736,7 +751,7 @@ gulp.task("watch:main", function(done) {
 			proxy: uri({
 				appdir: APPDIR,
 				filepath: INDEX,
-				https: $configs.open.https
+				https: HTTPS
 			}), // "markdown/preview/README.html"
 			port: bs.__ports[0],
 			ui: {
@@ -856,7 +871,7 @@ gulp.task("html:main", function(done) {
 			$.debug(),
 			$.concat(bundle_html.source.names.main),
 			$.injection.pre({ replacements: html_injection }),
-			$.beautify($configs.jsbeautify),
+			$.beautify(JSBEAUTIFY),
 			$.injection.post({ replacements: html_injection }),
 			gulp.dest($paths.base),
 			$.debug.edit(),
@@ -887,8 +902,8 @@ gulp.task("css:app", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer($configs.autoprefixer),
-				perfectionist($configs.perfectionist)
+				autoprefixer(AUTOPREFIXER),
+				perfectionist(PERFECTIONIST)
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
@@ -919,8 +934,8 @@ gulp.task("css:vendor", function(done) {
 			$.postcss([
 				unprefix(),
 				shorthand(),
-				autoprefixer($configs.autoprefixer),
-				perfectionist($configs.perfectionist)
+				autoprefixer(AUTOPREFIXER),
+				perfectionist(PERFECTIONIST)
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
@@ -943,7 +958,7 @@ gulp.task("js:app", function(done) {
 			}),
 			$.debug(),
 			$.concat(bundle_js.source.names.main),
-			$.prettier($configs.prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
 			bs.stream()
@@ -965,7 +980,7 @@ gulp.task("js:vendor", function(done) {
 			gulp.src(bundle_js.vendor.files),
 			$.debug(),
 			$.concat(bundle_js.vendor.names.main),
-			$.prettier($configs.prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
 			bs.stream()
@@ -1152,7 +1167,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 </html>`;
 				}
 			}),
-			$.beautify($configs.jsbeautify),
+			$.beautify(JSBEAUTIFY),
 			gulp.dest($paths.markdown_preview),
 			// open the file when the open flag is provided
 			$.gulpif(
@@ -1453,7 +1468,7 @@ gulp.task("pretty", function(done) {
 				base: $paths.base_dot
 			}),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify($configs.jsbeautify)),
+			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the
@@ -1464,20 +1479,20 @@ gulp.task("pretty", function(done) {
 						: false;
 				},
 				$.json_sort({
-					space: jindent
+					space: JINDENT
 				})
 			),
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
 				return ext(file, ["html", "css"]) ? false : true;
-			}, $.prettier($configs.prettier)),
+			}, $.prettier(PRETTIER)),
 			$.gulpif(
 				ext.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
-					autoprefixer($configs.autoprefixer),
-					perfectionist($configs.perfectionist)
+					autoprefixer(AUTOPREFIXER),
+					perfectionist(PERFECTIONIST)
 				])
 			),
 			$.eol(ending),
@@ -1627,7 +1642,7 @@ gulp.task("stats", function(done) {
 				return b[2] - a[2];
 			});
 
-			console.log(table.toString());
+			print(table.toString());
 
 			done();
 		}
@@ -1977,7 +1992,7 @@ gulp.task("make", function(done) {
 				$.concat(name_default),
 				$.concat(name_main)
 			),
-			$.prettier($configs.prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.base),
 			$.debug.edit()
 		],
@@ -2155,7 +2170,7 @@ gulp.task("settings", function(done) {
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
 			$.jsoncombine($paths.config_settings_name, function(data) {
-				return new Buffer(JSON.stringify(data, null, jindent));
+				return new Buffer(JSON.stringify(data, null, JINDENT));
 			}),
 			gulp.dest($paths.config_home),
 			$.debug.edit()
@@ -2392,9 +2407,9 @@ gulp.task("help", function(done) {
 					.trim();
 			};
 
-			console.log(newline);
-			console.log(chalk.bold("Tasks"));
-			console.log(newline);
+			print(newline);
+			print(chalk.bold("Tasks"));
+			print(newline);
 
 			var tasks = {};
 			var names = [];
@@ -2478,7 +2493,7 @@ gulp.task("help", function(done) {
 					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
 
 					// print the task name
-					console.log("   " + chalk[color](name));
+					print("   " + chalk[color](name));
 
 					var lines = block.split(newline);
 					lines.forEach(function(line) {
@@ -2487,14 +2502,14 @@ gulp.task("help", function(done) {
 						} else {
 							line = "\t" + line;
 						}
-						console.log(line);
+						print(line);
 					});
 
 					// bottom padding
-					console.log(newline);
+					print(newline);
 				} else {
 					// only show the name and its description
-					console.log(
+					print(
 						"   " +
 							chalk[color](name) +
 							" ".repeat(max_length - name.length + 3) +
@@ -2505,7 +2520,7 @@ gulp.task("help", function(done) {
 
 			if (!verbose) {
 				// bottom padding
-				console.log(newline);
+				print(newline);
 			}
 
 			done();
@@ -2603,7 +2618,7 @@ gulp.task("favicon:edit-manifest", function(done) {
 			done();
 		},
 		null,
-		jindent
+		JINDENT
 	);
 });
 
