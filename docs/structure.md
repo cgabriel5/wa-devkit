@@ -108,7 +108,7 @@
 │   │   ├── iife/
 │   │   │   ├── close.ig.js
 │   │   │   └── open.ig.js
-│   │   └── __init__.js
+│   │   └── __init.js
 │   └── modules/
 │       ├── core.js
 │       ├── events.js
@@ -194,6 +194,7 @@
         │   └── tohtml.js
         ├── injection.js
         ├── paths.js
+        ├── preconfig.js
         ├── requires.js
         ├── tasks/
         │   ├── css.js
@@ -221,7 +222,7 @@
 
 ```
 ./configs/
-├── app.json
+├── app.cm.json
 ├── autoprefixer.json
 ├── browsersync.json
 ├── bundles.json
@@ -233,14 +234,12 @@
 ├── htmllint.cm.json
 ├── jsbeautify.json
 ├── jshint.cm.json
-├── json_format.json
 ├── modernizr.json
-├── open.json
 ├── paths.cm.json
 ├── perfectionist.json
 ├── prettier.json
-├── ._internal.json
-└── ._settings.json
+├── .__internal.json
+└── .__settings.json
 ```
 
 <a name="configs-break-down"></a>
