@@ -1,47 +1,39 @@
-// dynamic configuration files (load via json-file to modify later)
-var $internal = json.read($paths.config_internal);
+// get all needed configuration values
 
-// object will contain the all the config settings
-var $configs = {};
+// bundles
+var bundle_html = get($configs, "bundles.html", "");
+var bundle_css = get($configs, "bundles.css", "");
+var bundle_js = get($configs, "bundles.js", "");
+// var bundle_img = get($configs, "bundles.img", "");
+var bundle_gulp = get($configs, "bundles.gulp", "");
+var bundle_dist = get($configs, "bundles.dist", "");
+var bundle_lib = get($configs, "bundles.lib", "");
 
-// settings config file must exist to populate the configs object
-if (fe.sync($paths.config_settings)) {
-	// static configuration files (just need to read file)
-	var $settings = jsonc.parse(
-		fs.readFileSync($paths.config_settings).toString()
-	);
+// app config information
 
-	// get individual plugin settings and store in an object
-	for (var $config in $paths) {
-		// path must match the following pattern to be a config path
-		if (
-			$paths.hasOwnProperty($config) &&
-			/^config_\$[a-z_.]+$/i.test($config)
-		) {
-			// remove any file name sub-extensions. for example,
-			// for "csslint.cm" turn to "csslint"
-			var config_name = $paths[$config].split(".")[0];
-			// get the config settings and add to the settings object
-			$configs[config_name] = $settings[$paths[$config]];
-		}
-	}
-} else {
-	// config settings file does not exist so give a message and
-	// exit the node process.
-	log(
-		chalk.yellow("warning"),
-		chalk.magenta($paths.config_settings),
-		'is missing. Run "$ gulp settings --reconfig" to create the file.'
-	);
+// app directory information
+var INDEX = get($configs, "app.index", "");
+var APPDIR = path.join(get($configs, "app.base", ""), $paths.rootdir);
 
-	// run yargs
-	var _args = yargs.argv;
-	// get the command line arguments from yargs
+// app line ending information
+var EOL = get($configs, "app.eol", "");
+var EOL_ENDING = get(EOL, "ending", "");
+// var EOL_STYLE = EOL.style;
 
-	// only continue when the reconfig flag is set. this will let the
-	// settings to run.
+// use https or not?
+var HTTPS = get($configs, "app.https", false);
 
-	if (!_args.reconfig || !-~_args._.indexOf("settings")) {
-		process.exit();
-	}
-}
+// app JSON indentation
+var JINDENT = get($configs, "app.indent_char", "\t");
+
+// plugin configs
+var PRETTIER = get($configs, "prettier", {});
+var JSBEAUTIFY = get($configs, "jsbeautify", {});
+var AUTOPREFIXER = get($configs, "autoprefixer", {});
+var PERFECTIONIST = get($configs, "perfectionist", {});
+
+// internal information
+var APPTYPE = $internal.get("apptype");
+
+// get the current Gulp file name
+var GULPFILE = path.basename($paths.filename);

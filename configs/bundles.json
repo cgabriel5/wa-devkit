@@ -54,6 +54,7 @@
 			"files": [
 				"requires.js",
 				"paths.js",
+				"preconfig.js",
 				"configs.js",
 				"vars.js",
 				"injection.js",

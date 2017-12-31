@@ -1,5 +1,5 @@
 // placeholder fillers
-var __data__ = {};
+var __data = {};
 
 // app directory information
 var INDEX = $app.index;
@@ -8,3 +8,6 @@ var INDEX = $app.index;
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
 // var EOL_STYLE = EOL.style;
+
+// app JSON indentation
+var JINDENT = $app.eol;

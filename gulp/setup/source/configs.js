@@ -7,8 +7,6 @@ var $app = jsonc.parse(fs.readFileSync($paths.config_app).toString());
 var $ap = require($paths.config_autoprefixer);
 var $bundles = json.read($paths.config_bundles);
 var $jsbeautify = require($paths.config_jsbeautify);
-var $json_format = require($paths.config_json_format);
-var jindent = $json_format.indent_size;
 var $perfectionist = require($paths.config_perfectionist);
 var $prettier = require($paths.config_prettier);
 
