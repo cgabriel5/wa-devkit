@@ -26,22 +26,22 @@ if (fe.sync($paths.config_settings)) {
 		}
 	}
 } else {
-	// config settings file does not exist so give a message and
-	// exit the node process.
-	print(
-		chalk.yellow("warning"),
-		chalk.magenta($paths.config_settings),
-		'is missing. Run "$ gulp settings --reconfig" to create the file.'
-	);
-
 	// run yargs
 	var _args = yargs.argv;
 	// get the command line arguments from yargs
 
 	// only continue when the reconfig flag is set. this will let the
-	// settings to run.
+	// settings task to run.
 
 	if (!_args.reconfig || !-~_args._.indexOf("settings")) {
+		// config settings file does not exist so give a message and
+		// exit the node process.
+		print.gulp(
+			chalk.yellow("warning"),
+			chalk.magenta($paths.config_settings),
+			'is missing. Run "$ gulp settings --reconfig" to create the file.'
+		);
+
 		process.exit();
 	}
 }
