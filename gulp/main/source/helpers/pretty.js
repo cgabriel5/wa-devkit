@@ -143,10 +143,10 @@ gulp.task("pretty", function(done) {
 	}
 
 	if (show) {
-		log(chalk.green("Using globs:"));
+		print(chalk.green("Using globs:"));
 		var prefix = " ".repeat(10);
 		files.forEach(function(glob) {
-			log(prefix, chalk.blue(glob));
+			print(prefix, chalk.blue(glob));
 		});
 		return done();
 	}

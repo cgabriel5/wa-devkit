@@ -141,7 +141,7 @@ gulp.task("dist", function(done) {
 	var task = this;
 
 	if (APPTYPE !== "webapp") {
-		log("This helper task is only available for webapp projects.");
+		print("This helper task is only available for webapp projects.");
 		return done();
 	}
 	// get the gulp build tasks
@@ -149,7 +149,7 @@ gulp.task("dist", function(done) {
 	// add callback to the sequence
 	tasks.push(function() {
 		notify("Distribution folder complete.");
-		log("Distribution folder complete.");
+		print("Distribution folder complete.");
 		done();
 	});
 	// apply the tasks and callback to sequence

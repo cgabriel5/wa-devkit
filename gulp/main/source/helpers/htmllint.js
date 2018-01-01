@@ -29,7 +29,7 @@ gulp.task("hlint", function(done) {
 				// make sure the first letter is always capitalized
 				var first_letter = issue.msg[0];
 				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
-				log(
+				print(
 					chalk.magenta(filepath),
 					chalk.white(`line ${issue.line} char ${issue.column}`),
 					chalk.blue(`(${issue.code})`),

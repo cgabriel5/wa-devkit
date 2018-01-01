@@ -37,7 +37,7 @@ function open_file_in_browser(filepath, port, callback) {
  * @return {undefined} Nothing.
  */
 function gulp_check_warn() {
-	log(
+	print(
 		chalk.red(
 			"Task cannot be performed while Gulp is running. Close Gulp then try again."
 		)

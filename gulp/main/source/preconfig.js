@@ -28,7 +28,7 @@ if (fe.sync($paths.config_settings)) {
 } else {
 	// config settings file does not exist so give a message and
 	// exit the node process.
-	log(
+	print(
 		chalk.yellow("warning"),
 		chalk.magenta($paths.config_settings),
 		'is missing. Run "$ gulp settings --reconfig" to create the file.'
