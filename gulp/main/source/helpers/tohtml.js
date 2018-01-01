@@ -3,7 +3,7 @@
  *     multiple tasks. The variable is populated in the tohtml:prepcss
  *     task and used in the tohtml task.
  */
-var _markdown_styles_;
+var __markdown_styles;
 
 /**
  * Get the CSS markdown + prismjs styles.
@@ -23,7 +23,7 @@ gulp.task("tohtml:prepcss", function(done) {
 			$.modify({
 				fileModifier: function(file, contents) {
 					// store the contents in variable
-					_markdown_styles_ = contents;
+					__markdown_styles = contents;
 					return contents;
 				}
 			}),
@@ -125,7 +125,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <meta name="msapplication-config" content="${fpath}/browserconfig.xml">
     <meta name="theme-color" content="#f6f5dd">
     <!-- https://github.com/sindresorhus/github-markdown-css -->
-	<style>${_markdown_styles_}</style>
+	<style>${__markdown_styles}</style>
 </head>
     <body class="markdown-body">${contents}</body>
 </html>`;
