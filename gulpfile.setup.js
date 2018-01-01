@@ -1,4 +1,6 @@
-//#! requires.js -- ./gulp/setup/source/requires.js
+// -----------------------------------------------------------------------------
+// requires.js -- ./gulp/setup/source/requires.js
+// -----------------------------------------------------------------------------
 
 /*jshint bitwise: false*/
 /*jshint browser: false*/
@@ -66,7 +68,9 @@ var ext = utils.ext;
 var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
 
-//#! paths.js -- ./gulp/setup/source/paths.js
+// -----------------------------------------------------------------------------
+// paths.js -- ./gulp/setup/source/paths.js
+// -----------------------------------------------------------------------------
 
 // get and fill in path placeholders
 var $paths = expand_paths(
@@ -80,7 +84,9 @@ var $paths = expand_paths(
 	})
 );
 
-//#! configs.js -- ./gulp/setup/source/configs.js
+// -----------------------------------------------------------------------------
+// configs.js -- ./gulp/setup/source/configs.js
+// -----------------------------------------------------------------------------
 
 // dynamic configuration files (load via json-file to modify later)
 var $internal = require("./gulp/setup/exports/internal.json");
@@ -99,7 +105,9 @@ var $questions = require($paths.gulp_setup_questions);
 var $templates = require($paths.gulp_setup_templates);
 var $jsconfigs = require($paths.gulp_setup_jsconfigs);
 
-//#! vars.js -- ./gulp/setup/source/vars.js
+// -----------------------------------------------------------------------------
+// vars.js -- ./gulp/setup/source/vars.js
+// -----------------------------------------------------------------------------
 
 // placeholder fillers
 var __data = {};
@@ -115,7 +123,9 @@ var EOL_ENDING = EOL.ending;
 // app JSON indentation
 var JINDENT = $app.eol;
 
-//#! functions.js -- ./gulp/setup/source/functions.js
+// -----------------------------------------------------------------------------
+// functions.js -- ./gulp/setup/source/functions.js
+// -----------------------------------------------------------------------------
 
 /**
  * node-cmd returns the output of the ran command. However, the returned
@@ -166,7 +176,9 @@ function cli_highlight(string) {
 	return output;
 }
 
-//#! init.js -- ./gulp/setup/source/tasks/init.js
+// -----------------------------------------------------------------------------
+// init.js -- ./gulp/setup/source/tasks/init.js
+// -----------------------------------------------------------------------------
 
 /**
  * The default Gulp task. As this file is the Gulp setup file this task
@@ -373,7 +385,9 @@ gulp.task("init", function(done) {
 	});
 });
 
-//#! steps.js -- ./gulp/setup/source/tasks/steps.js
+// -----------------------------------------------------------------------------
+// steps.js -- ./gulp/setup/source/tasks/steps.js
+// -----------------------------------------------------------------------------
 
 /**
  * This initialization step updates the app config file with the user
@@ -787,7 +801,9 @@ gulp.task("init:git", function(done) {
 	});
 });
 
-//#! make.js -- ./gulp/setup/source/helpers/make.js
+// -----------------------------------------------------------------------------
+// make.js -- ./gulp/setup/source/helpers/make.js
+// -----------------------------------------------------------------------------
 
 /**
  * Build gulpfile.setup.js from source.
@@ -810,13 +826,16 @@ gulp.task("make", function(done) {
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
+				// the max length of characters for decoration line
+				var max_length = 80;
+				var decor = "// " + "-".repeat(max_length - 3);
+
 				var filename = path.basename(file.path);
 				var filename_rel = path.relative($paths.cwd, file.path);
-				return stream.pipe(
-					$.insert.prepend(
-						`//#! ${filename} -- ./${filename_rel}\n\n`
-					)
-				);
+
+				var line_info = `${decor}\n// ${filename} -- ./${filename_rel}\n${decor}\n\n`;
+
+				return stream.pipe($.insert.prepend(line_info));
 			}),
 			$.concat($paths.gulp_file_setup),
 			$.prettier($prettier),
