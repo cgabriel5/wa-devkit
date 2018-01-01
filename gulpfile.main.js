@@ -1315,7 +1315,7 @@ gulp.task("ports", function(done) {
  * • By default files in the following directories or containing the
  *   following sub-extensions are ignored: ./node_modules/, ./git/,
  *   vendor/, .ig., and .min. files.
- * • Special characters in globs provided via the CLI (--glob) might
+ * • Special characters in globs provided via the CLI (--pattern) might
  *   need to be escaped if getting an error.
  *
  * Flags
@@ -1323,17 +1323,21 @@ gulp.task("ports", function(done) {
  * -t, --type
  *     [string] The file extensions types to clean.
  *
- * -g, --glob
+ * -p, --pattern
  *     [array] Use a glob to find files to prettify.
  *
- * -s, --show
- *     [boolean] Show the used globs before prettifying.
+ * -i, --ignore
+ *     [array] Use a glob to ignore files.
+ *
+ * --test
+ *     [boolean] A test run that only shows the used globs before
+ *     prettifying. Does not prettify at all.
  *
  * -e, --empty
  *     [boolean] Empty default globs array. Careful as this can prettify
  *     all project files. By default the node_modules/ is ignored, for
  *     example. Be sure to exclude files that don't need to be prettified
- *     by adding the necessary globs with the --glob option.
+ *     by adding the necessary globs with the --pattern option.
  *
  * -l, --line-ending
  *     [string] If provided, the file ending will get changed to provided
@@ -1347,13 +1351,16 @@ gulp.task("ports", function(done) {
  * $ gulp pretty --type "js, json"
  *     Only prettify JS and JSON files.
  *
- * $ gulp pretty --glob "some/folder/*.js"
+ * $ gulp pretty --pattern "some/folder/*.js"
  *     Prettify default files and all JS files.
  *
- * $ gulp pretty --show
+ * $ gulp pretty --ignore "*.js"
+ *     Prettify default files and ignore JS files.
+ *
+ * $ gulp pretty --test
  *     Halts prettifying to show the globs to be used for prettifying.
  *
- * $ gulp pretty --empty --glob "some/folder/*.js"
+ * $ gulp pretty --empty --pattern "some/folder/*.js"
  *     Flag indicating to remove default globs.
  *
  * $ gulp pretty --line-ending "\n"
@@ -1379,12 +1386,15 @@ gulp.task("pretty", function(done) {
 			alias: "t",
 			type: "string"
 		})
-		.option("glob", {
-			alias: "g",
+		.option("pattern", {
+			alias: "p",
 			type: "array"
 		})
-		.option("show", {
-			alias: "s",
+		.option("ignore", {
+			alias: "i",
+			type: "array"
+		})
+		.option("test", {
 			type: "boolean"
 		})
 		.option("empty", {
@@ -1397,8 +1407,9 @@ gulp.task("pretty", function(done) {
 		}).argv;
 	// get the command line arguments from yargs
 	var type = _args.t || _args.type;
-	var globs = _args.g || _args.glob;
-	var show = _args.s || _args.show;
+	var patterns = _args.p || _args.pattern;
+	var ignores = _args.i || _args.ignore;
+	var test = _args.test;
 	var empty = _args.e || _args.empty;
 	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
@@ -1438,7 +1449,8 @@ gulp.task("pretty", function(done) {
 		files[0] = `**/*.${type}`;
 	}
 
-	if (globs) {
+	// add user provided glob patterns
+	if (patterns) {
 		// only do changes when the type flag is not provided
 		// therefore, in other words, respect the type flag.
 		if (!type) {
@@ -1446,12 +1458,22 @@ gulp.task("pretty", function(done) {
 		}
 
 		// add the globs
-		globs.forEach(function(glob) {
+		patterns.forEach(function(glob) {
 			files.push(glob);
 		});
 	}
 
-	if (show) {
+	// add user provided exclude/negative glob patterns. this is
+	// useful when needing to exclude certain files/directories.
+	if (ignores) {
+		// add the globs
+		ignores.forEach(function(glob) {
+			files.push(bangify(glob));
+		});
+	}
+
+	// show the used glob patterns when the flag is provided
+	if (test) {
 		print(chalk.green("Using globs:"));
 		var prefix = " ".repeat(10);
 		files.forEach(function(glob) {
