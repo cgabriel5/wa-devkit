@@ -144,7 +144,7 @@ if (fe.sync($paths.config_settings)) {
 		print.gulp(
 			chalk.yellow("warning"),
 			chalk.magenta($paths.config_settings),
-			'is missing. Run "$ gulp settings --reconfig" to create the file.'
+			'is missing. Run "$ gulp settings --rebuild" to create the file.'
 		);
 
 		process.exit();
@@ -2234,7 +2234,7 @@ gulp.task("hlint", function(done) {
  *
  * Flags
  *
- * --reconfig
+ * --rebuild
  *     [boolean] Flag is used to rebuild the combined config file
  *     when it was deleted for example. The gulpfile needs this
  *     file and this will force its re-build when it gets deleted
@@ -2243,7 +2243,7 @@ gulp.task("hlint", function(done) {
  * Usage
  *
  * $ gulp settings # Re-build the settings file.
- * $ gulp settings --reconfig # Force settings file re-build when
+ * $ gulp settings --rebuild # Force settings file re-build when
  *     the file gets deleted for whatever reason.
  */
 gulp.task("settings", function(done) {
