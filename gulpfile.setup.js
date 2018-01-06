@@ -209,7 +209,7 @@ gulp.task("init", function(done) {
 	 * Prints the message group name.
 	 *
 	 * @param  {string} message - The group message name.
-	 * @return {undefined} - Nothing gets returned.
+	 * @return {undefined} Nothing.
 	 */
 	function sep_message(message) {
 		var messages = {
