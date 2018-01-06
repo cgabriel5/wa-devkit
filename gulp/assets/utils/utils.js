@@ -315,16 +315,44 @@ var expand_paths = function($paths) {
 	return $paths;
 };
 
-// gulp-sort custom sort function
+/**
+ * Gulp-sort custom sort function.
+ *
+ * @type {Object}
+ */
 var opts_sort = {
-	// sort based on dirname alphabetically
+	/**
+	 * Sort based on dirname alphabetically
+	 *
+	 * @param  {file-object} file1 - The file to compare with.
+	 * @param  {file-object} file2 - The file to compare against.
+	 * @return {number} The calculated difference (-1, 0, or 1).
+	 *
+	 * @link [https://github.com/benjamingr/RegExp.escape]
+	 */
 	comparator: function(file1, file2) {
+		// get the file paths
 		var dir1 = path.dirname(file1.path);
 		var dir2 = path.dirname(file2.path);
+
+		// compare files
 		if (dir1 > dir2) return 1;
 		if (dir1 < dir2) return -1;
 		return 0;
 	}
+};
+
+/**
+ * Escapes dynamic regular expression string to be used with new RegExp().
+ *
+ * @param  {string} string - The string to escape.
+ * @return {string} The escaped string.
+ *
+ * @link [https://github.com/benjamingr/RegExp.escape]
+ * @link [https://stackoverflow.com/a/9310752]
+ */
+var escape = function(string) {
+	return String(string).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
 };
 
 // export functions
@@ -340,3 +368,4 @@ exports.globall = globall;
 exports.ext = ext;
 exports.expand_paths = expand_paths;
 exports.opts_sort = opts_sort;
+exports.escape = escape;
