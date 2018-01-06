@@ -1,20 +1,17 @@
 # Setup
 
-Run the following commands to setup the project.
+Run the following command to start project setup:
 
-```bash
-# one after another...
-
-$ yarn install # Install node modules.
-$ gulp --silent --gulpfile gulpfile.setup.js init # Follow on-screen prompt questions.
-
-# or as one line...
-
-$ yarn install && gulp --silent --gulpfile gulpfile.setup.js init
+```
+$ yarn install && gulp --gulpfile gulpfile.setup.js init
 ```
 
-**Note**: `$ gulp --silent --gulpfile gulpfile.setup.js init` fill the template placeholders with the provided answers, ready project files, create initial project commit, _and_ do other things like remove the setup files.
+**Note**: Setup question answers will be used to ready project files (i.e. fill template placeholders). Although two Gulpfiles initially exist ([`gulpfile.main.js`](/gulpfile.main.js) & [`gulpfile.setup.js`](/gulpfile.setup.js)) once project setup is completed only one file called `gulpfile.js` will exist. Therefore, setup will remove all unneeded setup files.
 
-Once complete run `$ gulp` to watch project files for any changes. 
+Once complete run the following command and start developing!
 
-Available project Gulp commands and their documentation can be found [here](/docs/commands.md).
+```
+$ gulp
+```
+
+Project Gulp commands and their documentation can be found [here](/docs/commands.md).

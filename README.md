@@ -4,16 +4,17 @@
 <h1></h1>
 
 ### Quick Start
-1. Downloaded boilerplate:
-	- `git clone https://github.com/cgabriel5/wa-devkit.git "project_name"`
-2. Once downloaded [setup](/docs/setup.md) boilerplate to get up and running.
+1. Clone repo &mdash; `$ git clone https://github.com/cgabriel5/wa-devkit.git "my_app_name"`
+2. [Setup](/docs/setup.md) boilerplate to get up and running:
+	- first install dependencies... &mdash; `$ yarn install`
+	- ...then start setup prompt &mdash; `$ gulp --gulpfile gulpfile.setup.js init`
 3. Get acquainted with the provided Gulp [commands](/docs/commands.md).
 4. Look over all other [documentation](/docs/).
 5. Start developing! 
 
 ### Features
 
-- Painless project terminal setup via [`gulpfile.setup.js`](/gulpfile.setup.js).
+- Painless project setup via terminal ([`gulpfile.setup.js`](/gulpfile.setup.js)).
 	- Don't worry about having multiple `gulpfiles`. Setup will leave only one called `gulpfile.js`
 	- Easily generate your project's [`LICENSE.txt`](/LICENSE.txt) during setup. ([supported licenses](https://github.com/sdgluck/create-license/tree/master/licenses))
 	- Programmatically makes project's initial commit on setup completion. Establishing project birth! :)
@@ -25,8 +26,8 @@
 	- Create project favicons via [`RealFaviconGenerator`](https://realfavicongenerator.net/).
 	- File reload via [`BrowserSync`](https://www.browsersync.io/).
 		- Auto-detects free ports to use.
-		- Auto-closes opened tabs when `Gulp` terminal process ends.
-	- Search project files via the custom `Gulp` `files` task.
+		- Auto-closes opened tabs when Gulp terminal process ends.
+	- Search project files via the custom Gulp `files` task.
 - Conveniently includes the following front-end libraries:
 	- [`font-awesome`](http://fontawesome.io/)
 	- [`sanitize.css`](https://jonathantneal.github.io/sanitize.css/) (uses [`sanitize.css`](https://jonathantneal.github.io/sanitize.css/) by default)
@@ -36,7 +37,7 @@
 	- [`jquery.js`](https://jquery.com/)
 	- Don't need a pre-installed library? Simply [remove](/docs/vendor.md#remove) what you don't need.
 	- Need to add something else? [Add](/docs/vendor.md#add) what you do need.
-- Considerable amount of project documentation via inline comments, project's [`docs/`](/docs/) section, and terminal documentation provided by the custom `Gulp` [help command](/docs/commands.md): (`$ gulp help`).
+- Considerable amount of project documentation via inline comments, project's [`docs/`](/docs/) section, and terminal documentation provided by the custom Gulp [help command](/docs/commands.md): `$ gulp help`.
 
 ### Dependencies
 
