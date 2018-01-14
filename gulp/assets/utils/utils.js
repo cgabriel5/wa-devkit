@@ -22,7 +22,7 @@ var chalk = gutil.colors;
  *
  * @return {function} - The wrapped console.log() function.
 
- * @link [https://gist.github.com/bgrins/5108712]
+ * @resource [https://gist.github.com/bgrins/5108712]
  */
 var print = function() {
 	/* jshint -W021 */
@@ -61,9 +61,9 @@ print.gulp = log;
  * Detects the default Google Chrome browser based on OS. Falls
  *     back to "firefox".
  *
- * @return {string} The browser name.
+ * @return {string} - The browser name.
  *
- * @link [https://github.com/stevelacy/gulp-open]
+ * @resource [https://github.com/stevelacy/gulp-open]
  */
 var browser = function() {
 	var platform = os.platform();
@@ -78,7 +78,7 @@ var browser = function() {
 /**
  * Creates a Gulp like time formated, colored string.
  *
- * @return {string} The time formated, colored, Gulp like string.
+ * @return {string} - The time formated, colored, Gulp like string.
  */
 var time = function() {
 	// return the formated/colored time
@@ -90,7 +90,7 @@ var time = function() {
  *
  * @param {string} message - The notifcation message to display.
  * @param {boolean} error - Flag indicating what image to use.
- * @return {undefined} Nothing.
+ * @return {undefined} - Nothing.
  */
 var notify = function(message, error) {
 	// determine what image to show
@@ -109,7 +109,7 @@ var notify = function(message, error) {
  *     the tasks name.
  *
  * @param {object} gulp - Gulp itself.
- * @return {object} Modified Gulp.
+ * @return {object} - Modified Gulp.
  */
 var current_task = function(gulp) {
 	// Get the current task name inside task itself
@@ -130,7 +130,7 @@ var current_task = function(gulp) {
  * Builds the project "localhost" URL.
  *
  * @param {object} params - The parameters used to build the URL.
- * @return {string} The URL.
+ * @return {string} - The URL.
  */
 var uri = function(params) {
 	// get provided arguments
@@ -154,7 +154,7 @@ var uri = function(params) {
  * @param {string} template - The template to use.
  * @param {object} data - The object containing the data to replace
  *     placeholders with.
- * @return {undefined} Nothing.
+ * @return {undefined} - Nothing.
  */
 var format = function(template, data) {
 	return template.replace(/\{\{\#(.*?)\}\}/g, function(match) {
@@ -167,7 +167,7 @@ var format = function(template, data) {
  * Add a bang to the start of the string.
  *
  * @param {string} string - The string to add the bang to.
- * @return {string} The new string with bang added.
+ * @return {string} - The new string with bang added.
  */
 var bangify = function(string) {
 	return "!" + (string || "");
@@ -177,7 +177,7 @@ var bangify = function(string) {
  * Appends the "**" pattern to string.
  *
  * @param {string} string - The string to add pattern to.
- * @return {string} The new string with added pattern.
+ * @return {string} - The new string with added pattern.
  */
 var globall = function(string) {
 	return (string || "") + "**";
@@ -326,9 +326,9 @@ var opts_sort = {
 	 *
 	 * @param  {file-object} file1 - The file to compare with.
 	 * @param  {file-object} file2 - The file to compare against.
-	 * @return {number} The calculated difference (-1, 0, or 1).
+	 * @return {number} - The calculated difference (-1, 0, or 1).
 	 *
-	 * @link [https://github.com/benjamingr/RegExp.escape]
+	 * @resource [https://github.com/benjamingr/RegExp.escape]
 	 */
 	comparator: function(file1, file2) {
 		// get the file paths
@@ -346,10 +346,10 @@ var opts_sort = {
  * Escapes dynamic regular expression string to be used with new RegExp().
  *
  * @param  {string} string - The string to escape.
- * @return {string} The escaped string.
+ * @return {string} - The escaped string.
  *
- * @link [https://github.com/benjamingr/RegExp.escape]
- * @link [https://stackoverflow.com/a/9310752]
+ * @resource [https://github.com/benjamingr/RegExp.escape]
+ * @resource [https://stackoverflow.com/a/9310752]
  */
 var escape = function(string) {
 	return String(string).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");

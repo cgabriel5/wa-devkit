@@ -4,7 +4,7 @@
  *     highlighting removed. This function adds the removed highlighting.
  *
  * @param  {string} string - The string to highlight.
- * @return {string} The highlighted string.
+ * @return {string} - The highlighted string.
  */
 function cli_highlight(string) {
 	// remove unneeded lines

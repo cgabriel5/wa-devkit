@@ -135,7 +135,7 @@ var JINDENT = $app.eol;
  *     highlighting removed. This function adds the removed highlighting.
  *
  * @param  {string} string - The string to highlight.
- * @return {string} The highlighted string.
+ * @return {string} - The highlighted string.
  */
 function cli_highlight(string) {
 	// remove unneeded lines
@@ -209,7 +209,7 @@ gulp.task("init", function(done) {
 	 * Prints the message group name.
 	 *
 	 * @param  {string} message - The group message name.
-	 * @return {undefined} Nothing.
+	 * @return {undefined} - Nothing.
 	 */
 	function sep_message(message) {
 		var messages = {
