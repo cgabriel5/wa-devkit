@@ -138,13 +138,18 @@ var JINDENT = $app.eol;
  * @return {string} - The highlighted string.
  */
 function cli_highlight(string) {
-	// remove unneeded lines
+	// prepare the string
 	var output = string.trim().split("\n");
+
+	// remove unneeded lines
 	output = output.filter(function(line) {
 		return !-~line.indexOf("] Using gulpfile");
 	});
+
 	// turn back to string
 	output = output.join("\n");
+
+	// coloring starts here...
 
 	// color the gulp timestamps
 	output = output.replace(/\[([\d:]+)\]/g, "[" + chalk.gray("$1") + "]");
@@ -168,13 +173,15 @@ function cli_highlight(string) {
 			"$5" +
 			chalk.blue("$6")
 	);
-	// color final items count
 
+	// color final items count
 	output = output.replace(/(\d+ items?)/g, chalk.green("$1"));
+
 	// color symbols
 	output = output.replace(/(✎)/g, chalk.yellow("$1"));
 	output = output.replace(/(🗑)/g, chalk.red("$1"));
 
+	// return the colored output
 	return output;
 }
 
