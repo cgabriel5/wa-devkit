@@ -136,9 +136,9 @@ gulp.task("help", function(done) {
 					.trim();
 			};
 
-			print(newline);
+			print.ln();
 			print(chalk.bold("Tasks"));
-			print(newline);
+			print.ln();
 
 			var tasks = {};
 			var names = [];
@@ -252,7 +252,7 @@ gulp.task("help", function(done) {
 					});
 
 					// bottom padding
-					print(newline);
+					print.ln();
 				} else {
 					// only show the name and its description
 					print(
@@ -266,7 +266,7 @@ gulp.task("help", function(done) {
 
 			if (!verbose) {
 				// bottom padding
-				print(newline);
+				print.ln();
 			}
 
 			done();

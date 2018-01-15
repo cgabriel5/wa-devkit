@@ -269,7 +269,7 @@ function open_file_in_browser(filepath, port, callback) {
  * @return {undefined} - Nothing.
  */
 function gulp_check_warn() {
-	print(
+	print.gulp(
 		chalk.red(
 			"Task cannot be performed while Gulp is running. Close Gulp then try again."
 		)
@@ -375,7 +375,7 @@ gulp.task("init:watch-git-branch", function(done) {
 				function() {
 					var brn_current = git.checkSync($paths.dirname).branch;
 					if (branch_name) {
-						print(
+						print.gulp(
 							chalk.yellow("(pid:" + process.pid + ")"),
 							"Gulp monitoring",
 							chalk.green(branch_name),
@@ -384,14 +384,14 @@ gulp.task("init:watch-git-branch", function(done) {
 					}
 					if (brn_current !== branch_name) {
 						// message + exit
-						print(
+						print.gulp(
 							"Gulp stopped due to branch switch. (",
 							chalk.green(branch_name),
 							"=>",
 							chalk.yellow(brn_current),
 							")"
 						);
-						print(
+						print.gulp(
 							"Restart Gulp to monitor",
 							chalk.yellow(brn_current),
 							"branch."
@@ -458,11 +458,11 @@ gulp.task("default", function(done) {
 		var pid = $internal.get("pid");
 		if (pid) {
 			// kill the open process
-			print(chalk.green("Gulp process stopped."));
+			print.gulp(chalk.green("Gulp process stopped."));
 			process.kill(pid);
 		} else {
 			// no open process exists
-			print("No Gulp process exists.");
+			print.gulp("No Gulp process exists.");
 		}
 
 		return done();
@@ -480,7 +480,7 @@ gulp.task("default", function(done) {
 				// if there is a pid present it means a Gulp instance has
 				// already started. therefore, prevent another from starting.
 				if (pid) {
-					print(
+					print.gulp(
 						chalk.yellow(
 							"A Gulp instance is already running",
 							chalk.yellow("(pid:" + pid + ")") + ".",
@@ -668,15 +668,16 @@ gulp.task("dist", function(done) {
 	var task = this;
 
 	if (APPTYPE !== "webapp") {
-		print("This helper task is only available for webapp projects.");
+		print.gulp("This helper task is only available for webapp projects.");
 		return done();
 	}
 	// get the gulp build tasks
 	var tasks = bundle_dist.tasks;
 	// add callback to the sequence
 	tasks.push(function() {
-		notify("Distribution folder complete.");
-		print("Distribution folder complete.");
+		var message = "Distribution folder complete.";
+		notify(message);
+		print.gulp(message);
 		done();
 	});
 	// apply the tasks and callback to sequence
@@ -736,15 +737,16 @@ gulp.task("lib", function(done) {
 	var task = this;
 
 	if (APPTYPE !== "library") {
-		print("This helper task is only available for library projects.");
+		print.gulp("This helper task is only available for library projects.");
 		return done();
 	}
 	// get the gulp build tasks
 	var tasks = bundle_lib.tasks;
 	// add callback to the sequence
 	tasks.push(function() {
-		notify("Library folder complete.");
-		print("Library folder complete.");
+		var message = "Library folder complete.";
+		notify(message);
+		print.gulp(message);
 		done();
 	});
 	// apply the tasks and callback to sequence
@@ -1059,7 +1061,7 @@ gulp.task("modernizr", function(done) {
 			fs.writeFile(file_location, build + EOL_ENDING, function() {
 				var message = chalk.blue("Modernizr build complete. Placed in");
 				var location = chalk.green(file_location);
-				print(`${message} ${location}`);
+				print.gulp(`${message} ${location}`);
 				done();
 			});
 		});
@@ -1313,7 +1315,7 @@ gulp.task("open", function(done) {
  */
 gulp.task("status", function(done) {
 	var pid = $internal.get("pid");
-	print(
+	print.gulp(
 		pid
 			? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
 			: chalk.yellow("Gulp is not running.")
@@ -1334,11 +1336,11 @@ gulp.task("ports", function(done) {
 	var ports = $internal.get("ports");
 	// if file is empty
 	if (!ports) {
-		print(chalk.yellow("No ports are in use."));
+		print.gulp(chalk.yellow("No ports are in use."));
 		return done();
 	}
 	// ports exist...
-	print(
+	print.gulp(
 		chalk.green("(local, ui)"),
 		chalk.magenta("(" + ports.local + ", " + ports.ui + ")")
 	);
@@ -1516,10 +1518,10 @@ gulp.task("pretty", function(done) {
 
 	// show the used glob patterns when the flag is provided
 	if (test) {
-		print(chalk.green("Using globs:"));
+		print.gulp(chalk.green("Using globs:"));
 		var prefix = " ".repeat(10);
 		files.forEach(function(glob) {
-			print(prefix, chalk.blue(glob));
+			print.gulp(prefix, chalk.blue(glob));
 		});
 		return done();
 	}
@@ -2075,7 +2077,7 @@ gulp.task("dependency", function(done) {
 			// when folder name is not present leave the name empty.
 			name = name ? `(${name[2]})` : "";
 
-			print(" ".repeat(10), chalk.magenta(dependency), name);
+			print.gulp(" ".repeat(10), chalk.magenta(dependency), name);
 		};
 
 		// get the config path for the bundles file
@@ -2083,9 +2085,9 @@ gulp.task("dependency", function(done) {
 		var header = `${bundles_path} > $.vendor.files[...]`;
 
 		// print the dependencies
-		print(chalk.green(header.replace("$", "css")));
+		print.gulp(chalk.green(header.replace("$", "css")));
 		css_dependencies.forEach(printer);
-		print(chalk.green(header.replace("$", "js")));
+		print.gulp(chalk.green(header.replace("$", "js")));
 		js_dependencies.forEach(printer);
 
 		return done();
@@ -2093,13 +2095,17 @@ gulp.task("dependency", function(done) {
 
 	// check that the module exists
 	if (action === "add" && !de.sync(module_path)) {
-		print("The module", chalk.magenta(`${module_path}`), "does not exist.");
-		print(
+		print.gulp(
+			"The module",
+			chalk.magenta(`${module_path}`),
+			"does not exist."
+		);
+		print.gulp(
 			`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`
 		);
 		return done();
 	} else if (action === "remove" && !de.sync(delete_path)) {
-		print(
+		print.gulp(
 			"The module",
 			chalk.magenta(`${delete_path}`),
 			"does not exist. Removal aborted."
@@ -2130,13 +2136,13 @@ gulp.task("dependency", function(done) {
 					$.debug.edit()
 				],
 				function() {
-					print(message);
+					print.gulp(message);
 					done();
 				}
 			);
 		} else {
 			// remove
-			print(message);
+			print.gulp(message);
 			done();
 		}
 	});
@@ -2316,7 +2322,7 @@ gulp.task("hlint", function(done) {
 				// make sure the first letter is always capitalized
 				var first_letter = issue.msg[0];
 				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
-				print(
+				print.gulp(
 					chalk.magenta(filepath),
 					chalk.white(`line ${issue.line} char ${issue.column}`),
 					chalk.blue(`(${issue.code})`),
@@ -2422,7 +2428,7 @@ gulp.task("indent", function(done) {
 	var size = _args.size || 4; // spaces to use
 
 	// print the indentation information
-	print("Using:", chalk.green(style), "Size:", chalk.green(size));
+	print.gulp("Using:", chalk.green(style), "Size:", chalk.green(size));
 
 	pump(
 		[
@@ -2612,9 +2618,9 @@ gulp.task("help", function(done) {
 					.trim();
 			};
 
-			print(newline);
+			print.ln();
 			print(chalk.bold("Tasks"));
-			print(newline);
+			print.ln();
 
 			var tasks = {};
 			var names = [];
@@ -2728,7 +2734,7 @@ gulp.task("help", function(done) {
 					});
 
 					// bottom padding
-					print(newline);
+					print.ln();
 				} else {
 					// only show the name and its description
 					print(
@@ -2742,7 +2748,7 @@ gulp.task("help", function(done) {
 
 			if (!verbose) {
 				// bottom padding
-				print(newline);
+				print.ln();
 			}
 
 			done();
@@ -2933,7 +2939,7 @@ gulp.task("favicon", function(done) {
 		"pretty"
 	];
 	tasks.push(function() {
-		print("Favicons generated.");
+		print.gulp("Favicons generated.");
 		done();
 	});
 	return sequence.apply(task, tasks);

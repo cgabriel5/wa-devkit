@@ -93,7 +93,7 @@ gulp.task("init:watch-git-branch", function(done) {
 				function() {
 					var brn_current = git.checkSync($paths.dirname).branch;
 					if (branch_name) {
-						print(
+						print.gulp(
 							chalk.yellow("(pid:" + process.pid + ")"),
 							"Gulp monitoring",
 							chalk.green(branch_name),
@@ -102,14 +102,14 @@ gulp.task("init:watch-git-branch", function(done) {
 					}
 					if (brn_current !== branch_name) {
 						// message + exit
-						print(
+						print.gulp(
 							"Gulp stopped due to branch switch. (",
 							chalk.green(branch_name),
 							"=>",
 							chalk.yellow(brn_current),
 							")"
 						);
-						print(
+						print.gulp(
 							"Restart Gulp to monitor",
 							chalk.yellow(brn_current),
 							"branch."
@@ -176,11 +176,11 @@ gulp.task("default", function(done) {
 		var pid = $internal.get("pid");
 		if (pid) {
 			// kill the open process
-			print(chalk.green("Gulp process stopped."));
+			print.gulp(chalk.green("Gulp process stopped."));
 			process.kill(pid);
 		} else {
 			// no open process exists
-			print("No Gulp process exists.");
+			print.gulp("No Gulp process exists.");
 		}
 
 		return done();
@@ -198,7 +198,7 @@ gulp.task("default", function(done) {
 				// if there is a pid present it means a Gulp instance has
 				// already started. therefore, prevent another from starting.
 				if (pid) {
-					print(
+					print.gulp(
 						chalk.yellow(
 							"A Gulp instance is already running",
 							chalk.yellow("(pid:" + pid + ")") + ".",

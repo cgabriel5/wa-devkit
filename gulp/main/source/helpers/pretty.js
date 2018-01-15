@@ -165,10 +165,10 @@ gulp.task("pretty", function(done) {
 
 	// show the used glob patterns when the flag is provided
 	if (test) {
-		print(chalk.green("Using globs:"));
+		print.gulp(chalk.green("Using globs:"));
 		var prefix = " ".repeat(10);
 		files.forEach(function(glob) {
-			print(prefix, chalk.blue(glob));
+			print.gulp(prefix, chalk.blue(glob));
 		});
 		return done();
 	}

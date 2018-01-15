@@ -91,7 +91,7 @@ gulp.task("dependency", function(done) {
 			// when folder name is not present leave the name empty.
 			name = name ? `(${name[2]})` : "";
 
-			print(" ".repeat(10), chalk.magenta(dependency), name);
+			print.gulp(" ".repeat(10), chalk.magenta(dependency), name);
 		};
 
 		// get the config path for the bundles file
@@ -99,9 +99,9 @@ gulp.task("dependency", function(done) {
 		var header = `${bundles_path} > $.vendor.files[...]`;
 
 		// print the dependencies
-		print(chalk.green(header.replace("$", "css")));
+		print.gulp(chalk.green(header.replace("$", "css")));
 		css_dependencies.forEach(printer);
-		print(chalk.green(header.replace("$", "js")));
+		print.gulp(chalk.green(header.replace("$", "js")));
 		js_dependencies.forEach(printer);
 
 		return done();
@@ -109,13 +109,17 @@ gulp.task("dependency", function(done) {
 
 	// check that the module exists
 	if (action === "add" && !de.sync(module_path)) {
-		print("The module", chalk.magenta(`${module_path}`), "does not exist.");
-		print(
+		print.gulp(
+			"The module",
+			chalk.magenta(`${module_path}`),
+			"does not exist."
+		);
+		print.gulp(
 			`First install by running "$ yarn add ${name} --dev". Then try adding the dependency again.`
 		);
 		return done();
 	} else if (action === "remove" && !de.sync(delete_path)) {
-		print(
+		print.gulp(
 			"The module",
 			chalk.magenta(`${delete_path}`),
 			"does not exist. Removal aborted."
@@ -146,13 +150,13 @@ gulp.task("dependency", function(done) {
 					$.debug.edit()
 				],
 				function() {
-					print(message);
+					print.gulp(message);
 					done();
 				}
 			);
 		} else {
 			// remove
-			print(message);
+			print.gulp(message);
 			done();
 		}
 	});

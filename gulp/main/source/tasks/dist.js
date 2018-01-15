@@ -141,15 +141,16 @@ gulp.task("dist", function(done) {
 	var task = this;
 
 	if (APPTYPE !== "webapp") {
-		print("This helper task is only available for webapp projects.");
+		print.gulp("This helper task is only available for webapp projects.");
 		return done();
 	}
 	// get the gulp build tasks
 	var tasks = bundle_dist.tasks;
 	// add callback to the sequence
 	tasks.push(function() {
-		notify("Distribution folder complete.");
-		print("Distribution folder complete.");
+		var message = "Distribution folder complete.";
+		notify(message);
+		print.gulp(message);
 		done();
 	});
 	// apply the tasks and callback to sequence

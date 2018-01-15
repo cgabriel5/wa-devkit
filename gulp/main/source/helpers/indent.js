@@ -37,7 +37,7 @@ gulp.task("indent", function(done) {
 	var size = _args.size || 4; // spaces to use
 
 	// print the indentation information
-	print("Using:", chalk.green(style), "Size:", chalk.green(size));
+	print.gulp("Using:", chalk.green(style), "Size:", chalk.green(size));
 
 	pump(
 		[
