@@ -11,7 +11,7 @@
  * --verbose
  *     [boolean] Shows all documentation.
  *
- * -i, --internal
+ * --internal
  *     [boolean] Shows all internal (yellow) tasks.
  *
  * -f, --filter
@@ -43,7 +43,6 @@ gulp.task("help", function(done) {
 			type: "string"
 		})
 		.option("internal", {
-			alias: "i",
 			type: "boolean"
 		}).argv;
 	var verbose = _args.v || _args.verbose;
@@ -126,7 +125,9 @@ gulp.task("help", function(done) {
 			};
 
 			var replacer = function(match) {
-				return chalk.cyan(match);
+				return chalk[-~match.indexOf("--internal") ? "yellow" : "cyan"](
+					match
+				);
 			};
 
 			var remove_comment_syntax = function(string) {
@@ -164,8 +165,25 @@ gulp.task("help", function(done) {
 				// remove doc comment syntax
 				block = remove_comment_syntax(block);
 
+				// *************************************************
+				// For the time being this method of scraping for the
+				// description is fine but it must be made better in a
+				// future iteration. This way limits the description to
+				// a single line and sometimes that is not enough to
+				// describe its function.
+				// *************************************************
+
+				// Functions with only a description and nothing else,
+				// will not have any new lines in its description.
+				// Therefore, the simply use its entire documentation
+				// as its description.
+				var newline_index = block.indexOf(`${newline}${newline}`);
+				if (newline_index === -1) {
+					newline_index = block.length;
+				}
+
 				// get the description
-				var desc = block.substring(0, block.indexOf("\n\n"));
+				var desc = block.substring(0, newline_index);
 
 				tasks[name] = {
 					text: block,
