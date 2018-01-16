@@ -1,5 +1,7 @@
 /**
  * Build app.css + autoprefix + minify.
+ *
+ * @internal - Ran via the "css" task.
  */
 gulp.task("css:app", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -30,6 +32,8 @@ gulp.task("css:app", function(done) {
 
 /**
  * Build vendor bundle + minify + beautify.
+ *
+ * @internal - Ran via the "css" task.
  */
 gulp.task("css:vendor", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -58,4 +62,14 @@ gulp.task("css:vendor", function(done) {
 		],
 		done
 	);
+});
+
+/**
+ * Build app.css & css vendor files + autoprefix + minify.
+ */
+gulp.task("css", function(done) {
+	// Runs the css:* tasks.
+	return sequence("css:app", "css:vendor", function() {
+		done();
+	});
 });

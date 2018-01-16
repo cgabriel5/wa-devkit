@@ -44,6 +44,8 @@ cleanup(function(exit_code, signal) {
  * • This will write the current gulp
  *     process id to the internal gulp configuration file. this is done
  *     to prevent another Gulp instance from being opened.
+ *
+ * @internal - Used with the default task.
  */
 gulp.task("init:save-pid", function(done) {
 	$internal.set("pid", process.pid); // set the status
@@ -68,6 +70,8 @@ gulp.task("init:save-pid", function(done) {
  *     might be different. this can cause some problems with the watch
  *     tasks and could perform gulp tasks when not necessarily wanted.
  *     To resume gulp simply restart with the gulp command.
+ *
+ * @internal - Used with the default task.
  */
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
@@ -125,6 +129,8 @@ gulp.task("init:watch-git-branch", function(done) {
 
 /**
  * Build app files.
+ *
+ * @internal - Used with the default task.
  */
 gulp.task("init:build", function(done) {
 	// cache task

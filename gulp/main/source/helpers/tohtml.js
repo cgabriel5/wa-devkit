@@ -7,6 +7,8 @@ var __markdown_styles;
 
 /**
  * Get the CSS markdown + prismjs styles.
+ *
+ * @internal - Used to prepare the tohtml task.
  */
 gulp.task("tohtml:prepcss", function(done) {
 	// run gulp process

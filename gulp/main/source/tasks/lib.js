@@ -1,5 +1,7 @@
 /**
  * Remove old lib/ folder.
+ *
+ * @internal - Used to prepare the lib task.
  */
 gulp.task("lib:clean", function(done) {
 	pump(
@@ -10,6 +12,8 @@ gulp.task("lib:clean", function(done) {
 
 /**
  * Build the library JS files/folders.
+ *
+ * @internal - Used to prepare the lib task.
  */
 gulp.task("lib:js", function(done) {
 	pump(

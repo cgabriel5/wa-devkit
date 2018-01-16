@@ -1,5 +1,7 @@
 /**
  * Build app.js + minify + beautify.
+ *
+ * @internal - Ran via the "js" task.
  */
 gulp.task("js:app", function(done) {
 	pump(
@@ -20,6 +22,8 @@ gulp.task("js:app", function(done) {
 
 /**
  * Build vendor bundle + minify + beautify.
+ *
+ * @internal - Ran via the "js" task.
  */
 gulp.task("js:vendor", function(done) {
 	// NOTE: absolute vendor library file paths should be used.
@@ -38,4 +42,14 @@ gulp.task("js:vendor", function(done) {
 		],
 		done
 	);
+});
+
+/**
+ * Build app.js & js vendor files + autoprefix + minify.
+ */
+gulp.task("js", function(done) {
+	// Runs the js:* tasks.
+	return sequence("js:app", "js:vendor", function() {
+		done();
+	});
 });

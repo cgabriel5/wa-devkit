@@ -1,5 +1,7 @@
 /**
  * Remove old dist/ folder.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:clean", function(done) {
 	pump(
@@ -10,6 +12,8 @@ gulp.task("dist:clean", function(done) {
 
 /**
  * Copy new file/folders.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:favicon", function(done) {
 	pump(
@@ -30,6 +34,8 @@ gulp.task("dist:favicon", function(done) {
 
 /**
  * Build the distribution CSS files/folders.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:css", function(done) {
 	pump(
@@ -50,6 +56,8 @@ gulp.task("dist:css", function(done) {
 
 /**
  * Run images through imagemin to optimize them.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:img", function(done) {
 	// need to copy hidden files/folders?
@@ -90,6 +98,8 @@ gulp.task("dist:img", function(done) {
 
 /**
  * Build the distribution JS files/folders.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:js", function(done) {
 	pump(
@@ -110,6 +120,8 @@ gulp.task("dist:js", function(done) {
 
 /**
  * Copy over the root files to the distribution folder.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:root", function(done) {
 	pump(

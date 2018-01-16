@@ -7,6 +7,8 @@
  *     least once to create the icons. Then, you should run it whenever
  *     RealFaviconGenerator updates its package
  *     (see the check-for-favicon-update task below).
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:generate", function(done) {
 	$.real_favicon.generateFavicon(
@@ -76,6 +78,8 @@ gulp.task("favicon:generate", function(done) {
 
 /**
  * Update manifest.json.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:edit-manifest", function(done) {
 	var manifest = json.read($paths.favicon_root_manifest);
@@ -92,6 +96,8 @@ gulp.task("favicon:edit-manifest", function(done) {
 
 /**
  * Copy favicon.ico and apple-touch-icon.png to the root.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:root", function(done) {
 	pump(
@@ -113,6 +119,8 @@ gulp.task("favicon:root", function(done) {
 
 /**
  * Copy delete unneeded files.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:delete", function(done) {
 	pump(
@@ -130,6 +138,8 @@ gulp.task("favicon:delete", function(done) {
 
 /**
  * Inject new favicon HTML.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:html", function(done) {
 	pump(
@@ -184,7 +194,7 @@ gulp.task("favicon", function(done) {
 });
 
 /**
- * Check for updates RealFaviconGenerator.
+ * Check for RealFaviconGenerator updates.
  *
  * Notes
  *
@@ -193,7 +203,7 @@ gulp.task("favicon", function(done) {
  *     make it part of your continuous integration system. Check for
  *     RealFaviconGenerator updates.
  */
-gulp.task("favicon:updates", function(done) {
+gulp.task("favicon-updates", function(done) {
 	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
 		.version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {

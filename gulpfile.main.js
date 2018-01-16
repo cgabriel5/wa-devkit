@@ -326,6 +326,8 @@ cleanup(function(exit_code, signal) {
  * • This will write the current gulp
  *     process id to the internal gulp configuration file. this is done
  *     to prevent another Gulp instance from being opened.
+ *
+ * @internal - Used with the default task.
  */
 gulp.task("init:save-pid", function(done) {
 	$internal.set("pid", process.pid); // set the status
@@ -350,6 +352,8 @@ gulp.task("init:save-pid", function(done) {
  *     might be different. this can cause some problems with the watch
  *     tasks and could perform gulp tasks when not necessarily wanted.
  *     To resume gulp simply restart with the gulp command.
+ *
+ * @internal - Used with the default task.
  */
 gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
@@ -407,6 +411,8 @@ gulp.task("init:watch-git-branch", function(done) {
 
 /**
  * Build app files.
+ *
+ * @internal - Used with the default task.
  */
 gulp.task("init:build", function(done) {
 	// cache task
@@ -527,6 +533,8 @@ gulp.task("default", function(done) {
 
 /**
  * Remove old dist/ folder.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:clean", function(done) {
 	pump(
@@ -537,6 +545,8 @@ gulp.task("dist:clean", function(done) {
 
 /**
  * Copy new file/folders.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:favicon", function(done) {
 	pump(
@@ -557,6 +567,8 @@ gulp.task("dist:favicon", function(done) {
 
 /**
  * Build the distribution CSS files/folders.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:css", function(done) {
 	pump(
@@ -577,6 +589,8 @@ gulp.task("dist:css", function(done) {
 
 /**
  * Run images through imagemin to optimize them.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:img", function(done) {
 	// need to copy hidden files/folders?
@@ -617,6 +631,8 @@ gulp.task("dist:img", function(done) {
 
 /**
  * Build the distribution JS files/folders.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:js", function(done) {
 	pump(
@@ -637,6 +653,8 @@ gulp.task("dist:js", function(done) {
 
 /**
  * Copy over the root files to the distribution folder.
+ *
+ * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:root", function(done) {
 	pump(
@@ -690,6 +708,8 @@ gulp.task("dist", function(done) {
 
 /**
  * Remove old lib/ folder.
+ *
+ * @internal - Used to prepare the lib task.
  */
 gulp.task("lib:clean", function(done) {
 	pump(
@@ -700,6 +720,8 @@ gulp.task("lib:clean", function(done) {
 
 /**
  * Build the library JS files/folders.
+ *
+ * @internal - Used to prepare the lib task.
  */
 gulp.task("lib:js", function(done) {
 	pump(
@@ -915,6 +937,8 @@ gulp.task("html", function(done) {
 
 /**
  * Build app.css + autoprefix + minify.
+ *
+ * @internal - Ran via the "css" task.
  */
 gulp.task("css:app", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -945,6 +969,8 @@ gulp.task("css:app", function(done) {
 
 /**
  * Build vendor bundle + minify + beautify.
+ *
+ * @internal - Ran via the "css" task.
  */
 gulp.task("css:vendor", function(done) {
 	var unprefix = require("postcss-unprefix");
@@ -975,12 +1001,24 @@ gulp.task("css:vendor", function(done) {
 	);
 });
 
+/**
+ * Build app.css & css vendor files + autoprefix + minify.
+ */
+gulp.task("css", function(done) {
+	// Runs the css:* tasks.
+	return sequence("css:app", "css:vendor", function() {
+		done();
+	});
+});
+
 // -----------------------------------------------------------------------------
 // js.js -- ./gulp/main/source/tasks/js.js
 // -----------------------------------------------------------------------------
 
 /**
  * Build app.js + minify + beautify.
+ *
+ * @internal - Ran via the "js" task.
  */
 gulp.task("js:app", function(done) {
 	pump(
@@ -1001,6 +1039,8 @@ gulp.task("js:app", function(done) {
 
 /**
  * Build vendor bundle + minify + beautify.
+ *
+ * @internal - Ran via the "js" task.
  */
 gulp.task("js:vendor", function(done) {
 	// NOTE: absolute vendor library file paths should be used.
@@ -1019,6 +1059,16 @@ gulp.task("js:vendor", function(done) {
 		],
 		done
 	);
+});
+
+/**
+ * Build app.js & js vendor files + autoprefix + minify.
+ */
+gulp.task("js", function(done) {
+	// Runs the js:* tasks.
+	return sequence("js:app", "js:vendor", function() {
+		done();
+	});
 });
 
 // -----------------------------------------------------------------------------
@@ -1081,6 +1131,8 @@ var __markdown_styles;
 
 /**
  * Get the CSS markdown + prismjs styles.
+ *
+ * @internal - Used to prepare the tohtml task.
  */
 gulp.task("tohtml:prepcss", function(done) {
 	// run gulp process
@@ -2770,6 +2822,8 @@ gulp.task("help", function(done) {
  *     least once to create the icons. Then, you should run it whenever
  *     RealFaviconGenerator updates its package
  *     (see the check-for-favicon-update task below).
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:generate", function(done) {
 	$.real_favicon.generateFavicon(
@@ -2839,6 +2893,8 @@ gulp.task("favicon:generate", function(done) {
 
 /**
  * Update manifest.json.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:edit-manifest", function(done) {
 	var manifest = json.read($paths.favicon_root_manifest);
@@ -2855,6 +2911,8 @@ gulp.task("favicon:edit-manifest", function(done) {
 
 /**
  * Copy favicon.ico and apple-touch-icon.png to the root.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:root", function(done) {
 	pump(
@@ -2876,6 +2934,8 @@ gulp.task("favicon:root", function(done) {
 
 /**
  * Copy delete unneeded files.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:delete", function(done) {
 	pump(
@@ -2893,6 +2953,8 @@ gulp.task("favicon:delete", function(done) {
 
 /**
  * Inject new favicon HTML.
+ *
+ * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:html", function(done) {
 	pump(
@@ -2947,7 +3009,7 @@ gulp.task("favicon", function(done) {
 });
 
 /**
- * Check for updates RealFaviconGenerator.
+ * Check for RealFaviconGenerator updates.
  *
  * Notes
  *
@@ -2956,7 +3018,7 @@ gulp.task("favicon", function(done) {
  *     make it part of your continuous integration system. Check for
  *     RealFaviconGenerator updates.
  */
-gulp.task("favicon:updates", function(done) {
+gulp.task("favicon-updates", function(done) {
 	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
 		.version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
