@@ -2549,7 +2549,7 @@ gulp.task("indent", function(done) {
  * --internal
  *     [boolean] Shows all internal (yellow) tasks.
  *
- * -f, --filter
+ * --filter
  *     [string] Names of tasks to show documentation for.
  *
  * Usage
@@ -2570,11 +2570,9 @@ gulp.task("help", function(done) {
 	// run yargs
 	var _args = yargs
 		.option("verbose", {
-			alias: "v",
 			type: "boolean"
 		})
 		.option("filter", {
-			alias: "f",
 			type: "string"
 		})
 		.option("internal", {
@@ -2608,12 +2606,15 @@ gulp.task("help", function(done) {
 			})
 		],
 		function() {
-			// loop over gulpfile content string and file all the docblocks
 			var blocks = [];
+			var lengths = [];
+			var names = [];
 			var string = content;
 			var docblock_pattern = /^\/\*\*[\s\S]*?\*\/$/m;
 			var task_name_pattern = /^gulp.task\(('|")([a-z:\-_]+)\1/;
 			var match = string.match(docblock_pattern);
+
+			// loop over gulpfile content string and file all the docblocks
 			while (match) {
 				var comment = match[0];
 				// get the match index
@@ -2637,12 +2638,43 @@ gulp.task("help", function(done) {
 					continue;
 				}
 
+				// check whether the task is internal
+				var is_internal = Boolean(-~comment.indexOf("@internal"));
+
+				// exclude internal tasks when the internal flag is not set
+				if (is_internal && !internal) {
+					// reset the match pattern
+					match = string.match(docblock_pattern);
+					continue;
+				}
+
+				// get the task name
+				var task_name = task_name_match[2];
+
+				// filter if flag present, also grab the length of the tasks
+				if (filter) {
+					if (-~filter.indexOf(task_name) || task_name === "help") {
+						// store the task name length
+						lengths.push(task_name.length);
+					} else {
+						// reset the match pattern
+						match = string.match(docblock_pattern);
+						continue;
+					}
+				} else {
+					// when no flag present just add all to the array
+					lengths.push(task_name.length);
+				}
+
 				// add the comment and task name to array
-				// [ task name , task docblock comment ]
-				blocks.push([task_name_match[2], comment]);
+				// [ task name , task docblock comment , is task internal? ]
+				blocks.push([task_name, comment, is_internal]);
 				// reset the match pattern
 				match = string.match(docblock_pattern);
 			}
+
+			// get the task max length
+			var max_length = Math.max.apply(null, lengths);
 
 			var newline = "\n";
 			var headers = ["Flags", "Usage", "Notes"];
@@ -2660,9 +2692,7 @@ gulp.task("help", function(done) {
 			};
 
 			var replacer = function(match) {
-				return chalk[-~match.indexOf("--internal") ? "yellow" : "cyan"](
-					match
-				);
+				return chalk.bold(match);
 			};
 
 			var remove_comment_syntax = function(string) {
@@ -2676,13 +2706,12 @@ gulp.task("help", function(done) {
 			print.ln();
 
 			var tasks = {};
-			var names = [];
-			var lengths = [];
 
 			// loop over every match get needed data
 			blocks.forEach(function(block) {
 				// get task name
 				var name = block[0];
+				var internal = block[2];
 				// reset the block var to the actual comment block
 				block = block[1];
 
@@ -2722,29 +2751,18 @@ gulp.task("help", function(done) {
 
 				tasks[name] = {
 					text: block,
-					desc: desc
+					desc: desc,
+					internal: internal
 				};
 				if (name !== "help") {
 					names.push(name);
 				}
-				lengths.push(name.length);
 			});
 
 			// sort the array names
 			names.sort(function(a, b) {
 				return cmp(a, b) || cmp(a.length, b.length);
 			});
-
-			// get the task max length
-			var max_length = Math.max.apply(null, lengths);
-
-			// filter if flag present
-			if (filter) {
-				filter = filter.split(" ");
-				names = names.filter(function(name) {
-					return -~filter.indexOf(name);
-				});
-			}
 
 			// add the help task to the front of the array
 			names.unshift("help");
@@ -2755,18 +2773,11 @@ gulp.task("help", function(done) {
 				var task = tasks[name];
 				var block = task.text;
 				var desc = task.desc;
+				var internal = task.internal;
 
-				var is_internal = -~name.indexOf(":");
-
-				// task name color will change based on whether its
+				// task name color will change based on whether it's
 				// an internal task.
-				var color = is_internal ? "yellow" : "cyan";
-
-				// only print internal tasks when the internal flag
-				// is provided.
-				if (is_internal && !internal) {
-					return;
-				}
+				var color = !internal ? "bold" : "yellow";
 
 				// loop over lines
 				if (verbose || name === "help") {
