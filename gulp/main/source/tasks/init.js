@@ -225,7 +225,7 @@ gulp.task("default", function(done) {
 							"init:save-pid",
 							"init:watch-git-branch",
 							"init:build",
-							"watch:main",
+							"watch",
 							function() {
 								done();
 							}

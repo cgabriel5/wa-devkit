@@ -172,7 +172,7 @@ gulp.task("favicon", function(done) {
 		"favicon:root",
 		"favicon:delete",
 		"favicon:html",
-		"html:main",
+		"html",
 		"tohtml",
 		"pretty"
 	];

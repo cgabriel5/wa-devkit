@@ -1,7 +1,7 @@
 /**
  * Init HTML files + minify.
  */
-gulp.task("html:main", function(done) {
+gulp.task("html", function(done) {
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {

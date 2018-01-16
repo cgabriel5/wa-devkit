@@ -507,7 +507,7 @@ gulp.task("default", function(done) {
 							"init:save-pid",
 							"init:watch-git-branch",
 							"init:build",
-							"watch:main",
+							"watch",
 							function() {
 								done();
 							}
@@ -760,7 +760,7 @@ gulp.task("lib", function(done) {
 /**
  * Watch for files changes.
  */
-gulp.task("watch:main", function(done) {
+gulp.task("watch", function(done) {
 	// add auto tab closing capability to browser-sync. this will
 	// auto close the used bs tabs when gulp closes.
 	bs.use({
@@ -797,7 +797,7 @@ gulp.task("watch:main", function(done) {
 					cwd: $paths.html_source
 				},
 				function() {
-					return sequence("html:main");
+					return sequence("html");
 				}
 			);
 
@@ -852,7 +852,7 @@ gulp.task("watch:main", function(done) {
 					cwd: $paths.img_source
 				},
 				function() {
-					return sequence("img:main");
+					return sequence("img");
 				}
 			);
 
@@ -890,7 +890,7 @@ gulp.task("watch:main", function(done) {
 /**
  * Init HTML files + minify.
  */
-gulp.task("html:main", function(done) {
+gulp.task("html", function(done) {
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {
@@ -1028,7 +1028,7 @@ gulp.task("js:vendor", function(done) {
 /**
  * Just trigger a browser-sync stream.
  */
-gulp.task("img:main", function(done) {
+gulp.task("img", function(done) {
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
 	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], done);
@@ -2935,7 +2935,7 @@ gulp.task("favicon", function(done) {
 		"favicon:root",
 		"favicon:delete",
 		"favicon:html",
-		"html:main",
+		"html",
 		"tohtml",
 		"pretty"
 	];

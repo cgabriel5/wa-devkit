@@ -1,7 +1,7 @@
 /**
  * Watch for files changes.
  */
-gulp.task("watch:main", function(done) {
+gulp.task("watch", function(done) {
 	// add auto tab closing capability to browser-sync. this will
 	// auto close the used bs tabs when gulp closes.
 	bs.use({
@@ -38,7 +38,7 @@ gulp.task("watch:main", function(done) {
 					cwd: $paths.html_source
 				},
 				function() {
-					return sequence("html:main");
+					return sequence("html");
 				}
 			);
 
@@ -93,7 +93,7 @@ gulp.task("watch:main", function(done) {
 					cwd: $paths.img_source
 				},
 				function() {
-					return sequence("img:main");
+					return sequence("img");
 				}
 			);
 
