@@ -178,7 +178,7 @@ gulp.task("pretty", function(done) {
 		[
 			gulp.src(files, {
 				dot: true,
-				base: $paths.base_dot
+				base: $paths.dot
 			}),
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
@@ -210,7 +210,7 @@ gulp.task("pretty", function(done) {
 			),
 			$.eol(ending),
 			$.debug.edit(),
-			gulp.dest($paths.base)
+			gulp.dest($paths.basedir)
 		],
 		done
 	);

@@ -44,7 +44,7 @@ gulp.task("hlint", function(done) {
 	pump(
 		[
 			gulp.src(file, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug({ loader: false }),
 			$.htmllint({ rules: $configs.htmllint }, reporter)

@@ -19,7 +19,7 @@ gulp.task("settings", function(done) {
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments

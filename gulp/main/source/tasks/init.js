@@ -91,7 +91,7 @@ gulp.task("init:watch-git-branch", function(done) {
 			gulp.watch(
 				[$paths.githead],
 				{
-					cwd: $paths.base,
+					cwd: $paths.basedir,
 					dot: true
 				},
 				function() {

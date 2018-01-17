@@ -52,7 +52,7 @@ gulp.task("init:app-settings", function(done) {
 				}
 			}),
 			$.debug.edit(),
-			gulp.dest($paths.base)
+			gulp.dest($paths.basedir)
 		],
 		done
 	);
@@ -82,7 +82,7 @@ gulp.task("init:settings-internal", function(done) {
 			pump(
 				[
 					gulp.src(internal_filepath, {
-						cwd: $paths.base
+						cwd: $paths.basedir
 					}),
 					$.debug(),
 					$.debug.edit()
@@ -102,7 +102,7 @@ gulp.task("init:settings-main", function(done) {
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
@@ -157,7 +157,7 @@ gulp.task("init:--lib-remove-webapp-files", function(done) {
 		[
 			gulp.src($paths.js_source, {
 				dot: true,
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug.clean(),
 			$.clean()
@@ -180,7 +180,7 @@ gulp.task("init:--lib-add-library-files", function(done) {
 		[
 			gulp.src($paths.js_options_dynamic, {
 				dot: true,
-				cwd: $paths.base_dot
+				cwd: $paths.dot
 			}),
 			$.debug(),
 			gulp.dest($paths.js_home),
@@ -196,7 +196,7 @@ gulp.task("init:--lib-add-library-files", function(done) {
  */
 gulp.task("init:create-license", function(done) {
 	// generate the license
-	license($paths.base, __data.license, {
+	license($paths.basedir, __data.license, {
 		author: __data.fullname,
 		year: __data.year,
 		project: __data.name
@@ -209,10 +209,10 @@ gulp.task("init:create-license", function(done) {
 	pump(
 		[
 			gulp.src(license_no_ext, {
-				base: $paths.base
+				base: $paths.basedir
 			}),
 			$.rename($paths.license),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		// remove the old license file
@@ -220,7 +220,7 @@ gulp.task("init:create-license", function(done) {
 			pump(
 				[
 					gulp.src(license_no_ext, {
-						base: $paths.base
+						base: $paths.basedir
 					}),
 					$.debug.clean(),
 					$.clean()
@@ -246,11 +246,11 @@ gulp.task("init:fill-placeholders", function(done) {
 					INDEX
 				],
 				{
-					base: $paths.base
+					base: $paths.basedir
 				}
 			),
 			$.injection({ replacements: __data }),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		done
@@ -267,7 +267,7 @@ gulp.task("init:setup-readme", function(done) {
 		[
 			gulp.src([$paths.gulp_setup_readme_template]),
 			$.debug(),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		done
@@ -283,12 +283,12 @@ gulp.task("init:rename-gulpfile", function(done) {
 	pump(
 		[
 			gulp.src($paths.gulp_file_main, {
-				base: $paths.base
+				base: $paths.basedir
 			}),
 			$.debug(),
 			$.clean(), // remove the file
 			$.rename($paths.gulp_file_name),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		done
@@ -306,7 +306,7 @@ gulp.task("init:remove-setup", function(done) {
 			gulp.src([$paths.gulp_file_setup, $paths.gulp_setup, $paths.git], {
 				dot: true,
 				read: false,
-				base: $paths.base
+				base: $paths.basedir
 			}),
 			$.debug.clean(),
 			$.clean()

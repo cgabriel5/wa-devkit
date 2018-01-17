@@ -32,7 +32,7 @@ gulp.task("make", function(done) {
 			}),
 			$.concat($paths.gulp_file_setup),
 			$.prettier($prettier),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		done

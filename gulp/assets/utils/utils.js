@@ -280,9 +280,9 @@ var expand_paths = function($paths) {
 	// paths object after substitution down below.
 	var paths_subs_ = {
 		// paths::BASES
-		del: "/",
-		base: "./",
-		base_dot: ".",
+		delimiter: "/",
+		basedir: "./",
+		dot: ".",
 		homedir: ""
 	};
 

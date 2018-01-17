@@ -12,7 +12,7 @@ gulp.task("html", function(done) {
 			$.injection.pre({ replacements: html_injection }),
 			$.beautify(JSBEAUTIFY),
 			$.injection.post({ replacements: html_injection }),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit(),
 			bs.stream()
 		],

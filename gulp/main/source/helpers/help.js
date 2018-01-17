@@ -53,7 +53,7 @@ gulp.task("help", function(done) {
 	var name_main = names.main;
 
 	// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-	var gulpfile = fe.sync($paths.base + name_default)
+	var gulpfile = fe.sync($paths.basedir + name_default)
 		? name_default
 		: name_main;
 
@@ -63,7 +63,7 @@ gulp.task("help", function(done) {
 	pump(
 		[
 			gulp.src(gulpfile, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.fn(function(file) {
 				// get the file content

@@ -29,7 +29,7 @@ gulp.task("jshint", function(done) {
 	pump(
 		[
 			gulp.src(file, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.jshint($configs.jshint),

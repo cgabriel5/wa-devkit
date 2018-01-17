@@ -28,7 +28,7 @@ gulp.task("csslint", function(done) {
 	pump(
 		[
 			gulp.src(file, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.csslint($configs.csslint),

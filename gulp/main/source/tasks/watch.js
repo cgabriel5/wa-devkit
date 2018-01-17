@@ -101,7 +101,7 @@ gulp.task("watch", function(done) {
 			gulp.watch(
 				$paths.config_settings_json_files,
 				{
-					cwd: $paths.base
+					cwd: $paths.basedir
 				},
 				function() {
 					return sequence("settings");
@@ -112,7 +112,7 @@ gulp.task("watch", function(done) {
 
 			// // watch for any changes to README.md
 			// gulp.watch([$paths.readme], {
-			//     cwd: $paths.base
+			//     cwd: $paths.basedir
 			// }, function() {
 			//     return sequence("tohtml", function() {
 			//         bs.reload();

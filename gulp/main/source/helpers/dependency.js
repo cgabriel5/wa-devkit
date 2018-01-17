@@ -136,10 +136,10 @@ gulp.task("dependency", function(done) {
 			// copy module to location
 			pump(
 				[
-					gulp.src(name + $paths.del + $paths.files_all, {
+					gulp.src(name + $paths.delimiter + $paths.files_all, {
 						dot: true,
 						cwd: $paths.node_modules,
-						base: $paths.base_dot
+						base: $paths.dot
 					}),
 					$.rename(function(path) {
 						// [https://stackoverflow.com/a/36347297]

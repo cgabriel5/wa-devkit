@@ -208,7 +208,7 @@ var branch_name;
 // remove options
 var opts_remove = {
 	read: false,
-	cwd: $paths.base
+	cwd: $paths.basedir
 };
 
 // -----------------------------------------------------------------------------
@@ -242,7 +242,7 @@ function open_file_in_browser(filepath, port, callback) {
 	pump(
 		[
 			gulp.src(filepath, {
-				cwd: $paths.base,
+				cwd: $paths.basedir,
 				dot: true
 			}),
 			$.open({
@@ -373,7 +373,7 @@ gulp.task("init:watch-git-branch", function(done) {
 			gulp.watch(
 				[$paths.githead],
 				{
-					cwd: $paths.base,
+					cwd: $paths.basedir,
 					dot: true
 				},
 				function() {
@@ -553,9 +553,9 @@ gulp.task("dist:favicon", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.favicon, {
 				dot: true,
-				cwd: $paths.base,
+				cwd: $paths.basedir,
 				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
-				base: $paths.base_dot
+				base: $paths.dot
 			}),
 			$.debug(),
 			gulp.dest($paths.dist_home),
@@ -575,8 +575,8 @@ gulp.task("dist:css", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.css, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.debug(),
 			$.gulpif(ext.iscss, $.clean_css()),
@@ -599,8 +599,8 @@ gulp.task("dist:img", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.img, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.cache(
 				$.imagemin([
@@ -639,8 +639,8 @@ gulp.task("dist:js", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.js, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.debug(),
 			$.gulpif(ext.isjs, $.uglify()),
@@ -661,8 +661,8 @@ gulp.task("dist:root", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.root, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.debug(),
 			$.gulpif(ext.ishtml, $.minify_html()),
@@ -882,7 +882,7 @@ gulp.task("watch", function(done) {
 			gulp.watch(
 				$paths.config_settings_json_files,
 				{
-					cwd: $paths.base
+					cwd: $paths.basedir
 				},
 				function() {
 					return sequence("settings");
@@ -893,7 +893,7 @@ gulp.task("watch", function(done) {
 
 			// // watch for any changes to README.md
 			// gulp.watch([$paths.readme], {
-			//     cwd: $paths.base
+			//     cwd: $paths.basedir
 			// }, function() {
 			//     return sequence("tohtml", function() {
 			//         bs.reload();
@@ -923,7 +923,7 @@ gulp.task("html", function(done) {
 			$.injection.pre({ replacements: html_injection }),
 			$.beautify(JSBEAUTIFY),
 			$.injection.post({ replacements: html_injection }),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit(),
 			bs.stream()
 		],
@@ -1583,7 +1583,7 @@ gulp.task("pretty", function(done) {
 		[
 			gulp.src(files, {
 				dot: true,
-				base: $paths.base_dot
+				base: $paths.dot
 			}),
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
@@ -1615,7 +1615,7 @@ gulp.task("pretty", function(done) {
 			),
 			$.eol(ending),
 			$.debug.edit(),
-			gulp.dest($paths.base)
+			gulp.dest($paths.basedir)
 		],
 		done
 	);
@@ -1668,12 +1668,12 @@ gulp.task("eol", function(done) {
 		[
 			gulp.src(files, {
 				dot: true,
-				base: $paths.base_dot
+				base: $paths.dot
 			}),
 			$.sort(opts_sort),
 			$.eol(ending),
 			$.debug.edit(),
-			gulp.dest($paths.base)
+			gulp.dest($paths.basedir)
 		],
 		done
 	);
@@ -2174,10 +2174,10 @@ gulp.task("dependency", function(done) {
 			// copy module to location
 			pump(
 				[
-					gulp.src(name + $paths.del + $paths.files_all, {
+					gulp.src(name + $paths.delimiter + $paths.files_all, {
 						dot: true,
 						cwd: $paths.node_modules,
-						base: $paths.base_dot
+						base: $paths.dot
 					}),
 					$.rename(function(path) {
 						// [https://stackoverflow.com/a/36347297]
@@ -2239,12 +2239,12 @@ gulp.task("make", function(done) {
 			// if gulpfile.js exists use that name,
 			// else fallback to gulpfile.main.js
 			$.gulpif(
-				fe.sync($paths.base + name_default),
+				fe.sync($paths.basedir + name_default),
 				$.concat(name_default),
 				$.concat(name_main)
 			),
 			$.prettier(PRETTIER),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		done
@@ -2286,7 +2286,7 @@ gulp.task("jshint", function(done) {
 	pump(
 		[
 			gulp.src(file, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.jshint($configs.jshint),
@@ -2330,7 +2330,7 @@ gulp.task("csslint", function(done) {
 	pump(
 		[
 			gulp.src(file, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.csslint($configs.csslint),
@@ -2390,7 +2390,7 @@ gulp.task("hlint", function(done) {
 	pump(
 		[
 			gulp.src(file, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug({ loader: false }),
 			$.htmllint({ rules: $configs.htmllint }, reporter)
@@ -2424,7 +2424,7 @@ gulp.task("settings", function(done) {
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.debug(),
 			$.strip_jsonc(), // remove any json comments
@@ -2588,7 +2588,7 @@ gulp.task("help", function(done) {
 	var name_main = names.main;
 
 	// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
-	var gulpfile = fe.sync($paths.base + name_default)
+	var gulpfile = fe.sync($paths.basedir + name_default)
 		? name_default
 		: name_main;
 
@@ -2598,7 +2598,7 @@ gulp.task("help", function(done) {
 	pump(
 		[
 			gulp.src(gulpfile, {
-				cwd: $paths.base
+				cwd: $paths.basedir
 			}),
 			$.fn(function(file) {
 				// get the file content
@@ -2935,7 +2935,7 @@ gulp.task("favicon:root", function(done) {
 				$paths.favicon_root_manifest
 			]),
 			$.debug(),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit(),
 			bs.stream()
 		],

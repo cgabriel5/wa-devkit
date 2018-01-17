@@ -7,5 +7,5 @@ var branch_name;
 // remove options
 var opts_remove = {
 	read: false,
-	cwd: $paths.base
+	cwd: $paths.basedir
 };

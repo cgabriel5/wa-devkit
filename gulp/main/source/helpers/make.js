@@ -32,12 +32,12 @@ gulp.task("make", function(done) {
 			// if gulpfile.js exists use that name,
 			// else fallback to gulpfile.main.js
 			$.gulpif(
-				fe.sync($paths.base + name_default),
+				fe.sync($paths.basedir + name_default),
 				$.concat(name_default),
 				$.concat(name_main)
 			),
 			$.prettier(PRETTIER),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
 		done

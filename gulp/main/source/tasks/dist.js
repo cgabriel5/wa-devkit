@@ -20,9 +20,9 @@ gulp.task("dist:favicon", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.favicon, {
 				dot: true,
-				cwd: $paths.base,
+				cwd: $paths.basedir,
 				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
-				base: $paths.base_dot
+				base: $paths.dot
 			}),
 			$.debug(),
 			gulp.dest($paths.dist_home),
@@ -42,8 +42,8 @@ gulp.task("dist:css", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.css, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.debug(),
 			$.gulpif(ext.iscss, $.clean_css()),
@@ -66,8 +66,8 @@ gulp.task("dist:img", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.img, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.cache(
 				$.imagemin([
@@ -106,8 +106,8 @@ gulp.task("dist:js", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.js, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.debug(),
 			$.gulpif(ext.isjs, $.uglify()),
@@ -128,8 +128,8 @@ gulp.task("dist:root", function(done) {
 		[
 			gulp.src(bundle_dist.source.files.root, {
 				dot: true,
-				cwd: $paths.base,
-				base: $paths.base_dot
+				cwd: $paths.basedir,
+				base: $paths.dot
 			}),
 			$.debug(),
 			$.gulpif(ext.ishtml, $.minify_html()),

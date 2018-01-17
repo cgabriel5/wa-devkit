@@ -109,7 +109,7 @@ gulp.task("favicon:root", function(done) {
 				$paths.favicon_root_manifest
 			]),
 			$.debug(),
-			gulp.dest($paths.base),
+			gulp.dest($paths.basedir),
 			$.debug.edit(),
 			bs.stream()
 		],

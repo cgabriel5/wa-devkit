@@ -41,12 +41,12 @@ gulp.task("eol", function(done) {
 		[
 			gulp.src(files, {
 				dot: true,
-				base: $paths.base_dot
+				base: $paths.dot
 			}),
 			$.sort(opts_sort),
 			$.eol(ending),
 			$.debug.edit(),
-			gulp.dest($paths.base)
+			gulp.dest($paths.basedir)
 		],
 		done
 	);
