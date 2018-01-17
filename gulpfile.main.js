@@ -1109,10 +1109,17 @@ gulp.task("modernizr", function(done) {
 			}
 			// save the file to vendor
 			fs.writeFile(file_location, build + EOL_ENDING, function() {
-				var message = chalk.blue("Modernizr build complete. Placed in");
-				var location = chalk.green(file_location);
-				print.gulp(`${message} ${location}`);
-				done();
+				// the following gulp code is really only needed to log the
+				// file.
+				pump(
+					[
+						gulp.src(file_location, {
+							cwd: $paths.basedir
+						}),
+						$.debug.edit()
+					],
+					done
+				);
 			});
 		});
 	});
