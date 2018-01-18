@@ -1,5 +1,5 @@
 /**
- * Run csslint on a file.
+ * Lint a CSS file.
  *
  * Flags
  *
@@ -8,11 +8,11 @@
  *
  * Usage
  *
- * $ gulp csslint --file ./css/bundles/vendor.css
+ * $ gulp lintcss --file ./css/bundles/vendor.css
  *     Lint ./css/bundles/vendor.css
  *
  */
-gulp.task("csslint", function(done) {
+gulp.task("lintcss", function(done) {
 	// run yargs
 	var _args = yargs.option("file", {
 		alias: "f",

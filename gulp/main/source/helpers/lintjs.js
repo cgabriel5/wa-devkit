@@ -1,5 +1,5 @@
 /**
- * Run jshint on a file.
+ * Lint a JS file.
  *
  * Flags
  *
@@ -8,11 +8,11 @@
  *
  * Usage
  *
- * $ gulp jshint --file ./gulpfile.js
+ * $ gulp lintjs --file ./gulpfile.js
  *     Lint gulpfile.js
  *
  */
-gulp.task("jshint", function(done) {
+gulp.task("lintjs", function(done) {
 	// run yargs
 	var _args = yargs.option("file", {
 		alias: "f",

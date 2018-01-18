@@ -2259,11 +2259,11 @@ gulp.task("make", function(done) {
 });
 
 // -----------------------------------------------------------------------------
-// jshint.js -- ./gulp/main/source/helpers/jshint.js
+// lintjs.js -- ./gulp/main/source/helpers/lintjs.js
 // -----------------------------------------------------------------------------
 
 /**
- * Run jshint on a file.
+ * Lint a JS file.
  *
  * Flags
  *
@@ -2272,11 +2272,11 @@ gulp.task("make", function(done) {
  *
  * Usage
  *
- * $ gulp jshint --file ./gulpfile.js
+ * $ gulp lintjs --file ./gulpfile.js
  *     Lint gulpfile.js
  *
  */
-gulp.task("jshint", function(done) {
+gulp.task("lintjs", function(done) {
 	// run yargs
 	var _args = yargs.option("file", {
 		alias: "f",
@@ -2304,11 +2304,11 @@ gulp.task("jshint", function(done) {
 });
 
 // -----------------------------------------------------------------------------
-// csslint.js -- ./gulp/main/source/helpers/csslint.js
+// lintcss.js -- ./gulp/main/source/helpers/lintcss.js
 // -----------------------------------------------------------------------------
 
 /**
- * Run csslint on a file.
+ * Lint a CSS file.
  *
  * Flags
  *
@@ -2317,11 +2317,11 @@ gulp.task("jshint", function(done) {
  *
  * Usage
  *
- * $ gulp csslint --file ./css/bundles/vendor.css
+ * $ gulp lintcss --file ./css/bundles/vendor.css
  *     Lint ./css/bundles/vendor.css
  *
  */
-gulp.task("csslint", function(done) {
+gulp.task("lintcss", function(done) {
 	// run yargs
 	var _args = yargs.option("file", {
 		alias: "f",
@@ -2348,11 +2348,11 @@ gulp.task("csslint", function(done) {
 });
 
 // -----------------------------------------------------------------------------
-// htmllint.js -- ./gulp/main/source/helpers/htmllint.js
+// linthtml.js -- ./gulp/main/source/helpers/linthtml.js
 // -----------------------------------------------------------------------------
 
 /**
- * Run htmllint on a file.
+ * Lint a HTML file.
  *
  * Flags
  *
@@ -2361,11 +2361,11 @@ gulp.task("csslint", function(done) {
  *
  * Usage
  *
- * $ gulp hlint --file ./index.html
+ * $ gulp linthtml --file ./index.html
  *     Lint ./index.html
  *
  */
-gulp.task("hlint", function(done) {
+gulp.task("linthtml", function(done) {
 	// run yargs
 	var _args = yargs.option("file", {
 		alias: "f",

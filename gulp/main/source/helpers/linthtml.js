@@ -1,5 +1,5 @@
 /**
- * Run htmllint on a file.
+ * Lint a HTML file.
  *
  * Flags
  *
@@ -8,11 +8,11 @@
  *
  * Usage
  *
- * $ gulp hlint --file ./index.html
+ * $ gulp linthtml --file ./index.html
  *     Lint ./index.html
  *
  */
-gulp.task("hlint", function(done) {
+gulp.task("linthtml", function(done) {
 	// run yargs
 	var _args = yargs.option("file", {
 		alias: "f",
