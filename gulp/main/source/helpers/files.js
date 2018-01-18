@@ -222,18 +222,12 @@ gulp.task("files", function(done) {
 						// the modifier function will be used to highlight
 						// the search term in the file path.
 						modifier: function(data) {
-							// store the original data file path
-							var og_filepath = data.paths.relative;
-
-							// get the files lookup filepath
-							var string = lookup[data.paths.relative];
-
 							// remove placeholders and apply highlight
 							var string = lookup[data.paths.relative].replace(
-								/\$\<(.*?)\>/g,
+								/\$<(.*?)\>/g,
 								function(match) {
 									return chalk.bold.yellow(
-										match.replace(/^\$\<|\>$/g, "")
+										match.replace(/^\$<|\>$/g, "")
 									);
 								}
 							);
