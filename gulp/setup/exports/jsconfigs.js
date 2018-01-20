@@ -6,9 +6,8 @@ module.exports = {
 			files: [
 				"lib/iife/open.ig.js",
 				"lib/library/open.ig.js",
-				"modules/fn.helpers.js",
-				"modules/fn.source.js",
-				"modules/fn.core.js",
+				"modules/fn-helpers.js",
+				"modules/fn-core.js",
 				"modules/constructor.js",
 				"lib/library/close.ig.js",
 				"modules/globals.js",
