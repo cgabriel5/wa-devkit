@@ -42,6 +42,9 @@
  * $ gulp files --stype "min" --type "js"
  *     Find all files of type JS and containing the sub-extension
  *     "min".
+ *
+ * $ gulp files --subs
+ *     List all used file sub-extensions.
  */
 gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");
@@ -65,7 +68,10 @@ gulp.task("files", function(done) {
 			type: "boolean"
 		})
 		.option("highlight", {
-			alias: "-H",
+			alias: "H",
+			type: "boolean"
+		})
+		.option("subs", {
 			type: "boolean"
 		}).argv;
 
@@ -75,6 +81,7 @@ gulp.task("files", function(done) {
 	var whereis = _args.w || _args.whereis;
 	var no_fuzzy = _args.n || _args.nofuzzy;
 	var highlight = _args.H || _args.highlight;
+	var sub_extensions = _args.subs;
 
 	var clean_types = function(text) {
 		// collapse multiple spaces + remove left/right padding
@@ -148,6 +155,31 @@ gulp.task("files", function(done) {
 				// else nothing matched so filter path out
 				return false;
 			});
+		}
+
+		// list the used sub-extensions
+		if (sub_extensions) {
+			// store used sub-extensions
+			var subs_ = [];
+
+			// loop over each path to find the sub-extensions
+			files.forEach(function(path_) {
+				// get the paths sub-extensions
+				var subs = ext.subs({ path: path_ });
+
+				// loop over the found sub-extensions and print them
+				if (subs.length) {
+					subs.forEach(function(sub) {
+						// if the sub does not exist store it and print
+						if (!-~subs_.indexOf(sub)) {
+							print.gulp(chalk.blue(sub));
+							subs_.push(sub);
+						}
+					});
+				}
+			});
+
+			return done();
 		}
 
 		// this lookup object is only used for highlight purposes and will
