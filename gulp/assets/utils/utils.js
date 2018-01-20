@@ -324,8 +324,8 @@ var opts_sort = {
 	/**
 	 * Sort based on dirname alphabetically
 	 *
-	 * @param  {file-object} file1 - The file to compare with.
-	 * @param  {file-object} file2 - The file to compare against.
+	 * @param {file-object} file1 - The file to compare with.
+	 * @param {file-object} file2 - The file to compare against.
 	 * @return {number} - The calculated difference (-1, 0, or 1).
 	 *
 	 * @resource [https://github.com/benjamingr/RegExp.escape]
@@ -345,7 +345,7 @@ var opts_sort = {
 /**
  * Escapes dynamic regular expression string to be used with new RegExp().
  *
- * @param  {string} string - The string to escape.
+ * @param {string} string - The string to escape.
  * @return {string} - The escaped string.
  *
  * @resource [https://github.com/benjamingr/RegExp.escape]
@@ -353,6 +353,43 @@ var opts_sort = {
  */
 var escape = function(string) {
 	return String(string).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
+};
+
+/**
+ * Make the provided array unique.
+ *
+ * @param {array} array - The array to clean.
+ * @param {boolean} flag_sort - Flag indicating whether the array needs
+ *     to be sorted.
+ * @return {array} - The worked on array.
+ *
+ * @resource [https://stackoverflow.com/a/39272981]
+ * @resource [https://stackoverflow.com/a/21595293]
+ * @resource [https://github.com/cgabriel5/snippets/blob/master/js/array/make_unique.js]
+ */
+
+var unique_ = function(array, flag_sort) {
+	// Make array unique
+	array = array.filter(function(x, i, a_) {
+		return a_.indexOf(x) === i;
+	});
+
+	// Sort the array if flag set
+	// Note: Does not sort numbers
+	if (flag_sort) {
+		if (flag_sort === "alpha") {
+			array = array.sort(function(a, b) {
+				return a.localeCompare(b);
+			});
+		} else if (flag_sort === "number") {
+			array.sort(function(a, b) {
+				return a - b;
+			});
+		}
+	}
+
+	// Return the array
+	return array;
 };
 
 // export functions
@@ -369,3 +406,4 @@ exports.ext = ext;
 exports.expand_paths = expand_paths;
 exports.opts_sort = opts_sort;
 exports.escape = escape;
+exports.unique_ = unique_;
