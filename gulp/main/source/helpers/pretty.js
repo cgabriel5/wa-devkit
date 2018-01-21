@@ -1,4 +1,67 @@
 /**
+ * Variable is declared outside of tasks to be able to use it in
+ *     multiple tasks. The variable is populated in the pretty:gitfiles
+ *     task and used in the pretty task.
+ */
+var __modified_git_files;
+
+/**
+ * Gets the modified files via Git.
+ *
+ * Flags
+ *
+ * --quick
+ *     [boolean] Only prettify the git modified files.
+ *
+ * --staged
+ *     [boolean] Used with the --quick flag it only prettifies the staged
+ *     files.
+ *
+ * @internal - Used to prepare the pretty task.
+ */
+gulp.task("pretty:gitfiles", function(done) {
+	// get the changed files according to git if the quick/staged flags
+
+	// run yargs
+	var _args = yargs
+		.option("quick", {
+			type: "boolean"
+		})
+		.option("staged", {
+			type: "boolean"
+		}).argv;
+
+	// get the command line arguments from yargs
+	var quick = _args.quick;
+	var staged = _args.staged;
+
+	// the flags must be present to get the modified files...else
+	// skip to the main pretty task
+	if (!(quick || staged)) return done();
+
+	// reset the variable when the staged flag is provided
+	staged = staged ? "--cached" : "";
+
+	// diff filter [https://stackoverflow.com/a/6879568]
+	// example plugin [https://github.com/azz/pretty-quick]
+
+	// the command to run
+	var command = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
+
+	// get the list of modified files
+	cmd.get(command, function(err, data, stderr) {
+		// clean the data
+		data = data.trim();
+
+		// set the variable. if the data is empty there are no
+		// files to prettify so return an empty array.
+		__modified_git_files = data ? data.split("\n") : [];
+
+		return done();
+	});
+});
+
+/**
  * Beautify all HTML, JS, CSS, and JSON project files.
  *
  * Notes
@@ -56,8 +119,14 @@
  *
  * $ gulp pretty --line-ending "\n"
  *     Make files have "\n" line-ending.
+ *
+ * $ gulp pretty --quick
+ *     Only prettify the git modified files.
+ *
+ * $ gulp pretty --staged
+ *     Performs a --quick prettification on Git staged files.
  */
-gulp.task("pretty", function(done) {
+gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
@@ -96,6 +165,7 @@ gulp.task("pretty", function(done) {
 			alias: "l",
 			type: "string"
 		}).argv;
+
 	// get the command line arguments from yargs
 	var type = _args.t || _args.type;
 	var patterns = _args.p || _args.pattern;
@@ -120,6 +190,21 @@ gulp.task("pretty", function(done) {
 	// empty the files array?
 	if (empty) {
 		files.length = 0;
+	}
+
+	// merge the changed files to the patterns array...this means that
+	// the --quick/--staged flags are set.
+	if (__modified_git_files) {
+		// Important: when the __modified_git_files variable is an empty
+		// array this means that there are no Git modified/staged files.
+		// So simply remove all the globs from the files array to prevent
+		// anything from being prettified.
+		if (!__modified_git_files.length) {
+			files.length = 0;
+		}
+
+		// add the changed files to the patterns array
+		patterns = (patterns || []).concat(__modified_git_files);
 	}
 
 	// reset the files array when extension types are provided
@@ -165,15 +250,14 @@ gulp.task("pretty", function(done) {
 
 	// show the used glob patterns when the flag is provided
 	if (test) {
-		print.gulp(chalk.green("Using globs:"));
-		var prefix = " ".repeat(10);
+		// log the globs
 		files.forEach(function(glob) {
-			print.gulp(prefix, chalk.blue(glob));
+			print.gulp(chalk.blue(glob));
 		});
+
 		return done();
 	}
 
-	// get needed files
 	pump(
 		[
 			gulp.src(files, {
