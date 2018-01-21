@@ -1,5 +1,5 @@
 /**
- * Variable is declared outside of tasks to use be able to use in
+ * Variable is declared outside of tasks to be able to use it in
  *     multiple tasks. The variable is populated in the tohtml:prepcss
  *     task and used in the tohtml task.
  */
