@@ -73,6 +73,7 @@ var globall = utils.globall;
 var ext = utils.ext;
 var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
+var escape = utils.escape;
 var unique_ = utils.unique_;
 
 // -----------------------------------------------------------------------------
@@ -2080,7 +2081,7 @@ gulp.task("files", function(done) {
 
 						// add the path to object
 						lookup[file] = file.replace(
-							new RegExp(whereis, "gi"),
+							new RegExp(escape(whereis), "gi"),
 							function(match) {
 								return highlight_pre + match + highlight_post;
 							}

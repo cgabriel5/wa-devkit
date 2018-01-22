@@ -211,7 +211,7 @@ gulp.task("files", function(done) {
 
 						// add the path to object
 						lookup[file] = file.replace(
-							new RegExp(whereis, "gi"),
+							new RegExp(escape(whereis), "gi"),
 							function(match) {
 								return highlight_pre + match + highlight_post;
 							}
