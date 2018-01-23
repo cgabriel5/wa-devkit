@@ -322,18 +322,15 @@ gulp.task("init:remove-setup", function(done) {
  */
 gulp.task("init:create-bundles", function(done) {
 	// create the CSS/JS bundles before
-	cmd.get(
-		`gulp js:app && gulp js:vendor && gulp css:app && gulp css:vendor`,
-		function(err, data, test) {
-			if (err) {
-				throw err;
-			}
-			// highlight data string
-			print(cli_highlight(data));
-			// end the task
-			done();
+	cmd.get(`gulp js && gulp css`, function(err, data, test) {
+		if (err) {
+			throw err;
 		}
-	);
+		// highlight data string
+		print(cli_highlight(data));
+		// end the task
+		done();
+	});
 });
 
 /**
