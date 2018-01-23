@@ -264,6 +264,11 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 				dot: true,
 				base: $paths.dot
 			}),
+			// Filter out all non common files. This is more so a preventive
+			// measure as when using the --quick flag any modified files will
+			// get passed in. This makes sure to remove all image, markdown
+			// files for example.
+			$.filter([$paths.files_common]),
 			$.sort(opts_sort),
 			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
 			$.gulpif(
