@@ -91,15 +91,7 @@
 				"setup": "gulpfile.setup.js"
 			}
 		},
-		"tasks": [
-			"css:app",
-			"css:vendor",
-			"js:app",
-			"js:vendor",
-			"img:main",
-			"html:main",
-			"tohtml"
-		],
+		"tasks": ["css", "js", "img", "html", "tohtml"],
 		"watch": {
 			"css": {
 				"source": ["css/{source,assets}/**/*.css"],
