@@ -11,6 +11,7 @@
 	"css_bundles": "${homedir}css/bundles/",
 	// paths.js
 	"js_source": "${homedir}js/source/",
+	"js_source_modules": "${homedir}js/source/modules/",
 	"js_vendor": "${homedir}js/vendor/",
 	"js_bundles": "${homedir}js/bundles/",
 	// paths.img
