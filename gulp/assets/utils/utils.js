@@ -368,7 +368,7 @@ var escape = function(string) {
  * @resource [https://github.com/cgabriel5/snippets/blob/master/js/array/make_unique.js]
  */
 
-var unique_ = function(array, flag_sort) {
+var unique = function(array, flag_sort) {
 	// Make array unique
 	array = array.filter(function(x, i, a_) {
 		return a_.indexOf(x) === i;
@@ -406,4 +406,4 @@ exports.ext = ext;
 exports.expand_paths = expand_paths;
 exports.opts_sort = opts_sort;
 exports.escape = escape;
-exports.unique_ = unique_;
+exports.unique = unique;

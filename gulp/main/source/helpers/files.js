@@ -142,7 +142,7 @@ gulp.task("files", function(done) {
 		// when the type argument is provided
 		if (stypes) {
 			files = files.filter(function(filepath) {
-				var subs_extensions = ext.subs({ path: filepath });
+				var subs_extensions = extension.subs({ path: filepath });
 
 				// check if path contains any of the passed in subs
 				for (var i = 0, l = stypes.length; i < l; i++) {
@@ -165,7 +165,7 @@ gulp.task("files", function(done) {
 			// loop over each path to find the sub-extensions
 			files.forEach(function(path_) {
 				// get the paths sub-extensions
-				var subs = ext.subs({ path: path_ });
+				var subs = extension.subs({ path: path_ });
 
 				// loop over the found sub-extensions and print them
 				if (subs.length) {

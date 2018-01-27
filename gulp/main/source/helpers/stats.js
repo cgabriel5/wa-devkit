@@ -68,7 +68,7 @@ gulp.task("stats", function(done) {
 				if (extensions.hasOwnProperty(ext)) {
 					var count = +extensions[ext];
 					table.push([
-						ext.toUpperCase(),
+						extension.toUpperCase(),
 						count,
 						Math.round(count / file_count * 100)
 					]);

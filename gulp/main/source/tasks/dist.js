@@ -46,7 +46,7 @@ gulp.task("dist:css", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(ext.iscss, $.clean_css()),
+			$.gulpif(extension.iscss, $.clean_css()),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
@@ -110,7 +110,7 @@ gulp.task("dist:js", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(ext.isjs, $.uglify()),
+			$.gulpif(extension.isjs, $.uglify()),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
@@ -132,7 +132,7 @@ gulp.task("dist:root", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(ext.ishtml, $.minify_html()),
+			$.gulpif(extension.ishtml, $.minify_html()),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],

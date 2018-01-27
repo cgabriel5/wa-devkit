@@ -270,13 +270,14 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			// files for example.
 			$.filter([$paths.files_common]),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
+			$.gulpif(extension.ishtml, $.beautify(JSBEAUTIFY)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the
 					// comment (.cm.) sub-extension to be sortable as
 					// comments are not allowed in JSON files.
-					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
+					return extension(file, ["json"]) &&
+						!-~file.path.indexOf(".cm.")
 						? true
 						: false;
 				},
@@ -286,10 +287,10 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			),
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
-				return ext(file, ["html", "css"]) ? false : true;
+				return extension(file, ["html", "css"]) ? false : true;
 			}, $.prettier(PRETTIER)),
 			$.gulpif(
-				ext.iscss,
+				extension.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
