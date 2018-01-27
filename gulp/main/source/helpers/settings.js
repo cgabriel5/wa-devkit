@@ -12,6 +12,7 @@
  * Usage
  *
  * $ gulp settings # Re-build the settings file.
+ *
  * $ gulp settings --rebuild # Force settings file re-build when
  *     the file gets deleted for whatever reason.
  */

@@ -148,7 +148,6 @@ gulp.task("init:build", function(done) {
 });
 
 /**
- * task: default
  * Runs Gulp.
  *
  * Notes
