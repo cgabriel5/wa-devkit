@@ -70,11 +70,11 @@ var uri = utils.uri;
 var browser = utils.browser;
 var bangify = utils.bangify;
 var globall = utils.globall;
-var ext = utils.ext;
+var extension = utils.ext;
 var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
 var escape = utils.escape;
-var unique_ = utils.unique_;
+var unique = utils.unique;
 
 // -----------------------------------------------------------------------------
 // paths.js -- ./gulp/main/source/paths.js
@@ -278,6 +278,84 @@ function gulp_check_warn() {
 	);
 }
 
+function get_editor(options) {
+	// Default options
+	options = options || {};
+
+	// Use the provided editor or get the environment variables
+	var editor = options.editor || process.env.EDITOR || process.env.VISUAL;
+
+	// Default to the tried and true editors when nothing is found.
+	if (!editor) editor = /^win/.test(process.platform) ? "notepad" : "vim";
+
+	// Lowercase everything
+	editor = editor.toLowerCase();
+
+	// If nothing is found check the check the Git config??
+
+	// If an editor is found in an environment variable it will
+	// simply be a command followed by a flag(s). For example,
+	// this it could be something like this: "subl -w -n". "subl"
+	// being the editor command and "-w -n" the flags to use.
+
+	// Get any flags.
+	var flags = [];
+	if (options.flags) {
+		// Add the provided flags to the flags array.
+		flags = flags.concat(options.flags);
+	}
+
+	// Now get any flags found in the editor string
+	var parts = editor.split(/\s+/);
+	// Flags exist.
+	if (parts.length > 1) {
+		// Reset the editor variable and remove the editor from the
+		// parts array.
+		editor = parts.shift();
+		// Add all the flags to the flags array.
+		flags = flags.concat(parts);
+	} // Else there only exists an editor in the string
+
+	// Add other needed flags to make this work...
+	// Code lifted and modified from here:
+	// [https://github.com/sindresorhus/open-editor]
+
+	// Get the file parts
+	var file = options.file;
+	var name = file.name;
+	var line = file.line || 1;
+	var column = file.column || 1;
+
+	// Visual Studio Code needs a flag to open file at line number/column.
+	if (-~["code"].indexOf(editor)) {
+		flags.push("--goto");
+	}
+
+	// Add needed flags depending on the editor being used.
+	if (-~["atom", "code"].indexOf(editor) || /^subl/.test(editor)) {
+		// Open in a new window and wait for the file to close.
+		flags.push("--new-window", "--wait", `${name}:${line}:${column}`);
+	} else if (editor === "gedit") {
+		// gedit --new-window --wait ./configs/bundles.json +135:1
+		flags.push("--new-window", "--wait", name, `+${line}:${column}`);
+	} else if (-~["webstorm", "intellij"].indexOf(editor)) {
+		flags.push(`${name}:${line}`);
+	} else if (editor === "textmate") {
+		flags.push("--line", `${line}:${column}`, name);
+	} else if (-~["vim", "neovim"].indexOf(editor)) {
+		flags.push(`+call cursor(${line}, ${column})`, name);
+	} else {
+		// Default to pushing the file only
+		flags.push(name);
+	}
+
+	// Return the editor command with the flags to apply.
+	return {
+		command: editor,
+		flags: flags
+	};
+}
+
 // -----------------------------------------------------------------------------
 // init.js -- ./gulp/main/source/tasks/init.js
 // -----------------------------------------------------------------------------
@@ -432,7 +510,6 @@ gulp.task("init:build", function(done) {
 });
 
 /**
- * task: default
  * Runs Gulp.
  *
  * Notes
@@ -581,7 +658,7 @@ gulp.task("dist:css", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(ext.iscss, $.clean_css()),
+			$.gulpif(extension.iscss, $.clean_css()),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
@@ -645,7 +722,7 @@ gulp.task("dist:js", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(ext.isjs, $.uglify()),
+			$.gulpif(extension.isjs, $.uglify()),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
@@ -667,7 +744,7 @@ gulp.task("dist:root", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(ext.ishtml, $.minify_html()),
+			$.gulpif(extension.ishtml, $.minify_html()),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
@@ -1302,7 +1379,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * task: open
  * Opens provided file in browser.
  *
  * Notes
@@ -1318,16 +1394,57 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *
  * -f, --file
  *     <file> The path of the file to open.
+ *
  * -p, --port
  *     [number] The port to open in. (Defaults to browser-sync port if
  *     available or no port at all.)
+ *
+ * -d, --directory
+ *     [string] The directory path to open in a file manager.
+ *
+ * -e, --editor
+ *     [string] The file path to open in the user's text editor to edit.
+ *
+ * --wait
+ *     [boolean] To be Used with the -e/--editor flag. If provided the
+ *     editor will wait to close and will only close manually (i.e.
+ *     close the editor or exit the terminal task).
+ *
+ * --line
+ *     [number] To be used with -e/--editor flag. Open the file at the
+ *     provided line.
+ *
+ * --column
+ *     [number] To be used with -e/--editor flag. Open the file at the
+ *     provided column.
+ *
+ * --use
+ *     [string] To be used with -e/--editor flag. Manually set the editor
+ *     to use. Will default to the user's default editor via ($EDITOR/$VISUAL)
+ *     environment variables.
  *
  * Usage
  *
  * $ gulp open --file index.html --port 3000
  *     Open index.html in port 3000.
+ *
  * $ gulp open --file index.html
  *     Open index.html in browser-sync port is available or no port.
+ *
+ * $ gulp open --editor ./index.html --wait --line 12 --column 20 --use atom
+ *     Open "./index.html" using the text editor Atom if available. Set
+ *     the line to 12 and column 20. Use the --wait flag to close the process
+ *     after the editor is close or the process is killed via the terminal.
+ *
+ * $ gulp open --directory .
+ *     Open the root directory in a file manager.
+ *
+ * $ gulp open --directory ./docs
+ *     Open the docs directory in a file manager.
+ *
+ * $ gulp open --directory docs/subextensions.md
+ *     When a file is provided along with the directory, only the directory
+ *     section of the path will be used to try and open in a file manager.
  */
 gulp.task("open", function(done) {
 	// cache task
@@ -1335,31 +1452,153 @@ gulp.task("open", function(done) {
 
 	// run yargs
 	var _args = yargs
-		.option("file", {
-			alias: "f",
-			demandOption: true,
+		.option("directory", {
+			alias: "d",
 			type: "string"
 		})
-		.option("port", {
-			alias: "p",
-			type: "number"
+		.option("editor", {
+			alias: "e",
+			type: "string"
 		}).argv;
 
 	// get the command line arguments from yargs
-	var file = _args.f || _args.file;
-	// check for explicitly provided port...if none is provided
-	// check the internally fetched free ports and get the local port
-	var port =
-		_args.p ||
-		_args.port ||
-		(
-			$internal.get("ports") || {
-				local: null
-			}
-		).local;
+	// Open the root when nothing provided.
+	var directory = _args.d || _args.directory;
+	var editor = _args.e || _args.editor;
 
-	// run the open function
-	return open_file_in_browser(file, port, done, task);
+	// If the directory flag is provided open the directory in a file
+	// manager.
+	if (directory) {
+		// Parse the directory.
+		var parts = path.parse(directory);
+		if (!parts.ext) {
+			// No file was passed in.
+			// Reset the directory
+			directory = parts.dir + "/" + parts.base + "/";
+		} else {
+			// If a file is passed only get the dir part.
+			directory = parts.dir + "/";
+		}
+
+		// Make the path absolute and relative to the main project root.
+		directory = path.join("./", directory);
+
+		// Check that the directory exists
+		if (!de.sync(directory)) {
+			print.gulp(
+				chalk.yellow("The directory:"),
+				chalk.magenta(directory),
+				chalk.yellow("does not exist.")
+			);
+			return done();
+		}
+
+		// Else the directory exists so open the file manager.
+		require("opener")(directory, function() {
+			done();
+		});
+	} else if (editor) {
+		var spawn = require("child_process").spawn;
+
+		// Check that the file exists.
+		if (!fe.sync(editor)) {
+			print.gulp(
+				chalk.yellow("The file:"),
+				chalk.magenta(directory),
+				chalk.yellow("does not exist.")
+			);
+			return done();
+		}
+
+		// run yargs
+		var _args = yargs
+			.option("wait", {
+				type: "boolean"
+			})
+			.option("line", {
+				type: "number"
+			})
+			.option("column", {
+				type: "number"
+			})
+			.option("use", {
+				type: "string"
+			}).argv;
+
+		// Get the command line arguments from yargs
+		var wait = _args.wait;
+		var line = _args.line;
+		var column = _args.column;
+		var use_editor = _args.use;
+
+		// Get the user's editor and any flags needed to open the
+		// file via the terminal.
+		var editor = get_editor({
+			file: {
+				name: editor,
+				line: line,
+				column: 0
+			},
+			editor: use_editor
+		});
+
+		// Create the child process to open the editor
+		var child_process = spawn(editor.command, editor.flags, {
+			stdio: "inherit",
+			detached: true
+		});
+
+		// If an error occurs throw it
+		child_process.on("error", function(err) {
+			if (err) {
+				throw err;
+			}
+		});
+
+		// If the wait flag is provided make the process hold until the
+		// user closes the file or the terminal process is ended manually.
+		if (wait) {
+			// Once the file is closed continue with the task...
+			child_process.on("exit", function(code, sig) {
+				done();
+			});
+		} else {
+			// Close the process immediately.
+			child_process.unref();
+			return done();
+		}
+	} else {
+		// Else open the file in a browser. What this task was originally
+		// set out to do.
+
+		// run yargs
+		var _args = yargs
+			.option("file", {
+				alias: "f",
+				demandOption: true,
+				type: "string"
+			})
+			.option("port", {
+				alias: "p",
+				type: "number"
+			}).argv;
+
+		// get the command line arguments from yargs
+		var file = _args.f || _args.file;
+		// check for explicitly provided port...if none is provided
+		// check the internally fetched free ports and get the local port
+		var port =
+			_args.p ||
+			_args.port ||
+			(
+				$internal.get("ports") || {
+					local: null
+				}
+			).local;
+
+		// run the open function
+		return open_file_in_browser(file, port, done, task);
+	}
 });
 
 // -----------------------------------------------------------------------------
@@ -1684,13 +1923,14 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			// files for example.
 			$.filter([$paths.files_common]),
 			$.sort(opts_sort),
-			$.gulpif(ext.ishtml, $.beautify(JSBEAUTIFY)),
+			$.gulpif(extension.ishtml, $.beautify(JSBEAUTIFY)),
 			$.gulpif(
 				function(file) {
 					// file must be a JSON file and cannot contain the
 					// comment (.cm.) sub-extension to be sortable as
 					// comments are not allowed in JSON files.
-					return ext(file, ["json"]) && !-~file.path.indexOf(".cm.")
+					return extension(file, ["json"]) &&
+						!-~file.path.indexOf(".cm.")
 						? true
 						: false;
 				},
@@ -1700,10 +1940,10 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			),
 			$.gulpif(function(file) {
 				// exclude HTML and CSS files
-				return ext(file, ["html", "css"]) ? false : true;
+				return extension(file, ["html", "css"]) ? false : true;
 			}, $.prettier(PRETTIER)),
 			$.gulpif(
-				ext.iscss,
+				extension.iscss,
 				$.postcss([
 					unprefix(),
 					shorthand(),
@@ -1717,6 +1957,229 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 		],
 		done
 	);
+});
+
+// -----------------------------------------------------------------------------
+// module.js -- ./gulp/main/source/helpers/module.js
+// -----------------------------------------------------------------------------
+
+/**
+ * Beautify all HTML, JS, CSS, and JSON project files.
+ *
+ * Flags
+ *
+ * --filename
+ *     <string> The file name of the new module file.
+ *
+ * --remove
+ *     [string] The file name of the module to remove.
+ *
+ * --modname
+ *     [string] The name of the module within the app. Defaults to the
+ *     filename without the extension.
+ *
+ * --description
+ *     [string] Optional description of the module.
+ *
+ * --mode
+ *     [string] The mode the module should load via. (interactive/complete)
+ *
+ * --same
+ *     [boolean] Flag indicating whether to use the same filename for the
+ *     modname.
+ *
+ * Usage
+ *
+ * $ gulp module --filename "my_module" --same --mode "complete"
+ *     Make a module "new_module.js". The extension will be added it not
+ *     provided. The same file name will be used for the modname. It will
+ *     also load when the document readyState hits complete.
+ *
+ * $ gulp module --filename "test" --same --description "My cool module."
+ *     Make a module "test.js" with a description of "My cool module."
+ *
+ * $ gulp module --filename "my_cool_module"
+ *     Simplest way to make a module. This will make a module with the name
+ *     "my_cool_module.js". Have the name of "my_cool_module", load on
+ *     "complete", and have an empty description.
+ *
+ * $ gulp module --filename "my_cool_module" --modname "coolModule"
+ *     This will make a module with the name "my_cool_module.js". Have the
+ *     name of "coolModule", load on "complete", and have an empty
+ *     description.
+ *
+ * $ gulp module --remove "my_cool_module.js"
+ *     This will remove the module "my_cool_module.js".
+ */
+gulp.task("module", function(done) {
+	var linenumber = require("linenumber");
+
+	// run yargs
+	var _args = yargs.option("remove", {
+		type: "string"
+	}).argv;
+
+	// get the command line arguments from yargs
+	var remove = _args.remove;
+
+	// Get the config file.
+	var config_file = $paths.config_home + $paths.config_$bundles + ".json";
+
+	// Remove the module when the remove flag is provided.
+	if (remove) {
+		// Check for a file extension.
+		var ext = extension({ path: remove });
+
+		// If no extension make sure to add the extension
+		if (!ext) {
+			remove += ".js";
+		}
+
+		// Path to the config file.
+		var file = path.join($paths.js_source_modules, remove);
+
+		// Before anything is done make sure to check that the name
+		// is not already taken by another file. We don't want to
+		// overwrite an existing file.
+		if (!fe.sync(file)) {
+			print.gulp(
+				chalk.magenta(remove),
+				chalk.yellow("does not exist. Task was aborted.")
+			);
+			return done();
+		}
+
+		pump(
+			[gulp.src(file, opts_remove), $.debug.clean(), $.clean()],
+			function() {
+				// Get the line number where the config array exists.
+				// Looking for the js.source.files.
+				var line = (linenumber(
+					config_file,
+					/\s"js":\s+\{\n\s+"source":\s+\{\n\s+"files":\s+\[/gim
+				) || [{ line: 0 }])[0].line;
+
+				cmd.get(
+					`gulp --gulpfile ${GULPFILE} open -e ${config_file} --line ${line} --wait`,
+					function(err, data) {
+						if (err) {
+							throw err;
+						}
+
+						// Update the js:app bundle.
+						return sequence("js:app", function() {
+							done();
+						});
+					}
+				);
+			}
+		);
+	} else {
+		// run yargs
+		var _args = yargs
+			.option("filename", {
+				type: "string",
+				demandOption: true
+			})
+			.option("modname", {
+				type: "string"
+			})
+			.option("description", {
+				default: "",
+				type: "string"
+			})
+			.option("mode", {
+				choices: ["interactive", "complete"],
+				default: "complete",
+				type: "string",
+				demandOption: true
+			})
+			.option("same", {
+				type: "boolean"
+			}).argv;
+
+		// get the command line arguments from yargs
+		var filename = _args.filename;
+		var modname = _args.modname;
+		var description = _args.description;
+		var mode = _args.mode;
+		var same = _args.same;
+		var ending = _args["line-ending"] || EOL_ENDING;
+
+		// Get the basename from the filename.
+		var ext = path.extname(filename);
+
+		// When no extension is found reset it and the file name
+		if (!ext) {
+			ext = ".js";
+			filename = filename + ext;
+		}
+
+		// If the same flag is provided this means to use the same filename
+		// for the name flag as well. Also, if no name is provided use the
+		// filename without the extension as the name.
+		if (same || !modname) {
+			// Get the filename without the extension.
+			modname = path.basename(filename, ext);
+		}
+
+		// The content template string for a module.
+		var content = `app.module(
+	"${modname}",
+	function(modules, name) {
+		// App logic...
+	},
+	"${mode}",
+	"${description}"
+);`;
+
+		// Path to the config file.
+		var file = path.join($paths.js_source_modules, filename);
+
+		// Before anything is done make sure to check that the name
+		// is not already taken by another file. We don't want to
+		// overwrite an existing file.
+		if (fe.sync(file)) {
+			print.gulp(
+				chalk.magenta(modname),
+				chalk.yellow("exists. Use another file name. Task was aborted.")
+			);
+			return done();
+		}
+
+		pump(
+			[
+				// Create the file via gulp-file and use is at the Gulp.src.
+				$.file(file, content, {
+					src: true
+				}),
+				$.debug.edit(),
+				gulp.dest($paths.basedir)
+			],
+			function() {
+				// Get the line number where the config array exists.
+				// Looking for the js.source.files.
+				var line = (linenumber(
+					config_file,
+					/\s"js":\s+\{\n\s+"source":\s+\{\n\s+"files":\s+\[/gim
+				) || [{ line: 0 }])[0].line;
+
+				cmd.get(
+					`gulp --gulpfile ${GULPFILE} open -e ${config_file} --line ${line} --wait`,
+					function(err, data) {
+						if (err) {
+							throw err;
+						}
+
+						// Update the js:app bundle.
+						return sequence("js:app", function() {
+							done();
+						});
+					}
+				);
+			}
+		);
+	}
 });
 
 // -----------------------------------------------------------------------------
@@ -1851,7 +2314,7 @@ gulp.task("stats", function(done) {
 				if (extensions.hasOwnProperty(ext)) {
 					var count = +extensions[ext];
 					table.push([
-						ext.toUpperCase(),
+						extension.toUpperCase(),
 						count,
 						Math.round(count / file_count * 100)
 					]);
@@ -2017,7 +2480,7 @@ gulp.task("files", function(done) {
 		// when the type argument is provided
 		if (stypes) {
 			files = files.filter(function(filepath) {
-				var subs_extensions = ext.subs({ path: filepath });
+				var subs_extensions = extension.subs({ path: filepath });
 
 				// check if path contains any of the passed in subs
 				for (var i = 0, l = stypes.length; i < l; i++) {
@@ -2040,7 +2503,7 @@ gulp.task("files", function(done) {
 			// loop over each path to find the sub-extensions
 			files.forEach(function(path_) {
 				// get the paths sub-extensions
-				var subs = ext.subs({ path: path_ });
+				var subs = extension.subs({ path: path_ });
 
 				// loop over the found sub-extensions and print them
 				if (subs.length) {
@@ -2541,6 +3004,7 @@ gulp.task("linthtml", function(done) {
  * Usage
  *
  * $ gulp settings # Re-build the settings file.
+ *
  * $ gulp settings --rebuild # Force settings file re-build when
  *     the file gets deleted for whatever reason.
  */
