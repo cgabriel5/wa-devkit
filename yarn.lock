@@ -2352,6 +2352,13 @@ gulp-fail@^1.0.5:
     gulp-util "^3.0.6"
     through2 "^2.0.0"
 
+gulp-file@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/gulp-file/-/gulp-file-0.4.0.tgz#451356a2ac5089c6db91a0444252a0543657006b"
+  dependencies:
+    through2 "^0.4.1"
+    vinyl "^2.1.0"
+
 gulp-filter@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/gulp-filter/-/gulp-filter-5.0.1.tgz#5d87f662e317e5839ef7650e620e6c9008ff92d0"
@@ -3430,6 +3437,10 @@ limiter@^1.0.5:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/limiter/-/limiter-1.1.2.tgz#229d8055891c8b11af9e0ee5200e8e09bb3dcbeb"
 
+linenumber@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/linenumber/-/linenumber-1.0.0.tgz#1011b0b064c4f1b4061127a6a73b0d720e272ea3"
+
 load-json-file@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/load-json-file/-/load-json-file-1.1.0.tgz#956905708d58b4bab4c2261b04f59f31c99374c0"
@@ -4303,6 +4314,10 @@ onetime@^2.0.0:
 open@0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/open/-/open-0.0.5.tgz#42c3e18ec95466b6bf0dc42f3a2945c3f0cad8fc"
+
+opener@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/opener/-/opener-1.4.3.tgz#5c6da2c5d7e5831e8ffa3964950f8d6674ac90b8"
 
 openurl@1.1.1:
   version "1.1.1"
@@ -5759,7 +5774,7 @@ through2@*, through2@2.0.3, through2@^2.0.0, through2@^2.0.1, through2@^2.0.3, t
     readable-stream "^2.1.5"
     xtend "~4.0.1"
 
-through2@^0.4.2, through2@~0.4:
+through2@^0.4.1, through2@^0.4.2, through2@~0.4:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/through2/-/through2-0.4.2.tgz#dbf5866031151ec8352bb6c4db64a2292a840b9b"
   dependencies:
@@ -6145,7 +6160,7 @@ vinyl@^1.0.0, vinyl@^1.1.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-vinyl@^2.0.0:
+vinyl@^2.0.0, vinyl@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/vinyl/-/vinyl-2.1.0.tgz#021f9c2cf951d6b939943c89eb5ee5add4fd924c"
   dependencies:
