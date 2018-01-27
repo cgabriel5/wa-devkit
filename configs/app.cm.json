@@ -29,5 +29,24 @@
 	"port": 80,
 
 	// The char used to indent project files. Tabs are used by default.
-	"indent_char": "\t"
+	"indent_char": "\t",
+
+	// The text editor to use when opening files.
+	"editor": {
+		// Path of text editor binary.
+		"command": "",
+		// Any flags wished to be passed along with the command.
+		"flags": [],
+
+		// Example of what is could look like for a Linux system.
+		// "command": "subl",
+		// "args": ["--new-window", "--wait"]
+
+		// By default the project will look at the user's environment
+		// variables for default text editor information. If nothing is
+		// found vim or notepad will be used depending on the OS. Flag
+		// must be set to true to use this editor information or else
+		// environment variables will be used.
+		"active": false
+	}
 }
