@@ -204,8 +204,9 @@ gulp.task("favicon", function(done) {
  *     RealFaviconGenerator updates.
  */
 gulp.task("favicon-updates", function(done) {
-	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
-		.version;
+	var currentVersion = JSON.parse(
+		fs.readFileSync(get_config_file($paths.config_$favicondata))
+	).version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
 		if (err) {
 			throw err;

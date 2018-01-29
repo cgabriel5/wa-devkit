@@ -58,7 +58,7 @@ gulp.task("module", function(done) {
 	var remove = _args.remove;
 
 	// Get the config file.
-	var config_file = $paths.config_home + $paths.config_$bundles + ".json";
+	var config_file = get_config_file($paths.config_$bundles);
 
 	// Remove the module when the remove flag is provided.
 	if (remove) {

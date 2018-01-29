@@ -121,3 +121,13 @@ function get_editor(options) {
 		flags: flags
 	};
 }
+
+/**
+ * Build the config file path with the provided file name.
+ *
+ * @param  {string} name - The name of the config file.
+ * @return {string} - The built file path.
+ */
+function get_config_file(name) {
+	return `${$paths.config_home}${name}.json`;
+}

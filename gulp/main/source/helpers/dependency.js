@@ -95,8 +95,7 @@ gulp.task("dependency", function(done) {
 		};
 
 		// get the config path for the bundles file
-		var bundles_path =
-			$paths.config_home + $paths.config_$bundles + ".json";
+		var bundles_path = get_config_file($paths.config_$bundles);
 		var header = `${bundles_path} > $.vendor.files[...]`;
 
 		// print the dependencies

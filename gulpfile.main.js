@@ -356,6 +356,16 @@ function get_editor(options) {
 	};
 }
 
+/**
+ * Build the config file path with the provided file name.
+ *
+ * @param  {string} name - The name of the config file.
+ * @return {string} - The built file path.
+ */
+function get_config_file(name) {
+	return `${$paths.config_home}${name}.json`;
+}
+
 // -----------------------------------------------------------------------------
 // init.js -- ./gulp/main/source/tasks/init.js
 // -----------------------------------------------------------------------------
@@ -2024,7 +2034,7 @@ gulp.task("module", function(done) {
 	var remove = _args.remove;
 
 	// Get the config file.
-	var config_file = $paths.config_home + $paths.config_$bundles + ".json";
+	var config_file = get_config_file($paths.config_$bundles);
 
 	// Remove the module when the remove flag is provided.
 	if (remove) {
@@ -2721,8 +2731,7 @@ gulp.task("dependency", function(done) {
 		};
 
 		// get the config path for the bundles file
-		var bundles_path =
-			$paths.config_home + $paths.config_$bundles + ".json";
+		var bundles_path = get_config_file($paths.config_$bundles);
 		var header = `${bundles_path} > $.vendor.files[...]`;
 
 		// print the dependencies
@@ -3627,8 +3636,9 @@ gulp.task("favicon", function(done) {
  *     RealFaviconGenerator updates.
  */
 gulp.task("favicon-updates", function(done) {
-	var currentVersion = JSON.parse(fs.readFileSync($paths.config_favicondata))
-		.version;
+	var currentVersion = JSON.parse(
+		fs.readFileSync(get_config_file($paths.config_$favicondata))
+	).version;
 	$.real_favicon.checkForUpdates(currentVersion, function(err) {
 		if (err) {
 			throw err;
