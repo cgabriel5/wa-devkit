@@ -17,6 +17,9 @@
  *     the file gets deleted for whatever reason.
  */
 gulp.task("settings", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:settings");
+
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
@@ -30,6 +33,11 @@ gulp.task("settings", function(done) {
 			gulp.dest($paths.config_home),
 			$.debug.edit()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:settings");
+
+			done();
+		}
 	);
 });

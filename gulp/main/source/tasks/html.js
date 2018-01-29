@@ -2,6 +2,9 @@
  * Init HTML files + minify.
  */
 gulp.task("html", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:html");
+
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {
@@ -16,6 +19,11 @@ gulp.task("html", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:html");
+
+			done();
+		}
 	);
 });

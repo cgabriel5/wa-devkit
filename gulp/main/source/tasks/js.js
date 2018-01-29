@@ -4,6 +4,9 @@
  * @internal - Ran via the "js" task.
  */
 gulp.task("js:app", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:js:app");
+
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
@@ -16,7 +19,12 @@ gulp.task("js:app", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:js:app");
+
+			done();
+		}
 	);
 });
 
@@ -30,6 +38,9 @@ gulp.task("js:vendor", function(done) {
 	// The paths should be supplied in ./configs/bundles.json
 	// within the js.vendor.files array.
 
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:js:vendor");
+
 	pump(
 		[
 			gulp.src(bundle_js.vendor.files),
@@ -40,7 +51,12 @@ gulp.task("js:vendor", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:js:vendor");
+
+			done();
+		}
 	);
 });
 

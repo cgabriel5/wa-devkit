@@ -94,15 +94,16 @@
 		},
 		"tasks": ["css", "js", "img", "html", "tohtml"],
 		"watch": {
+			"config": ["./configs/**/*.json"],
 			"css": {
-				"source": ["css/{source,assets}/**/*.css"],
-				"vendor": ["css/{vendor,assets}/**/*.css"]
+				"app": ["css{/source,/assets}/**/*.css"],
+				"vendor": ["css{/vendor,/assets}/**/*.css"]
 			},
-			"html": ["html/**/*.html"],
+			"html": ["html/source/**/*.html"],
 			"img": ["img/**/*.*"],
 			"js": {
-				"source": ["js/source/**/*.js"],
-				"vendor": ["js/vendor/**/*.js"]
+				"app": ["js{/source,/assets}/**/*.js"],
+				"vendor": ["js{/vendor,/assets}/**/*.js"]
 			}
 		}
 	},

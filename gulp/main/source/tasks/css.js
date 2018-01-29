@@ -4,6 +4,9 @@
  * @internal - Ran via the "css" task.
  */
 gulp.task("css:app", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:css:app");
+
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
@@ -26,7 +29,12 @@ gulp.task("css:app", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:css:app");
+
+			done();
+		}
 	);
 });
 
@@ -36,6 +44,9 @@ gulp.task("css:app", function(done) {
  * @internal - Ran via the "css" task.
  */
 gulp.task("css:vendor", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:css:vendor");
+
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
@@ -60,7 +71,12 @@ gulp.task("css:vendor", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:css:vendor");
+
+			done();
+		}
 	);
 });
 

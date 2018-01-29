@@ -31,86 +31,38 @@ gulp.task("watch", function(done) {
 			// gulp watcher paths
 			var watch_paths = bundle_gulp.watch;
 
-			// watch for any changes to HTML files
-			gulp.watch(
-				watch_paths.html,
-				{
-					cwd: $paths.html_source
-				},
-				function() {
-					return sequence("html");
-				}
-			);
+			// Watch for any changes to HTML files.
+			$.watcher.create("watcher:html", watch_paths.html, ["html"]);
 
-			// watch for any changes to CSS Source files
-			gulp.watch(
-				watch_paths.css.source,
-				{
-					cwd: $paths.css_source
-				},
-				function() {
-					return sequence("css:app");
-				}
-			);
+			// Watch for any changes to CSS Source files.
+			$.watcher.create("watcher:css:app", watch_paths.css.app, [
+				"css:app"
+			]);
 
-			// watch for any changes to CSS Lib files
-			gulp.watch(
-				watch_paths.css.vendor,
-				{
-					cwd: $paths.css_vendor
-				},
-				function() {
-					return sequence("css:vendor");
-				}
-			);
+			// Watch for any changes to CSS Lib files.
+			$.watcher.create("watcher:css:vendor", watch_paths.css.vendor, [
+				"css:vendor"
+			]);
 
 			// watch for any changes to JS Source files
-			gulp.watch(
-				watch_paths.js.source,
-				{
-					cwd: $paths.js_source
-				},
-				function() {
-					return sequence("js:app");
-				}
-			);
+			$.watcher.create("watcher:js:app", watch_paths.js.app, ["js:app"]);
 
 			// watch for any changes to JS Lib files
-			gulp.watch(
-				watch_paths.js.vendor,
-				{
-					cwd: $paths.js_vendor
-				},
-				function() {
-					return sequence("js:vendor");
-				}
-			);
+			$.watcher.create("watcher:js:vendor", watch_paths.js.vendor, [
+				"js:vendor"
+			]);
 
 			// watch for any changes to IMG files
-			gulp.watch(
-				watch_paths.img,
-				{
-					cwd: $paths.img_source
-				},
-				function() {
-					return sequence("img");
-				}
-			);
+			$.watcher.create("watcher:img", watch_paths.img, ["img"]);
 
 			// watch for any changes to config files
-			gulp.watch(
-				$paths.config_settings_json_files,
-				{
-					cwd: $paths.basedir
-				},
-				function() {
-					return sequence("settings");
-				}
-			);
+			$.watcher.create("watcher:settings", watch_paths.config, [
+				"settings"
+			]);
 
-			// is the following watcher needed?
+			// Is the following watcher needed?
 
-			// // watch for any changes to README.md
+			// // Watch for any changes to README.md.
 			// gulp.watch([$paths.readme], {
 			//     cwd: $paths.basedir
 			// }, function() {

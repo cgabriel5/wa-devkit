@@ -67,6 +67,7 @@
 		"gulp-strip-json-comments": "^2.1.0",
 		"gulp-uglify": "^3.0.0",
 		"gulp-util": "^3.0.8",
+		"gulp-watcher": "^1.0.1",
 		"inquirer": "^3.3.0",
 		"jshint": "^2.9.5",
 		"jshint-stylish": "^2.2.1",

@@ -891,86 +891,38 @@ gulp.task("watch", function(done) {
 			// gulp watcher paths
 			var watch_paths = bundle_gulp.watch;
 
-			// watch for any changes to HTML files
-			gulp.watch(
-				watch_paths.html,
-				{
-					cwd: $paths.html_source
-				},
-				function() {
-					return sequence("html");
-				}
-			);
+			// Watch for any changes to HTML files.
+			$.watcher.create("watcher:html", watch_paths.html, ["html"]);
 
-			// watch for any changes to CSS Source files
-			gulp.watch(
-				watch_paths.css.source,
-				{
-					cwd: $paths.css_source
-				},
-				function() {
-					return sequence("css:app");
-				}
-			);
+			// Watch for any changes to CSS Source files.
+			$.watcher.create("watcher:css:app", watch_paths.css.app, [
+				"css:app"
+			]);
 
-			// watch for any changes to CSS Lib files
-			gulp.watch(
-				watch_paths.css.vendor,
-				{
-					cwd: $paths.css_vendor
-				},
-				function() {
-					return sequence("css:vendor");
-				}
-			);
+			// Watch for any changes to CSS Lib files.
+			$.watcher.create("watcher:css:vendor", watch_paths.css.vendor, [
+				"css:vendor"
+			]);
 
 			// watch for any changes to JS Source files
-			gulp.watch(
-				watch_paths.js.source,
-				{
-					cwd: $paths.js_source
-				},
-				function() {
-					return sequence("js:app");
-				}
-			);
+			$.watcher.create("watcher:js:app", watch_paths.js.app, ["js:app"]);
 
 			// watch for any changes to JS Lib files
-			gulp.watch(
-				watch_paths.js.vendor,
-				{
-					cwd: $paths.js_vendor
-				},
-				function() {
-					return sequence("js:vendor");
-				}
-			);
+			$.watcher.create("watcher:js:vendor", watch_paths.js.vendor, [
+				"js:vendor"
+			]);
 
 			// watch for any changes to IMG files
-			gulp.watch(
-				watch_paths.img,
-				{
-					cwd: $paths.img_source
-				},
-				function() {
-					return sequence("img");
-				}
-			);
+			$.watcher.create("watcher:img", watch_paths.img, ["img"]);
 
 			// watch for any changes to config files
-			gulp.watch(
-				$paths.config_settings_json_files,
-				{
-					cwd: $paths.basedir
-				},
-				function() {
-					return sequence("settings");
-				}
-			);
+			$.watcher.create("watcher:settings", watch_paths.config, [
+				"settings"
+			]);
 
-			// is the following watcher needed?
+			// Is the following watcher needed?
 
-			// // watch for any changes to README.md
+			// // Watch for any changes to README.md.
 			// gulp.watch([$paths.readme], {
 			//     cwd: $paths.basedir
 			// }, function() {
@@ -992,6 +944,9 @@ gulp.task("watch", function(done) {
  * Init HTML files + minify.
  */
 gulp.task("html", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:html");
+
 	pump(
 		[
 			gulp.src(bundle_html.source.files, {
@@ -1006,7 +961,12 @@ gulp.task("html", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:html");
+
+			done();
+		}
 	);
 });
 
@@ -1020,6 +980,9 @@ gulp.task("html", function(done) {
  * @internal - Ran via the "css" task.
  */
 gulp.task("css:app", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:css:app");
+
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
@@ -1042,7 +1005,12 @@ gulp.task("css:app", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:css:app");
+
+			done();
+		}
 	);
 });
 
@@ -1052,6 +1020,9 @@ gulp.task("css:app", function(done) {
  * @internal - Ran via the "css" task.
  */
 gulp.task("css:vendor", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:css:vendor");
+
 	var unprefix = require("postcss-unprefix");
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
@@ -1076,7 +1047,12 @@ gulp.task("css:vendor", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:css:vendor");
+
+			done();
+		}
 	);
 });
 
@@ -1100,6 +1076,9 @@ gulp.task("css", function(done) {
  * @internal - Ran via the "js" task.
  */
 gulp.task("js:app", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:js:app");
+
 	pump(
 		[
 			gulp.src(bundle_js.source.files, {
@@ -1112,7 +1091,12 @@ gulp.task("js:app", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:js:app");
+
+			done();
+		}
 	);
 });
 
@@ -1126,6 +1110,9 @@ gulp.task("js:vendor", function(done) {
 	// The paths should be supplied in ./configs/bundles.json
 	// within the js.vendor.files array.
 
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:js:vendor");
+
 	pump(
 		[
 			gulp.src(bundle_js.vendor.files),
@@ -1136,7 +1123,12 @@ gulp.task("js:vendor", function(done) {
 			$.debug.edit(),
 			bs.stream()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:js:vendor");
+
+			done();
+		}
 	);
 });
 
@@ -1158,9 +1150,17 @@ gulp.task("js", function(done) {
  * Just trigger a browser-sync stream.
  */
 gulp.task("img", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:img");
+
 	// need to copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
-	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], done);
+	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], function() {
+		// Un-pause and re-start the watcher.
+		$.watcher.start("watcher:img");
+
+		done();
+	});
 });
 
 // -----------------------------------------------------------------------------
@@ -1785,13 +1785,14 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	// this task can only run when gulp is not running as gulps watchers
-	// can run too many times as many files are potentially being beautified
-	if ($internal.get("pid")) {
-		// Gulp instance exists so cleanup
-		gulp_check_warn();
-		return done();
-	}
+	// **This might no longer be needed
+	// // this task can only run when gulp is not running as gulps watchers
+	// // can run too many times as many files are potentially being beautified
+	// if ($internal.get("pid")) {
+	// 	// Gulp instance exists so cleanup
+	// 	gulp_check_warn();
+	// 	return done();
+	// }
 
 	// run yargs
 	var _args = yargs
@@ -3009,6 +3010,9 @@ gulp.task("linthtml", function(done) {
  *     the file gets deleted for whatever reason.
  */
 gulp.task("settings", function(done) {
+	// Pause the watcher to prevent infinite loops.
+	$.watcher.pause("watcher:settings");
+
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
@@ -3022,7 +3026,12 @@ gulp.task("settings", function(done) {
 			gulp.dest($paths.config_home),
 			$.debug.edit()
 		],
-		done
+		function() {
+			// Un-pause and re-start the watcher.
+			$.watcher.start("watcher:settings");
+
+			done();
+		}
 	);
 });
 
