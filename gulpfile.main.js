@@ -3500,7 +3500,7 @@ gulp.task("favicon:generate", function(done) {
 				scalingAlgorithm: "Mitchell",
 				errorOnImageTooSmall: false
 			},
-			markupFile: $paths.config_favicondata
+			markupFile: get_config_file($paths.config_$favicondata)
 		},
 		function() {
 			done();
@@ -3578,8 +3578,9 @@ gulp.task("favicon:html", function(done) {
 		[
 			gulp.src($paths.favicon_html),
 			$.real_favicon.injectFaviconMarkups(
-				JSON.parse(fs.readFileSync($paths.config_favicondata)).favicon
-					.html_code
+				JSON.parse(
+					fs.readFileSync(get_config_file($paths.config_$favicondata))
+				).favicon.html_code
 			),
 			gulp.dest($paths.favicon_html_dest),
 			$.debug.edit(),
