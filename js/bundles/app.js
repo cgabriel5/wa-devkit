@@ -3,9 +3,9 @@
 	"use strict";
 
 	/**
-	 * This script is used to initialize all the project modules found in
+	 * This IIFE is used to initialize all the project modules found in
 	 * ./js/source/modules. Essentially, it will loop over all modules and
-	 * invoke them bases on the mode (complete|interactive) provided. When
+	 * invoke them based on the mode (complete|interactive) provided. When
 	 * a mode is not provided it will default to "complete". For information
 	 * about what mode to use see below.
 	 */

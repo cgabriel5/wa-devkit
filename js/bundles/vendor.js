@@ -6268,6 +6268,7 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 	jQuery.fn.ready = function(fn) {
 		readyList
 			.then(fn)
+
 			// Wrap jQuery.readyException in a function so that the lookup
 			// happens at the time of error handling instead of callback
 			// registration.
@@ -9853,6 +9854,7 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
 				this.filter(isHiddenWithinTree)
 					.css("opacity", 0)
 					.show()
+
 					// Animate to the value specified
 					.end()
 					.animate({ opacity: to }, speed, easing, callback)
