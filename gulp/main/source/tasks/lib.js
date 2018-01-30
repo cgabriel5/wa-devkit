@@ -50,7 +50,7 @@ gulp.task("lib", function(done) {
 	// cache task
 	var task = this;
 
-	if (APPTYPE !== "library") {
+	if (INT_APPTYPE !== "library") {
 		print.gulp("This helper task is only available for library projects.");
 		return done();
 	}

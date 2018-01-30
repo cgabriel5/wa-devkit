@@ -211,7 +211,7 @@ gulp.task("open", function(done) {
 			_args.p ||
 			_args.port ||
 			(
-				$internal.get("ports") || {
+				INT_PORTS || {
 					local: null
 				}
 			).local;

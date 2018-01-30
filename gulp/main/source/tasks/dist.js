@@ -152,7 +152,7 @@ gulp.task("dist", function(done) {
 	// cache task
 	var task = this;
 
-	if (APPTYPE !== "webapp") {
+	if (INt_APPTYPE !== "webapp") {
 		print.gulp("This helper task is only available for webapp projects.");
 		return done();
 	}

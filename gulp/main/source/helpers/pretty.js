@@ -133,15 +133,6 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	// **This might no longer be needed
-	// // this task can only run when gulp is not running as gulps watchers
-	// // can run too many times as many files are potentially being beautified
-	// if ($internal.get("pid")) {
-	// 	// Gulp instance exists so cleanup
-	// 	gulp_check_warn();
-	// 	return done();
-	// }
-
 	// run yargs
 	var _args = yargs
 		.option("type", {

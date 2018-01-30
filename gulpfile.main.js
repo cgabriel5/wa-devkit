@@ -193,7 +193,11 @@ var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 
 // internal information
-var APPTYPE = $internal.get("apptype");
+var INT_APPTYPE = get($internal.data, "apptype", "");
+var INT_PROCESS = get($internal.data, "process", "");
+var INT_PID = get(INT_PROCESS, "pid", "");
+var INT_TITLE = get(INT_PROCESS, "title", "");
+var INT_PORTS = get(INT_PROCESS, "ports", "");
 
 // get the current Gulp file name
 var GULPFILE = path.basename($paths.filename);
@@ -380,20 +384,22 @@ var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
 	var alphabetize = require("alphabetize-object-keys");
 
-	// check for current Gulp process
-	var pid = $internal.get("pid");
-
 	// only perform this cleanup when the Gulp instance is closed.
 	// when any other task is run the cleanup should not be done.
 	// [https://goo.gl/rJNKNZ]
 
-	if (pid && signal) {
+	// Re-read the file to get the most current value.
+	$internal = json.read($paths.config_internal);
+	INT_PROCESS = get($internal.data, "process", "");
+	INT_PID = get(INT_PROCESS, "pid", "");
+
+	if (INT_PID && signal) {
+		// Don't call cleanup handler again.
+		cleanup.uninstall();
+
 		// Gulp instance exists so cleanup
 		// clear gulp internal configuration keys
-		$internal.set("pid", null);
-		$internal.set("argv", null);
-		$internal.set("title", null);
-		$internal.set("ports", null);
+		$internal.set("process", null);
 		$internal.data = alphabetize($internal.data);
 		$internal.writeSync(null, JINDENT);
 		// cleanup vars, process
@@ -404,10 +410,10 @@ cleanup(function(exit_code, signal) {
 		if (process) {
 			process.exit();
 			if (signal) {
-				process.kill(pid, signal);
+				process.kill(INT_PID, signal);
 			}
 		}
-		cleanup.uninstall(); // don't call cleanup handler again
+
 		return false;
 	}
 });
@@ -424,12 +430,14 @@ cleanup(function(exit_code, signal) {
  * @internal - Used with the default task.
  */
 gulp.task("init:save-pid", function(done) {
-	$internal.set("pid", process.pid); // set the status
-	$internal.set("title", process.title);
-	$internal.set("argv", process.argv);
+	// Store process information.
+	$internal.set("process.pid", process.pid);
+	$internal.set("process.title", process.title);
+	$internal.set("process.argv", process.argv);
+
+	// Save changes to file.
 	$internal.write(
 		function() {
-			// save changes to file
 			done();
 		},
 		null,
@@ -546,12 +554,10 @@ gulp.task("default:active-pid-check", function(done) {
 
 		__process_stopped = true;
 
-		// get pid, if any
-		var pid = $internal.get("pid");
-		if (pid) {
+		if (INT_PID) {
 			// kill the open process
 			print.gulp(chalk.green("Gulp process stopped."));
-			process.kill(pid);
+			process.kill(INT_PID);
 		} else {
 			// no open process exists
 			print.gulp("No Gulp process exists.");
@@ -560,8 +566,6 @@ gulp.task("default:active-pid-check", function(done) {
 		return done();
 	}
 
-	// Get pid, if any.
-	var pid = $internal.get("pid");
 	// If a pid is stored present it means a Gulp instance has
 	// already started or the file was not cleared properly. This task
 	// will help determine if an active gulp process with the stored
@@ -571,14 +575,14 @@ gulp.task("default:active-pid-check", function(done) {
 
 	// If no stored pid simply continue. No stored pid means there is
 	// no active running gulp instance so continue the task normally.
-	if (!pid) {
+	if (!INT_PID) {
 		return done();
 	} else {
 		// Else if a pid exists determine if its active and a gulp
 		// process.
 
 		// Get the process information using the stored pid.
-		find("pid", pid).then(
+		find("pid", INT_PID).then(
 			function(processes) {
 				// This module will return an array containing the found
 				// process in objects. Because we are supplying it the
@@ -597,10 +601,7 @@ gulp.task("default:active-pid-check", function(done) {
 				// is legit. If they match then the process exists. This
 				// will prevent making other processes.
 				// To-Do: Possible make this check better in the future.
-				if (
-					p.cmd === $internal.get("title") &&
-					p.name.toLowerCase() === "gulp"
-				) {
+				if (p.cmd === INT_TITLE && p.name.toLowerCase() === "gulp") {
 					// A process exists.
 					__process_exists = p;
 				}
@@ -669,13 +670,15 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 		$configs.findfreeport.ip,
 		$configs.findfreeport.count,
 		function(err, p1, p2) {
-			// store the ports
-			$internal.set("ports", {
-				local: p1,
-				ui: p2
+			// Store the ports.
+			$internal.set("process", {
+				ports: {
+					local: p1,
+					ui: p2
+				}
 			});
 
-			// save ports
+			// Save ports.
 			$internal.write(
 				function() {
 					// store ports on the browser-sync object itself
@@ -874,7 +877,7 @@ gulp.task("dist", function(done) {
 	// cache task
 	var task = this;
 
-	if (APPTYPE !== "webapp") {
+	if (INt_APPTYPE !== "webapp") {
 		print.gulp("This helper task is only available for webapp projects.");
 		return done();
 	}
@@ -947,7 +950,7 @@ gulp.task("lib", function(done) {
 	// cache task
 	var task = this;
 
-	if (APPTYPE !== "library") {
+	if (INT_APPTYPE !== "library") {
 		print.gulp("This helper task is only available for library projects.");
 		return done();
 	}
@@ -1701,7 +1704,7 @@ gulp.task("open", function(done) {
 			_args.p ||
 			_args.port ||
 			(
-				$internal.get("ports") || {
+				INT_PORTS || {
 					local: null
 				}
 			).local;
@@ -1724,9 +1727,8 @@ gulp.task("open", function(done) {
  *     Print Gulp status.
  */
 gulp.task("status", function(done) {
-	var pid = $internal.get("pid");
 	print.gulp(
-		pid
+		INT_PID
 			? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
 			: chalk.yellow("Gulp is not running.")
 	);
@@ -1742,17 +1744,15 @@ gulp.task("status", function(done) {
  *     Print uses ports.
  */
 gulp.task("ports", function(done) {
-	// get the ports
-	var ports = $internal.get("ports");
 	// if file is empty
-	if (!ports) {
+	if (!INT_PORTS) {
 		print.gulp(chalk.yellow("No ports are in use."));
 		return done();
 	}
 	// ports exist...
 	print.gulp(
 		chalk.green("(local, ui)"),
-		chalk.magenta("(" + ports.local + ", " + ports.ui + ")")
+		chalk.magenta("(" + INT_PORTS.local + ", " + INT_PORTS.ui + ")")
 	);
 	done();
 });
@@ -1895,15 +1895,6 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var autoprefixer = require("autoprefixer");
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
-
-	// **This might no longer be needed
-	// // this task can only run when gulp is not running as gulps watchers
-	// // can run too many times as many files are potentially being beautified
-	// if ($internal.get("pid")) {
-	// 	// Gulp instance exists so cleanup
-	// 	gulp_check_warn();
-	// 	return done();
-	// }
 
 	// run yargs
 	var _args = yargs
@@ -3703,13 +3694,6 @@ gulp.task("favicon", function(done) {
 	// cache task
 	var task = this;
 
-	// this task can only run when gulp is not running as gulps watchers
-	// can run too many times as many files are potentially being beautified
-	if ($internal.get("pid")) {
-		// Gulp instance exists so cleanup
-		gulp_check_warn();
-		return done();
-	}
 	var tasks = [
 		"favicon:generate",
 		"favicon:edit-manifest",

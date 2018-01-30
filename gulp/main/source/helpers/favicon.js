@@ -170,13 +170,6 @@ gulp.task("favicon", function(done) {
 	// cache task
 	var task = this;
 
-	// this task can only run when gulp is not running as gulps watchers
-	// can run too many times as many files are potentially being beautified
-	if ($internal.get("pid")) {
-		// Gulp instance exists so cleanup
-		gulp_check_warn();
-		return done();
-	}
 	var tasks = [
 		"favicon:generate",
 		"favicon:edit-manifest",

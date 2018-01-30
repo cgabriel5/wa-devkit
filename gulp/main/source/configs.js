@@ -33,7 +33,11 @@ var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 
 // internal information
-var APPTYPE = $internal.get("apptype");
+var INT_APPTYPE = get($internal.data, "apptype", "");
+var INT_PROCESS = get($internal.data, "process", "");
+var INT_PID = get(INT_PROCESS, "pid", "");
+var INT_TITLE = get(INT_PROCESS, "title", "");
+var INT_PORTS = get(INT_PROCESS, "ports", "");
 
 // get the current Gulp file name
 var GULPFILE = path.basename($paths.filename);
