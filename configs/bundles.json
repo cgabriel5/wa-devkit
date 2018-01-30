@@ -92,7 +92,7 @@
 				"setup": "gulpfile.setup.js"
 			}
 		},
-		"tasks": ["css", "js", "img", "html", "tohtml"],
+		"tasks": ["css", "js", "img", "html"],
 		"watch": {
 			"config": ["./configs/**/*.json"],
 			"css": {
