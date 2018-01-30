@@ -71,3 +71,4 @@ var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
 var escape = utils.escape;
 var unique = utils.unique;
+var cli_highlight = utils.cli_highlight;
