@@ -10,7 +10,7 @@ var __modified_git_files;
  *
  * Flags
  *
- * --quick
+ * -q, --quick
  *     [boolean] Only prettify the git modified files.
  *
  * --staged
@@ -25,6 +25,7 @@ gulp.task("pretty:gitfiles", function(done) {
 	// run yargs
 	var _args = yargs
 		.option("quick", {
+			alias: "q",
 			type: "boolean"
 		})
 		.option("staged", {
