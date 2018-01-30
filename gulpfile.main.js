@@ -75,6 +75,7 @@ var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
 var escape = utils.escape;
 var unique = utils.unique;
+var cli_highlight = utils.cli_highlight;
 
 // -----------------------------------------------------------------------------
 // paths.js -- ./gulp/main/source/paths.js
@@ -196,6 +197,7 @@ var APPTYPE = $internal.get("apptype");
 
 // get the current Gulp file name
 var GULPFILE = path.basename($paths.filename);
+var GULPCLI = `gulp --gulpfile ${GULPFILE}`;
 
 // -----------------------------------------------------------------------------
 // vars.js -- ./gulp/main/source/vars.js
@@ -389,6 +391,8 @@ cleanup(function(exit_code, signal) {
 		// Gulp instance exists so cleanup
 		// clear gulp internal configuration keys
 		$internal.set("pid", null);
+		$internal.set("argv", null);
+		$internal.set("title", null);
 		$internal.set("ports", null);
 		$internal.data = alphabetize($internal.data);
 		$internal.writeSync(null, JINDENT);
@@ -421,6 +425,8 @@ cleanup(function(exit_code, signal) {
  */
 gulp.task("init:save-pid", function(done) {
 	$internal.set("pid", process.pid); // set the status
+	$internal.set("title", process.title);
+	$internal.set("argv", process.argv);
 	$internal.write(
 		function() {
 			// save changes to file
@@ -520,6 +526,97 @@ gulp.task("init:build", function(done) {
 });
 
 /**
+ * Variables are declared outside of tasks to be able to use it in
+ *     multiple tasks. The variables are populated in the
+ *     default:active-pid-check task and used in the default task.
+ */
+var __process_exists;
+var __process_stopped;
+
+/**
+ * Checks for an active Gulp process before making another.
+ *
+ * @internal - Used with the default task.
+ */
+gulp.task("default:active-pid-check", function(done) {
+	var args = yargs.argv; // Get cli parameters.
+
+	if (args.s || args.stop) {
+		// end the running Gulp process
+
+		__process_stopped = true;
+
+		// get pid, if any
+		var pid = $internal.get("pid");
+		if (pid) {
+			// kill the open process
+			print.gulp(chalk.green("Gulp process stopped."));
+			process.kill(pid);
+		} else {
+			// no open process exists
+			print.gulp("No Gulp process exists.");
+		}
+
+		return done();
+	}
+
+	// Get pid, if any.
+	var pid = $internal.get("pid");
+	// If a pid is stored present it means a Gulp instance has
+	// already started or the file was not cleared properly. This task
+	// will help determine if an active gulp process with the stored
+	// pid exists.
+
+	var find = require("find-process");
+
+	// If no stored pid simply continue. No stored pid means there is
+	// no active running gulp instance so continue the task normally.
+	if (!pid) {
+		return done();
+	} else {
+		// Else if a pid exists determine if its active and a gulp
+		// process.
+
+		// Get the process information using the stored pid.
+		find("pid", pid).then(
+			function(processes) {
+				// This module will return an array containing the found
+				// process in objects. Because we are supplying it the
+				// pid the array will only return 1 object.
+
+				// Get the process.
+				var p = processes[0];
+
+				// If no process exists then the process with the stored pid
+				// does not exist and the we can proceed to the next task.
+				if (!p) {
+					return done();
+				}
+
+				// The following have to match to make sure the process
+				// is legit. If they match then the process exists. This
+				// will prevent making other processes.
+				// To-Do: Possible make this check better in the future.
+				if (
+					p.cmd === $internal.get("title") &&
+					p.name.toLowerCase() === "gulp"
+				) {
+					// A process exists.
+					__process_exists = p;
+				}
+
+				return done();
+			},
+			function(err) {
+				if (err) {
+					throw err;
+				}
+			}
+		);
+	}
+});
+
+/**
  * Runs Gulp.
  *
  * Notes
@@ -541,79 +638,82 @@ gulp.task("init:build", function(done) {
  * $ gulp --stop
  *     Stops active Gulp process, if running.
  */
-gulp.task("default", function(done) {
+gulp.task("default", ["default:active-pid-check"], function(done) {
+	// Check the default:active-pid-check variables before the actual
+	// task code runs.
+
+	// When the --stop flag is provided only do not let the task run.
+	if (__process_stopped) {
+		return done();
+	}
+
+	// Return if a process exists.
+	if (__process_exists) {
+		print.gulp(
+			chalk.yellow(
+				"Gulp instance",
+				chalk.green("(pid:" + __process_exists.pid + ")"),
+				"running. Stop it before starting a new one."
+			)
+		);
+		return done();
+	}
+
+	// Actual task starts here.
+
 	var find_free_port = require("find-free-port");
 
-	var args = yargs.argv; // get cli parameters
+	return find_free_port(
+		$configs.findfreeport.range.start,
+		$configs.findfreeport.range.end,
+		$configs.findfreeport.ip,
+		$configs.findfreeport.count,
+		function(err, p1, p2) {
+			// store the ports
+			$internal.set("ports", {
+				local: p1,
+				ui: p2
+			});
 
-	if (args.s || args.stop) {
-		// end the running Gulp process
+			// save ports
+			$internal.write(
+				function() {
+					// store ports on the browser-sync object itself
+					bs.__ports = [p1, p2]; // [app, ui]
 
-		// get pid, if any
-		var pid = $internal.get("pid");
-		if (pid) {
-			// kill the open process
-			print.gulp(chalk.green("Gulp process stopped."));
-			process.kill(pid);
-		} else {
-			// no open process exists
-			print.gulp("No Gulp process exists.");
-		}
+					// After getting the free ports, finally run the
+					// build task.
+					return sequence(
+						"init:save-pid",
+						"init:watch-git-branch",
+						"init:build",
+						function() {
+							// Pretty files before working on them for
+							// the first time.
+							cmd.get(`${GULPCLI} pretty -q`, function(
+								err,
+								data
+							) {
+								if (err) {
+									throw err;
+								}
 
-		return done();
-	} else {
-		// start up Gulp like normal
+								// highlight data string
+								print(cli_highlight(data));
 
-		return find_free_port(
-			$configs.findfreeport.range.start,
-			$configs.findfreeport.range.end,
-			$configs.findfreeport.ip,
-			$configs.findfreeport.count,
-			function(err, p1, p2) {
-				// get pid, if any
-				var pid = $internal.get("pid");
-				// if there is a pid present it means a Gulp instance has
-				// already started. therefore, prevent another from starting.
-				if (pid) {
-					print.gulp(
-						chalk.yellow(
-							"A Gulp instance is already running",
-							chalk.yellow("(pid:" + pid + ")") + ".",
-							"Stop that instance before starting a new one."
-						)
+								// Finally, watch all files for changes.
+								return sequence("watch", function() {
+									done();
+								});
+							});
+						}
 					);
-					return done();
-				}
-
-				// store the ports
-				$internal.set("ports", {
-					local: p1,
-					ui: p2
-				});
-
-				// save ports
-				$internal.write(
-					function() {
-						// store ports on the browser-sync object itself
-						bs.__ports = [p1, p2]; // [app, ui]
-						// after getting the free ports, finally run the
-						// build task
-						return sequence(
-							"init:save-pid",
-							"init:watch-git-branch",
-							"init:build",
-							"watch",
-							function() {
-								done();
-							}
-						);
-					},
-					null,
-					JINDENT
-				);
-			}
-		);
-	}
+				},
+				null,
+				JINDENT
+			);
+		}
+	);
 });
 
 // -----------------------------------------------------------------------------
@@ -1365,7 +1465,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						// run the open command as a shell command to not
 						// re-write the open code here as well.
 						cmd.get(
-							`gulp --gulpfile ${GULPFILE} open --file ${filename_rel}`,
+							`${GULPCLI} open --file ${filename_rel}`,
 							function(err, data) {
 								if (err) {
 									throw err;
@@ -1673,7 +1773,7 @@ var __modified_git_files;
  *
  * Flags
  *
- * --quick
+ * -q, --quick
  *     [boolean] Only prettify the git modified files.
  *
  * --staged
@@ -1688,6 +1788,7 @@ gulp.task("pretty:gitfiles", function(done) {
 	// run yargs
 	var _args = yargs
 		.option("quick", {
+			alias: "q",
 			type: "boolean"
 		})
 		.option("staged", {
@@ -2071,7 +2172,7 @@ gulp.task("module", function(done) {
 				) || [{ line: 0 }])[0].line;
 
 				cmd.get(
-					`gulp --gulpfile ${GULPFILE} open -e ${config_file} --line ${line} --wait`,
+					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
 					function(err, data) {
 						if (err) {
 							throw err;
@@ -2176,7 +2277,7 @@ gulp.task("module", function(done) {
 				) || [{ line: 0 }])[0].line;
 
 				cmd.get(
-					`gulp --gulpfile ${GULPFILE} open -e ${config_file} --line ${line} --wait`,
+					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
 					function(err, data) {
 						if (err) {
 							throw err;
