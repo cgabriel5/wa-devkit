@@ -95,7 +95,7 @@ gulp.task("module", function(done) {
 				) || [{ line: 0 }])[0].line;
 
 				cmd.get(
-					`gulp --gulpfile ${GULPFILE} open -e ${config_file} --line ${line} --wait`,
+					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
 					function(err, data) {
 						if (err) {
 							throw err;
@@ -200,7 +200,7 @@ gulp.task("module", function(done) {
 				) || [{ line: 0 }])[0].line;
 
 				cmd.get(
-					`gulp --gulpfile ${GULPFILE} open -e ${config_file} --line ${line} --wait`,
+					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
 					function(err, data) {
 						if (err) {
 							throw err;

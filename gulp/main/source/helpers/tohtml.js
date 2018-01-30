@@ -145,7 +145,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						// run the open command as a shell command to not
 						// re-write the open code here as well.
 						cmd.get(
-							`gulp --gulpfile ${GULPFILE} open --file ${filename_rel}`,
+							`${GULPCLI} open --file ${filename_rel}`,
 							function(err, data) {
 								if (err) {
 									throw err;

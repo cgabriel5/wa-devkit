@@ -37,3 +37,4 @@ var APPTYPE = $internal.get("apptype");
 
 // get the current Gulp file name
 var GULPFILE = path.basename($paths.filename);
+var GULPCLI = `gulp --gulpfile ${GULPFILE}`;
