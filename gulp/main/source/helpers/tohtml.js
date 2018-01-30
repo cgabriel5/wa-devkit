@@ -4,6 +4,7 @@
  *     task and used in the tohtml task.
  */
 var __markdown_styles;
+var __markdown_stopped;
 
 /**
  * Get the CSS markdown + prismjs styles.
@@ -11,6 +12,30 @@ var __markdown_styles;
  * @internal - Used to prepare the tohtml task.
  */
 gulp.task("tohtml:prepcss", function(done) {
+	// run yargs
+	var _args = yargs.option("file", {
+		type: "string"
+	}).argv;
+
+	// get the command line arguments from yargs
+	var filename = _args.f || _args.file;
+
+	// Check that the file is a markdown file.
+	if (!extension.ismd({ path: filename })) {
+		print.gulp(
+			chalk.yellow(
+				`.${extension({
+					path: filename
+				})} was provided. Need an .md (Markdown) file.`
+			)
+		);
+
+		// Set the variable.
+		__markdown_stopped = true;
+
+		return done();
+	}
+
 	// run gulp process
 	pump(
 		[
@@ -60,6 +85,13 @@ gulp.task("tohtml:prepcss", function(done) {
  *     Convert README.md to README.html and open file in browser.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
+	// Check the tohtml:prepcss variables before the actual task code runs.
+	if (__markdown_stopped) {
+		return done();
+	}
+
+	// Actual task starts here.
+
 	var prism = require("prismjs");
 	// extend the default prismjs languages.
 	require("prism-languages");
@@ -75,6 +107,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 			alias: "o",
 			type: "boolean"
 		}).argv;
+
 	// get the command line arguments from yargs
 	var filename = _args.f || _args.file;
 	var open = _args.o || _args.open;
