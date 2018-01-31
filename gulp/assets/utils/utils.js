@@ -58,6 +58,45 @@ print.ln = function() {
 print.gulp = log;
 
 /**
+ * Closure function which adds log level to the print.gulp function.
+ *
+ * @param  {string} level - The log level.
+ * @return {function} - The closure function.
+ */
+function log_level_fn(level) {
+	return function() {
+		// Turn arguments into an array.
+		var args = Array.prototype.slice.call(arguments);
+
+		// Add the level message to the start of the array.
+		args.unshift(level);
+
+		// Apply the arguments and return the function.
+		return print.gulp.apply(log, args);
+	};
+}
+
+/**
+ * Object containing the log levels.
+ *
+ * @type {object}
+ */
+var log_levels = {
+	debug: "cyan",
+	info: "blue",
+	warn: "yellow",
+	error: "red",
+	success: "green"
+};
+
+// Loop over the log levels and add them to the print.gulp function.
+for (var level in log_levels) {
+	if (log_levels.hasOwnProperty(level)) {
+		print.gulp[level] = log_level_fn(chalk[log_levels[level]](level));
+	}
+}
+
+/**
  * Detects the default Google Chrome browser based on OS. Falls
  *     back to "firefox".
  *
