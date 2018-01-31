@@ -31,6 +31,12 @@ function open_file_in_browser(filepath, port, callback) {
 	);
 }
 
+/**
+ * Determine the user's default text editor.
+ *
+ * @param  {object} options - Options object.
+ * @return {object} - Object containing the user's editor and CLI flags
+ */
 function get_editor(options) {
 	// Default options
 	options = options || {};
