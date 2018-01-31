@@ -33,7 +33,7 @@ if (fe.sync($paths.config_settings)) {
 	// only continue when the reconfig flag is set. this will let the
 	// settings task to run.
 
-	if (!_args.reconfig || !-~_args._.indexOf("settings")) {
+	if (!_args.rebuild || !-~_args._.indexOf("settings")) {
 		// config settings file does not exist so give a message and
 		// exit the node process.
 		print.gulp(
