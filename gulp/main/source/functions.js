@@ -31,19 +31,6 @@ function open_file_in_browser(filepath, port, callback) {
 	);
 }
 
-/**
- * Print that an active Gulp instance exists.
- *
- * @return {undefined} - Nothing.
- */
-function gulp_check_warn() {
-	print.gulp(
-		chalk.red(
-			"Task cannot be performed while Gulp is running. Close Gulp then try again."
-		)
-	);
-}
-
 function get_editor(options) {
 	// Default options
 	options = options || {};
