@@ -51,18 +51,23 @@ gulp.task("lib", function(done) {
 	var task = this;
 
 	if (INT_APPTYPE !== "library") {
-		print.gulp("This helper task is only available for library projects.");
+		print.gulp.warn(
+			"This helper task is only available for library projects."
+		);
 		return done();
 	}
+
 	// get the gulp build tasks
 	var tasks = bundle_lib.tasks;
+
 	// add callback to the sequence
 	tasks.push(function() {
 		var message = "Library folder complete.";
 		notify(message);
-		print.gulp(message);
+		print.gulp.success(message);
 		done();
 	});
+
 	// apply the tasks and callback to sequence
 	return sequence.apply(task, tasks);
 });

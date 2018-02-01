@@ -36,10 +36,13 @@ if (fe.sync($paths.config_settings)) {
 	if (!_args.rebuild || !-~_args._.indexOf("settings")) {
 		// config settings file does not exist so give a message and
 		// exit the node process.
-		print.gulp(
-			chalk.yellow("warning"),
+		print.gulp.warn(
 			chalk.magenta($paths.config_settings),
-			'is missing. Run "$ gulp settings --rebuild" to create the file.'
+			"is missing (settings file)."
+		);
+		print.gulp.info(
+			"Rebuild file by running:",
+			"$ gulp settings --rebuild"
 		);
 
 		process.exit();

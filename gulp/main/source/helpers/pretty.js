@@ -243,10 +243,15 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 
 	// show the used glob patterns when the flag is provided
 	if (test) {
+		print.ln();
+		print(chalk.underline("Patterns"));
+
 		// log the globs
 		files.forEach(function(glob) {
-			print.gulp(chalk.blue(glob));
+			print(`  ${glob}`);
 		});
+
+		print.ln();
 
 		return done();
 	}

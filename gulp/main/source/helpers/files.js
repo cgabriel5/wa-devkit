@@ -162,6 +162,9 @@ gulp.task("files", function(done) {
 			// store used sub-extensions
 			var subs_ = [];
 
+			print.ln();
+			print(chalk.underline("Sub-extensions"));
+
 			// loop over each path to find the sub-extensions
 			files.forEach(function(path_) {
 				// get the paths sub-extensions
@@ -172,12 +175,14 @@ gulp.task("files", function(done) {
 					subs.forEach(function(sub) {
 						// if the sub does not exist store it and print
 						if (!-~subs_.indexOf(sub)) {
-							print.gulp(chalk.blue(sub));
+							print(`  ${sub}`);
 							subs_.push(sub);
 						}
 					});
 				}
 			});
+
+			print.ln();
 
 			return done();
 		}

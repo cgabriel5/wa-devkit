@@ -77,9 +77,10 @@ gulp.task("module", function(done) {
 		// is not already taken by another file. We don't want to
 		// overwrite an existing file.
 		if (!fe.sync(file)) {
-			print.gulp(
+			print.gulp.warn(
+				"The module",
 				chalk.magenta(remove),
-				chalk.yellow("does not exist. Task was aborted.")
+				"does not exist."
 			);
 			return done();
 		}
@@ -175,10 +176,8 @@ gulp.task("module", function(done) {
 		// is not already taken by another file. We don't want to
 		// overwrite an existing file.
 		if (fe.sync(file)) {
-			print.gulp(
-				chalk.magenta(modname),
-				chalk.yellow("exists. Use another file name. Task was aborted.")
-			);
+			print.gulp.warn("The module", chalk.magenta(modname), "exists.");
+			print.gulp.info("Use another file name.");
 			return done();
 		}
 

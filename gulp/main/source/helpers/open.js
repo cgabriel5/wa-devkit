@@ -105,10 +105,10 @@ gulp.task("open", function(done) {
 
 		// Check that the directory exists
 		if (!de.sync(directory)) {
-			print.gulp(
-				chalk.yellow("The directory:"),
+			print.gulp.warn(
+				"The directory",
 				chalk.magenta(directory),
-				chalk.yellow("does not exist.")
+				"does not exist."
 			);
 			return done();
 		}
@@ -122,10 +122,10 @@ gulp.task("open", function(done) {
 
 		// Check that the file exists.
 		if (!fe.sync(editor)) {
-			print.gulp(
-				chalk.yellow("The file:"),
+			print.gulp.warn(
+				"The file",
 				chalk.magenta(directory),
-				chalk.yellow("does not exist.")
+				"does not exist."
 			);
 			return done();
 		}

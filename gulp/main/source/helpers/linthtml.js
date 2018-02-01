@@ -29,13 +29,21 @@ gulp.task("linthtml", function(done) {
 				// make sure the first letter is always capitalized
 				var first_letter = issue.msg[0];
 				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
-				print.gulp(
-					chalk.magenta(filepath),
+
+				// Try to print in the style of other linters.
+				print.ln();
+				print(chalk.underline(filepath));
+				print(
+					" ",
 					chalk.white(`line ${issue.line} char ${issue.column}`),
 					chalk.blue(`(${issue.code})`),
-					chalk.yellow(`${issue.msg}`)
+					chalk.yellow(`${issue.msg}.`)
 				);
+				print.ln();
 			});
+
+			print(`    ${chalk.yellow("⚠")}  ${issues.length} warning(s)`);
+			print.ln();
 
 			process.exitCode = 1;
 		}

@@ -7,10 +7,10 @@
  *     Print Gulp status.
  */
 gulp.task("status", function(done) {
-	print.gulp(
+	print.gulp.info(
 		INT_PID
-			? "Gulp is running. " + chalk.green(`(pid: ${pid})`)
-			: chalk.yellow("Gulp is not running.")
+			? `Gulp instance running. Process ${chalk.green(INT_PID)}.`
+			: "Gulp is not running."
 	);
 	done();
 });
@@ -26,13 +26,15 @@ gulp.task("status", function(done) {
 gulp.task("ports", function(done) {
 	// if file is empty
 	if (!INT_PORTS) {
-		print.gulp(chalk.yellow("No ports are in use."));
+		print.gulp.info("No ports are in use.");
 		return done();
 	}
+
 	// ports exist...
-	print.gulp(
-		chalk.green("(local, ui)"),
-		chalk.magenta("(" + INT_PORTS.local + ", " + INT_PORTS.ui + ")")
+	print.gulp.info(
+		`Local: ${chalk.green(INT_PORTS.local)}, UI: ${chalk.green(
+			INT_PORTS.ui
+		)}`
 	);
 	done();
 });

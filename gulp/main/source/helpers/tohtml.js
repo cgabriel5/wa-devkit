@@ -22,13 +22,12 @@ gulp.task("tohtml:prepcss", function(done) {
 
 	// Check that the file is a markdown file.
 	if (!extension.ismd({ path: filename })) {
-		print.gulp(
-			chalk.yellow(
-				`.${extension({
-					path: filename
-				})} was provided. Need an .md (Markdown) file.`
-			)
+		print.gulp.warn(
+			`.${extension({
+				path: filename
+			})} file was provided.`
 		);
+		print.gulp.info("Need a .md (Markdown) file.");
 
 		// Set the variable.
 		__markdown_stopped = true;

@@ -181,7 +181,7 @@ gulp.task("favicon", function(done) {
 		"pretty"
 	];
 	tasks.push(function() {
-		print.gulp("Favicons generated.");
+		print.gulp.success("Favicons generated.");
 		done();
 	});
 	return sequence.apply(task, tasks);
