@@ -8,7 +8,11 @@ var modules_path = path_offset + "node_modules/";
 
 var url = require(modules_path + "url-parse");
 var gulp = require(modules_path + "gulp");
-var notifier = require(modules_path + "node-notifier");
+
+// Use growl as default but node-notifier can be used instead.
+// var notifier = require(modules_path + "node-notifier");
+var growl = require(modules_path + "growl");
+
 var format_date = require(modules_path + "dateformat");
 var gutil = require(modules_path + "gulp-util");
 var log = gutil.log;
@@ -134,12 +138,22 @@ var time = function() {
 var notify = function(message, error) {
 	// determine what image to show
 	var image = (error ? "error" : "success") + "_256.png";
-	// OS agnostic
-	notifier.notify({
+
+	// // OS agnostic
+	// notifier.notify({
+	// 	title: "Gulp",
+	// 	message: message,
+	// 	icon: path.join(__dirname, "../node-notifier/" + image),
+	// 	sound: true
+	// });
+
+	// Use growl instead as it used libnotify-bin on Linux which is
+	// faster. Using Growl, however, is a little more involved
+	// depending on what OS one is using. More info here:
+	// [https://github.com/tj/node-growl#installation]
+	growl(message + "sfsdf", {
 		title: "Gulp",
-		message: message,
-		icon: path.join(__dirname, "../node-notifier/" + image),
-		sound: true
+		image: path.join(__dirname, "../node-notifier/" + image)
 	});
 };
 

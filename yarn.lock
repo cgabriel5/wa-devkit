@@ -2276,6 +2276,10 @@ graceful-fs@~1.2.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
+growl@^1.10.4:
+  version "1.10.4"
+  resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.4.tgz#923f53f90c3df0e696ab55fa74e5d6f254a34d3d"
+
 growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
