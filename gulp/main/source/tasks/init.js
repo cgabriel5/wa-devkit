@@ -15,26 +15,39 @@ cleanup(function(exit_code, signal) {
 	INT_PROCESS = get($internal.data, "process", "");
 	INT_PID = get(INT_PROCESS, "pid", "");
 
-	if (INT_PID && signal) {
+	// If the process is closed and it matches the recorded pid it is
+	// the original process so close it and clear the internal file.
+	if (INT_PID && INT_PID === process.pid) {
 		// Don't call cleanup handler again.
 		cleanup.uninstall();
 
-		// Gulp instance exists so cleanup
-		// clear gulp internal configuration keys
+		// If the process closed due to an error give an error message
+		// and notification.
+		if (exit_code) {
+			var message = `Error caused instance ${chalk.green(
+				process.pid
+			)} to close.`;
+			notify(message, true);
+			print.gulp.error(message);
+		} else {
+			print.gulp.success(
+				`Gulp instance ${chalk.green(process.pid)} stopped.`
+			);
+		}
+
+		// Gulp instance exists so cleanup clear gulp internal
+		// configuration keys.
 		$internal.set("process", null);
 		$internal.data = alphabetize($internal.data);
 		$internal.writeSync(null, JINDENT);
+
 		// cleanup vars, process
 		branch_name = undefined;
 		if (bs) {
 			bs.exit();
 		}
-		if (process) {
-			process.exit();
-			if (signal) {
-				process.kill(INT_PID, signal);
-			}
-		}
+
+		process.kill(INT_PID, signal);
 
 		return false;
 	}
@@ -105,27 +118,23 @@ gulp.task("init:watch-git-branch", function(done) {
 				function() {
 					var brn_current = git.checkSync($paths.dirname).branch;
 					if (branch_name) {
-						print.gulp(
-							chalk.yellow("(pid:" + process.pid + ")"),
-							"Gulp monitoring",
-							chalk.green(branch_name),
-							"branch."
+						print.gulp.info(
+							"Gulp is monitoring branch:",
+							chalk.magenta(branch_name)
 						);
 					}
 					if (brn_current !== branch_name) {
 						// message + exit
-						print.gulp(
-							"Gulp stopped due to branch switch. (",
-							chalk.green(branch_name),
-							"=>",
-							chalk.yellow(brn_current),
-							")"
+						print.gulp.warn(
+							"Gulp stopped due to a branch switch.",
+							`(branch_name => ${chalk.magenta(brn_current)})`
 						);
-						print.gulp(
+						print.gulp.info(
 							"Restart Gulp to monitor",
-							chalk.yellow(brn_current),
+							chalk.magenta(brn_current),
 							"branch."
 						);
+
 						process.exit();
 					}
 				}
@@ -178,11 +187,13 @@ gulp.task("default:active-pid-check", function(done) {
 
 		if (INT_PID) {
 			// kill the open process
-			print.gulp(chalk.green("Gulp process stopped."));
+			print.gulp.success(
+				`Gulp instance ${chalk.green(INT_PID)} stopped.`
+			);
 			process.kill(INT_PID);
 		} else {
 			// no open process exists
-			print.gulp("No Gulp process exists.");
+			print.gulp.warn("No Gulp process exists.");
 		}
 
 		return done();
@@ -272,13 +283,14 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 
 	// Return if a process exists.
 	if (__process_exists) {
-		print.gulp(
-			chalk.yellow(
-				"Gulp instance",
-				chalk.green("(pid:" + __process_exists.pid + ")"),
-				"running. Stop it before starting a new one."
-			)
+		print.gulp.warn(
+			`Gulp process ${chalk.green(__process_exists.pid)}`,
+			"is running. Stop it before starting a new one."
 		);
+		print.gulp.info(
+			"Stop current instance by running: $ gulp settings --rebuild"
+		);
+
 		return done();
 	}
 
