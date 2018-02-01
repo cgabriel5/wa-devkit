@@ -11,6 +11,7 @@ gulp.task("make", function(done) {
 	var names = bundle_gulp.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
+
 	pump(
 		[
 			gulp.src(bundle_gulp.source.files, {
