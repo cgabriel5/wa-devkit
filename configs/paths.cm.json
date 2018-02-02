@@ -1,31 +1,39 @@
 {
-	// paths.distribution (only for apptype=webapp)
+	// Distribution paths (only for apptype=webapp).
 	"dist_home": "dist/",
-	// paths. library (only for apptype=library)
+
+	// Library paths (only for apptype=library).
 	"lib_home": "lib/",
-	// paths.html
+
+	// HTML paths.
 	"html_source": "${homedir}html/source/",
-	// paths.css
+
+	// CSS paths.
 	"css_source": "${homedir}css/source/",
 	"css_vendor": "${homedir}css/vendor/",
 	"css_bundles": "${homedir}css/bundles/",
-	// paths.js
+
+	// JS paths.
 	"js_source": "${homedir}js/source/",
 	"js_source_modules": "${homedir}js/source/modules/",
 	"js_vendor": "${homedir}js/vendor/",
 	"js_bundles": "${homedir}js/bundles/",
-	// paths.img
+
+	// Img paths.
 	"img_source": "${homedir}img/**/*.*",
-	// paths.gulp
+
+	// Gulp paths.
 	// "gulp_home": "${homedir}gulp/",
 	"gulp_source": "${homedir}gulp/main/source/",
-	// paths.markdown (tohtml:prepcss)
+
+	// Markdown paths (tohtml:prepcss).
 	"markdown_preview": "${homedir}markdown/previews/",
 	"markdown_styles_github": "github-markdown.css",
 	"markdown_styles_prismjs": "prism-github.css",
 	"markdown_assets": "./markdown/assets/css/",
 	"markdown_concat_name": "markdown.css",
-	// paths.config_files
+
+	// Configuration file paths.
 	"config_home": "./${homedir}configs/",
 	"config_internal": "./${homedir}configs/.__internal.json",
 	"config_settings": "./${homedir}configs/.__settings.json",
@@ -45,7 +53,8 @@
 	"config_$bundles": "bundles",
 	"config_$csscomb": "csscomb",
 	"config_$app": "app.cm",
-	// paths.favicons
+
+	// Favicon paths.
 	"favicon_dest": "${homedir}favicon/",
 	"favicon_master_pic": "./${homedir}docs/brand/img/leaf-900.png",
 	"favicon_root_ico": "./${homedir}favicon/favicon.ico",
@@ -54,25 +63,31 @@
 	"favicon_root_manifest": "./${homedir}favicon/manifest.json",
 	"favicon_html": "./${homedir}html/source/head/favicon.html",
 	"favicon_html_dest": "./${homedir}html/source/head/",
-	// paths.git
+
+	// .git/ paths.
 	"git": ".git/",
 	"githead": ".git/head",
-	// paths.node_modules
+
+	// node_modules/ paths.
 	"node_modules": "./node_modules/",
 	"node_modules_name": "node_modules/",
-	// paths.readme
+
+	// Readme paths.
 	"readme": "readme.md",
 	"readme_html": "readme.html",
-	// paths.modernizr
+
+	// Modernizr paths.
 	"vendor_modernizr": "./${homedir}js/vendor/modernizr/",
 	"modernizr_file_name": "modernizr.js",
-	// paths.files
+
+	// File paths.
 	"files_all": "**/*.*",
 	"files_min": "**/*.min.*",
 	"files_common": "**/*.{html,css,js,json}",
 	"files_code":
 		"**/*.{bat,coffee,css,htm,html,inc,ini,js,json,jsx,less,od,onlydata,php,pl,py,rb,sass,scm,scss,sh,sql,styl,tag,ts,tsx,xml,xhtml,markdown,md,mdwn,mdown,mkd,mkdn,mdtxt,mdtext,txt,text}",
-	// paths.files.not (exclude files w/ following in path)
+
+	// Negative file paths (exclude files w/ following in path).
 	"not_min": "!**/*.min.*",
 	"not_tests": "!**/test/**",
 	"not_vendor": "!**/vendor/**",

@@ -42,21 +42,21 @@ Each method, `pre` and `post`, can take in an options object. These are the foll
 
 ```js
 var options = {
-	// the location of the injectable files
+	// The location of the injectable files.
 	directory: "html/injection/",
 
-	replacements: {}, // the variable replacements
+	replacements: {}, // The variable replacements.
 
-	// match file name exactly as provided (take extension into consideration).
-	// for example, when $:post{hello_world.txt} is provided a file with the
-	// name of "hello_world.txt" will be looked for. when an extension-less
-	// file name needs to be used set this flag to false. therefore, when
+	// Match file name exactly as provided (take extension into consideration).
+	// For example, when $:post{hello_world.txt} is provided a file with the
+	// name of "hello_world.txt" will be looked for. When an extension-less
+	// file name needs to be used set this flag to false. Therefore, when
 	// $:post{hello_world} is provided the first file found with the name
 	// "hello_world" will be used regardless of the file extension.
 	exact: true,
 
-	// cache file contents to speed up performance when the same placeholder
-	// is found throughout the file's contents. set this flag to false if this
+	// Cache file contents to speed up performance when the same placeholder
+	// is found throughout the file's contents. Set this flag to false if this
 	// behavior is not needed.
 	cache: true
 };
@@ -95,17 +95,17 @@ var pump = require("pump");
 var beautify = require("gulp-jsbeautifier");
 var injection = require("gulp-inject-content");
 
-// since the options object is empty it is not really needed and
+// Since the options object is empty it is not really needed and
 // is only shown for the purpose of example.
-var options = {}; // use defaults
+var options = {}; // Use defaults.
 
 gulp.task("my_task", function(done) {
 	pump(
 		[
 			gulp.src("my_html_file.html"),
-			injection.pre(options), // any pre content injection
+			injection.pre(options), // Any pre content injection.
 			beautify(),
-			injection.post(options), // any post content injection
+			injection.post(options), // Any post content injection.
 			gulp.dest("./")
 		],
 		done
@@ -159,7 +159,7 @@ gulp.task("my_task", function(done) {
 	pump(
 		[
 			gulp.src("my_html_file.html"),
-			injection.post(options), // variable injection
+			injection.post(options), // Variable injection.
 			gulp.dest("./")
 		],
 		done

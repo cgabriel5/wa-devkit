@@ -30,9 +30,10 @@ var chalk = gutil.colors;
  */
 var print = function() {
 	/* jshint -W021 */
+
 	if (console.log) {
-		// Only run on the first time through - reset this function to the
-		// appropriate console.log helper
+		// Only run on the first time through. Reset this function to the
+		// appropriate console.log helper.
 		if (Function.prototype.bind) {
 			log = Function.prototype.bind.call(console.log, console);
 		} else {
@@ -110,7 +111,7 @@ for (var level in log_levels) {
  */
 var browser = function() {
 	var platform = os.platform();
-	// linux (else) darwin (else) windows (else) firefox
+	// Linux (else) Darwin (else) Windows (else) Firefox.
 	return platform === "linux"
 		? "google-chrome"
 		: platform === "darwin"
@@ -124,7 +125,7 @@ var browser = function() {
  * @return {string} - The time formated, colored, Gulp like string.
  */
 var time = function() {
-	// return the formated/colored time
+	// Return the formated/colored time.
 	return "[" + chalk.gray(format_date(new Date(), "HH:MM:ss")) + "]";
 };
 
@@ -136,10 +137,10 @@ var time = function() {
  * @return {undefined} - Nothing.
  */
 var notify = function(message, error) {
-	// determine what image to show
+	// Determine what image to show.
 	var image = (error ? "error" : "success") + "_256.png";
 
-	// // OS agnostic
+	// // OS agnostic.
 	// notifier.notify({
 	// 	title: "Gulp",
 	// 	message: message,
@@ -147,11 +148,11 @@ var notify = function(message, error) {
 	// 	sound: true
 	// });
 
-	// Use growl instead as it used libnotify-bin on Linux which is
+	// Use growl instead as it uses libnotify-bin on Linux which is
 	// faster. Using Growl, however, is a little more involved
 	// depending on what OS one is using. More info here:
 	// [https://github.com/tj/node-growl#installation]
-	growl(message + "sfsdf", {
+	growl(message, {
 		title: "Gulp",
 		image: path.join(__dirname, "../node-notifier/" + image)
 	});
@@ -165,7 +166,7 @@ var notify = function(message, error) {
  * @return {object} - Modified Gulp.
  */
 var current_task = function(gulp) {
-	// Get the current task name inside task itself
+	// Get the current task name inside task itself.
 	// [http://stackoverflow.com/a/27535245]
 	gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
 	gulp.Gulp.prototype._runTask = function(task) {
@@ -186,13 +187,13 @@ var current_task = function(gulp) {
  * @return {string} - The URL.
  */
 var uri = function(params) {
-	// get provided arguments
+	// Get provided arguments.
 	var appdir = params.appdir;
 	var filepath = params.filepath;
 	var port = params.port;
 	var https = params.https;
 
-	// build url to open on
+	// Build url to open on.
 	var scheme = "http" + (https ? "s" : "") + "://";
 	var parsed = new url(scheme + appdir);
 	parsed.set("port", port);
@@ -246,24 +247,23 @@ var globall = function(string) {
  *     compare result.
  */
 var ext = function(file, types) {
-	// when no file exists return an empty string
+	// When no file exists return an empty string.
 	if (!file) return "";
 
-	// get the file extname
+	// Get the file extname.
 	var extname = path
 		.extname(file.path)
 		.toLowerCase()
 		.replace(/^\./, "");
 
-	// simply return the extname when no type is
-	// provided to check against.
+	// Simply return the extname when no type is provided to check against.
 	if (!types) return extname;
 
-	// else when a type is provided check against it
+	// Else when a type is provided check against it.
 	return Boolean(-~types.indexOf(extname));
 };
 
-// check for the usual file types
+// Check for the usual file types.
 ext.ishtml = function(file) {
 	return ext(file, ["html"]);
 };
@@ -286,34 +286,34 @@ ext.ismd = function(file) {
  * @return {array} - Array containing the found sub-extensions.
  */
 ext.subs = function(file) {
-	// when no file exists return an empty string
+	// When no file exists return an empty string.
 	if (!file) return [];
 
-	// cache the file path
+	// Cache the file path.
 	var filepath = file.path;
 
-	// get the file extname
+	// Get the file extname.
 	var extname = path.extname(filepath);
 
-	// sub extensions will be stored here
+	// Sub extensions will be stored here.
 	var extensions = [];
 
-	// get extension and all sub-extensions
+	// Get extension and all sub-extensions.
 	while (extname && extname !== ".") {
-		// add the extension to the array
+		// Add the extension to the array.
 		extensions.push(extname);
-		// remove the extname from the string
+		// Remove the extname from the string.
 		filepath = filepath.substring(0, filepath.length - extname.length);
-		// reset the extname
+		// Reset the extname.
 		extname = path.extname(filepath);
 	}
 
-	// modify the extensions
+	// Modify the extensions.
 	extensions = extensions.map(function(extname) {
 		return extname.toLowerCase().replace(/^\./, "");
 	});
 
-	// remove the first item which is the extname, only sub-extensions
+	// Remove the first item which is the extname. Only sub-extensions
 	// will be returned.
 	extensions.shift();
 
@@ -329,10 +329,9 @@ ext.subs = function(file) {
  * @return {object} - The object with paths filled-in.
  */
 var expand_paths = function($paths) {
-	// path placeholders substitutes. these paths will also get added to the
+	// Path placeholders substitutes: These paths will also get added to the
 	// paths object after substitution down below.
 	var paths_subs_ = {
-		// paths::BASES
 		delimiter: "/",
 		basedir: "./",
 		dot: ".",
@@ -343,28 +342,29 @@ var expand_paths = function($paths) {
 		var replacement = paths_subs_[match.replace(/^\$\{|\}$/g, "")];
 		return replacement !== undefined ? replacement : undefined;
 	};
-	// recursively replace all the placeholders
+
+	// Recursively replace all the placeholders.
 	for (var key in $paths) {
 		if ($paths.hasOwnProperty(key)) {
 			var __path = $paths[key];
 
-			// find all the placeholders
+			// Find all the placeholders.
 			while (/\$\{.*?\}/g.test(__path)) {
 				__path = __path.replace(/\$\{.*?\}/g, replacer);
 			}
-			// reset the substituted string back in the $paths object
+			// Reset the substituted string back in the $paths object.
 			$paths[key] = __path;
 		}
 	}
 
-	// add the subs to the paths object
+	// Add the subs to the paths object.
 	for (var key in paths_subs_) {
 		if (paths_subs_.hasOwnProperty(key)) {
 			$paths[key] = paths_subs_[key];
 		}
 	}
 
-	// filled-in paths
+	// Filled-in paths.
 	return $paths;
 };
 
@@ -384,11 +384,11 @@ var opts_sort = {
 	 * @resource [https://github.com/benjamingr/RegExp.escape]
 	 */
 	comparator: function(file1, file2) {
-		// get the file paths
+		// Get the file paths.
 		var dir1 = path.dirname(file1.path);
 		var dir2 = path.dirname(file2.path);
 
-		// compare files
+		// Compare files.
 		if (dir1 > dir2) return 1;
 		if (dir1 < dir2) return -1;
 		return 0;
@@ -422,13 +422,13 @@ var escape = function(string) {
  */
 
 var unique = function(array, flag_sort) {
-	// Make array unique
+	// Make array unique.
 	array = array.filter(function(x, i, a_) {
 		return a_.indexOf(x) === i;
 	});
 
-	// Sort the array if flag set
-	// Note: Does not sort numbers
+	// Sort the array if flag set.
+	// Note: Does not sort numbers.
 	if (flag_sort) {
 		if (flag_sort === "alpha") {
 			array = array.sort(function(a, b) {
@@ -441,7 +441,7 @@ var unique = function(array, flag_sort) {
 		}
 	}
 
-	// Return the array
+	// Return the array.
 	return array;
 };
 
@@ -454,32 +454,32 @@ var unique = function(array, flag_sort) {
  * @return {string} - The highlighted string.
  */
 function cli_highlight(string) {
-	// prepare the string
+	// Prepare the string.
 	var output = string.trim().split("\n");
 
-	// remove unneeded lines
+	// Remove unneeded lines.
 	output = output.filter(function(line) {
 		return !-~line.indexOf("] Using gulpfile");
 	});
 
-	// turn back to string
+	// Turn back to string.
 	output = output.join("\n");
 
-	// coloring starts here...
+	// Coloring starts here...
 
-	// color the gulp timestamps
+	// Color the gulp timestamps.
 	output = output.replace(/\[([\d:]+)\]/g, "[" + chalk.gray("$1") + "]");
 
-	// color task names
+	// Color task names.
 	output = output.replace(
 		/(Finished|Starting) '(.+)'/g,
 		"$1 '" + chalk.cyan("$2") + "'"
 	);
 
-	// color task times
+	// Color task times.
 	output = output.replace(/(after) (.+)/g, "$1 " + chalk.magenta("$2"));
 
-	// color file path lines
+	// Color file path lines.
 	output = output.replace(
 		/(─ )(\d+)(\s+=>\s+)([^\s]+)(\s)(\d+(.\d+)? \w+)/g,
 		"$1" +
@@ -490,18 +490,18 @@ function cli_highlight(string) {
 			chalk.blue("$6")
 	);
 
-	// color final items count
+	// Color final items count.
 	output = output.replace(/(\d+ items?)/g, chalk.green("$1"));
 
-	// color symbols
+	// Color symbols.
 	output = output.replace(/(✎)/g, chalk.yellow("$1"));
 	output = output.replace(/(🗑)/g, chalk.red("$1"));
 
-	// return the colored output
+	// Return the colored output.
 	return output;
 }
 
-// export functions
+// Export functions.
 exports.browser = browser();
 exports.time = time;
 exports.print = print;
