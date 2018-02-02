@@ -1,8 +1,8 @@
 app.module(
 	"globals",
 	function(modules, name) {
-		// app logic...
+		// App logic...
 	},
 	"complete",
-	"module handles global app variables"
+	"Module handles getting/exporting global app variables."
 );

@@ -1,8 +1,8 @@
 app.module(
 	"core",
 	function(modules, name) {
-		// app logic...
+		// App logic...
 	},
 	"complete",
-	"module handles core app functions"
+	"Module handles making/exporting core app functions."
 );

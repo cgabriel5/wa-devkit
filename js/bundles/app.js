@@ -1,4 +1,4 @@
-// IIFE start
+// IIFE start.
 (function(window) {
 	"use strict";
 
@@ -10,8 +10,8 @@
 	 * about what mode to use see below.
 	 */
 	(function() {
-		// add to global scope for ease of use
-		// use global app var or create it if not present
+		// Add to global scope for ease of use. Use global app var or
+		// create it if not present.
 		var app = window.app || (window.app = {}),
 			counter = {
 				complete: 0,
@@ -22,98 +22,102 @@
 				interactive: []
 			};
 
-		// add a module to load
+		// Add a module to load.
 		app.module = function(module_name, fn, mode) {
-			// determine what array the module needs to be added to.
-			// default to complete when nothing is provided.
+			// Determine what array the module needs to be added to.
+			// Default to complete when nothing is provided.
 			var type =
 				!mode || mode === "complete" ? "complete" : "interactive";
-			// add the module to the queue
+
+			// Add the module to the queue.
 			queue[type].push([module_name, fn]);
 		};
 
-		// app module invoker
+		// App module invoker.
 		var invoke = function(mode) {
-			// get the queued array
+			// Get the queued array.
 			var modules = queue[mode];
-			// if no modules, return
+
+			// If no modules, return.
 			if (!modules.length) return;
-			// run the modules one after another
-			// get the first module
+
+			// Run the modules one after another.
 			load(modules, counter[mode], mode);
 		};
 
 		var load = function(modules, count, mode) {
-			// get the current module + its information
+			// Get the current module + its information.
 			var module = modules[count];
-			// if no module exists all modules have loaded
+
+			// If no module exists all modules have loaded.
 			if (!module) return;
-			// get the module information
+
+			// Get the module information.
 			var module_name = module[0],
 				fn = module[1];
-			// run the module and the load() function
+
+			// Run the module and the load() function.
 			(function() {
-				// add the module name to the app
+				// Add the module name to the app.
 				app[module_name] = app[module_name] || {};
-				// call the module and run it
+
+				// Call the module and run it.
 				fn.call(app, app, module_name);
-				// increase the counter
+
+				// Increase the counter.
 				counter[mode]++;
-				// run the load function again
+
+				// Run the load function again.
 				load(modules, counter[mode], mode);
 			})();
 		};
 
-		// cleanup the app variable
+		// Cleanup the app variable.
 		var cleanup = function() {
-			// remove unneeded properties once
-			// the app has loaded
+			// Remove unneeded properties once the app has loaded.
 			delete app.module;
 			delete app.invoke;
 		};
 
+		// The readystatechange event is fired when the readyState attribute of a
+		// document has changed.
 		// [https://developer.mozilla.org/en-US/docs/Web/Events/readystatechange]
-		// the readystatechange event is fired when the readyState attribute of a
-		// document has changed
 		document.onreadystatechange = function() {
 			// [https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState]
 
-			// [LOADING]:
-			// loading => the document still loading.
+			// Loading: The document still loading.
 
-			// [COMPLETE]:
-			// complete => the document and all sub-resources have finished
-			// loading (same as the window.onload event).
+			// Complete: The document and all sub-resources have finished loading
+			//  (same as the window.onload event).
 			//
-			// Essentially the following...
+			// Essentially the following:
 			// window.addEventListener("load", function() {...
 			// [https://developer.mozilla.org/en-US/docs/Web/Events/load]
 
-			// [INTERACTIVE]:
-			// interactive => the document has finished loading & parsed but
-			// sub-resources such as images, stylesheets and frames are still
+			// Interactive: The document has finished loading & parsed but
+			// sub-resources such as images, stylesheets, and frames are still
 			// loading.
 			//
-			// Essentially the following...
+			// Essentially the following:
 			// document.addEventListener("DOMContentLoaded",...
 			// [https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded]
 
-			// document loaded and parsed but still loading sub-resources,
-			// but user is able to interact with page.
+			// Document loaded and parsed but still loading sub-resources. User
+			// is able to interact with page, however.
 			if (document.readyState === "interactive") {
-				// invoke the modules set to mode interactive
+				// Invoke the modules set to mode interactive.
 				invoke("interactive");
 			}
 
-			// all resources have loaded (document + subresources)
+			// All resources have loaded (document + subresources).
 			if (document.readyState === "complete") {
-				// invoke the modules set to mode complete
+				// Invoke the modules set to mode complete.
 				invoke("complete");
-				// cleanup app var once everything is loaded
+				// Cleanup app var once everything is loaded.
 				cleanup();
 			}
 
-			// explanation with images:
+			// Explanation with images:
 			// [https://varvy.com/performance/document-ready-state.html]
 		};
 	})();
@@ -121,68 +125,69 @@
 	app.module(
 		"libs",
 		function(modules, name) {
-			// init FastClickJS
+			// Init FastClickJS.
 			if ("addEventListener" in document) {
 				FastClick.attach(document.body);
 			}
 		},
-		"interactive"
+		"interactive",
+		"Module handles initiating/setting-up any vendor/third-party libraries."
 	);
 
 	app.module(
 		"globals",
 		function(modules, name) {
-			// app logic...
+			// App logic...
 		},
 		"complete",
-		"module handles global app variables"
+		"Module handles getting/exporting global app variables."
 	);
 
 	app.module(
 		"utils",
 		function(modules, name) {
-			// app logic...
+			// App logic...
 		},
 		"complete",
-		"module handles app function utilities"
+		"Module handles making/exporting needed app utilities."
 	);
 
 	app.module(
 		"$$",
 		function(modules, name) {
-			// app logic...
+			// App logic...
 		},
 		"complete",
-		"module handles getting needed elements"
+		"Module handles getting/exporting needed elements."
 	);
 
 	app.module(
 		"core",
 		function(modules, name) {
-			// app logic...
+			// App logic...
 		},
 		"complete",
-		"module handles core app functions"
+		"Module handles making/exporting core app functions."
 	);
 
 	app.module(
 		"events",
 		function(modules, name) {
-			// app logic...
+			// App logic...
 		},
 		"complete",
-		"module handles app event handlers"
+		"Module handles making/exporting needed app event handlers."
 	);
 
 	app.module(
 		"main",
 		function(modules, name) {
-			// app logic...
+			// App logic...
 			console.log("My app has loaded!");
 		},
 		"complete",
-		"main app module. where the apps logic should me placed"
+		"Main app module is where the app's logic should be placed."
 	);
 
-	// IIFE end
+	// IIFE end.
 })(window);

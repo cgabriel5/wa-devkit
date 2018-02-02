@@ -1,9 +1,9 @@
 app.module(
 	"main",
 	function(modules, name) {
-		// app logic...
+		// App logic...
 		console.log("My app has loaded!");
 	},
 	"complete",
-	"main app module. where the apps logic should me placed"
+	"Main app module is where the app's logic should be placed."
 );

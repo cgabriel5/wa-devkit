@@ -1,8 +1,8 @@
 app.module(
 	"events",
 	function(modules, name) {
-		// app logic...
+		// App logic...
 	},
 	"complete",
-	"module handles app event handlers"
+	"Module handles making/exporting needed app event handlers."
 );

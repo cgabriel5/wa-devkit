@@ -1,8 +1,8 @@
 app.module(
 	"utils",
 	function(modules, name) {
-		// app logic...
+		// App logic...
 	},
 	"complete",
-	"module handles app function utilities"
+	"Module handles making/exporting needed app utilities."
 );

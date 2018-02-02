@@ -1,8 +1,8 @@
 app.module(
 	"$$",
 	function(modules, name) {
-		// app logic...
+		// App logic...
 	},
 	"complete",
-	"module handles getting needed elements"
+	"Module handles getting/exporting needed elements."
 );
