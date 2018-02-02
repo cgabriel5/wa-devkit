@@ -11,11 +11,11 @@
 
 "use strict";
 
-// node modules
+// Node modules.
 var fs = require("fs");
 var path = require("path");
 
-// lazy load gulp plugins
+// Lazy load gulp plugins.
 var $ = require("gulp-load-plugins")({
 	rename: {
 		"gulp-if": "gulpif",
@@ -35,8 +35,8 @@ var $ = require("gulp-load-plugins")({
 			return plugin.default;
 		},
 		uglify: function() {
-			// [https://stackoverflow.com/a/45554108]
 			// By default es-uglify is used to uglify JS.
+			// [https://stackoverflow.com/a/45554108]
 			var uglifyjs = require("uglify-es");
 			var composer = require("gulp-uglify/composer");
 			return composer(uglifyjs, console);
@@ -44,7 +44,7 @@ var $ = require("gulp-load-plugins")({
 	}
 });
 
-// universal modules
+// Universal modules.
 var pump = require("pump");
 var chalk = require("chalk");
 var cmd = require("node-cmd");
@@ -56,7 +56,7 @@ var sequence = require("run-sequence");
 var license = require("create-license");
 var alphabetize = require("alphabetize-object-keys");
 
-// project utils
+// Project utils.
 var utils = require("./gulp/assets/utils/utils.js");
 var print = utils.print;
 var notify = utils.notify;
@@ -72,16 +72,19 @@ var opts_sort = utils.opts_sort;
 // paths.js -- ./gulp/setup/source/paths.js
 // -----------------------------------------------------------------------------
 
-// get and fill in path placeholders
+// Get and fill in path placeholders.
 var $paths = expand_paths(
 	Object.assign(require("./gulp/setup/exports/paths.js"), {
-		// add in the following paths
+		// Add in the following paths.
+
 		dirname: __dirname,
 		cwd: process.cwd(),
-		// store the project folder name
+
+		// Store the project folder name.
 		rootdir: path.basename(process.cwd()),
 		filepath: __filename,
-		// get the filepath file name
+
+		// Get the filepath file name.
 		filename: path.basename(__filename)
 	})
 );
@@ -90,11 +93,11 @@ var $paths = expand_paths(
 // configs.js -- ./gulp/setup/source/configs.js
 // -----------------------------------------------------------------------------
 
-// dynamic configuration files (load via json-file to modify later)
+// Dynamic configuration files (load via json-file to modify later).
 var $internal = require("./gulp/setup/exports/internal.json");
 var $pkg = json.read($paths.config_pkg);
 
-// get individual plugin settings
+// Get individual plugin settings.
 var $app = jsonc.parse(fs.readFileSync($paths.config_app).toString());
 var $ap = require($paths.config_autoprefixer);
 var $bundles = json.read($paths.config_bundles);
@@ -102,7 +105,7 @@ var $jsbeautify = require($paths.config_jsbeautify);
 var $perfectionist = require($paths.config_perfectionist);
 var $prettier = require($paths.config_prettier);
 
-// setup exports
+// Setup exports.
 var $questions = require($paths.gulp_setup_questions);
 var $templates = require($paths.gulp_setup_templates);
 var $jsconfigs = require($paths.gulp_setup_jsconfigs);
@@ -111,18 +114,18 @@ var $jsconfigs = require($paths.gulp_setup_jsconfigs);
 // vars.js -- ./gulp/setup/source/vars.js
 // -----------------------------------------------------------------------------
 
-// placeholder fillers
+// Placeholder fillers.
 var __data = {};
 
-// app directory information
+// App directory information.
 var INDEX = $app.index;
 
-// line ending information
+// Line ending information.
 var EOL = $app.eol;
 var EOL_ENDING = EOL.ending;
 // var EOL_STYLE = EOL.style;
 
-// app JSON indentation
+// App JSON indentation.
 var JINDENT = $app.eol;
 
 // -----------------------------------------------------------------------------
@@ -138,32 +141,32 @@ var JINDENT = $app.eol;
  * @return {string} - The highlighted string.
  */
 function cli_highlight(string) {
-	// prepare the string
+	// Prepare the string.
 	var output = string.trim().split("\n");
 
-	// remove unneeded lines
+	// Remove unneeded lines.
 	output = output.filter(function(line) {
 		return !-~line.indexOf("] Using gulpfile");
 	});
 
-	// turn back to string
+	// Turn back to string.
 	output = output.join("\n");
 
-	// coloring starts here...
+	// Coloring starts here...
 
-	// color the gulp timestamps
+	// Color the gulp timestamps.
 	output = output.replace(/\[([\d:]+)\]/g, "[" + chalk.gray("$1") + "]");
 
-	// color task names
+	// Color task names.
 	output = output.replace(
 		/(Finished|Starting) '(.+)'/g,
 		"$1 '" + chalk.cyan("$2") + "'"
 	);
 
-	// color task times
+	// Color task times.
 	output = output.replace(/(after) (.+)/g, "$1 " + chalk.magenta("$2"));
 
-	// color file path lines
+	// Color file path lines.
 	output = output.replace(
 		/(─ )(\d+)(\s+=>\s+)([^\s]+)(\s)(\d+(.\d+)? \w+)/g,
 		"$1" +
@@ -174,14 +177,14 @@ function cli_highlight(string) {
 			chalk.blue("$6")
 	);
 
-	// color final items count
+	// Color final items count.
 	output = output.replace(/(\d+ items?)/g, chalk.green("$1"));
 
-	// color symbols
+	// Color symbols.
 	output = output.replace(/(✎)/g, chalk.yellow("$1"));
 	output = output.replace(/(🗑)/g, chalk.red("$1"));
 
-	// return the colored output
+	// Return the colored output.
 	return output;
 }
 
@@ -196,7 +199,7 @@ function cli_highlight(string) {
  *     project.
  */
 gulp.task("default", function(done) {
-	// show the user the init message
+	// Show the user the init message.
 	print.gulp('Run "$ gulp init" before running Gulp\'s default command.');
 	done();
 });
@@ -206,7 +209,7 @@ gulp.task("default", function(done) {
  *     initialization steps are shown down below.
  */
 gulp.task("init", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 	var answers_ = [{}];
 
@@ -226,79 +229,79 @@ gulp.task("init", function(done) {
 			app: "[App Questions]"
 		};
 
-		// overwrite the var
+		// Overwrite the var.
 		message = messages[message];
 
 		print.ln();
 		print.gulp(chalk.green(`${message}\n`));
 	}
 
-	// not really the most ideal but to ask the setup questions in groups
-	// this seems to be the way to go. questions are asked and their replies
+	// Not really the most ideal but to ask the setup questions in groups
+	// this seems to be the way to go. Questions are asked and their replies
 	// are stored in the answers_ variable for later use.
 
 	inquirer.prompt($questions.ready).then(function(answers) {
 		if (answers.continue) {
 			sep_message("initial");
 
-			// ask the initial questions
+			// Ask the initial questions.
 			inquirer.prompt($questions.initial).then(function(answers) {
-				// store the answer
+				// Store the answer.
 				answers_.push(answers);
 
 				sep_message("author");
 
-				// ask the author questions
+				// Ask the author questions.
 				inquirer.prompt($questions.author).then(function(answers) {
-					// store the answer
+					// Store the answer.
 					answers_.push(answers);
 
 					sep_message("license");
 
-					// ask the other
+					// Ask the other.
 					inquirer.prompt($questions.license).then(function(answers) {
-						// store the answer
+						// Store the answer.
 						answers_.push(answers);
 
 						sep_message("app");
 
-						// ask the app questions
+						// Ask the app questions.
 						inquirer
 							.prompt($questions.app)
 							.then(function(answers) {
-								// store the answer
+								// Store the answer.
 								answers_.push(answers);
 							})
 							.then(function() {
-								// combine all answers
+								// Combine all answers.
 								var answers = Object.assign.apply(
 									null,
 									answers_
 								);
 
-								// get answers
+								// Get answers.
 								__data = answers;
 								var type = __data.apptype;
 
-								// set the path for js option
+								// Set the path for js option.
 								$paths.js_options_dynamic = `gulp/setup/${type}/**/*.*`;
 
-								// set the application type
+								// Set the application type.
 								$internal.apptype = type;
-								// pick js bundle based on provided project type + reset the
-								// config js bundle
+								// Pick js bundle based on provided project type + reset the
+								// config js bundle.
 								$bundles.data.js = $jsconfigs[type];
 
-								// remove distribution configuration if type is library
+								// Remove distribution configuration if type is library
 								// as the project is defaulted for a webapp project.
 								if (type === "library") {
-									// remove the distribution configuration
+									// Remove the distribution configuration.
 									delete $bundles.data.dist;
-									// add the library configuration
+									// Add the library configuration.
 									$bundles.data.lib = $jsconfigs.lib;
-								} // else leave as-is for webapp project
+								} // Else leave as-is for webapp project.
 
-								// set package.json properties
+								// Set package.json properties.
 								$pkg.set("name", __data.name);
 								$pkg.set("version", __data.version);
 								$pkg.set("description", __data.description);
@@ -322,15 +325,15 @@ gulp.task("init", function(done) {
 								);
 								$pkg.set("private", __data.private);
 
-								// sort keys
+								// Sort keys.
 								$bundles.data = alphabetize($bundles.data);
 								$pkg.data = alphabetize($pkg.data);
 
-								// saves changes to files
+								// Saves changes to files.
 								$bundles.writeSync(null, JINDENT);
 								$pkg.write(
 									function() {
-										// run initialization steps
+										// Run initialization steps.
 										var tasks = [
 											"init:app-settings",
 											"init:settings-internal",
@@ -351,7 +354,8 @@ gulp.task("init", function(done) {
 											"init:pretty",
 											"init:git"
 										];
-										// remove steps that are only for library project setup
+
+										// Remove steps that are only for library project setup
 										// when the apptype is set to webapp.
 										if (__data.apptype === "webapp") {
 											tasks = tasks.filter(function(
@@ -360,6 +364,7 @@ gulp.task("init", function(done) {
 												return !-~task.indexOf("--lib");
 											});
 										}
+
 										tasks.push(function() {
 											var message = `Project initialized. (${type})`;
 											notify(message);
@@ -403,21 +408,21 @@ gulp.task("init", function(done) {
  *     provided values.
  */
 gulp.task("init:app-settings", function(done) {
-	// run gulp process
+	// Run gulp process.
 	pump(
 		[
 			gulp.src($paths.config_app),
 			$.debug(),
 			$.modify({
 				fileModifier: function(file, contents) {
-					// since the app file has already been loaded we don't
-					// use the modifier's contents variable. we modify the
-					// app object and return the stringified text of the
-					// object. doing this will prevent the file from being
+					// Note: Since the app file has already been loaded we
+					// don't use the modifier's contents variable. We modify
+					// the app object and return the stringified text of the
+					// object. Doing this will prevent the file from being
 					// re-opened again via jsonc and will also log the
 					// task in the terminal.
 
-					// update the app object
+					// Update the app object.
 					$app.index = __data.entry_point;
 					$app.base = __data.base;
 					$app.https = __data.https;
@@ -427,22 +432,21 @@ gulp.task("init:app-settings", function(done) {
 						style: __data.eol[0]
 					};
 
-					// hacky-method: comment-json removes all
-					// empty lines so the lines are added back
-					// to make the config file easier to read.
+					// Hacky-method: comment-json removes all empty lines so
+					// the lines are added back to make the config file easier
+					// to read.
 					for (var key in $app) {
 						if ($app.hasOwnProperty(key)) {
-							// only modify the comments
+							// Only modify the comments.
 							if (key.charAt(0) === "/") {
-								// prepend a placeholder for the
-								// new lines.
+								// Prepend a placeholder for the new lines.
 								$app[key][0].unshift("// $LINE");
 							}
 						}
 					}
 
-					// stringify the answers object and remove
-					// the placeholders with new lines.
+					// Stringify the answers object and remove the placeholders
+					// with new lines.
 					var content = jsonc
 						.stringify($app, null, JINDENT)
 						.replace(/\/\/ \$LINE/gm, "\n")
@@ -468,17 +472,16 @@ gulp.task("init:app-settings", function(done) {
  *     modified.
  */
 gulp.task("init:settings-internal", function(done) {
-	// get the internal filepath
+	// Get the internal filepath.
 	var internal_filepath =
 		$paths.config_home + $paths.gulp_setup_settings_internal_name;
 
-	// save the $internal JSON object
+	// Save the $internal JSON object.
 	fs.writeFile(
 		internal_filepath,
 		JSON.stringify(alphabetize($internal), null, JINDENT),
 		function() {
-			// the following gulp code is really only needed to log the
-			// file.
+			// The following is only needed to log the file.
 			pump(
 				[
 					gulp.src(internal_filepath, {
@@ -498,14 +501,14 @@ gulp.task("init:settings-internal", function(done) {
  *     to generate the collective .__settings.js file.
  */
 gulp.task("init:settings-main", function(done) {
-	// make the main settings file
+	// Make the main settings file.
 	pump(
 		[
 			gulp.src($paths.config_settings_json_files, {
 				cwd: $paths.basedir
 			}),
 			$.debug(),
-			$.strip_jsonc(), // remove any json comments
+			$.strip_jsonc(), // Remove any JSON comments.
 			$.jsoncombine($paths.config_settings_name, function(data) {
 				return new Buffer(JSON.stringify(data, null, JINDENT));
 			}),
@@ -521,14 +524,14 @@ gulp.task("init:settings-main", function(done) {
  *     setting up a webapp or library.
  */
 gulp.task("init:clean-docs", function(done) {
-	// get the correct file sub types to remove. this depends on the project
+	// Get the correct file sub types to remove. This depends on the project
 	// setup.
 	var files =
 		$paths[
 			"gulp_setup_docs_" + (__data.apptype === "webapp" ? "lib" : "app")
 		];
 
-	// remove files
+	// Remove files.
 	pump(
 		[
 			gulp.src(files, {
@@ -547,10 +550,9 @@ gulp.task("init:clean-docs", function(done) {
  *     It removes all webapp files as the project is defaulted to a webapp.
  */
 gulp.task("init:--lib-remove-webapp-files", function(done) {
-	// When setting up a library project it will overwrite the
-	// ./js/source/ with the library setup folder equivalent.
-	// this will in effect combine the folders and add the needed
-	// files/folders for the library.
+	// Note: When setting up a library project ./js/source/ will get
+	// overwritten with the library setup folder files. This will in effect
+	// combine the folders and add the needed files/folders for the library.
 	// (i.e. ./js/vendor/__init__.js and ./js/bundles/)
 
 	pump(
@@ -572,9 +574,9 @@ gulp.task("init:--lib-remove-webapp-files", function(done) {
  *     project files.
  */
 gulp.task("init:--lib-add-library-files", function(done) {
-	// This will copy the library project files from the setup
-	// directory into the ./js/ directory. this will also
-	// overwrite needed files, like the bundle files.
+	// This will copy the library project files from the setup directory
+	// into the ./js/ directory. This will also overwrite needed files,
+	// like the bundle files.
 
 	pump(
 		[
@@ -595,17 +597,17 @@ gulp.task("init:--lib-add-library-files", function(done) {
  *     the provided data (year, name, etc.).
  */
 gulp.task("init:create-license", function(done) {
-	// generate the license
+	// Generate the license.
 	license($paths.basedir, __data.license, {
 		author: __data.fullname,
 		year: __data.year,
 		project: __data.name
 	});
 
-	// remove the ext from the path
+	// Remove the ext from the path.
 	var license_no_ext = $paths.license.replace(".txt", "");
 
-	// rename the generated license
+	// Rename the generated license.
 	pump(
 		[
 			gulp.src(license_no_ext, {
@@ -615,7 +617,7 @@ gulp.task("init:create-license", function(done) {
 			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
-		// remove the old license file
+		// Remove the old license file.
 		function() {
 			pump(
 				[
@@ -636,7 +638,7 @@ gulp.task("init:create-license", function(done) {
  *    data.
  */
 gulp.task("init:fill-placeholders", function(done) {
-	// replace placeholder with real data
+	// Replace placeholder with real data.
 	pump(
 		[
 			gulp.src(
@@ -662,7 +664,7 @@ gulp.task("init:fill-placeholders", function(done) {
  *     location to the root.
  */
 gulp.task("init:setup-readme", function(done) {
-	// move templates to new locations
+	// Move templates to new locations.
 	pump(
 		[
 			gulp.src([$paths.gulp_setup_readme_template]),
@@ -679,14 +681,14 @@ gulp.task("init:setup-readme", function(done) {
  *     Gulp file name.
  */
 gulp.task("init:rename-gulpfile", function(done) {
-	// rename the gulpfile.main.js to gulpfile.js
+	// Rename the gulpfile.main.js to gulpfile.js.
 	pump(
 		[
 			gulp.src($paths.gulp_file_main, {
 				base: $paths.basedir
 			}),
 			$.debug(),
-			$.clean(), // remove the file
+			$.clean(), // Remove the file.
 			$.rename($paths.gulp_file_name),
 			gulp.dest($paths.basedir),
 			$.debug.edit()
@@ -700,7 +702,7 @@ gulp.task("init:rename-gulpfile", function(done) {
  *     needed in the further steps.
  */
 gulp.task("init:remove-setup", function(done) {
-	// remove the setup files/folders/old .git folder
+	// Remove the setup files/folders/old .git folder.
 	pump(
 		[
 			gulp.src([$paths.gulp_file_setup, $paths.gulp_setup, $paths.git], {
@@ -721,14 +723,16 @@ gulp.task("init:remove-setup", function(done) {
  *     project CSS/JS bundles.
  */
 gulp.task("init:create-bundles", function(done) {
-	// create the CSS/JS bundles before
+	// Create the CSS/JS bundles before.
 	cmd.get(`gulp js && gulp css`, function(err, data, test) {
 		if (err) {
 			throw err;
 		}
-		// highlight data string
+
+		// Highlight data string.
 		print(cli_highlight(data));
-		// end the task
+
+		// End the task.
 		done();
 	});
 });
@@ -739,14 +743,16 @@ gulp.task("init:create-bundles", function(done) {
  *     prints them.
  */
 gulp.task("init:pretty", function(done) {
-	// create the CSS/JS bundles before
+	// Create the CSS/JS bundles before.
 	cmd.get(`gulp pretty`, function(err, data) {
 		if (err) {
 			throw err;
 		}
-		// highlight data string
+
+		// Highlight data string.
 		print(cli_highlight(data));
-		// end the task
+
+		// End the task.
 		done();
 	});
 });
@@ -756,9 +762,9 @@ gulp.task("init:pretty", function(done) {
  *     commit and lightly configures Git with useful settings.
  */
 gulp.task("init:git", function(done) {
-	// git init new project
+	// Git init new project.
 	git.init("", function() {
-		// set gitconfig values
+		// Set gitconfig values.
 		cmd.get(
 			`
 		git config --local core.fileMode false
@@ -770,7 +776,7 @@ gulp.task("init:git", function(done) {
 					throw err;
 				}
 
-				// make the first commit
+				// Make the first commit.
 				git
 					.add("./*")
 					.commit(
@@ -799,6 +805,7 @@ gulp.task("init:git", function(done) {
 									")"
 							);
 							print.gulp("");
+
 							done();
 						}
 					);
@@ -832,7 +839,7 @@ gulp.task("make", function(done) {
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
-				// the max length of characters for decoration line
+				// The max length of characters for decoration line.
 				var max_length = 80;
 				var decor = "// " + "-".repeat(max_length - 3);
 

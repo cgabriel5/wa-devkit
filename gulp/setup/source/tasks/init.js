@@ -5,7 +5,7 @@
  *     project.
  */
 gulp.task("default", function(done) {
-	// show the user the init message
+	// Show the user the init message.
 	print.gulp('Run "$ gulp init" before running Gulp\'s default command.');
 	done();
 });
@@ -15,7 +15,7 @@ gulp.task("default", function(done) {
  *     initialization steps are shown down below.
  */
 gulp.task("init", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 	var answers_ = [{}];
 
@@ -35,79 +35,79 @@ gulp.task("init", function(done) {
 			app: "[App Questions]"
 		};
 
-		// overwrite the var
+		// Overwrite the var.
 		message = messages[message];
 
 		print.ln();
 		print.gulp(chalk.green(`${message}\n`));
 	}
 
-	// not really the most ideal but to ask the setup questions in groups
-	// this seems to be the way to go. questions are asked and their replies
+	// Not really the most ideal but to ask the setup questions in groups
+	// this seems to be the way to go. Questions are asked and their replies
 	// are stored in the answers_ variable for later use.
 
 	inquirer.prompt($questions.ready).then(function(answers) {
 		if (answers.continue) {
 			sep_message("initial");
 
-			// ask the initial questions
+			// Ask the initial questions.
 			inquirer.prompt($questions.initial).then(function(answers) {
-				// store the answer
+				// Store the answer.
 				answers_.push(answers);
 
 				sep_message("author");
 
-				// ask the author questions
+				// Ask the author questions.
 				inquirer.prompt($questions.author).then(function(answers) {
-					// store the answer
+					// Store the answer.
 					answers_.push(answers);
 
 					sep_message("license");
 
-					// ask the other
+					// Ask the other.
 					inquirer.prompt($questions.license).then(function(answers) {
-						// store the answer
+						// Store the answer.
 						answers_.push(answers);
 
 						sep_message("app");
 
-						// ask the app questions
+						// Ask the app questions.
 						inquirer
 							.prompt($questions.app)
 							.then(function(answers) {
-								// store the answer
+								// Store the answer.
 								answers_.push(answers);
 							})
 							.then(function() {
-								// combine all answers
+								// Combine all answers.
 								var answers = Object.assign.apply(
 									null,
 									answers_
 								);
 
-								// get answers
+								// Get answers.
 								__data = answers;
 								var type = __data.apptype;
 
-								// set the path for js option
+								// Set the path for js option.
 								$paths.js_options_dynamic = `gulp/setup/${type}/**/*.*`;
 
-								// set the application type
+								// Set the application type.
 								$internal.apptype = type;
-								// pick js bundle based on provided project type + reset the
-								// config js bundle
+								// Pick js bundle based on provided project type + reset the
+								// config js bundle.
 								$bundles.data.js = $jsconfigs[type];
 
-								// remove distribution configuration if type is library
+								// Remove distribution configuration if type is library
 								// as the project is defaulted for a webapp project.
 								if (type === "library") {
-									// remove the distribution configuration
+									// Remove the distribution configuration.
 									delete $bundles.data.dist;
-									// add the library configuration
+									// Add the library configuration.
 									$bundles.data.lib = $jsconfigs.lib;
-								} // else leave as-is for webapp project
+								} // Else leave as-is for webapp project.
 
-								// set package.json properties
+								// Set package.json properties.
 								$pkg.set("name", __data.name);
 								$pkg.set("version", __data.version);
 								$pkg.set("description", __data.description);
@@ -131,15 +131,15 @@ gulp.task("init", function(done) {
 								);
 								$pkg.set("private", __data.private);
 
-								// sort keys
+								// Sort keys.
 								$bundles.data = alphabetize($bundles.data);
 								$pkg.data = alphabetize($pkg.data);
 
-								// saves changes to files
+								// Saves changes to files.
 								$bundles.writeSync(null, JINDENT);
 								$pkg.write(
 									function() {
-										// run initialization steps
+										// Run initialization steps.
 										var tasks = [
 											"init:app-settings",
 											"init:settings-internal",
@@ -160,7 +160,8 @@ gulp.task("init", function(done) {
 											"init:pretty",
 											"init:git"
 										];
-										// remove steps that are only for library project setup
+
+										// Remove steps that are only for library project setup
 										// when the apptype is set to webapp.
 										if (__data.apptype === "webapp") {
 											tasks = tasks.filter(function(
@@ -169,6 +170,7 @@ gulp.task("init", function(done) {
 												return !-~task.indexOf("--lib");
 											});
 										}
+
 										tasks.push(function() {
 											var message = `Project initialized. (${type})`;
 											notify(message);

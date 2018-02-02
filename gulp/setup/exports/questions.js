@@ -41,7 +41,7 @@ module.exports = {
 			message: "Repository name:",
 			default: "my-app",
 			when: function(answers) {
-				// only show this question when wanting to use
+				// Only show this question when wanting to use
 				// a different name than the project name.
 				return !answers.same_name;
 			}
@@ -181,8 +181,7 @@ module.exports = {
 					"Unix (OS X/Linux)": "(LF, \\n)",
 					"Windows/DOS": "(CRLF, \\r\\n)"
 				};
-				// work the answer to remove all
-				// unneeded text.
+				// Work the answer to remove all unneeded text.
 				return options[answer]
 					.match(/\(.*\)/)[0]
 					.replace(/\(|\)|\s/g, "")

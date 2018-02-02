@@ -1,4 +1,4 @@
-// =============================== Helper Functions
+// =============================== Helper Functions.
 
 /**
  * Generates a simple ID containing letters and numbers.
@@ -19,8 +19,8 @@ function id(length) {
  * Returns index of given value in provided array.
  *
  * @param {array} array - The array to check against.
- * @param {integer} value - The value to check.
- * @return {integer} Returns the index value. -1 if not in array.
+ * @param {number} value - The value to check.
+ * @return {number} - Returns the index value. -1 if not in array.
  */
 function index(array, value) {
 	return array.indexOf(value);
@@ -31,7 +31,7 @@ function index(array, value) {
  *
  * @param {array|string} iterable - The array or string to check against.
  * @param {any} value - The value to check.
- * @return {boolean} Boolean, true means iterable includes value.
+ * @return {boolean} - Boolean, true means iterable includes value.
  *
  * @link [https://www.joezimjs.com/javascript/great-mystery-of-the-tilde/]
  * @link [https://stackoverflow.com/a/12299717]
@@ -44,7 +44,7 @@ function includes(iterable, value) {
  * Checks if the provided index exists.
  *
  * @param {number} index - The index (number) to check.
- * @return {boolean} False if -1. Otherwise, true.
+ * @return {boolean} - False if -1. Otherwise, true.
  */
 function indexed(index) {
 	return Boolean(-~index);
@@ -55,11 +55,12 @@ function indexed(index) {
  *     property for it to work.
  *
  * @param {alo} alo - The ALO.
- * @return {array} The created array.
+ * @return {array} - The created array.
  */
 function to_array(alo) {
 	var true_array = [];
-	// loop through ALO and pushing items into true_array
+
+	// Loop through ALO and pushing items into true_array.
 	for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
 	return true_array;
 }
@@ -68,10 +69,10 @@ function to_array(alo) {
  * Returns the data type of the provided object.
  *
  * @param {any} object - The object to check.
- * @return {string} The data type of the checked object.
+ * @return {string} - The data type of the checked object.
  */
 var dtype = function(object) {
-	// will always return something like "[object {type}]"
+	// Will always return something like "[object {type}]".
 	return Object.prototype.toString
 		.call(object)
 		.replace(/(\[object |\])/g, "")
@@ -83,15 +84,17 @@ var dtype = function(object) {
  *
  * @param {any} object - The object to check.
  * @param {string} types - The allowed data type the object may be.
- * @return {boolean} Boolean indicating whether the object is of the
+ * @return {boolean} - Boolean indicating whether the object is of the
  *     allowed data types.
  */
 dtype.is = function(object, types) {
-	// get the object type
+	// Get the object type.
 	var type = this(object);
-	// prepare the types
+
+	// Prepare the types.
 	types = "|" + types.toLowerCase().trim() + "|";
-	// check if the object's type is in the list
+
+	// Check if the object's type is in the list.
 	return Boolean(-~types.indexOf("|" + type + "|"));
 };
 
@@ -100,11 +103,11 @@ dtype.is = function(object, types) {
  *
  * @param {any} object - The object to check.
  * @param {string} types - The prohibited data types.
- * @return {boolean} Boolean indicating whether the object is not of the
+ * @return {boolean} - Boolean indicating whether the object is not of the
  *     allowed data types.
  */
 dtype.isnot = function(object, types) {
-	// return the inverse of the is method
+	// Return the inverse of the is method.
 	return !this.is(object, types);
 };
 
@@ -119,25 +122,29 @@ dtype.isnot = function(object, types) {
  *     • methods__ {object} Object containing class methods.
  *     • extend__  {boolean|object} Set to false if does not need to
  *     extend. Otherwise, provide the class to extend.
- * @return {function} Returns class constructor.
+ * @return {function} - Returns class constructor.
  */
 function class__(cobject) {
-	// cache class data
+	// Cache class data.
 	var constructor = cobject.constructor__,
 		methods = cobject.methods__,
 		parent = cobject.extend__;
-	// extend if parent class provided
+
+	// Extend if parent class provided.
 	if (parent) {
 		constructor.prototype = Object.create(parent.prototype);
 		constructor.prototype.constructor = constructor;
 	}
-	// cache prototype
+
+	// Cache prototype.
 	var prototype = constructor.prototype;
-	// add class methods to prototype
+
+	// Add class methods to prototype.
 	for (var method in methods) {
 		if (methods.hasOwnProperty(method)) {
 			prototype[method] = methods[method];
 		}
 	}
+
 	return constructor;
 }

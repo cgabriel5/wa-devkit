@@ -7,32 +7,32 @@
  * @return {string} - The highlighted string.
  */
 function cli_highlight(string) {
-	// prepare the string
+	// Prepare the string.
 	var output = string.trim().split("\n");
 
-	// remove unneeded lines
+	// Remove unneeded lines.
 	output = output.filter(function(line) {
 		return !-~line.indexOf("] Using gulpfile");
 	});
 
-	// turn back to string
+	// Turn back to string.
 	output = output.join("\n");
 
-	// coloring starts here...
+	// Coloring starts here...
 
-	// color the gulp timestamps
+	// Color the gulp timestamps.
 	output = output.replace(/\[([\d:]+)\]/g, "[" + chalk.gray("$1") + "]");
 
-	// color task names
+	// Color task names.
 	output = output.replace(
 		/(Finished|Starting) '(.+)'/g,
 		"$1 '" + chalk.cyan("$2") + "'"
 	);
 
-	// color task times
+	// Color task times.
 	output = output.replace(/(after) (.+)/g, "$1 " + chalk.magenta("$2"));
 
-	// color file path lines
+	// Color file path lines.
 	output = output.replace(
 		/(─ )(\d+)(\s+=>\s+)([^\s]+)(\s)(\d+(.\d+)? \w+)/g,
 		"$1" +
@@ -43,13 +43,13 @@ function cli_highlight(string) {
 			chalk.blue("$6")
 	);
 
-	// color final items count
+	// Color final items count.
 	output = output.replace(/(\d+ items?)/g, chalk.green("$1"));
 
-	// color symbols
+	// Color symbols.
 	output = output.replace(/(✎)/g, chalk.yellow("$1"));
 	output = output.replace(/(🗑)/g, chalk.red("$1"));
 
-	// return the colored output
+	// Return the colored output.
 	return output;
 }

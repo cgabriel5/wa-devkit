@@ -19,7 +19,7 @@ gulp.task("make", function(done) {
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
-				// the max length of characters for decoration line
+				// The max length of characters for decoration line.
 				var max_length = 80;
 				var decor = "// " + "-".repeat(max_length - 3);
 

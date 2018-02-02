@@ -1,2 +1,2 @@
-// IIFE end
+// IIFE end.
 })(window);

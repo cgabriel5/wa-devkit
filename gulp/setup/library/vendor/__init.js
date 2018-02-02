@@ -6,8 +6,7 @@
  * Add any code necessary to initialize the used vendor libraries here.
  */
 (function() {
-	// initialize FastClickJS:
-	// [https://github.com/ftlabs/fastclick#usage]
+	// Initialize FastClickJS: [https://github.com/ftlabs/fastclick#usage]
 	if ("addEventListener" in document) {
 		document.addEventListener(
 			"DOMContentLoaded",

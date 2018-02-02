@@ -1,11 +1,12 @@
 "use strict";
 
 module.exports = {
-	// paths.js
+	// JS paths.
 	js_home: "./${homedir}js/",
 	js_source: "./${homedir}js/source/",
 	js_options_dynamic: "",
-	// paths.gulp
+
+	// Gulp paths.
 	gulp_utils: "./${homedir}gulp/assets/utils/utils.js",
 	gulp_setup: "./${homedir}gulp/setup/",
 	gulp_setup_source: "./${homedir}gulp/setup/source/",
@@ -21,7 +22,8 @@ module.exports = {
 	gulp_file_name: "gulpfile.js",
 	gulp_file_setup: "gulpfile.setup.js",
 	gulp_file_main: "gulpfile.main.js",
-	// paths.config_files
+
+	// Configuration file paths.
 	config_home: "./${homedir}configs/",
 	config_settings_json_files: "./${homedir}configs/**/*.json",
 	config_settings_name: ".__settings.json",
@@ -32,17 +34,22 @@ module.exports = {
 	config_bundles: "./${homedir}configs/bundles.json",
 	config_app: "./${homedir}configs/app.cm.json",
 	config_pkg: "./${homedir}package.json",
-	// paths.git
+
+	// .git/ paths.
 	git: ".git/",
-	// paths.node_modules
+
+	// node_modules/ paths.
 	node_modules_name: "node_modules/",
-	// paths.files
+
+	// File paths.
 	files_common: "**/*.{html,css,js,json}",
-	// paths.files.not (exclude files w/ following in path)
+
+	// Negative file paths (exclude files w/ following in path).
 	not_min: "!**/*.min.*",
 	not_vendor: "!**/vendor/**",
 	not_ignore: "!**/*.ig.*",
-	// paths.other
+
+	// Other paths.
 	license: "LICENSE.txt",
 	html_headmeta: "html/source/head/meta.html"
 };
