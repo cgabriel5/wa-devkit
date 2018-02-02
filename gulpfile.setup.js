@@ -145,7 +145,7 @@ var JINDENT = $app.eol;
  */
 gulp.task("default", function(done) {
 	// Show the user the init message.
-	print.gulp('Run "$ gulp init" before running Gulp\'s default command.');
+	print.gulp.info("To start project setup run: $ gulp init.");
 	done();
 });
 
@@ -313,18 +313,10 @@ gulp.task("init", function(done) {
 										tasks.push(function() {
 											var message = `Project initialized. (${type})`;
 											notify(message);
-											print.gulp("");
-											print.gulp(
-												chalk.green("✔"),
-												message
+											print.gulp.success(message);
+											print.gulp.info(
+												"Start watching for file changes by running: $ gulp."
 											);
-											print.gulp("");
-											print.gulp(
-												"Run",
-												chalk.green("$ gulp"),
-												"to start watching project for any file changes."
-											);
-											print.gulp("");
 
 											done();
 										});
@@ -339,7 +331,7 @@ gulp.task("init", function(done) {
 			});
 		} else {
 			print.ln();
-			return print.gulp(chalk.red("Project setup canceled."));
+			return print.gulp.error("Project setup canceled.");
 		}
 	});
 });
@@ -727,29 +719,15 @@ gulp.task("init:git", function(done) {
 					.commit(
 						"chore: Initial commit\n\nProject initialization.",
 						function() {
-							print.gulp("");
-							print.gulp(
-								"Make sure to set your editor of choice with Git if not already set."
+							print.gulp.info(
+								"It not already set, make sure to set your default text editor."
 							);
-							print.gulp(
-								"For example, for Sublime Text run:",
-								chalk.green(
-									'$ git config core.editor "subl -n w"'
-								)
-							);
-							print.gulp("More information can be found here:");
-							print.gulp(
+							print.gulp.info(
 								"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
 							);
-							print.gulp("");
-							print.gulp(
-								chalk.green("✔"),
-								`Git initialized and configured.`,
-								"(" +
-									chalk.green("$ git config --list --local") +
-									")"
+							print.gulp.success(
+								"Git initialized and configured ($ git config --list --local)."
 							);
-							print.gulp("");
 
 							done();
 						}

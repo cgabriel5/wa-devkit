@@ -377,29 +377,15 @@ gulp.task("init:git", function(done) {
 					.commit(
 						"chore: Initial commit\n\nProject initialization.",
 						function() {
-							print.gulp("");
-							print.gulp(
-								"Make sure to set your editor of choice with Git if not already set."
+							print.gulp.info(
+								"It not already set, make sure to set your default text editor."
 							);
-							print.gulp(
-								"For example, for Sublime Text run:",
-								chalk.green(
-									'$ git config core.editor "subl -n w"'
-								)
-							);
-							print.gulp("More information can be found here:");
-							print.gulp(
+							print.gulp.info(
 								"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
 							);
-							print.gulp("");
-							print.gulp(
-								chalk.green("✔"),
-								`Git initialized and configured.`,
-								"(" +
-									chalk.green("$ git config --list --local") +
-									")"
+							print.gulp.success(
+								"Git initialized and configured ($ git config --list --local)."
 							);
-							print.gulp("");
 
 							done();
 						}
