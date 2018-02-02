@@ -17,7 +17,9 @@ gulp.task("default", function(done) {
 gulp.task("init", function(done) {
 	// Cache task.
 	var task = this;
-	var answers_ = [{}];
+
+	// Contain user replies/answers here.
+	var __answers = [{}];
 
 	print.ln();
 
@@ -44,7 +46,7 @@ gulp.task("init", function(done) {
 
 	// Not really the most ideal but to ask the setup questions in groups
 	// this seems to be the way to go. Questions are asked and their replies
-	// are stored in the answers_ variable for later use.
+	// are stored in the __answers variable for later use.
 
 	inquirer.prompt($questions.ready).then(function(answers) {
 		if (answers.continue) {
@@ -53,21 +55,21 @@ gulp.task("init", function(done) {
 			// Ask the initial questions.
 			inquirer.prompt($questions.initial).then(function(answers) {
 				// Store the answer.
-				answers_.push(answers);
+				__answers.push(answers);
 
 				sep_message("author");
 
 				// Ask the author questions.
 				inquirer.prompt($questions.author).then(function(answers) {
 					// Store the answer.
-					answers_.push(answers);
+					__answers.push(answers);
 
 					sep_message("license");
 
 					// Ask the other.
 					inquirer.prompt($questions.license).then(function(answers) {
 						// Store the answer.
-						answers_.push(answers);
+						__answers.push(answers);
 
 						sep_message("app");
 
@@ -76,13 +78,13 @@ gulp.task("init", function(done) {
 							.prompt($questions.app)
 							.then(function(answers) {
 								// Store the answer.
-								answers_.push(answers);
+								__answers.push(answers);
 							})
 							.then(function() {
 								// Combine all answers.
 								var answers = Object.assign.apply(
 									null,
-									answers_
+									__answers
 								);
 
 								// Get answers.

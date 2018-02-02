@@ -148,7 +148,7 @@ gulp.task("init:--lib-remove-webapp-files", function(done) {
 	// Note: When setting up a library project ./js/source/ will get
 	// overwritten with the library setup folder files. This will in effect
 	// combine the folders and add the needed files/folders for the library.
-	// (i.e. ./js/vendor/__init__.js and ./js/bundles/)
+	// (i.e. ./js/vendor/__init.js and ./js/bundles/)
 
 	pump(
 		[
