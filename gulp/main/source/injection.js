@@ -1,4 +1,4 @@
-// HTML injection variable object
+// HTML injection variable object.
 var html_injection = {
 	css_bundle_app:
 		$paths.css_bundles + get(bundle_css, "source.names.main", ""),

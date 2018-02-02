@@ -52,7 +52,7 @@ gulp.task("css:vendor", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	// NOTE: absolute vendor library file paths should be used.
+	// Note: Absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json
 	// within the css.vendor.files array.
 

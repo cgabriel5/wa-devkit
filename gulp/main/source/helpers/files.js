@@ -49,7 +49,7 @@
 gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("type", {
 			alias: "t",
@@ -75,7 +75,7 @@ gulp.task("files", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var types = _args.t || _args.type;
 	var stypes = _args.s || _args.stype;
 	var whereis = _args.w || _args.whereis;
@@ -84,67 +84,67 @@ gulp.task("files", function(done) {
 	var sub_extensions = _args.subs;
 
 	var clean_types = function(text) {
-		// collapse multiple spaces + remove left/right padding
+		// Collapse multiple spaces + remove left/right padding.
 		text = text.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-		// turn to an array
+		// Turn to an array.
 		text = text.split(/\s+/);
 
 		return text;
 	};
 
-	// if types provided clean them
+	// If types provided clean them.
 	if (types) {
 		types = clean_types(types);
 	}
 
-	// if sub types provided clean them
+	// If sub types provided clean them.
 	if (stypes) {
 		stypes = clean_types(stypes);
 	}
 
-	// where files will be contained
+	// Where files will be contained.
 	var files = [];
 
-	// get all project files
+	// Get all project files.
 	dir.files($paths.dirname, function(err, paths) {
 		if (err) {
 			throw err;
 		}
 
-		// skip files from these locations: .git/, node_modules/
+		// Skip files from these locations: .git/, node_modules/.
 		loop1: for (var i = 0, l = paths.length; i < l; i++) {
-			// only get the relative path (relative to the root dir
-			// of the project). the absolute path is not needed.
+			// Only get the relative path (relative to the root directory
+			// of the project). The absolute path is not needed.
 			var filepath = path.relative($paths.cwd, paths[i]);
 
-			// globs to ignore
+			// Globs to ignore.
 			var ignores = [$paths.node_modules_name, $paths.git];
-			// ignore files containing the above globs
+			// Ignore files containing the above globs.
 			for (var j = 0, ll = ignores.length; j < ll; j++) {
 				var ignore = ignores[j];
 				if (-~filepath.indexOf(ignore)) {
 					continue loop1;
 				}
 			}
-			// add to files array
+			// Add to files array.
 			files.push(filepath);
 		}
 
-		// filter the files based on their file extensions
-		// when the type argument is provided
+		// Filter the files based on their file extensions when the type
+		// argument is provided.
 		if (types) {
 			files = files.filter(function(filepath) {
 				return ext({ path: filepath }, types);
 			});
 		}
 
-		// filter the files based on their sub extensions
-		// when the type argument is provided
+		// Filter the files based on their sub extensions when the type
+		// argument is provided.
 		if (stypes) {
 			files = files.filter(function(filepath) {
 				var subs_extensions = extension.subs({ path: filepath });
 
-				// check if path contains any of the passed in subs
+				// Check if path contains any of the passed in subs.
 				for (var i = 0, l = stypes.length; i < l; i++) {
 					var sub = stypes[i];
 					if (-~subs_extensions.indexOf(sub)) {
@@ -152,28 +152,28 @@ gulp.task("files", function(done) {
 					}
 				}
 
-				// else nothing matched so filter path out
+				// Else nothing matched so filter path out.
 				return false;
 			});
 		}
 
-		// list the used sub-extensions
+		// List the used sub-extensions.
 		if (sub_extensions) {
-			// store used sub-extensions
+			// Store used sub-extensions.
 			var subs_ = [];
 
 			print.ln();
 			print(chalk.underline("Sub-extensions"));
 
-			// loop over each path to find the sub-extensions
+			// Loop over each path to find the sub-extensions.
 			files.forEach(function(path_) {
-				// get the paths sub-extensions
+				// Get the paths sub-extensions.
 				var subs = extension.subs({ path: path_ });
 
-				// loop over the found sub-extensions and print them
+				// Loop over the found sub-extensions and print them.
 				if (subs.length) {
 					subs.forEach(function(sub) {
-						// if the sub does not exist store it and print
+						// If the sub does not exist store it and print.
 						if (!-~subs_.indexOf(sub)) {
 							print(`  ${sub}`);
 							subs_.push(sub);
@@ -187,34 +187,34 @@ gulp.task("files", function(done) {
 			return done();
 		}
 
-		// this lookup object is only used for highlight purposes and will
-		// only be populate when the whereis flag is provided. it is
-		// a work around the fuzzy module. it will store the relative
+		// Note: This lookup object is only used for highlight purposes
+		// and will only be populate when the --whereis flag is provided.
+		// It is a work around the fuzzy module. It will store the relative
 		// file path with its file path containing the highlight wrappers
 		// so it can be accessed in the debug modifier function.
-		// basically: { relative_file_path: file_path_with_wrappers}
+		// Basically: { relative_file_path: file_path_with_wrappers}
 		var lookup = whereis ? {} : false;
 
-		// if whereis parameter is provided run a search on files
+		// If whereis parameter is provided run a search on files.
 		if (whereis) {
-			// filtered files containing the whereis substring/term
+			// Filtered files containing the whereis substring/term
 			// will get added into this array.
 			var results = [];
 
-			// highlight wrappers: these will later be replaced and the
+			// Highlight wrappers: These will later be replaced and the
 			// wrapped text highlight and bolded.
 			var highlight_pre = "$<";
 			var highlight_post = ">";
 
-			// run a non fuzzy search. when fuzzy search is turned off
+			// Run a non fuzzy search. When fuzzy search is turned off
 			// we default back to an indexOf() search.
 			if (no_fuzzy) {
 				files.forEach(function(file) {
 					if (-~file.indexOf(whereis)) {
-						// add the file path to the array
+						// Add the file path to the array.
 						results.push(file);
 
-						// add the path to object
+						// Add the path to object.
 						lookup[file] = file.replace(
 							new RegExp(escape(whereis), "gi"),
 							function(match) {
@@ -224,42 +224,42 @@ gulp.task("files", function(done) {
 					}
 				});
 			} else {
-				// run a fuzzy search on the file paths
+				// Run a fuzzy search on the file paths.
 				var fuzzy_results = fuzzy.filter(whereis, files, {
 					pre: highlight_pre,
 					post: highlight_post
 				});
 
-				// turn into an array
+				// Turn into an array.
 				fuzzy_results.forEach(function(result) {
-					// cache the original file path
+					// Cache the original file path.
 					var og_filepath = result.original;
 
-					// add the file path to the array
+					// Add the file path to the array.
 					results.push(og_filepath);
 
-					// add the path containing the highlighting wrappers
+					// Add the path containing the highlighting wrappers
 					// to the object.
 					lookup[og_filepath] = result.string;
 				});
 			}
 
-			// reset var to the newly filtered files
+			// Reset var to the newly filtered files.
 			files = results;
 		}
 
-		// if the highlight flag is not provided simply run the debug
-		// with default options...else use the modifier option to
-		// highlight the path. this was not done through gulpif because
-		// gulpif was not playing nice with the debug plugin as the cli
+		// If the highlight flag is not provided simply run the debug
+		// with default options. Else use the modifier option to
+		// highlight the path. This was not done through gulpif because
+		// gulpif was not playing nice with the debug plugin as the CLI
 		// loader was messing up.
 		var options =
 			highlight && whereis
 				? {
-						// the modifier function will be used to highlight
+						// The modifier function will be used to highlight
 						// the search term in the file path.
 						modifier: function(data) {
-							// remove placeholders and apply highlight
+							// Remove placeholders and apply highlight.
 							var string = lookup[data.paths.relative].replace(
 								/\$<(.*?)\>/g,
 								function(match) {
@@ -269,19 +269,19 @@ gulp.task("files", function(done) {
 								}
 							);
 
-							// update the data object
+							// Update the data object.
 							data.file_path = string;
 							data.output = `=> ${string} ${data.size} ${
 								data.action
 							}`;
 
-							// return the updated data object
+							// Return the updated data object.
 							return data;
 						}
 					}
 				: {};
 
-		// log files
+		// Log files.
 		pump([gulp.src(files), $.sort(opts_sort), $.debug(options)], done);
 	});
 });

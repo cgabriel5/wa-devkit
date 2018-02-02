@@ -22,7 +22,7 @@ gulp.task("lib:js", function(done) {
 				nocase: true,
 				cwd: $paths.js_source
 			}),
-			// filter out all but test files (^test*/i)
+			// Filter out all but test files (^test*/i).
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
@@ -47,9 +47,10 @@ gulp.task("lib:js", function(done) {
  *     Create lib/ folder.
  */
 gulp.task("lib", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
+	// If the apptype is not a library then stop task.
 	if (INT_APPTYPE !== "library") {
 		print.gulp.warn(
 			"This helper task is only available for library projects."
@@ -57,10 +58,10 @@ gulp.task("lib", function(done) {
 		return done();
 	}
 
-	// get the gulp build tasks
+	// Get the gulp build tasks.
 	var tasks = bundle_lib.tasks;
 
-	// add callback to the sequence
+	// Add callback to the sequence.
 	tasks.push(function() {
 		var message = "Library folder complete.";
 		notify(message);
@@ -68,6 +69,6 @@ gulp.task("lib", function(done) {
 		done();
 	});
 
-	// apply the tasks and callback to sequence
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });

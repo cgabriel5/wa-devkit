@@ -24,13 +24,13 @@ gulp.task("status", function(done) {
  *     Print uses ports.
  */
 gulp.task("ports", function(done) {
-	// if file is empty
+	// No ports are in use so return and print message.
 	if (!INT_PORTS) {
 		print.gulp.info("No ports are in use.");
 		return done();
 	}
 
-	// ports exist...
+	// Ports exist.
 	print.gulp.info(
 		`Local: ${chalk.green(INT_PORTS.local)}, UI: ${chalk.green(
 			INT_PORTS.ui

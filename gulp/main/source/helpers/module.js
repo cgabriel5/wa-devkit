@@ -49,15 +49,15 @@
 gulp.task("module", function(done) {
 	var linenumber = require("linenumber");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("remove", {
 		type: "string"
 	}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var remove = _args.remove;
 
-	// Get the config file.
+	// Get the configuration file.
 	var config_file = get_config_file($paths.config_$bundles);
 
 	// Remove the module when the remove flag is provided.
@@ -65,7 +65,7 @@ gulp.task("module", function(done) {
 		// Check for a file extension.
 		var ext = extension({ path: remove });
 
-		// If no extension make sure to add the extension
+		// If no extension make sure to add the extension.
 		if (!ext) {
 			remove += ".js";
 		}
@@ -88,8 +88,8 @@ gulp.task("module", function(done) {
 		pump(
 			[gulp.src(file, opts_remove), $.debug.clean(), $.clean()],
 			function() {
-				// Get the line number where the config array exists.
-				// Looking for the js.source.files.
+				// Get the line number where the configuration array exists.
+				// Looking for the js.source.files array.
 				var line = (linenumber(
 					config_file,
 					/\s"js":\s+\{\n\s+"source":\s+\{\n\s+"files":\s+\[/gim
@@ -111,7 +111,7 @@ gulp.task("module", function(done) {
 			}
 		);
 	} else {
-		// run yargs
+		// Run yargs.
 		var _args = yargs
 			.option("filename", {
 				type: "string",
@@ -134,7 +134,7 @@ gulp.task("module", function(done) {
 				type: "boolean"
 			}).argv;
 
-		// get the command line arguments from yargs
+		// Get the command line arguments from yargs.
 		var filename = _args.filename;
 		var modname = _args.modname;
 		var description = _args.description;
@@ -145,7 +145,7 @@ gulp.task("module", function(done) {
 		// Get the basename from the filename.
 		var ext = path.extname(filename);
 
-		// When no extension is found reset it and the file name
+		// When no extension is found reset it and the file name.
 		if (!ext) {
 			ext = ".js";
 			filename = filename + ext;
@@ -192,7 +192,7 @@ gulp.task("module", function(done) {
 			],
 			function() {
 				// Get the line number where the config array exists.
-				// Looking for the js.source.files.
+				// Looking for the js.source.files array.
 				var line = (linenumber(
 					config_file,
 					/\s"js":\s+\{\n\s+"source":\s+\{\n\s+"files":\s+\[/gim

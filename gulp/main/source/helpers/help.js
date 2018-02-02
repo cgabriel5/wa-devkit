@@ -32,7 +32,7 @@
  *     Show documentation for internally used tasks.
  */
 gulp.task("help", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("verbose", {
 			type: "boolean"
@@ -47,17 +47,17 @@ gulp.task("help", function(done) {
 	var filter = _args.f || _args.filter;
 	var internal = _args.i || _args.internal;
 
-	// get concat file names to use
+	// Get file names to use.
 	var names = bundle_gulp.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
 
-	// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
+	// If gulpfile.js exists use that. Else fall back to gulpfile.main.js.
 	var gulpfile = fe.sync($paths.basedir + name_default)
 		? name_default
 		: name_main;
 
-	// store file content in a variable
+	// Store file content in this variable.
 	var content = "";
 
 	pump(
@@ -66,7 +66,7 @@ gulp.task("help", function(done) {
 				cwd: $paths.basedir
 			}),
 			$.fn(function(file) {
-				// get the file content
+				// Store the file content.
 				content = file.contents.toString();
 			})
 		],
@@ -79,73 +79,72 @@ gulp.task("help", function(done) {
 			var task_name_pattern = /^gulp.task\(('|")([a-z:\-_]+)\1/;
 			var match = string.match(docblock_pattern);
 
-			// loop over gulpfile content string and file all the docblocks
+			// Loop over gulpfile content string and get all the docblocks.
 			while (match) {
 				var comment = match[0];
-				// get the match index
+				// Get the match index.
 				var index = match.index;
-				// get the match length
+				// Get the match length.
 				var length = comment.length;
-				// reset the string to exclude the match
+				// Reset the string to exclude the match.
 				string = string.substring(index + length, string.length).trim();
 
-				// now look for the task name
-				// the name needs to be at the front of the string
-				// to pertain to the current docblock comment. therefore,
-				// it must have an index of 0.
+				// Now look for the task name. The name needs to be at the
+				// front of the string to pertain to the current docblock
+				// comment. Therefore, it must have an index of 0.
 				var task_name_match = string.match(task_name_pattern);
 
-				// if no task name match continue and skip, or...
-				// task name has to be at the front of the string
+				// If no task name match continue and skip. Or task name has
+				// to be at the front of the string.
 				if (!task_name_match || task_name_match.index !== 0) {
-					// reset the match pattern
+					// Reset the match pattern.
 					match = string.match(docblock_pattern);
 					continue;
 				}
 
-				// check whether the task is internal
+				// Check whether the task is internal.
 				var is_internal = Boolean(-~comment.indexOf("@internal"));
 
-				// exclude internal tasks when the internal flag is not set
+				// Exclude internal tasks when the internal flag is not set.
 				if (is_internal && !internal) {
-					// reset the match pattern
+					// Reset the match pattern.
 					match = string.match(docblock_pattern);
 					continue;
 				}
 
-				// get the task name
+				// Get the task name.
 				var task_name = task_name_match[2];
 
-				// filter if flag present, also grab the length of the tasks
+				// Filter if flag present. Also grab the length of the tasks.
 				if (filter) {
 					if (-~filter.indexOf(task_name) || task_name === "help") {
-						// store the task name length
+						// Store the task name length.
 						lengths.push(task_name.length);
 					} else {
-						// reset the match pattern
+						// Reset the match pattern.
 						match = string.match(docblock_pattern);
 						continue;
 					}
 				} else {
-					// when no flag present just add all to the array
+					// When no flag present just add all to the array.
 					lengths.push(task_name.length);
 				}
 
-				// add the comment and task name to array
+				// Add the comment and task name to array:
 				// [ task name , task docblock comment , is task internal? ]
 				blocks.push([task_name, comment, is_internal]);
-				// reset the match pattern
+				// Reset the match pattern.
 				match = string.match(docblock_pattern);
 			}
 
-			// get the task max length
+			// Get the task max length.
 			var max_length = Math.max.apply(null, lengths);
 
 			var newline = "\n";
 			var headers = ["Flags", "Usage", "Notes"];
 
+			// Sort alphabetically fallback to a length.
 			// [https://stackoverflow.com/a/9175783]
-			// sort alphabetically fallback to a length
 			var cmp = function(a, b) {
 				if (a > b) {
 					return +1;
@@ -156,10 +155,12 @@ gulp.task("help", function(done) {
 				return 0;
 			};
 
+			// Replacer function will bold all found flags in docblock.
 			var replacer = function(match) {
 				return chalk.bold(match);
 			};
 
+			// Remove all the docblock comment syntax.
 			var remove_comment_syntax = function(string) {
 				return string
 					.replace(/(^\/\*\*)|( \*\/$)|( \* ?)/gm, "")
@@ -172,26 +173,26 @@ gulp.task("help", function(done) {
 
 			var tasks = {};
 
-			// loop over every match get needed data
+			// Loop over every match get needed data.
 			blocks.forEach(function(block) {
-				// get task name
+				// Get task name.
 				var name = block[0];
 				var internal = block[2];
-				// reset the block var to the actual comment block
+				// Reset the block var to the actual comment block.
 				block = block[1];
 
-				// skip if no name is found
+				// Skip if no name is found.
 				if (!name) {
 					return;
 				}
 
-				// reset name
+				// Reset name.
 				block = block.replace(
 					new RegExp("task: " + name + "$", "m"),
 					""
 				);
 
-				// remove doc comment syntax
+				// Remove doc comment syntax.
 				block = remove_comment_syntax(block);
 
 				// *************************************************
@@ -204,14 +205,14 @@ gulp.task("help", function(done) {
 
 				// Functions with only a description and nothing else,
 				// will not have any new lines in its description.
-				// Therefore, the simply use its entire documentation
-				// as its description.
+				// Therefore, simply use its entire documentation as its
+				// description.
 				var newline_index = block.indexOf(`${newline}${newline}`);
 				if (newline_index === -1) {
 					newline_index = block.length;
 				}
 
-				// get the description
+				// Get the description.
 				var desc = block.substring(0, newline_index);
 
 				tasks[name] = {
@@ -224,32 +225,32 @@ gulp.task("help", function(done) {
 				}
 			});
 
-			// sort the array names
+			// Sort the array names.
 			names.sort(function(a, b) {
 				return cmp(a, b) || cmp(a.length, b.length);
 			});
 
-			// add the help task to the front of the array
+			// Add the help task to the front of the array.
 			names.unshift("help");
 
-			// loop over to print this time
+			// Loop over to print this time.
 			names.forEach(function(name) {
-				// get the block
+				// Get the block.
 				var task = tasks[name];
 				var block = task.text;
 				var desc = task.desc;
 				var internal = task.internal;
 
-				// task name color will change based on whether it's
+				// Task name color will change based on whether it's
 				// an internal task.
 				var color = !internal ? "bold" : "yellow";
 
-				// loop over lines
+				// Loop over lines.
 				if (verbose || name === "help") {
-					// bold the tasks
+					// Bold the tasks.
 					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
 
-					// print the task name
+					// Print the task name.
 					print("   " + chalk[color](name));
 
 					var lines = block.split(newline);
@@ -262,10 +263,10 @@ gulp.task("help", function(done) {
 						print(line);
 					});
 
-					// bottom padding
+					// Bottom padding.
 					print.ln();
 				} else {
-					// only show the name and its description
+					// Only show the name and its description.
 					print(
 						"   " +
 							chalk[color](name) +
@@ -276,7 +277,7 @@ gulp.task("help", function(done) {
 			});
 
 			if (!verbose) {
-				// bottom padding
+				// Bottom padding.
 				print.ln();
 			}
 

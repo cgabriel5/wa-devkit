@@ -23,7 +23,7 @@
  *     Expand all line starting tabs into 2 spaces.
  */
 gulp.task("indent", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("style", {
 			type: "string"
@@ -32,11 +32,11 @@ gulp.task("indent", function(done) {
 			type: "number"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var style = _args.style || "tabs";
-	var size = _args.size || 4; // spaces to use
+	var size = _args.size || 4; // Spaces to use.
 
-	// print the indentation information
+	// Print the indentation information.
 	print.gulp.info(
 		`Using: ${chalk.magenta(style)}. Size: ${chalk.green(size)}.`
 	);
@@ -45,7 +45,7 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					$paths.files_all.replace(/\*$/, "js"), // only JS FILES
+					$paths.files_all.replace(/\*$/, "js"), // Only JS FILES.
 					bangify(globall($paths.node_modules_name)),
 					bangify(globall($paths.git)),
 					$paths.not_vendor
@@ -55,27 +55,27 @@ gulp.task("indent", function(done) {
 				}
 			),
 			$.gulpif(
-				// convert tabs to spaces
+				// Convert tabs to spaces.
 				style === "tabs",
 				$.replace(/^( )+/gm, function(match) {
-					// split on the amount size provided
+					// Split on the amount size provided.
 					// [https://stackoverflow.com/a/6259543]
 					var chunks = match.match(new RegExp(`.\{1,${size}\}`, "g"));
 
-					// modify the chunks
+					// Modify the chunks.
 					chunks = chunks.map(function(chunk) {
 						return !(chunk.length % size) ? "\t" : chunk;
 					});
 
-					// join and return new indentation
+					// Join and return new indentation.
 					return chunks.join("");
 				})
 			),
 			$.gulpif(
-				// convert spaces to tabs
+				// Convert spaces to tabs.
 				style === "spaces",
 				$.replace(/^([\t ])+/gm, function(match) {
-					// replace all tabs with spaces
+					// Replace all tabs with spaces.
 					match = match.replace(/\t/g, " ".repeat(size));
 					return match;
 				})

@@ -13,20 +13,20 @@
  *
  */
 gulp.task("linthtml", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var file = _args.f || _args.file || "";
 
 	function reporter(filepath, issues) {
 		if (issues.length) {
 			filepath = path.relative($paths.cwd, filepath);
 			issues.forEach(function(issue) {
-				// make sure the first letter is always capitalized
+				// Make sure the first letter is always capitalized.
 				var first_letter = issue.msg[0];
 				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
 

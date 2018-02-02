@@ -7,11 +7,11 @@
 
 "use strict";
 
-// node modules
+// Node modules.
 var fs = require("fs");
 var path = require("path");
 
-// lazy load gulp plugins
+// Lazy load gulp plugins.
 var $ = require("gulp-load-plugins")({
 	rename: {
 		"gulp-if": "gulpif",
@@ -31,8 +31,8 @@ var $ = require("gulp-load-plugins")({
 			return plugin.default;
 		},
 		uglify: function() {
-			// [https://stackoverflow.com/a/45554108]
 			// By default es-uglify is used to uglify JS.
+			// [https://stackoverflow.com/a/45554108]
 			var uglifyjs = require("uglify-es");
 			var composer = require("gulp-uglify/composer");
 			return composer(uglifyjs, console);
@@ -40,7 +40,7 @@ var $ = require("gulp-load-plugins")({
 	}
 });
 
-// universal modules
+// Universal modules.
 var del = require("del");
 var pump = require("pump");
 var yargs = require("yargs");
@@ -57,7 +57,7 @@ var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var bs_autoclose = require("browser-sync-close-hook");
 
-// project utils
+// Project utils.
 var utils = require("./gulp/assets/utils/utils.js");
 var print = utils.print;
 var notify = utils.notify;

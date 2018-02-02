@@ -34,12 +34,12 @@ gulp.task("js:app", function(done) {
  * @internal - Ran via the "js" task.
  */
 gulp.task("js:vendor", function(done) {
-	// NOTE: absolute vendor library file paths should be used.
-	// The paths should be supplied in ./configs/bundles.json
-	// within the js.vendor.files array.
-
 	// Pause the watcher to prevent infinite loops.
 	$.watcher.pause("watcher:js:vendor");
+
+	// Note: absolute vendor library file paths should be used.
+	// The paths should be supplied in ./configs/bundles.json
+	// within the js.vendor.files array.
 
 	pump(
 		[

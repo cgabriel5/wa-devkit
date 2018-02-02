@@ -20,9 +20,7 @@ var __modified_git_files;
  * @internal - Used to prepare the pretty task.
  */
 gulp.task("pretty:gitfiles", function(done) {
-	// get the changed files according to git if the quick/staged flags
-
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("quick", {
 			alias: "q",
@@ -32,29 +30,29 @@ gulp.task("pretty:gitfiles", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var quick = _args.quick;
 	var staged = _args.staged;
 
-	// the flags must be present to get the modified files...else
-	// skip to the main pretty task
+	// The flags must be present to get the modified files or else
+	// skip to the main pretty task.
 	if (!(quick || staged)) return done();
 
-	// reset the variable when the staged flag is provided
+	// Reset the variable when the staged flag is provided.
 	staged = staged ? "--cached" : "";
 
-	// diff filter [https://stackoverflow.com/a/6879568]
-	// example plugin [https://github.com/azz/pretty-quick]
+	// Diff filter: [https://stackoverflow.com/a/6879568]
+	// Example plugin: [https://github.com/azz/pretty-quick]
 
-	// the command to run
+	// The command to run.
 	var command = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
 
-	// get the list of modified files
+	// Get the list of modified files.
 	cmd.get(command, function(err, data, stderr) {
-		// clean the data
+		// Clean the data.
 		data = data.trim();
 
-		// set the variable. if the data is empty there are no
+		// Set the variable. If the data is empty there are no
 		// files to prettify so return an empty array.
 		__modified_git_files = data ? data.split("\n") : [];
 
@@ -133,7 +131,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("type", {
 			alias: "t",
@@ -159,7 +157,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			type: "string"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var type = _args.t || _args.type;
 	var patterns = _args.p || _args.pattern;
 	var ignores = _args.i || _args.ignore;
@@ -167,10 +165,10 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var empty = _args.e || _args.empty;
 	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
-	// default files to clean:
-	// HTML, CSS, JS, and JSON files. exclude files containing
-	// a ".min." as this is the convention used for minified files.
-	// the node_modules/, .git/, and all vendor/ files are also excluded.
+	// Default globs: look for HTML, CSS, JS, and JSON files. They also
+	// exclude files containing a ".min." as this is the convention used
+	// for minified files. The node_modules/, .git/, and all vendor/
+	// files are also excluded.
 	var files = [
 		$paths.files_common,
 		$paths.not_min,
@@ -180,73 +178,72 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 		$paths.not_ignore
 	];
 
-	// empty the files array?
+	// When the empty flag is provided the files array will be emptied.
 	if (empty) {
 		files.length = 0;
 	}
 
-	// merge the changed files to the patterns array...this means that
-	// the --quick/--staged flags are set.
+	// Merge the changed files to the patterns array. This means that the
+	// --quick/--staged flags are set.
 	if (__modified_git_files) {
-		// Important: when the __modified_git_files variable is an empty
-		// array this means that there are no Git modified/staged files.
-		// So simply remove all the globs from the files array to prevent
+		// Note: When the __modified_git_files variable is an empty array
+		// this means that there are no Git modified/staged files. So
+		// simply remove all the globs from the files array to prevent
 		// anything from being prettified.
 		if (!__modified_git_files.length) {
 			files.length = 0;
 		}
 
-		// add the changed files to the patterns array
+		// Add the changed files to the patterns array.
 		patterns = (patterns || []).concat(__modified_git_files);
 	}
 
-	// reset the files array when extension types are provided
+	// Reset the files array when extension types are provided.
 	if (type) {
-		// remove all spaces from provided types string
+		// Remove all spaces from provided types string.
 		type = type.replace(/\s+?/g, "");
 
-		// ...when using globs and there is only 1 file
-		// type in .{js} for example, it will not work.
-		// if only 1 file type is provided the {} must
-		// not be present. they only seem to work when
-		// multiple options are used like .{js,css,html}.
-		// this is normalized below.
+		// Note: When using globs and there is only 1 file type like in
+		// ".{js}", for example, it will not work. As this won't work the
+		// "{}" must not be present. They only seem to work when multiple
+		// options are used like .{js,css,html}. This is normalized below.
 		if (-~type.indexOf(",")) {
 			type = "{" + type + "}";
 		}
-		// finally, reset the files array
+
+		// Finally, reset the files array.
 		files[0] = `**/*.${type}`;
 	}
 
-	// add user provided glob patterns
+	// Add user provided glob patterns.
 	if (patterns) {
-		// only do changes when the type flag is not provided
-		// therefore, in other words, respect the type flag.
+		// Only do changes when the type flag is not provided. Therefore,
+		// in other words, respect the type flag.
 		if (!type) {
 			files.shift();
 		}
 
-		// add the globs
+		// Add the globs.
 		patterns.forEach(function(glob) {
 			files.push(glob);
 		});
 	}
 
-	// add user provided exclude/negative glob patterns. this is
-	// useful when needing to exclude certain files/directories.
+	// Add user provided exclude/negative glob patterns. This is useful
+	// when needing to exclude certain files/directories.
 	if (ignores) {
-		// add the globs
+		// Add the globs.
 		ignores.forEach(function(glob) {
 			files.push(bangify(glob));
 		});
 	}
 
-	// show the used glob patterns when the flag is provided
+	// Show the used glob patterns when the flag is provided.
 	if (test) {
 		print.ln();
 		print(chalk.underline("Patterns"));
 
-		// log the globs
+		// Log the globs.
 		files.forEach(function(glob) {
 			print(`  ${glob}`);
 		});
@@ -262,18 +259,20 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 				dot: true,
 				base: $paths.dot
 			}),
-			// Filter out all non common files. This is more so a preventive
-			// measure as when using the --quick flag any modified files will
-			// get passed in. This makes sure to remove all image, markdown
-			// files for example.
+			// Note: Filter out all non common files. This is more so a
+			// preventive measure as when using the --quick flag any modified
+			// files will get passed in. This makes sure to remove all image,
+			// markdown files for example.
 			$.filter([$paths.files_common]),
 			$.sort(opts_sort),
+			// Prettify HTML files.
 			$.gulpif(extension.ishtml, $.beautify(JSBEAUTIFY)),
+			// Sort JSON files.
 			$.gulpif(
 				function(file) {
-					// file must be a JSON file and cannot contain the
-					// comment (.cm.) sub-extension to be sortable as
-					// comments are not allowed in JSON files.
+					// Note: File must be a JSON file and cannot contain the
+					// comment (.cm.) sub-extension to be sortable as comments
+					// are not allowed in JSON files.
 					return extension(file, ["json"]) &&
 						!-~file.path.indexOf(".cm.")
 						? true
@@ -283,10 +282,12 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 					space: JINDENT
 				})
 			),
+			// Prettify JS/JSON files.
 			$.gulpif(function(file) {
-				// exclude HTML and CSS files
+				// Exclude HTML and CSS files.
 				return extension(file, ["html", "css"]) ? false : true;
 			}, $.prettier(PRETTIER)),
+			// Prettify CSS files.
 			$.gulpif(
 				extension.iscss,
 				$.postcss([

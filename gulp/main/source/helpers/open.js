@@ -3,7 +3,7 @@
  *
  * Notes
  *
- * • New tabs should be opened via the terminal using `open`. Doing
+ * • Tabs should be opened using the terminal via this task. Doing
  *   so will ensure the generated tab will auto-close when Gulp is
  *   closed. Opening tabs by typing/copy-pasting the project URL
  *   into the browser address bar will not auto-close the tab(s)
@@ -67,10 +67,10 @@
  *     section of the path will be used to try and open in a file manager.
  */
 gulp.task("open", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("directory", {
 			alias: "d",
@@ -81,29 +81,27 @@ gulp.task("open", function(done) {
 			type: "string"
 		}).argv;
 
-	// get the command line arguments from yargs
-	// Open the root when nothing provided.
+	// Get the command line arguments from yargs.
 	var directory = _args.d || _args.directory;
 	var editor = _args.e || _args.editor;
 
-	// If the directory flag is provided open the directory in a file
-	// manager.
+	// If the directory flag is provided open directory in a file manager.
 	if (directory) {
 		// Parse the directory.
 		var parts = path.parse(directory);
+
 		if (!parts.ext) {
-			// No file was passed in.
-			// Reset the directory
+			// No file was passed in so reset the directory.
 			directory = parts.dir + "/" + parts.base + "/";
 		} else {
-			// If a file is passed only get the dir part.
+			// If a file is passed only get the directory part.
 			directory = parts.dir + "/";
 		}
 
 		// Make the path absolute and relative to the main project root.
 		directory = path.join("./", directory);
 
-		// Check that the directory exists
+		// Check that the directory exists.
 		if (!de.sync(directory)) {
 			print.gulp.warn(
 				"The directory",
@@ -118,6 +116,9 @@ gulp.task("open", function(done) {
 			done();
 		});
 	} else if (editor) {
+		// If the editor flag is provided open the given file in the user's
+		// default editor.
+
 		var spawn = require("child_process").spawn;
 
 		// Check that the file exists.
@@ -130,7 +131,7 @@ gulp.task("open", function(done) {
 			return done();
 		}
 
-		// run yargs
+		// Run yargs.
 		var _args = yargs
 			.option("wait", {
 				type: "boolean"
@@ -145,14 +146,13 @@ gulp.task("open", function(done) {
 				type: "string"
 			}).argv;
 
-		// Get the command line arguments from yargs
+		// Get the command line arguments from yargs.
 		var wait = _args.wait;
 		var line = _args.line;
 		var column = _args.column;
 		var use_editor = _args.use;
 
-		// Get the user's editor and any flags needed to open the
-		// file via the terminal.
+		// Get user's editor/flags needed to open file via the terminal.
 		var editor = get_editor({
 			file: {
 				name: editor,
@@ -162,13 +162,13 @@ gulp.task("open", function(done) {
 			editor: use_editor
 		});
 
-		// Create the child process to open the editor
+		// Create the child process to open the editor.
 		var child_process = spawn(editor.command, editor.flags, {
 			stdio: "inherit",
 			detached: true
 		});
 
-		// If an error occurs throw it
+		// If an error occurs throw it.
 		child_process.on("error", function(err) {
 			if (err) {
 				throw err;
@@ -183,15 +183,15 @@ gulp.task("open", function(done) {
 				done();
 			});
 		} else {
-			// Close the process immediately.
+			// Else close the process immediately.
 			child_process.unref();
 			return done();
 		}
 	} else {
-		// Else open the file in a browser. What this task was originally
-		// set out to do.
+		// Else open the file in a browser. Which is what this task was
+		// originally set out to do.
 
-		// run yargs
+		// Run yargs.
 		var _args = yargs
 			.option("file", {
 				alias: "f",
@@ -203,10 +203,11 @@ gulp.task("open", function(done) {
 				type: "number"
 			}).argv;
 
-		// get the command line arguments from yargs
+		// Get the command line arguments from yargs.
 		var file = _args.f || _args.file;
-		// check for explicitly provided port...if none is provided
-		// check the internally fetched free ports and get the local port
+
+		// Check for explicitly provided port. If none is provided check
+		// the internally fetched free ports and get the local port.
 		var port =
 			_args.p ||
 			_args.port ||
@@ -216,7 +217,7 @@ gulp.task("open", function(done) {
 				}
 			).local;
 
-		// run the open function
+		// Open the file in the browser.
 		return open_file_in_browser(file, port, done, task);
 	}
 });

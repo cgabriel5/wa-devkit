@@ -11,11 +11,11 @@
 
 "use strict";
 
-// node modules
+// Node modules.
 var fs = require("fs");
 var path = require("path");
 
-// lazy load gulp plugins
+// Lazy load gulp plugins.
 var $ = require("gulp-load-plugins")({
 	rename: {
 		"gulp-if": "gulpif",
@@ -35,8 +35,8 @@ var $ = require("gulp-load-plugins")({
 			return plugin.default;
 		},
 		uglify: function() {
-			// [https://stackoverflow.com/a/45554108]
 			// By default es-uglify is used to uglify JS.
+			// [https://stackoverflow.com/a/45554108]
 			var uglifyjs = require("uglify-es");
 			var composer = require("gulp-uglify/composer");
 			return composer(uglifyjs, console);
@@ -44,7 +44,7 @@ var $ = require("gulp-load-plugins")({
 	}
 });
 
-// universal modules
+// Universal modules.
 var del = require("del");
 var pump = require("pump");
 var yargs = require("yargs");
@@ -61,7 +61,7 @@ var sequence = require("run-sequence");
 var browser_sync = require("browser-sync");
 var bs_autoclose = require("browser-sync-close-hook");
 
-// project utils
+// Project utils.
 var utils = require("./gulp/assets/utils/utils.js");
 var print = utils.print;
 var notify = utils.notify;
@@ -81,22 +81,25 @@ var cli_highlight = utils.cli_highlight;
 // paths.js -- ./gulp/main/source/paths.js
 // -----------------------------------------------------------------------------
 
-// get and fill in path placeholders
+// Get and fill in path placeholders.
 var $paths = expand_paths(
 	Object.assign(
 		jsonc.parse(
-			fs.readFileSync(`./configs/paths.cm.json`).toString(),
+			fs.readFileSync("./configs/paths.cm.json").toString(),
 			null,
 			true
 		),
 		{
-			// add in the following paths
+			// Add in the following paths:
+
 			dirname: __dirname,
 			cwd: process.cwd(),
-			// store the project folder name
+
+			// Store the project folder name.
 			rootdir: path.basename(process.cwd()),
 			filepath: __filename,
-			// get the filepath file name
+
+			// Get the filepath file name.
 			filename: path.basename(__filename)
 		}
 	)
@@ -106,45 +109,45 @@ var $paths = expand_paths(
 // preconfig.js -- ./gulp/main/source/preconfig.js
 // -----------------------------------------------------------------------------
 
-// dynamic configuration files (load via json-file to modify later)
+// Dynamic configuration files (load via json-file to modify later).
 var $internal = json.read($paths.config_internal);
 
-// object will contain the all the config settings
+// Object will contain all the configuration settings.
 var $configs = {};
 
-// settings config file must exist to populate the configs object
+// Settings configuration file must exist to populate the configs object.
 if (fe.sync($paths.config_settings)) {
-	// static configuration files (just need to read file)
+	// Static configuration files (just need to read file).
 	var $settings = jsonc.parse(
 		fs.readFileSync($paths.config_settings).toString()
 	);
 
-	// get individual plugin settings and store in an object
+	// Get individual plugin settings and store in an object.
 	for (var $config in $paths) {
-		// path must match the following pattern to be a config path
-		if (
-			$paths.hasOwnProperty($config) &&
-			/^config_\$[a-z_.]+$/i.test($config)
-		) {
-			// remove any file name sub-extensions. for example,
-			// for "csslint.cm" turn to "csslint"
+		// configuration files must match this pattern.
+		var config_file_pattern = /^config_\$[a-z_.]+$/i.test($config);
+
+		// Path must match the following pattern to be a config path.
+		if ($paths.hasOwnProperty($config) && config_file_pattern) {
+			// Remove any file name sub-extensions. For example,
+			// turn "csslint.cm" to "csslint".
 			var config_name = $paths[$config].split(".")[0];
-			// get the config settings and add to the settings object
+
+			// Get the config settings and add to the settings object.
 			$configs[config_name] = $settings[$paths[$config]];
 		}
 	}
 } else {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.argv;
-	// get the command line arguments from yargs
 
-	// only continue when the reconfig flag is set. this will let the
-	// settings task to run.
+	// Note: When the settings file is missing this error message will get
+	// shown. Follow the rebuild command and the file will get rebuilt. The
+	// code is only allowed to run when the rebuild flag is set.
 
 	if (!_args.rebuild || !-~_args._.indexOf("settings")) {
-		// config settings file does not exist so give a message and
-		// exit the node process.
-		print.gulp.warn(
+		// Settings file does not exist so give a message and exit process.
+		print.gulp.error(
 			chalk.magenta($paths.config_settings),
 			"is missing (settings file)."
 		);
@@ -161,9 +164,9 @@ if (fe.sync($paths.config_settings)) {
 // configs.js -- ./gulp/main/source/configs.js
 // -----------------------------------------------------------------------------
 
-// get all needed configuration values
+// Get all needed configuration values.
 
-// bundles
+// Bundles.
 var bundle_html = get($configs, "bundles.html", "");
 var bundle_css = get($configs, "bundles.css", "");
 var bundle_js = get($configs, "bundles.js", "");
@@ -172,37 +175,37 @@ var bundle_gulp = get($configs, "bundles.gulp", "");
 var bundle_dist = get($configs, "bundles.dist", "");
 var bundle_lib = get($configs, "bundles.lib", "");
 
-// app config information
+// App configuration information.
 
-// app directory information
+// App directory information.
 var INDEX = get($configs, "app.index", "");
 var APPDIR = path.join(get($configs, "app.base", ""), $paths.rootdir);
 
-// app line ending information
+// App line ending information.
 var EOL = get($configs, "app.eol", "");
 var EOL_ENDING = get(EOL, "ending", "");
 // var EOL_STYLE = EOL.style;
 
-// use https or not?
+// Use https or not.
 var HTTPS = get($configs, "app.https", false);
 
-// app JSON indentation
+// App JSON indentation.
 var JINDENT = get($configs, "app.indent_char", "\t");
 
-// plugin configs
+// Plugin configurations.
 var PRETTIER = get($configs, "prettier", {});
 var JSBEAUTIFY = get($configs, "jsbeautify", {});
 var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 
-// internal information
+// Internal information.
 var INT_APPTYPE = get($internal.data, "apptype", "");
 var INT_PROCESS = get($internal.data, "process", "");
 var INT_PID = get(INT_PROCESS, "pid", "");
 var INT_TITLE = get(INT_PROCESS, "title", "");
 var INT_PORTS = get(INT_PROCESS, "ports", "");
 
-// get the current Gulp file name
+// Get the current Gulp file name.
 var GULPFILE = path.basename($paths.filename);
 var GULPCLI = `gulp --gulpfile ${GULPFILE}`;
 
@@ -210,13 +213,13 @@ var GULPCLI = `gulp --gulpfile ${GULPFILE}`;
 // vars.js -- ./gulp/main/source/vars.js
 // -----------------------------------------------------------------------------
 
-// create browsersync server
+// Create browsersync server.
 var bs = browser_sync.create(get($configs, "browsersync.server_name", ""));
 
-// get current branch name
+// Get current branch name.
 var branch_name;
 
-// remove options
+// Remove options.
 var opts_remove = {
 	read: false,
 	cwd: $paths.basedir
@@ -226,7 +229,7 @@ var opts_remove = {
 // injection.js -- ./gulp/main/source/injection.js
 // -----------------------------------------------------------------------------
 
-// HTML injection variable object
+// HTML injection variable object.
 var html_injection = {
 	css_bundle_app:
 		$paths.css_bundles + get(bundle_css, "source.names.main", ""),
@@ -281,54 +284,58 @@ function open_file_in_browser(filepath, port, callback) {
  * @return {object} - Object containing the user's editor and CLI flags
  */
 function get_editor(options) {
-	// Default options
+	// Default options.
 	options = options || {};
 
-	// Use the provided editor or get the environment variables
+	// Use the provided editor or get the environment variables.
 	var editor = options.editor || process.env.EDITOR || process.env.VISUAL;
 
 	// Default to the tried and true editors when nothing is found.
 	if (!editor) editor = /^win/.test(process.platform) ? "notepad" : "vim";
 
-	// Lowercase everything
+	// Lowercase everything.
 	editor = editor.toLowerCase();
 
-	// If nothing is found check the check the Git config??
+	// If nothing is found should we check the check the Git config??
 
-	// If an editor is found in an environment variable it will
-	// simply be a command followed by a flag(s). For example,
-	// this it could be something like this: "subl -w -n". "subl"
-	// being the editor command and "-w -n" the flags to use.
+	// If an editor is found in an environment variable it will simply
+	// be a command followed by a flag(s). For example, it could be
+	// something like this: "subl -w -n". "subl" being the editor command
+	// and "-w -n" the flags to use.
 
-	// Get any flags.
+	// Editor flags will be stored here.
 	var flags = [];
+
+	// When flags are provided via the options object join them.
 	if (options.flags) {
 		// Add the provided flags to the flags array.
 		flags = flags.concat(options.flags);
 	}
 
-	// Now get any flags found in the editor string
+	// Now get any flags found in the editor string.
 	var parts = editor.split(/\s+/);
-	// Flags exist.
+
+	// Since the editor is the first item in the array there must be at
+	// least 1 item. Check for any flags present in the string.
 	if (parts.length > 1) {
-		// Reset the editor variable and remove the editor from the
-		// parts array.
+		// Reset variable and remove the editor from the parts array.
 		editor = parts.shift();
 		// Add all the flags to the flags array.
 		flags = flags.concat(parts);
-	} // Else there only exists an editor in the string
+	} // Else there only exists an editor in the string.
 
 	// Add other needed flags to make this work...
 	// Code lifted and modified from here:
 	// [https://github.com/sindresorhus/open-editor]
 
-	// Get the file parts
+	// Get the file parts.
 	var file = options.file;
 	var name = file.name;
 	var line = file.line || 1;
 	var column = file.column || 1;
 
 	// Visual Studio Code needs a flag to open file at line number/column.
+	// [https://code.visualstudio.com/docs/editor/command-line#_core-cli-options]
 	if (-~["code"].indexOf(editor)) {
 		flags.push("--goto");
 	}
@@ -336,18 +343,22 @@ function get_editor(options) {
 	// Add needed flags depending on the editor being used.
 	if (-~["atom", "code"].indexOf(editor) || /^subl/.test(editor)) {
 		// Open in a new window and wait for the file to close.
+		// Format: editor --FLAGS... <FILE>[:LINE][:COLUMN]
 		flags.push("--new-window", "--wait", `${name}:${line}:${column}`);
 	} else if (editor === "gedit") {
-		// gedit --new-window --wait ./configs/bundles.json +135:1
+		// Format: editor --FLAGS... <FILE> +[LINE][:COLUMN]
 		flags.push("--new-window", "--wait", name, `+${line}:${column}`);
 	} else if (-~["webstorm", "intellij"].indexOf(editor)) {
+		// Format: editor <FILE>[:LINE]
 		flags.push(`${name}:${line}`);
 	} else if (editor === "textmate") {
+		// Format: editor --line [LINE][:COLUMN] <FILE>
 		flags.push("--line", `${line}:${column}`, name);
 	} else if (-~["vim", "neovim"].indexOf(editor)) {
+		// Format: editor +call cursor([LINE], [COLUMN]) <FILE>
 		flags.push(`+call cursor(${line}, ${column})`, name);
 	} else {
-		// Default to pushing the file only
+		// If the editor is none of the above only pass in the file name.
 		flags.push(name);
 	}
 
@@ -373,30 +384,34 @@ function get_config_file(name) {
 // -----------------------------------------------------------------------------
 
 /**
- * When gulp is closed, either on error, crash, or intentionally, do
+ * When Gulp is closed, either on error, crash, or intentionally, do
  *     a quick cleanup.
  */
 var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
+	// Is alphabetize really needed for an internal file?
 	var alphabetize = require("alphabetize-object-keys");
 
-	// only perform this cleanup when the Gulp instance is closed.
-	// when any other task is run the cleanup should not be done.
-	// [https://goo.gl/rJNKNZ]
+	// The purpose of this cleanup is to cleanup the internal settings
+	// file. This code will run when the current Gulp instance is closed
+	// for whatever reason. When the process ID matches that of the stored
+	// PID then the file will get cleared. Non-matching PIDs will not
+	// cause any cleanup, as they should not.
+
+	// Termination signal explanation: [https://goo.gl/rJNKNZ]
 
 	// Re-read the file to get the most current value.
 	$internal = json.read($paths.config_internal);
 	INT_PROCESS = get($internal.data, "process", "");
 	INT_PID = get(INT_PROCESS, "pid", "");
 
-	// If the process is closed and it matches the recorded pid it is
+	// If the process is closed and it matches the recorded PID it is
 	// the original process so close it and clear the internal file.
 	if (INT_PID && INT_PID === process.pid) {
 		// Don't call cleanup handler again.
 		cleanup.uninstall();
 
-		// If the process closed due to an error give an error message
-		// and notification.
+		// When closed due to an error give an error message & notification.
 		if (exit_code) {
 			var message = `Error caused instance ${chalk.green(
 				process.pid
@@ -404,23 +419,24 @@ cleanup(function(exit_code, signal) {
 			notify(message, true);
 			print.gulp.error(message);
 		} else {
+			// Else simply show that the process was successfully stopped.
 			print.gulp.success(
 				`Gulp instance ${chalk.green(process.pid)} stopped.`
 			);
 		}
 
-		// Gulp instance exists so cleanup clear gulp internal
-		// configuration keys.
+		// Clear stored internal process values.
 		$internal.set("process", null);
 		$internal.data = alphabetize($internal.data);
 		$internal.writeSync(null, JINDENT);
 
-		// cleanup vars, process
+		// Cleanup other variables.
 		branch_name = undefined;
 		if (bs) {
 			bs.exit();
 		}
 
+		// Finally kill the process.
 		process.kill(INT_PID, signal);
 
 		return false;
@@ -428,23 +444,23 @@ cleanup(function(exit_code, signal) {
 });
 
 /**
- * Update the status of gulp to active.
+ * Store the current process information (internal config. file).
  *
  * Notes
  *
- * • This will write the current gulp
- *     process id to the internal gulp configuration file. this is done
- *     to prevent another Gulp instance from being opened.
+ * • This will write current process information to an internal gulp
+ *     configuration file. This is done to prevent multiple Gulp
+ *     instances from being spawned. Only one can be made at a time.
  *
  * @internal - Used with the default task.
  */
 gulp.task("init:save-pid", function(done) {
-	// Store process information.
+	// Set the process information.
 	$internal.set("process.pid", process.pid);
 	$internal.set("process.title", process.title);
 	$internal.set("process.argv", process.argv);
 
-	// Save changes to file.
+	// Store and save changes to file.
 	$internal.write(
 		function() {
 			done();
@@ -455,16 +471,16 @@ gulp.task("init:save-pid", function(done) {
 });
 
 /**
- * Watch for git branch changes.
+ * Watch for Git branch changes.
  *
  * Notes
  *
- * • Branch name checks are done to check
- *     whether the branch was changed after the gulp command was used.
- *     This is done as when switching branches files and file structure
- *     might be different. this can cause some problems with the watch
- *     tasks and could perform gulp tasks when not necessarily wanted.
- *     To resume gulp simply restart with the gulp command.
+ * • Branch name checks are done to check whether the branch was changed
+ *     after the Gulp instance was made. When switching branches files
+ *     and file structure might be different. This can cause problems
+ *     like making performing unnecessary tasks calls. Therefore, after
+ *     making a branch change simply restart Gulp. This is something that
+ *     needs to be made seamless.
  *
  * @internal - Used with the default task.
  */
@@ -472,17 +488,21 @@ gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
 	git.isGit($paths.dirname, function(exists) {
-		// if no .git exists simply ignore and return done
+		// If no .git/ exists simply ignore and return done.
 		if (!exists) {
 			return done();
 		}
+
+		// Else it does exist so continue.
 		git.check($paths.dirname, function(err, result) {
 			if (err) {
 				throw err;
 			}
-			// record branch name
+
+			// Record branch name.
 			branch_name = result.branch;
-			// set the gulp watcher as .git exists
+
+			// Create a Gulp watcher as .git/ exists.
 			gulp.watch(
 				[$paths.githead],
 				{
@@ -490,13 +510,19 @@ gulp.task("init:watch-git-branch", function(done) {
 					dot: true
 				},
 				function() {
+					// Get the branch name.
 					var brn_current = git.checkSync($paths.dirname).branch;
+
+					// Print the branch name being watched.
 					if (branch_name) {
 						print.gulp.info(
 							"Gulp is monitoring branch:",
 							chalk.magenta(branch_name)
 						);
 					}
+
+					// When the branch names do not match a switch was made.
+					// Print some messages and exit the process.
 					if (brn_current !== branch_name) {
 						// message + exit
 						print.gulp.warn(
@@ -513,6 +539,7 @@ gulp.task("init:watch-git-branch", function(done) {
 					}
 				}
 			);
+
 			done();
 		});
 	});
@@ -524,22 +551,24 @@ gulp.task("init:watch-git-branch", function(done) {
  * @internal - Used with the default task.
  */
 gulp.task("init:build", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
-	// get the gulp build tasks
+	// Get the gulp build tasks.
 	var tasks = bundle_gulp.tasks;
-	// add callback to the sequence
+
+	// Add callback to the sequence.
 	tasks.push(function() {
 		notify("Build complete");
 		done();
 	});
-	// apply the tasks and callback to sequence
+
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });
 
 /**
- * Variables are declared outside of tasks to be able to use it in
+ * Variables are declared outside of tasks to be able to use them in
  *     multiple tasks. The variables are populated in the
  *     default:active-pid-check task and used in the default task.
  */
@@ -552,64 +581,67 @@ var __process_stopped;
  * @internal - Used with the default task.
  */
 gulp.task("default:active-pid-check", function(done) {
-	var args = yargs.argv; // Get cli parameters.
+	var _args = yargs.argv; // Get cli parameters.
 
-	if (args.s || args.stop) {
-		// end the running Gulp process
-
+	// When the --stop flag is provided the Gulp instance must be stopped.
+	if (_args.stop) {
+		// Set the task variable to true.
 		__process_stopped = true;
 
 		if (INT_PID) {
-			// kill the open process
+			// Kill the Gulp instance.
 			print.gulp.success(
 				`Gulp instance ${chalk.green(INT_PID)} stopped.`
 			);
 			process.kill(INT_PID);
 		} else {
-			// no open process exists
+			// No open process exists so simply print out a message.
 			print.gulp.warn("No Gulp process exists.");
 		}
 
 		return done();
 	}
 
-	// If a pid is stored present it means a Gulp instance has
-	// already started or the file was not cleared properly. This task
-	// will help determine if an active gulp process with the stored
-	// pid exists.
+	// If a PID is stored it means a Gulp instance has already started
+	// or the file was not cleared properly. This task will help determine
+	// which case of the two it is.
 
 	var find = require("find-process");
 
-	// If no stored pid simply continue. No stored pid means there is
-	// no active running gulp instance so continue the task normally.
+	// If no stored PID simply continue. No stored PID means there is
+	// no active running gulp instance so continue the task normally
+	// to create the Gulp instance.
 	if (!INT_PID) {
 		return done();
 	} else {
-		// Else if a pid exists determine if its active and a gulp
-		// process.
+		// Else if a PID exists determine if its active and a Gulp process.
 
-		// Get the process information using the stored pid.
+		// Get the process information using the stored PID.
 		find("pid", INT_PID).then(
 			function(processes) {
 				// This module will return an array containing the found
 				// process in objects. Because we are supplying it the
-				// pid the array will only return 1 object.
+				// PID the array will only return 1 object if the process
+				// exists.
 
 				// Get the process.
 				var p = processes[0];
 
-				// If no process exists then the process with the stored pid
-				// does not exist and the we can proceed to the next task.
+				// If no process exists then the process with the stored PID
+				// does not exist and so we can proceed to the next task to
+				// create a new instance.
 				if (!p) {
 					return done();
 				}
 
-				// The following have to match to make sure the process
-				// is legit. If they match then the process exists. This
-				// will prevent making other processes.
-				// To-Do: Possible make this check better in the future.
+				// When a process does exist then the following have to match
+				// to make sure the process is legit. In other words if they
+				// match then the process exists. An existing process will
+				// prevent making other processes.
+				// To-Do: Make this check better in the future.
 				if (p.cmd === INT_TITLE && p.name.toLowerCase() === "gulp") {
-					// A process exists.
+					// A process exists so store the process information
+					// to access it in the following task.
 					__process_exists = p;
 				}
 
@@ -629,8 +661,8 @@ gulp.task("default:active-pid-check", function(done) {
  *
  * Notes
  *
- * • This is the default task that will builds project files, watches
- *   files, run browser-sync, etc.
+ * • This is the default task that will build project files, watch files,
+ *     run browser-sync, etc.
  * • Only one instance can be run at a time.
  *
  * Flags
@@ -644,18 +676,18 @@ gulp.task("default:active-pid-check", function(done) {
  *     Run Gulp.
  *
  * $ gulp --stop
- *     Stops active Gulp process, if running.
+ *     Stops the active Gulp process, if running.
  */
 gulp.task("default", ["default:active-pid-check"], function(done) {
 	// Check the default:active-pid-check variables before the actual
 	// task code runs.
 
-	// When the --stop flag is provided only do not let the task run.
+	// When the --stop flag is provided do not let the task run.
 	if (__process_stopped) {
 		return done();
 	}
 
-	// Return if a process exists.
+	// As only one Gulp instance is allowed return if a process exists.
 	if (__process_exists) {
 		print.gulp.warn(
 			`Gulp process ${chalk.green(__process_exists.pid)}`,
@@ -672,6 +704,7 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 
 	var find_free_port = require("find-free-port");
 
+	// Find free ports to open browser-sync on.
 	return find_free_port(
 		$configs.findfreeport.range.start,
 		$configs.findfreeport.range.end,
@@ -689,11 +722,10 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 			// Save ports.
 			$internal.write(
 				function() {
-					// store ports on the browser-sync object itself
+					// Store ports on the browser-sync object itself.
 					bs.__ports = [p1, p2]; // [app, ui]
 
-					// After getting the free ports, finally run the
-					// build task.
+					// After getting the free ports run the build task.
 					return sequence(
 						"init:save-pid",
 						"init:watch-git-branch",
@@ -709,10 +741,10 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 									throw err;
 								}
 
-								// highlight data string
+								// Highlight data string.
 								print(cli_highlight(data));
 
-								// Finally, watch all files for changes.
+								// Finally, watch files for changes.
 								return sequence("watch", function() {
 									done();
 								});
@@ -754,7 +786,8 @@ gulp.task("dist:favicon", function(done) {
 			gulp.src(bundle_dist.source.files.favicon, {
 				dot: true,
 				cwd: $paths.basedir,
-				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
+				// To keep the sub-folders define the base in the options.
+				// [https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551]
 				base: $paths.dot
 			}),
 			$.debug(),
@@ -793,8 +826,9 @@ gulp.task("dist:css", function(done) {
  * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:img", function(done) {
-	// need to copy hidden files/folders?
+	// Copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
+
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.img, {
@@ -874,7 +908,7 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
- * Build the dist/ folder. (only for webapp projects).
+ * Build the dist/ folder (webapp projects only).
  *
  * Usage
  *
@@ -882,9 +916,10 @@ gulp.task("dist:root", function(done) {
  *     Create dist/ folder.
  */
 gulp.task("dist", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
+	// If the apptype is not a webapp then stop task.
 	if (INt_APPTYPE !== "webapp") {
 		print.gulp.warn(
 			"This helper task is only available for webapp projects."
@@ -892,10 +927,10 @@ gulp.task("dist", function(done) {
 		return done();
 	}
 
-	// get the gulp build tasks
+	// Get the gulp build tasks.
 	var tasks = bundle_dist.tasks;
 
-	// add callback to the sequence
+	// Add callback to the sequence.
 	tasks.push(function() {
 		var message = "Distribution folder complete.";
 		notify(message);
@@ -903,7 +938,7 @@ gulp.task("dist", function(done) {
 		done();
 	});
 
-	// apply the tasks and callback to sequence
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });
 
@@ -935,7 +970,7 @@ gulp.task("lib:js", function(done) {
 				nocase: true,
 				cwd: $paths.js_source
 			}),
-			// filter out all but test files (^test*/i)
+			// Filter out all but test files (^test*/i).
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
 			$.concat(bundle_js.source.names.libs.main),
@@ -960,9 +995,10 @@ gulp.task("lib:js", function(done) {
  *     Create lib/ folder.
  */
 gulp.task("lib", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
+	// If the apptype is not a library then stop task.
 	if (INT_APPTYPE !== "library") {
 		print.gulp.warn(
 			"This helper task is only available for library projects."
@@ -970,10 +1006,10 @@ gulp.task("lib", function(done) {
 		return done();
 	}
 
-	// get the gulp build tasks
+	// Get the gulp build tasks.
 	var tasks = bundle_lib.tasks;
 
-	// add callback to the sequence
+	// Add callback to the sequence.
 	tasks.push(function() {
 		var message = "Library folder complete.";
 		notify(message);
@@ -981,7 +1017,7 @@ gulp.task("lib", function(done) {
 		done();
 	});
 
-	// apply the tasks and callback to sequence
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });
 
@@ -990,11 +1026,11 @@ gulp.task("lib", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Watch for files changes.
+ * Watch for file changes.
  */
 gulp.task("watch", function(done) {
-	// add auto tab closing capability to browser-sync. this will
-	// auto close the used bs tabs when gulp closes.
+	// Add auto tab closing capability to browser-sync. This will
+	// auto close the created browser-sync tabs when gulp closes.
 	bs.use({
 		plugin() {},
 		hooks: {
@@ -1002,7 +1038,7 @@ gulp.task("watch", function(done) {
 		}
 	});
 
-	// start browser-sync
+	// Start browser-sync.
 	bs.init(
 		{
 			browser: browser,
@@ -1010,7 +1046,7 @@ gulp.task("watch", function(done) {
 				appdir: APPDIR,
 				filepath: INDEX,
 				https: HTTPS
-			}), // "markdown/preview/README.html"
+			}),
 			port: bs.__ports[0],
 			ui: {
 				port: bs.__ports[1]
@@ -1019,34 +1055,34 @@ gulp.task("watch", function(done) {
 			open: true
 		},
 		function() {
-			// gulp watcher paths
+			// Gulp watcher paths.
 			var watch_paths = bundle_gulp.watch;
 
-			// Watch for any changes to HTML files.
+			// Watch for any changes to HTML source files.
 			$.watcher.create("watcher:html", watch_paths.html, ["html"]);
 
-			// Watch for any changes to CSS Source files.
+			// Watch for any changes to CSS source files.
 			$.watcher.create("watcher:css:app", watch_paths.css.app, [
 				"css:app"
 			]);
 
-			// Watch for any changes to CSS Lib files.
+			// Watch for any changes to CSS vendor files.
 			$.watcher.create("watcher:css:vendor", watch_paths.css.vendor, [
 				"css:vendor"
 			]);
 
-			// watch for any changes to JS Source files
+			// Watch for any changes to JS source files.
 			$.watcher.create("watcher:js:app", watch_paths.js.app, ["js:app"]);
 
-			// watch for any changes to JS Lib files
+			// Watch for any changes to JS vendor files.
 			$.watcher.create("watcher:js:vendor", watch_paths.js.vendor, [
 				"js:vendor"
 			]);
 
-			// watch for any changes to IMG files
+			// Watch for any changes to IMG files.
 			$.watcher.create("watcher:img", watch_paths.img, ["img"]);
 
-			// watch for any changes to config files
+			// Watch for any changes to config files.
 			$.watcher.create("watcher:settings", watch_paths.config, [
 				"settings"
 			]);
@@ -1159,7 +1195,7 @@ gulp.task("css:vendor", function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	// NOTE: absolute vendor library file paths should be used.
+	// Note: Absolute vendor library file paths should be used.
 	// The paths should be supplied in ./configs/bundles.json
 	// within the css.vendor.files array.
 
@@ -1237,12 +1273,12 @@ gulp.task("js:app", function(done) {
  * @internal - Ran via the "js" task.
  */
 gulp.task("js:vendor", function(done) {
-	// NOTE: absolute vendor library file paths should be used.
-	// The paths should be supplied in ./configs/bundles.json
-	// within the js.vendor.files array.
-
 	// Pause the watcher to prevent infinite loops.
 	$.watcher.pause("watcher:js:vendor");
+
+	// Note: absolute vendor library file paths should be used.
+	// The paths should be supplied in ./configs/bundles.json
+	// within the js.vendor.files array.
 
 	pump(
 		[
@@ -1284,8 +1320,9 @@ gulp.task("img", function(done) {
 	// Pause the watcher to prevent infinite loops.
 	$.watcher.pause("watcher:img");
 
-	// need to copy hidden files/folders?
+	// Copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
+
 	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], function() {
 		// Un-pause and re-start the watcher.
 		$.watcher.start("watcher:img");
@@ -1304,23 +1341,25 @@ gulp.task("img", function(done) {
  * Usage
  *
  * $ gulp modernizr
- *     Build modernizr.js. (uses ./modernizr.config.json)
+ *     Build modernizr.js (uses ./modernizr.config.json).
  */
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
 	modernizr.build($configs.modernizr, function(build) {
+		// Build the modernizr file path.
 		var file_location =
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
-		// create missing folders
+
+		// Create any missing folders.
 		mkdirp($paths.vendor_modernizr, function(err) {
 			if (err) {
 				throw err;
 			}
-			// save the file to vendor
+
+			// Save the file to vendor.
 			fs.writeFile(file_location, build + EOL_ENDING, function() {
-				// the following gulp code is really only needed to log the
-				// file.
+				// The following is only needed to log the file.
 				pump(
 					[
 						gulp.src(file_location, {
@@ -1340,8 +1379,8 @@ gulp.task("modernizr", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Variable is declared outside of tasks to be able to use it in
- *     multiple tasks. The variable is populated in the tohtml:prepcss
+ * Variables are declared outside of tasks to be able to use them in
+ *     multiple tasks. The variables are populated in the tohtml:prepcss
  *     task and used in the tohtml task.
  */
 var __markdown_styles;
@@ -1353,12 +1392,12 @@ var __markdown_stopped;
  * @internal - Used to prepare the tohtml task.
  */
 gulp.task("tohtml:prepcss", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("file", {
 		type: "string"
 	}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var filename = _args.f || _args.file;
 
 	// Check that the file is a markdown file.
@@ -1376,7 +1415,7 @@ gulp.task("tohtml:prepcss", function(done) {
 		return done();
 	}
 
-	// run gulp process
+	// Run gulp process.
 	pump(
 		[
 			gulp.src(
@@ -1389,7 +1428,7 @@ gulp.task("tohtml:prepcss", function(done) {
 			$.concat($paths.markdown_concat_name),
 			$.modify({
 				fileModifier: function(file, contents) {
-					// store the contents in variable
+					// Store the contents in variable.
 					__markdown_styles = contents;
 					return contents;
 				}
@@ -1405,7 +1444,7 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * Notes
  *
- * • Files will get placed in ./markdown/previews/
+ * • Files will get placed in ./markdown/previews/.
  *
  * Flags
  *
@@ -1433,10 +1472,10 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Actual task starts here.
 
 	var prism = require("prismjs");
-	// extend the default prismjs languages.
+	// Extend the default prismjs languages.
 	require("prism-languages");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("file", {
 			alias: "f",
@@ -1448,25 +1487,26 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 			type: "boolean"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var filename = _args.f || _args.file;
 	var open = _args.o || _args.open;
 
-	// get file markdown file contents
-	// convert contents into HTML via marked
-	// inject HTML fragment into HTML markdown template
-	// save file in markdown/previews/
+	// Task logic:
+	// - Get file markdown file contents.
+	// - Convert contents into HTML via marked.
+	// - Inject HTML fragment into HTML markdown template.
+	// - Save file in markdown/previews/.
 
-	// [https://github.com/krasimir/techy/issues/30]
-	// make marked use prism for syntax highlighting
+	// Make marked use prism for syntax highlighting.
+	// [https://github.com/krasimir/techy/issues/30#issuecomment-238850743]
 	$.marked.marked.setOptions({
 		highlight: function(code, language) {
-			// default to markup when language is undefined
+			// Default to markup when language is undefined or get an error.
 			return prism.highlight(code, prism.languages[language || "markup"]);
 		}
 	});
 
-	// run gulp process
+	// Run gulp process.
 	pump(
 		[
 			gulp.src(filename),
@@ -1474,12 +1514,12 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 			$.marked(),
 			$.modify({
 				fileModifier: function(file, contents) {
-					// path offsets
+					// Path offsets.
 					var fpath = "../../favicon/";
-					// get file name
+					// Get file name.
 					var filename = path.basename(file.path);
 
-					// return filled in template
+					// Return filled in template.
 					return `
 <!doctype html>
 <html lang="en">
@@ -1508,15 +1548,23 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 			}),
 			$.beautify(JSBEAUTIFY),
 			gulp.dest($paths.markdown_preview),
-			// open the file when the open flag is provided
+			// Open the file when the open flag is provided.
 			$.gulpif(
 				open,
 				$.modify({
 					fileModifier: function(file, contents) {
-						// get the converted HTML file name
+						// Note: fileModifier is being used here in a 'hacky'
+						// way. fileModifier is intended to modify the file's
+						// contents. However, the original file contents are
+						// being returned. fileModifier in this case is being
+						// used as a callback function to run the open task
+						// as a shell command.
+
+						// Get the converted HTML file name.
 						var filename_rel = path.relative($paths.cwd, file.path);
-						// run the open command as a shell command to not
-						// re-write the open code here as well.
+
+						// Run the open task as a shell command to not
+						// re-write the task logic.
 						cmd.get(
 							`${GULPCLI} open --file ${filename_rel}`,
 							function(err, data) {
@@ -1546,7 +1594,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *
  * Notes
  *
- * • New tabs should be opened via the terminal using `open`. Doing
+ * • Tabs should be opened using the terminal via this task. Doing
  *   so will ensure the generated tab will auto-close when Gulp is
  *   closed. Opening tabs by typing/copy-pasting the project URL
  *   into the browser address bar will not auto-close the tab(s)
@@ -1610,10 +1658,10 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *     section of the path will be used to try and open in a file manager.
  */
 gulp.task("open", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("directory", {
 			alias: "d",
@@ -1624,29 +1672,27 @@ gulp.task("open", function(done) {
 			type: "string"
 		}).argv;
 
-	// get the command line arguments from yargs
-	// Open the root when nothing provided.
+	// Get the command line arguments from yargs.
 	var directory = _args.d || _args.directory;
 	var editor = _args.e || _args.editor;
 
-	// If the directory flag is provided open the directory in a file
-	// manager.
+	// If the directory flag is provided open directory in a file manager.
 	if (directory) {
 		// Parse the directory.
 		var parts = path.parse(directory);
+
 		if (!parts.ext) {
-			// No file was passed in.
-			// Reset the directory
+			// No file was passed in so reset the directory.
 			directory = parts.dir + "/" + parts.base + "/";
 		} else {
-			// If a file is passed only get the dir part.
+			// If a file is passed only get the directory part.
 			directory = parts.dir + "/";
 		}
 
 		// Make the path absolute and relative to the main project root.
 		directory = path.join("./", directory);
 
-		// Check that the directory exists
+		// Check that the directory exists.
 		if (!de.sync(directory)) {
 			print.gulp.warn(
 				"The directory",
@@ -1661,6 +1707,9 @@ gulp.task("open", function(done) {
 			done();
 		});
 	} else if (editor) {
+		// If the editor flag is provided open the given file in the user's
+		// default editor.
+
 		var spawn = require("child_process").spawn;
 
 		// Check that the file exists.
@@ -1673,7 +1722,7 @@ gulp.task("open", function(done) {
 			return done();
 		}
 
-		// run yargs
+		// Run yargs.
 		var _args = yargs
 			.option("wait", {
 				type: "boolean"
@@ -1688,14 +1737,13 @@ gulp.task("open", function(done) {
 				type: "string"
 			}).argv;
 
-		// Get the command line arguments from yargs
+		// Get the command line arguments from yargs.
 		var wait = _args.wait;
 		var line = _args.line;
 		var column = _args.column;
 		var use_editor = _args.use;
 
-		// Get the user's editor and any flags needed to open the
-		// file via the terminal.
+		// Get user's editor/flags needed to open file via the terminal.
 		var editor = get_editor({
 			file: {
 				name: editor,
@@ -1705,13 +1753,13 @@ gulp.task("open", function(done) {
 			editor: use_editor
 		});
 
-		// Create the child process to open the editor
+		// Create the child process to open the editor.
 		var child_process = spawn(editor.command, editor.flags, {
 			stdio: "inherit",
 			detached: true
 		});
 
-		// If an error occurs throw it
+		// If an error occurs throw it.
 		child_process.on("error", function(err) {
 			if (err) {
 				throw err;
@@ -1726,15 +1774,15 @@ gulp.task("open", function(done) {
 				done();
 			});
 		} else {
-			// Close the process immediately.
+			// Else close the process immediately.
 			child_process.unref();
 			return done();
 		}
 	} else {
-		// Else open the file in a browser. What this task was originally
-		// set out to do.
+		// Else open the file in a browser. Which is what this task was
+		// originally set out to do.
 
-		// run yargs
+		// Run yargs.
 		var _args = yargs
 			.option("file", {
 				alias: "f",
@@ -1746,10 +1794,11 @@ gulp.task("open", function(done) {
 				type: "number"
 			}).argv;
 
-		// get the command line arguments from yargs
+		// Get the command line arguments from yargs.
 		var file = _args.f || _args.file;
-		// check for explicitly provided port...if none is provided
-		// check the internally fetched free ports and get the local port
+
+		// Check for explicitly provided port. If none is provided check
+		// the internally fetched free ports and get the local port.
 		var port =
 			_args.p ||
 			_args.port ||
@@ -1759,7 +1808,7 @@ gulp.task("open", function(done) {
 				}
 			).local;
 
-		// run the open function
+		// Open the file in the browser.
 		return open_file_in_browser(file, port, done, task);
 	}
 });
@@ -1794,13 +1843,13 @@ gulp.task("status", function(done) {
  *     Print uses ports.
  */
 gulp.task("ports", function(done) {
-	// if file is empty
+	// No ports are in use so return and print message.
 	if (!INT_PORTS) {
 		print.gulp.info("No ports are in use.");
 		return done();
 	}
 
-	// ports exist...
+	// Ports exist.
 	print.gulp.info(
 		`Local: ${chalk.green(INT_PORTS.local)}, UI: ${chalk.green(
 			INT_PORTS.ui
@@ -1835,9 +1884,7 @@ var __modified_git_files;
  * @internal - Used to prepare the pretty task.
  */
 gulp.task("pretty:gitfiles", function(done) {
-	// get the changed files according to git if the quick/staged flags
-
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("quick", {
 			alias: "q",
@@ -1847,29 +1894,29 @@ gulp.task("pretty:gitfiles", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var quick = _args.quick;
 	var staged = _args.staged;
 
-	// the flags must be present to get the modified files...else
-	// skip to the main pretty task
+	// The flags must be present to get the modified files or else
+	// skip to the main pretty task.
 	if (!(quick || staged)) return done();
 
-	// reset the variable when the staged flag is provided
+	// Reset the variable when the staged flag is provided.
 	staged = staged ? "--cached" : "";
 
-	// diff filter [https://stackoverflow.com/a/6879568]
-	// example plugin [https://github.com/azz/pretty-quick]
+	// Diff filter: [https://stackoverflow.com/a/6879568]
+	// Example plugin: [https://github.com/azz/pretty-quick]
 
-	// the command to run
+	// The command to run.
 	var command = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
 
-	// get the list of modified files
+	// Get the list of modified files.
 	cmd.get(command, function(err, data, stderr) {
-		// clean the data
+		// Clean the data.
 		data = data.trim();
 
-		// set the variable. if the data is empty there are no
+		// Set the variable. If the data is empty there are no
 		// files to prettify so return an empty array.
 		__modified_git_files = data ? data.split("\n") : [];
 
@@ -1948,7 +1995,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("type", {
 			alias: "t",
@@ -1974,7 +2021,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			type: "string"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var type = _args.t || _args.type;
 	var patterns = _args.p || _args.pattern;
 	var ignores = _args.i || _args.ignore;
@@ -1982,10 +2029,10 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var empty = _args.e || _args.empty;
 	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
-	// default files to clean:
-	// HTML, CSS, JS, and JSON files. exclude files containing
-	// a ".min." as this is the convention used for minified files.
-	// the node_modules/, .git/, and all vendor/ files are also excluded.
+	// Default globs: look for HTML, CSS, JS, and JSON files. They also
+	// exclude files containing a ".min." as this is the convention used
+	// for minified files. The node_modules/, .git/, and all vendor/
+	// files are also excluded.
 	var files = [
 		$paths.files_common,
 		$paths.not_min,
@@ -1995,73 +2042,72 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 		$paths.not_ignore
 	];
 
-	// empty the files array?
+	// When the empty flag is provided the files array will be emptied.
 	if (empty) {
 		files.length = 0;
 	}
 
-	// merge the changed files to the patterns array...this means that
-	// the --quick/--staged flags are set.
+	// Merge the changed files to the patterns array. This means that the
+	// --quick/--staged flags are set.
 	if (__modified_git_files) {
-		// Important: when the __modified_git_files variable is an empty
-		// array this means that there are no Git modified/staged files.
-		// So simply remove all the globs from the files array to prevent
+		// Note: When the __modified_git_files variable is an empty array
+		// this means that there are no Git modified/staged files. So
+		// simply remove all the globs from the files array to prevent
 		// anything from being prettified.
 		if (!__modified_git_files.length) {
 			files.length = 0;
 		}
 
-		// add the changed files to the patterns array
+		// Add the changed files to the patterns array.
 		patterns = (patterns || []).concat(__modified_git_files);
 	}
 
-	// reset the files array when extension types are provided
+	// Reset the files array when extension types are provided.
 	if (type) {
-		// remove all spaces from provided types string
+		// Remove all spaces from provided types string.
 		type = type.replace(/\s+?/g, "");
 
-		// ...when using globs and there is only 1 file
-		// type in .{js} for example, it will not work.
-		// if only 1 file type is provided the {} must
-		// not be present. they only seem to work when
-		// multiple options are used like .{js,css,html}.
-		// this is normalized below.
+		// Note: When using globs and there is only 1 file type like in
+		// ".{js}", for example, it will not work. As this won't work the
+		// "{}" must not be present. They only seem to work when multiple
+		// options are used like .{js,css,html}. This is normalized below.
 		if (-~type.indexOf(",")) {
 			type = "{" + type + "}";
 		}
-		// finally, reset the files array
+
+		// Finally, reset the files array.
 		files[0] = `**/*.${type}`;
 	}
 
-	// add user provided glob patterns
+	// Add user provided glob patterns.
 	if (patterns) {
-		// only do changes when the type flag is not provided
-		// therefore, in other words, respect the type flag.
+		// Only do changes when the type flag is not provided. Therefore,
+		// in other words, respect the type flag.
 		if (!type) {
 			files.shift();
 		}
 
-		// add the globs
+		// Add the globs.
 		patterns.forEach(function(glob) {
 			files.push(glob);
 		});
 	}
 
-	// add user provided exclude/negative glob patterns. this is
-	// useful when needing to exclude certain files/directories.
+	// Add user provided exclude/negative glob patterns. This is useful
+	// when needing to exclude certain files/directories.
 	if (ignores) {
-		// add the globs
+		// Add the globs.
 		ignores.forEach(function(glob) {
 			files.push(bangify(glob));
 		});
 	}
 
-	// show the used glob patterns when the flag is provided
+	// Show the used glob patterns when the flag is provided.
 	if (test) {
 		print.ln();
 		print(chalk.underline("Patterns"));
 
-		// log the globs
+		// Log the globs.
 		files.forEach(function(glob) {
 			print(`  ${glob}`);
 		});
@@ -2077,18 +2123,20 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 				dot: true,
 				base: $paths.dot
 			}),
-			// Filter out all non common files. This is more so a preventive
-			// measure as when using the --quick flag any modified files will
-			// get passed in. This makes sure to remove all image, markdown
-			// files for example.
+			// Note: Filter out all non common files. This is more so a
+			// preventive measure as when using the --quick flag any modified
+			// files will get passed in. This makes sure to remove all image,
+			// markdown files for example.
 			$.filter([$paths.files_common]),
 			$.sort(opts_sort),
+			// Prettify HTML files.
 			$.gulpif(extension.ishtml, $.beautify(JSBEAUTIFY)),
+			// Sort JSON files.
 			$.gulpif(
 				function(file) {
-					// file must be a JSON file and cannot contain the
-					// comment (.cm.) sub-extension to be sortable as
-					// comments are not allowed in JSON files.
+					// Note: File must be a JSON file and cannot contain the
+					// comment (.cm.) sub-extension to be sortable as comments
+					// are not allowed in JSON files.
 					return extension(file, ["json"]) &&
 						!-~file.path.indexOf(".cm.")
 						? true
@@ -2098,10 +2146,12 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 					space: JINDENT
 				})
 			),
+			// Prettify JS/JSON files.
 			$.gulpif(function(file) {
-				// exclude HTML and CSS files
+				// Exclude HTML and CSS files.
 				return extension(file, ["html", "css"]) ? false : true;
 			}, $.prettier(PRETTIER)),
+			// Prettify CSS files.
 			$.gulpif(
 				extension.iscss,
 				$.postcss([
@@ -2174,15 +2224,15 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 gulp.task("module", function(done) {
 	var linenumber = require("linenumber");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("remove", {
 		type: "string"
 	}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var remove = _args.remove;
 
-	// Get the config file.
+	// Get the configuration file.
 	var config_file = get_config_file($paths.config_$bundles);
 
 	// Remove the module when the remove flag is provided.
@@ -2190,7 +2240,7 @@ gulp.task("module", function(done) {
 		// Check for a file extension.
 		var ext = extension({ path: remove });
 
-		// If no extension make sure to add the extension
+		// If no extension make sure to add the extension.
 		if (!ext) {
 			remove += ".js";
 		}
@@ -2213,8 +2263,8 @@ gulp.task("module", function(done) {
 		pump(
 			[gulp.src(file, opts_remove), $.debug.clean(), $.clean()],
 			function() {
-				// Get the line number where the config array exists.
-				// Looking for the js.source.files.
+				// Get the line number where the configuration array exists.
+				// Looking for the js.source.files array.
 				var line = (linenumber(
 					config_file,
 					/\s"js":\s+\{\n\s+"source":\s+\{\n\s+"files":\s+\[/gim
@@ -2236,7 +2286,7 @@ gulp.task("module", function(done) {
 			}
 		);
 	} else {
-		// run yargs
+		// Run yargs.
 		var _args = yargs
 			.option("filename", {
 				type: "string",
@@ -2259,7 +2309,7 @@ gulp.task("module", function(done) {
 				type: "boolean"
 			}).argv;
 
-		// get the command line arguments from yargs
+		// Get the command line arguments from yargs.
 		var filename = _args.filename;
 		var modname = _args.modname;
 		var description = _args.description;
@@ -2270,7 +2320,7 @@ gulp.task("module", function(done) {
 		// Get the basename from the filename.
 		var ext = path.extname(filename);
 
-		// When no extension is found reset it and the file name
+		// When no extension is found reset it and the file name.
 		if (!ext) {
 			ext = ".js";
 			filename = filename + ext;
@@ -2317,7 +2367,7 @@ gulp.task("module", function(done) {
 			],
 			function() {
 				// Get the line number where the config array exists.
-				// Looking for the js.source.files.
+				// Looking for the js.source.files array.
 				var line = (linenumber(
 					config_file,
 					/\s"js":\s+\{\n\s+"source":\s+\{\n\s+"files":\s+\[/gim
@@ -2362,19 +2412,19 @@ gulp.task("module", function(done) {
  *     Enforce "\n" line endings.
  */
 gulp.task("eol", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("line-ending", {
 		alias: "l",
 		type: "string"
 	}).argv;
-	// get the command line arguments from yargs
+
+	// Get the command line arguments from yargs.
 	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
-	// check:
-	// HTML, CSS, JS, JSON, TXT, TEXT, and MD files.
+	// Check: HTML, CSS, JS, JSON, TXT, TEXT, and MD files. They also
 	// exclude files containing a ".min." as this is the convention used
-	// for minified files. the node_modules/, .git/, img/ files are also
-	// excluded.
+	// for minified files. The node_modules/, .git/, and all vendor/
+	// files are also excluded.
 	var files = [
 		$paths.files_code,
 		$paths.not_min,
@@ -2383,7 +2433,7 @@ gulp.task("eol", function(done) {
 		bangify(globall($paths.git))
 	];
 
-	// get needed files
+	// Get needed files.
 	pump(
 		[
 			gulp.src(files, {
@@ -2418,7 +2468,7 @@ gulp.task("eol", function(done) {
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
 
-	// get all files excluding the following: node_modules/, .git/, and img/.
+	// Get all files excluding: node_modules/, .git/, and img/.
 	var files = [
 		$paths.files_code,
 		bangify($paths.img_source),
@@ -2429,7 +2479,7 @@ gulp.task("stats", function(done) {
 	var file_count = 0;
 	var extensions = {};
 
-	// get needed files
+	// Get needed files.
 	pump(
 		[
 			gulp.src(files, {
@@ -2437,13 +2487,13 @@ gulp.task("stats", function(done) {
 				read: false
 			}),
 			$.fn(function(file) {
-				// get the extension type
+				// Get the extension type.
 				var ext = path
 					.extname(file.path)
 					.toLowerCase()
 					.slice(1);
 
-				// exclude any extension-less files
+				// Exclude any extension-less files.
 				if (!ext) {
 					return;
 				}
@@ -2453,33 +2503,34 @@ gulp.task("stats", function(done) {
 				file_count++;
 
 				if (ext_count === undefined) {
-					// does not exist, so start extension count
+					// Does not exist, so start extension count.
 					extensions[ext] = 1;
 				} else {
-					// already exists just increment the value
+					// Already exists just increment the value.
 					extensions[ext] = ++ext_count;
 				}
 			})
 		],
 		function() {
-			// instantiate
+			// Instantiate.
 			var table = new Table({
 				head: ["Extensions", `Count (${file_count})`, "% Of Project"],
 				style: { head: ["green"] }
 			});
 
-			// add data to table
+			// Add data to table.
 			for (var ext in extensions) {
 				if (extensions.hasOwnProperty(ext)) {
 					var count = +extensions[ext];
 					table.push([
-						extension.toUpperCase(),
+						ext.toUpperCase(),
 						count,
 						Math.round(count / file_count * 100)
 					]);
 				}
 			}
 
+			// Sort table descendingly.
 			table.sort(function(a, b) {
 				return b[2] - a[2];
 			});
@@ -2546,7 +2597,7 @@ gulp.task("stats", function(done) {
 gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");
 
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("type", {
 			alias: "t",
@@ -2572,7 +2623,7 @@ gulp.task("files", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var types = _args.t || _args.type;
 	var stypes = _args.s || _args.stype;
 	var whereis = _args.w || _args.whereis;
@@ -2581,67 +2632,67 @@ gulp.task("files", function(done) {
 	var sub_extensions = _args.subs;
 
 	var clean_types = function(text) {
-		// collapse multiple spaces + remove left/right padding
+		// Collapse multiple spaces + remove left/right padding.
 		text = text.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-		// turn to an array
+		// Turn to an array.
 		text = text.split(/\s+/);
 
 		return text;
 	};
 
-	// if types provided clean them
+	// If types provided clean them.
 	if (types) {
 		types = clean_types(types);
 	}
 
-	// if sub types provided clean them
+	// If sub types provided clean them.
 	if (stypes) {
 		stypes = clean_types(stypes);
 	}
 
-	// where files will be contained
+	// Where files will be contained.
 	var files = [];
 
-	// get all project files
+	// Get all project files.
 	dir.files($paths.dirname, function(err, paths) {
 		if (err) {
 			throw err;
 		}
 
-		// skip files from these locations: .git/, node_modules/
+		// Skip files from these locations: .git/, node_modules/.
 		loop1: for (var i = 0, l = paths.length; i < l; i++) {
-			// only get the relative path (relative to the root dir
-			// of the project). the absolute path is not needed.
+			// Only get the relative path (relative to the root directory
+			// of the project). The absolute path is not needed.
 			var filepath = path.relative($paths.cwd, paths[i]);
 
-			// globs to ignore
+			// Globs to ignore.
 			var ignores = [$paths.node_modules_name, $paths.git];
-			// ignore files containing the above globs
+			// Ignore files containing the above globs.
 			for (var j = 0, ll = ignores.length; j < ll; j++) {
 				var ignore = ignores[j];
 				if (-~filepath.indexOf(ignore)) {
 					continue loop1;
 				}
 			}
-			// add to files array
+			// Add to files array.
 			files.push(filepath);
 		}
 
-		// filter the files based on their file extensions
-		// when the type argument is provided
+		// Filter the files based on their file extensions when the type
+		// argument is provided.
 		if (types) {
 			files = files.filter(function(filepath) {
 				return ext({ path: filepath }, types);
 			});
 		}
 
-		// filter the files based on their sub extensions
-		// when the type argument is provided
+		// Filter the files based on their sub extensions when the type
+		// argument is provided.
 		if (stypes) {
 			files = files.filter(function(filepath) {
 				var subs_extensions = extension.subs({ path: filepath });
 
-				// check if path contains any of the passed in subs
+				// Check if path contains any of the passed in subs.
 				for (var i = 0, l = stypes.length; i < l; i++) {
 					var sub = stypes[i];
 					if (-~subs_extensions.indexOf(sub)) {
@@ -2649,28 +2700,28 @@ gulp.task("files", function(done) {
 					}
 				}
 
-				// else nothing matched so filter path out
+				// Else nothing matched so filter path out.
 				return false;
 			});
 		}
 
-		// list the used sub-extensions
+		// List the used sub-extensions.
 		if (sub_extensions) {
-			// store used sub-extensions
+			// Store used sub-extensions.
 			var subs_ = [];
 
 			print.ln();
 			print(chalk.underline("Sub-extensions"));
 
-			// loop over each path to find the sub-extensions
+			// Loop over each path to find the sub-extensions.
 			files.forEach(function(path_) {
-				// get the paths sub-extensions
+				// Get the paths sub-extensions.
 				var subs = extension.subs({ path: path_ });
 
-				// loop over the found sub-extensions and print them
+				// Loop over the found sub-extensions and print them.
 				if (subs.length) {
 					subs.forEach(function(sub) {
-						// if the sub does not exist store it and print
+						// If the sub does not exist store it and print.
 						if (!-~subs_.indexOf(sub)) {
 							print(`  ${sub}`);
 							subs_.push(sub);
@@ -2684,34 +2735,34 @@ gulp.task("files", function(done) {
 			return done();
 		}
 
-		// this lookup object is only used for highlight purposes and will
-		// only be populate when the whereis flag is provided. it is
-		// a work around the fuzzy module. it will store the relative
+		// Note: This lookup object is only used for highlight purposes
+		// and will only be populate when the --whereis flag is provided.
+		// It is a work around the fuzzy module. It will store the relative
 		// file path with its file path containing the highlight wrappers
 		// so it can be accessed in the debug modifier function.
-		// basically: { relative_file_path: file_path_with_wrappers}
+		// Basically: { relative_file_path: file_path_with_wrappers}
 		var lookup = whereis ? {} : false;
 
-		// if whereis parameter is provided run a search on files
+		// If whereis parameter is provided run a search on files.
 		if (whereis) {
-			// filtered files containing the whereis substring/term
+			// Filtered files containing the whereis substring/term
 			// will get added into this array.
 			var results = [];
 
-			// highlight wrappers: these will later be replaced and the
+			// Highlight wrappers: These will later be replaced and the
 			// wrapped text highlight and bolded.
 			var highlight_pre = "$<";
 			var highlight_post = ">";
 
-			// run a non fuzzy search. when fuzzy search is turned off
+			// Run a non fuzzy search. When fuzzy search is turned off
 			// we default back to an indexOf() search.
 			if (no_fuzzy) {
 				files.forEach(function(file) {
 					if (-~file.indexOf(whereis)) {
-						// add the file path to the array
+						// Add the file path to the array.
 						results.push(file);
 
-						// add the path to object
+						// Add the path to object.
 						lookup[file] = file.replace(
 							new RegExp(escape(whereis), "gi"),
 							function(match) {
@@ -2721,42 +2772,42 @@ gulp.task("files", function(done) {
 					}
 				});
 			} else {
-				// run a fuzzy search on the file paths
+				// Run a fuzzy search on the file paths.
 				var fuzzy_results = fuzzy.filter(whereis, files, {
 					pre: highlight_pre,
 					post: highlight_post
 				});
 
-				// turn into an array
+				// Turn into an array.
 				fuzzy_results.forEach(function(result) {
-					// cache the original file path
+					// Cache the original file path.
 					var og_filepath = result.original;
 
-					// add the file path to the array
+					// Add the file path to the array.
 					results.push(og_filepath);
 
-					// add the path containing the highlighting wrappers
+					// Add the path containing the highlighting wrappers
 					// to the object.
 					lookup[og_filepath] = result.string;
 				});
 			}
 
-			// reset var to the newly filtered files
+			// Reset var to the newly filtered files.
 			files = results;
 		}
 
-		// if the highlight flag is not provided simply run the debug
-		// with default options...else use the modifier option to
-		// highlight the path. this was not done through gulpif because
-		// gulpif was not playing nice with the debug plugin as the cli
+		// If the highlight flag is not provided simply run the debug
+		// with default options. Else use the modifier option to
+		// highlight the path. This was not done through gulpif because
+		// gulpif was not playing nice with the debug plugin as the CLI
 		// loader was messing up.
 		var options =
 			highlight && whereis
 				? {
-						// the modifier function will be used to highlight
+						// The modifier function will be used to highlight
 						// the search term in the file path.
 						modifier: function(data) {
-							// remove placeholders and apply highlight
+							// Remove placeholders and apply highlight.
 							var string = lookup[data.paths.relative].replace(
 								/\$<(.*?)\>/g,
 								function(match) {
@@ -2766,19 +2817,19 @@ gulp.task("files", function(done) {
 								}
 							);
 
-							// update the data object
+							// Update the data object.
 							data.file_path = string;
 							data.output = `=> ${string} ${data.size} ${
 								data.action
 							}`;
 
-							// return the updated data object
+							// Return the updated data object.
 							return data;
 						}
 					}
 				: {};
 
-		// log files
+		// Log files.
 		pump([gulp.src(files), $.sort(opts_sort), $.debug(options)], done);
 	});
 });
@@ -2826,7 +2877,7 @@ gulp.task("files", function(done) {
  *     Show all CSS/JS dependencies.
  */
 gulp.task("dependency", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("name", {
 			alias: "n",
@@ -2846,7 +2897,7 @@ gulp.task("dependency", function(done) {
 			["name", "type", "action"],
 			"Options: Vendor dependency information (all required when any is provided)"
 		)
-		// name, type, and action must all be provided when one is provided
+		// Name, type, and action must all be provided when one is provided.
 		.implies({
 			name: "type",
 			type: "action",
@@ -2856,41 +2907,41 @@ gulp.task("dependency", function(done) {
 			alias: "l",
 			type: "boolean"
 		}).argv;
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var name = _args.n || _args.name;
 	var type = _args.t || _args.type;
 	var action = _args.a || _args.action;
 	var list = _args.l || _args.list;
 
-	// get needed paths
+	// Get needed paths.
 	var dest = type === "js" ? $paths.js_vendor : $paths.css_vendor;
 	var delete_path = dest + name;
 	var module_path = $paths.node_modules + name;
 
-	// print used vendor dependencies if flag provided
+	// Print used vendor dependencies if flag provided.
 	if (list) {
-		// get the vendor dependencies
+		// Get the vendor dependencies.
 		var css_dependencies = bundle_css.vendor.files;
 		var js_dependencies = bundle_js.vendor.files;
 
 		print.ln();
 		print(chalk.underline("Dependencies"));
 
-		// printer function
+		// Printer function.
 		var printer = function(dependency) {
-			// get the name of the folder.
+			// Get the name of the folder.
 			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/);
-			// when folder name is not present leave the name empty.
+			// When folder name is not present leave the name empty.
 			name = name ? `(${name[2]})` : "";
 
 			print(`    ${chalk.magenta(dependency)} ${name}`);
 		};
 
-		// get the config path for the bundles file
+		// Get the config path for the bundles file.
 		var bundles_path = get_config_file($paths.config_$bundles);
 		var header = `${bundles_path} > $.vendor.files[...]`;
 
-		// print the dependencies
+		// Print the dependencies.
 		print(" ", chalk.green(header.replace("$", "css")));
 		css_dependencies.forEach(printer);
 		print(" ", chalk.green(header.replace("$", "js")));
@@ -2901,7 +2952,7 @@ gulp.task("dependency", function(done) {
 		return done();
 	}
 
-	// check that the module exists
+	// Check that the module exists.
 	if (action === "add" && !de.sync(module_path)) {
 		print.gulp.warn(
 			"The module",
@@ -2920,13 +2971,13 @@ gulp.task("dependency", function(done) {
 		);
 		return done();
 	}
-	// delete the old module folder
+	// Delete the old module folder.
 	del([delete_path]).then(function() {
 		var message =
 			`Dependency (${name}) ` +
 			(action === "add" ? "added" : "removed" + ".");
 		if (action === "add") {
-			// copy module to location
+			// Copy module to location.
 			pump(
 				[
 					gulp.src(name + $paths.delimiter + $paths.files_all, {
@@ -2935,8 +2986,8 @@ gulp.task("dependency", function(done) {
 						base: $paths.dot
 					}),
 					$.rename(function(path) {
+						// Remove the node_modules/ parent folder.
 						// [https://stackoverflow.com/a/36347297]
-						// remove the node_modules/ parent folder
 						var regexp = new RegExp("^" + $paths.node_modules_name);
 						path.dirname = path.dirname.replace(regexp, "");
 					}),
@@ -2949,7 +3000,7 @@ gulp.task("dependency", function(done) {
 				}
 			);
 		} else {
-			// remove
+			// Remove.
 			print.gulp.success(message);
 			done();
 		}
@@ -2969,7 +3020,7 @@ gulp.task("dependency", function(done) {
  *     Re-build gulpfile.
  */
 gulp.task("make", function(done) {
-	// get concat file names to use
+	// Get file names to use.
 	var names = bundle_gulp.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
@@ -2981,7 +3032,7 @@ gulp.task("make", function(done) {
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
-				// the max length of characters for decoration line
+				// The max length of characters for decoration line.
 				var max_length = 80;
 				var decor = "// " + "-".repeat(max_length - 3);
 
@@ -2992,8 +3043,8 @@ gulp.task("make", function(done) {
 
 				return stream.pipe($.insert.prepend(line_info));
 			}),
-			// if gulpfile.js exists use that name,
-			// else fallback to gulpfile.main.js
+			// If gulpfile.js exists use that name else fall back to
+			// gulpfile.main.js.
 			$.gulpif(
 				fe.sync($paths.basedir + name_default),
 				$.concat(name_default),
@@ -3026,17 +3077,17 @@ gulp.task("make", function(done) {
  *
  */
 gulp.task("lintjs", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var file = _args.f || _args.file || "";
 
-	// don't search for a config file as a config object will be
-	// supplied instead.
+	// Don't search for a config file as a config object will be supplied
+	// instead.
 	$.jshint.lookup = false;
 
 	pump(
@@ -3071,16 +3122,16 @@ gulp.task("lintjs", function(done) {
  *
  */
 gulp.task("lintcss", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var file = _args.f || _args.file || "";
 
-	// get the stylish logger
+	// Get the stylish logger.
 	var stylish = require("csslint-stylish");
 
 	pump(
@@ -3115,20 +3166,20 @@ gulp.task("lintcss", function(done) {
  *
  */
 gulp.task("linthtml", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var file = _args.f || _args.file || "";
 
 	function reporter(filepath, issues) {
 		if (issues.length) {
 			filepath = path.relative($paths.cwd, filepath);
 			issues.forEach(function(issue) {
-				// make sure the first letter is always capitalized
+				// Make sure the first letter is always capitalized.
 				var first_letter = issue.msg[0];
 				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
 
@@ -3195,7 +3246,7 @@ gulp.task("settings", function(done) {
 				cwd: $paths.basedir
 			}),
 			$.debug(),
-			$.strip_jsonc(), // remove any json comments
+			$.strip_jsonc(), // Remove any json comments.
 			$.jsoncombine($paths.config_settings_name, function(data) {
 				return new Buffer(JSON.stringify(data, null, JINDENT));
 			}),
@@ -3240,7 +3291,7 @@ gulp.task("settings", function(done) {
  *     Expand all line starting tabs into 2 spaces.
  */
 gulp.task("indent", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("style", {
 			type: "string"
@@ -3249,11 +3300,11 @@ gulp.task("indent", function(done) {
 			type: "number"
 		}).argv;
 
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var style = _args.style || "tabs";
-	var size = _args.size || 4; // spaces to use
+	var size = _args.size || 4; // Spaces to use.
 
-	// print the indentation information
+	// Print the indentation information.
 	print.gulp.info(
 		`Using: ${chalk.magenta(style)}. Size: ${chalk.green(size)}.`
 	);
@@ -3262,7 +3313,7 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					$paths.files_all.replace(/\*$/, "js"), // only JS FILES
+					$paths.files_all.replace(/\*$/, "js"), // Only JS FILES.
 					bangify(globall($paths.node_modules_name)),
 					bangify(globall($paths.git)),
 					$paths.not_vendor
@@ -3272,27 +3323,27 @@ gulp.task("indent", function(done) {
 				}
 			),
 			$.gulpif(
-				// convert tabs to spaces
+				// Convert tabs to spaces.
 				style === "tabs",
 				$.replace(/^( )+/gm, function(match) {
-					// split on the amount size provided
+					// Split on the amount size provided.
 					// [https://stackoverflow.com/a/6259543]
 					var chunks = match.match(new RegExp(`.\{1,${size}\}`, "g"));
 
-					// modify the chunks
+					// Modify the chunks.
 					chunks = chunks.map(function(chunk) {
 						return !(chunk.length % size) ? "\t" : chunk;
 					});
 
-					// join and return new indentation
+					// Join and return new indentation.
 					return chunks.join("");
 				})
 			),
 			$.gulpif(
-				// convert spaces to tabs
+				// Convert spaces to tabs.
 				style === "spaces",
 				$.replace(/^([\t ])+/gm, function(match) {
-					// replace all tabs with spaces
+					// Replace all tabs with spaces.
 					match = match.replace(/\t/g, " ".repeat(size));
 					return match;
 				})
@@ -3342,7 +3393,7 @@ gulp.task("indent", function(done) {
  *     Show documentation for internally used tasks.
  */
 gulp.task("help", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs
 		.option("verbose", {
 			type: "boolean"
@@ -3357,17 +3408,17 @@ gulp.task("help", function(done) {
 	var filter = _args.f || _args.filter;
 	var internal = _args.i || _args.internal;
 
-	// get concat file names to use
+	// Get file names to use.
 	var names = bundle_gulp.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
 
-	// if gulpfile.js exists use that name, else fallback to gulpfile.main.js
+	// If gulpfile.js exists use that. Else fall back to gulpfile.main.js.
 	var gulpfile = fe.sync($paths.basedir + name_default)
 		? name_default
 		: name_main;
 
-	// store file content in a variable
+	// Store file content in this variable.
 	var content = "";
 
 	pump(
@@ -3376,7 +3427,7 @@ gulp.task("help", function(done) {
 				cwd: $paths.basedir
 			}),
 			$.fn(function(file) {
-				// get the file content
+				// Store the file content.
 				content = file.contents.toString();
 			})
 		],
@@ -3389,73 +3440,72 @@ gulp.task("help", function(done) {
 			var task_name_pattern = /^gulp.task\(('|")([a-z:\-_]+)\1/;
 			var match = string.match(docblock_pattern);
 
-			// loop over gulpfile content string and file all the docblocks
+			// Loop over gulpfile content string and get all the docblocks.
 			while (match) {
 				var comment = match[0];
-				// get the match index
+				// Get the match index.
 				var index = match.index;
-				// get the match length
+				// Get the match length.
 				var length = comment.length;
-				// reset the string to exclude the match
+				// Reset the string to exclude the match.
 				string = string.substring(index + length, string.length).trim();
 
-				// now look for the task name
-				// the name needs to be at the front of the string
-				// to pertain to the current docblock comment. therefore,
-				// it must have an index of 0.
+				// Now look for the task name. The name needs to be at the
+				// front of the string to pertain to the current docblock
+				// comment. Therefore, it must have an index of 0.
 				var task_name_match = string.match(task_name_pattern);
 
-				// if no task name match continue and skip, or...
-				// task name has to be at the front of the string
+				// If no task name match continue and skip. Or task name has
+				// to be at the front of the string.
 				if (!task_name_match || task_name_match.index !== 0) {
-					// reset the match pattern
+					// Reset the match pattern.
 					match = string.match(docblock_pattern);
 					continue;
 				}
 
-				// check whether the task is internal
+				// Check whether the task is internal.
 				var is_internal = Boolean(-~comment.indexOf("@internal"));
 
-				// exclude internal tasks when the internal flag is not set
+				// Exclude internal tasks when the internal flag is not set.
 				if (is_internal && !internal) {
-					// reset the match pattern
+					// Reset the match pattern.
 					match = string.match(docblock_pattern);
 					continue;
 				}
 
-				// get the task name
+				// Get the task name.
 				var task_name = task_name_match[2];
 
-				// filter if flag present, also grab the length of the tasks
+				// Filter if flag present. Also grab the length of the tasks.
 				if (filter) {
 					if (-~filter.indexOf(task_name) || task_name === "help") {
-						// store the task name length
+						// Store the task name length.
 						lengths.push(task_name.length);
 					} else {
-						// reset the match pattern
+						// Reset the match pattern.
 						match = string.match(docblock_pattern);
 						continue;
 					}
 				} else {
-					// when no flag present just add all to the array
+					// When no flag present just add all to the array.
 					lengths.push(task_name.length);
 				}
 
-				// add the comment and task name to array
+				// Add the comment and task name to array:
 				// [ task name , task docblock comment , is task internal? ]
 				blocks.push([task_name, comment, is_internal]);
-				// reset the match pattern
+				// Reset the match pattern.
 				match = string.match(docblock_pattern);
 			}
 
-			// get the task max length
+			// Get the task max length.
 			var max_length = Math.max.apply(null, lengths);
 
 			var newline = "\n";
 			var headers = ["Flags", "Usage", "Notes"];
 
+			// Sort alphabetically fallback to a length.
 			// [https://stackoverflow.com/a/9175783]
-			// sort alphabetically fallback to a length
 			var cmp = function(a, b) {
 				if (a > b) {
 					return +1;
@@ -3466,10 +3516,12 @@ gulp.task("help", function(done) {
 				return 0;
 			};
 
+			// Replacer function will bold all found flags in docblock.
 			var replacer = function(match) {
 				return chalk.bold(match);
 			};
 
+			// Remove all the docblock comment syntax.
 			var remove_comment_syntax = function(string) {
 				return string
 					.replace(/(^\/\*\*)|( \*\/$)|( \* ?)/gm, "")
@@ -3482,26 +3534,26 @@ gulp.task("help", function(done) {
 
 			var tasks = {};
 
-			// loop over every match get needed data
+			// Loop over every match get needed data.
 			blocks.forEach(function(block) {
-				// get task name
+				// Get task name.
 				var name = block[0];
 				var internal = block[2];
-				// reset the block var to the actual comment block
+				// Reset the block var to the actual comment block.
 				block = block[1];
 
-				// skip if no name is found
+				// Skip if no name is found.
 				if (!name) {
 					return;
 				}
 
-				// reset name
+				// Reset name.
 				block = block.replace(
 					new RegExp("task: " + name + "$", "m"),
 					""
 				);
 
-				// remove doc comment syntax
+				// Remove doc comment syntax.
 				block = remove_comment_syntax(block);
 
 				// *************************************************
@@ -3514,14 +3566,14 @@ gulp.task("help", function(done) {
 
 				// Functions with only a description and nothing else,
 				// will not have any new lines in its description.
-				// Therefore, the simply use its entire documentation
-				// as its description.
+				// Therefore, simply use its entire documentation as its
+				// description.
 				var newline_index = block.indexOf(`${newline}${newline}`);
 				if (newline_index === -1) {
 					newline_index = block.length;
 				}
 
-				// get the description
+				// Get the description.
 				var desc = block.substring(0, newline_index);
 
 				tasks[name] = {
@@ -3534,32 +3586,32 @@ gulp.task("help", function(done) {
 				}
 			});
 
-			// sort the array names
+			// Sort the array names.
 			names.sort(function(a, b) {
 				return cmp(a, b) || cmp(a.length, b.length);
 			});
 
-			// add the help task to the front of the array
+			// Add the help task to the front of the array.
 			names.unshift("help");
 
-			// loop over to print this time
+			// Loop over to print this time.
 			names.forEach(function(name) {
-				// get the block
+				// Get the block.
 				var task = tasks[name];
 				var block = task.text;
 				var desc = task.desc;
 				var internal = task.internal;
 
-				// task name color will change based on whether it's
+				// Task name color will change based on whether it's
 				// an internal task.
 				var color = !internal ? "bold" : "yellow";
 
-				// loop over lines
+				// Loop over lines.
 				if (verbose || name === "help") {
-					// bold the tasks
+					// Bold the tasks.
 					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
 
-					// print the task name
+					// Print the task name.
 					print("   " + chalk[color](name));
 
 					var lines = block.split(newline);
@@ -3572,10 +3624,10 @@ gulp.task("help", function(done) {
 						print(line);
 					});
 
-					// bottom padding
+					// Bottom padding.
 					print.ln();
 				} else {
-					// only show the name and its description
+					// Only show the name and its description.
 					print(
 						"   " +
 							chalk[color](name) +
@@ -3586,7 +3638,7 @@ gulp.task("help", function(done) {
 			});
 
 			if (!verbose) {
-				// bottom padding
+				// Bottom padding.
 				print.ln();
 			}
 
@@ -3612,6 +3664,11 @@ gulp.task("help", function(done) {
  * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:generate", function(done) {
+	// Note: Most of the used plugins have their own dedicated config
+	// file found in configs/. This plugin, however, does not and therefore
+	// requires this file to be changed. Maybe in the future this might
+	// change and a dedicated config file will be made.
+
 	$.real_favicon.generateFavicon(
 		{
 			masterPicture: $paths.favicon_master_pic,
@@ -3768,7 +3825,7 @@ gulp.task("favicon:html", function(done) {
  *     Re-build favicons.
  */
 gulp.task("favicon", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
 	var tasks = [

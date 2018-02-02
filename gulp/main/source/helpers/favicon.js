@@ -11,6 +11,11 @@
  * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:generate", function(done) {
+	// Note: Most of the used plugins have their own dedicated config
+	// file found in configs/. This plugin, however, does not and therefore
+	// requires this file to be changed. Maybe in the future this might
+	// change and a dedicated config file will be made.
+
 	$.real_favicon.generateFavicon(
 		{
 			masterPicture: $paths.favicon_master_pic,
@@ -167,7 +172,7 @@ gulp.task("favicon:html", function(done) {
  *     Re-build favicons.
  */
 gulp.task("favicon", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
 	var tasks = [

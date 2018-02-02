@@ -15,19 +15,19 @@
  *     Enforce "\n" line endings.
  */
 gulp.task("eol", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("line-ending", {
 		alias: "l",
 		type: "string"
 	}).argv;
-	// get the command line arguments from yargs
+
+	// Get the command line arguments from yargs.
 	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
 
-	// check:
-	// HTML, CSS, JS, JSON, TXT, TEXT, and MD files.
+	// Check: HTML, CSS, JS, JSON, TXT, TEXT, and MD files. They also
 	// exclude files containing a ".min." as this is the convention used
-	// for minified files. the node_modules/, .git/, img/ files are also
-	// excluded.
+	// for minified files. The node_modules/, .git/, and all vendor/
+	// files are also excluded.
 	var files = [
 		$paths.files_code,
 		$paths.not_min,
@@ -36,7 +36,7 @@ gulp.task("eol", function(done) {
 		bangify(globall($paths.git))
 	];
 
-	// get needed files
+	// Get needed files.
 	pump(
 		[
 			gulp.src(files, {

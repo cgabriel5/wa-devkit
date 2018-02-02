@@ -1,28 +1,32 @@
 /**
- * When gulp is closed, either on error, crash, or intentionally, do
+ * When Gulp is closed, either on error, crash, or intentionally, do
  *     a quick cleanup.
  */
 var cleanup = require("node-cleanup");
 cleanup(function(exit_code, signal) {
+	// Is alphabetize really needed for an internal file?
 	var alphabetize = require("alphabetize-object-keys");
 
-	// only perform this cleanup when the Gulp instance is closed.
-	// when any other task is run the cleanup should not be done.
-	// [https://goo.gl/rJNKNZ]
+	// The purpose of this cleanup is to cleanup the internal settings
+	// file. This code will run when the current Gulp instance is closed
+	// for whatever reason. When the process ID matches that of the stored
+	// PID then the file will get cleared. Non-matching PIDs will not
+	// cause any cleanup, as they should not.
+
+	// Termination signal explanation: [https://goo.gl/rJNKNZ]
 
 	// Re-read the file to get the most current value.
 	$internal = json.read($paths.config_internal);
 	INT_PROCESS = get($internal.data, "process", "");
 	INT_PID = get(INT_PROCESS, "pid", "");
 
-	// If the process is closed and it matches the recorded pid it is
+	// If the process is closed and it matches the recorded PID it is
 	// the original process so close it and clear the internal file.
 	if (INT_PID && INT_PID === process.pid) {
 		// Don't call cleanup handler again.
 		cleanup.uninstall();
 
-		// If the process closed due to an error give an error message
-		// and notification.
+		// When closed due to an error give an error message & notification.
 		if (exit_code) {
 			var message = `Error caused instance ${chalk.green(
 				process.pid
@@ -30,23 +34,24 @@ cleanup(function(exit_code, signal) {
 			notify(message, true);
 			print.gulp.error(message);
 		} else {
+			// Else simply show that the process was successfully stopped.
 			print.gulp.success(
 				`Gulp instance ${chalk.green(process.pid)} stopped.`
 			);
 		}
 
-		// Gulp instance exists so cleanup clear gulp internal
-		// configuration keys.
+		// Clear stored internal process values.
 		$internal.set("process", null);
 		$internal.data = alphabetize($internal.data);
 		$internal.writeSync(null, JINDENT);
 
-		// cleanup vars, process
+		// Cleanup other variables.
 		branch_name = undefined;
 		if (bs) {
 			bs.exit();
 		}
 
+		// Finally kill the process.
 		process.kill(INT_PID, signal);
 
 		return false;
@@ -54,23 +59,23 @@ cleanup(function(exit_code, signal) {
 });
 
 /**
- * Update the status of gulp to active.
+ * Store the current process information (internal config. file).
  *
  * Notes
  *
- * • This will write the current gulp
- *     process id to the internal gulp configuration file. this is done
- *     to prevent another Gulp instance from being opened.
+ * • This will write current process information to an internal gulp
+ *     configuration file. This is done to prevent multiple Gulp
+ *     instances from being spawned. Only one can be made at a time.
  *
  * @internal - Used with the default task.
  */
 gulp.task("init:save-pid", function(done) {
-	// Store process information.
+	// Set the process information.
 	$internal.set("process.pid", process.pid);
 	$internal.set("process.title", process.title);
 	$internal.set("process.argv", process.argv);
 
-	// Save changes to file.
+	// Store and save changes to file.
 	$internal.write(
 		function() {
 			done();
@@ -81,16 +86,16 @@ gulp.task("init:save-pid", function(done) {
 });
 
 /**
- * Watch for git branch changes.
+ * Watch for Git branch changes.
  *
  * Notes
  *
- * • Branch name checks are done to check
- *     whether the branch was changed after the gulp command was used.
- *     This is done as when switching branches files and file structure
- *     might be different. this can cause some problems with the watch
- *     tasks and could perform gulp tasks when not necessarily wanted.
- *     To resume gulp simply restart with the gulp command.
+ * • Branch name checks are done to check whether the branch was changed
+ *     after the Gulp instance was made. When switching branches files
+ *     and file structure might be different. This can cause problems
+ *     like making performing unnecessary tasks calls. Therefore, after
+ *     making a branch change simply restart Gulp. This is something that
+ *     needs to be made seamless.
  *
  * @internal - Used with the default task.
  */
@@ -98,17 +103,21 @@ gulp.task("init:watch-git-branch", function(done) {
 	var git = require("git-state");
 
 	git.isGit($paths.dirname, function(exists) {
-		// if no .git exists simply ignore and return done
+		// If no .git/ exists simply ignore and return done.
 		if (!exists) {
 			return done();
 		}
+
+		// Else it does exist so continue.
 		git.check($paths.dirname, function(err, result) {
 			if (err) {
 				throw err;
 			}
-			// record branch name
+
+			// Record branch name.
 			branch_name = result.branch;
-			// set the gulp watcher as .git exists
+
+			// Create a Gulp watcher as .git/ exists.
 			gulp.watch(
 				[$paths.githead],
 				{
@@ -116,13 +125,19 @@ gulp.task("init:watch-git-branch", function(done) {
 					dot: true
 				},
 				function() {
+					// Get the branch name.
 					var brn_current = git.checkSync($paths.dirname).branch;
+
+					// Print the branch name being watched.
 					if (branch_name) {
 						print.gulp.info(
 							"Gulp is monitoring branch:",
 							chalk.magenta(branch_name)
 						);
 					}
+
+					// When the branch names do not match a switch was made.
+					// Print some messages and exit the process.
 					if (brn_current !== branch_name) {
 						// message + exit
 						print.gulp.warn(
@@ -139,6 +154,7 @@ gulp.task("init:watch-git-branch", function(done) {
 					}
 				}
 			);
+
 			done();
 		});
 	});
@@ -150,22 +166,24 @@ gulp.task("init:watch-git-branch", function(done) {
  * @internal - Used with the default task.
  */
 gulp.task("init:build", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
-	// get the gulp build tasks
+	// Get the gulp build tasks.
 	var tasks = bundle_gulp.tasks;
-	// add callback to the sequence
+
+	// Add callback to the sequence.
 	tasks.push(function() {
 		notify("Build complete");
 		done();
 	});
-	// apply the tasks and callback to sequence
+
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });
 
 /**
- * Variables are declared outside of tasks to be able to use it in
+ * Variables are declared outside of tasks to be able to use them in
  *     multiple tasks. The variables are populated in the
  *     default:active-pid-check task and used in the default task.
  */
@@ -178,64 +196,67 @@ var __process_stopped;
  * @internal - Used with the default task.
  */
 gulp.task("default:active-pid-check", function(done) {
-	var args = yargs.argv; // Get cli parameters.
+	var _args = yargs.argv; // Get cli parameters.
 
-	if (args.s || args.stop) {
-		// end the running Gulp process
-
+	// When the --stop flag is provided the Gulp instance must be stopped.
+	if (_args.stop) {
+		// Set the task variable to true.
 		__process_stopped = true;
 
 		if (INT_PID) {
-			// kill the open process
+			// Kill the Gulp instance.
 			print.gulp.success(
 				`Gulp instance ${chalk.green(INT_PID)} stopped.`
 			);
 			process.kill(INT_PID);
 		} else {
-			// no open process exists
+			// No open process exists so simply print out a message.
 			print.gulp.warn("No Gulp process exists.");
 		}
 
 		return done();
 	}
 
-	// If a pid is stored present it means a Gulp instance has
-	// already started or the file was not cleared properly. This task
-	// will help determine if an active gulp process with the stored
-	// pid exists.
+	// If a PID is stored it means a Gulp instance has already started
+	// or the file was not cleared properly. This task will help determine
+	// which case of the two it is.
 
 	var find = require("find-process");
 
-	// If no stored pid simply continue. No stored pid means there is
-	// no active running gulp instance so continue the task normally.
+	// If no stored PID simply continue. No stored PID means there is
+	// no active running gulp instance so continue the task normally
+	// to create the Gulp instance.
 	if (!INT_PID) {
 		return done();
 	} else {
-		// Else if a pid exists determine if its active and a gulp
-		// process.
+		// Else if a PID exists determine if its active and a Gulp process.
 
-		// Get the process information using the stored pid.
+		// Get the process information using the stored PID.
 		find("pid", INT_PID).then(
 			function(processes) {
 				// This module will return an array containing the found
 				// process in objects. Because we are supplying it the
-				// pid the array will only return 1 object.
+				// PID the array will only return 1 object if the process
+				// exists.
 
 				// Get the process.
 				var p = processes[0];
 
-				// If no process exists then the process with the stored pid
-				// does not exist and the we can proceed to the next task.
+				// If no process exists then the process with the stored PID
+				// does not exist and so we can proceed to the next task to
+				// create a new instance.
 				if (!p) {
 					return done();
 				}
 
-				// The following have to match to make sure the process
-				// is legit. If they match then the process exists. This
-				// will prevent making other processes.
-				// To-Do: Possible make this check better in the future.
+				// When a process does exist then the following have to match
+				// to make sure the process is legit. In other words if they
+				// match then the process exists. An existing process will
+				// prevent making other processes.
+				// To-Do: Make this check better in the future.
 				if (p.cmd === INT_TITLE && p.name.toLowerCase() === "gulp") {
-					// A process exists.
+					// A process exists so store the process information
+					// to access it in the following task.
 					__process_exists = p;
 				}
 
@@ -255,8 +276,8 @@ gulp.task("default:active-pid-check", function(done) {
  *
  * Notes
  *
- * • This is the default task that will builds project files, watches
- *   files, run browser-sync, etc.
+ * • This is the default task that will build project files, watch files,
+ *     run browser-sync, etc.
  * • Only one instance can be run at a time.
  *
  * Flags
@@ -270,18 +291,18 @@ gulp.task("default:active-pid-check", function(done) {
  *     Run Gulp.
  *
  * $ gulp --stop
- *     Stops active Gulp process, if running.
+ *     Stops the active Gulp process, if running.
  */
 gulp.task("default", ["default:active-pid-check"], function(done) {
 	// Check the default:active-pid-check variables before the actual
 	// task code runs.
 
-	// When the --stop flag is provided only do not let the task run.
+	// When the --stop flag is provided do not let the task run.
 	if (__process_stopped) {
 		return done();
 	}
 
-	// Return if a process exists.
+	// As only one Gulp instance is allowed return if a process exists.
 	if (__process_exists) {
 		print.gulp.warn(
 			`Gulp process ${chalk.green(__process_exists.pid)}`,
@@ -298,6 +319,7 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 
 	var find_free_port = require("find-free-port");
 
+	// Find free ports to open browser-sync on.
 	return find_free_port(
 		$configs.findfreeport.range.start,
 		$configs.findfreeport.range.end,
@@ -315,11 +337,10 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 			// Save ports.
 			$internal.write(
 				function() {
-					// store ports on the browser-sync object itself
+					// Store ports on the browser-sync object itself.
 					bs.__ports = [p1, p2]; // [app, ui]
 
-					// After getting the free ports, finally run the
-					// build task.
+					// After getting the free ports run the build task.
 					return sequence(
 						"init:save-pid",
 						"init:watch-git-branch",
@@ -335,10 +356,10 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 									throw err;
 								}
 
-								// highlight data string
+								// Highlight data string.
 								print(cli_highlight(data));
 
-								// Finally, watch all files for changes.
+								// Finally, watch files for changes.
 								return sequence("watch", function() {
 									done();
 								});

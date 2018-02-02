@@ -1,42 +1,42 @@
-// dynamic configuration files (load via json-file to modify later)
+// Dynamic configuration files (load via json-file to modify later).
 var $internal = json.read($paths.config_internal);
 
-// object will contain the all the config settings
+// Object will contain all the configuration settings.
 var $configs = {};
 
-// settings config file must exist to populate the configs object
+// Settings configuration file must exist to populate the configs object.
 if (fe.sync($paths.config_settings)) {
-	// static configuration files (just need to read file)
+	// Static configuration files (just need to read file).
 	var $settings = jsonc.parse(
 		fs.readFileSync($paths.config_settings).toString()
 	);
 
-	// get individual plugin settings and store in an object
+	// Get individual plugin settings and store in an object.
 	for (var $config in $paths) {
-		// path must match the following pattern to be a config path
-		if (
-			$paths.hasOwnProperty($config) &&
-			/^config_\$[a-z_.]+$/i.test($config)
-		) {
-			// remove any file name sub-extensions. for example,
-			// for "csslint.cm" turn to "csslint"
+		// configuration files must match this pattern.
+		var config_file_pattern = /^config_\$[a-z_.]+$/i.test($config);
+
+		// Path must match the following pattern to be a config path.
+		if ($paths.hasOwnProperty($config) && config_file_pattern) {
+			// Remove any file name sub-extensions. For example,
+			// turn "csslint.cm" to "csslint".
 			var config_name = $paths[$config].split(".")[0];
-			// get the config settings and add to the settings object
+
+			// Get the config settings and add to the settings object.
 			$configs[config_name] = $settings[$paths[$config]];
 		}
 	}
 } else {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.argv;
-	// get the command line arguments from yargs
 
-	// only continue when the reconfig flag is set. this will let the
-	// settings task to run.
+	// Note: When the settings file is missing this error message will get
+	// shown. Follow the rebuild command and the file will get rebuilt. The
+	// code is only allowed to run when the rebuild flag is set.
 
 	if (!_args.rebuild || !-~_args._.indexOf("settings")) {
-		// config settings file does not exist so give a message and
-		// exit the node process.
-		print.gulp.warn(
+		// Settings file does not exist so give a message and exit process.
+		print.gulp.error(
 			chalk.magenta($paths.config_settings),
 			"is missing (settings file)."
 		);

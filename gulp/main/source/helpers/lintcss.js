@@ -13,16 +13,16 @@
  *
  */
 gulp.task("lintcss", function(done) {
-	// run yargs
+	// Run yargs.
 	var _args = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
-	// get the command line arguments from yargs
+	// Get the command line arguments from yargs.
 	var file = _args.f || _args.file || "";
 
-	// get the stylish logger
+	// Get the stylish logger.
 	var stylish = require("csslint-stylish");
 
 	pump(

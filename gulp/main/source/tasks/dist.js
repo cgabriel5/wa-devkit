@@ -21,7 +21,8 @@ gulp.task("dist:favicon", function(done) {
 			gulp.src(bundle_dist.source.files.favicon, {
 				dot: true,
 				cwd: $paths.basedir,
-				// https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551
+				// To keep the sub-folders define the base in the options.
+				// [https://github.com/gulpjs/gulp/issues/151#issuecomment-41508551]
 				base: $paths.dot
 			}),
 			$.debug(),
@@ -60,8 +61,9 @@ gulp.task("dist:css", function(done) {
  * @internal - Used to prepare the dist task.
  */
 gulp.task("dist:img", function(done) {
-	// need to copy hidden files/folders?
+	// Copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
+
 	pump(
 		[
 			gulp.src(bundle_dist.source.files.img, {
@@ -141,7 +143,7 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
- * Build the dist/ folder. (only for webapp projects).
+ * Build the dist/ folder (webapp projects only).
  *
  * Usage
  *
@@ -149,9 +151,10 @@ gulp.task("dist:root", function(done) {
  *     Create dist/ folder.
  */
 gulp.task("dist", function(done) {
-	// cache task
+	// Cache task.
 	var task = this;
 
+	// If the apptype is not a webapp then stop task.
 	if (INt_APPTYPE !== "webapp") {
 		print.gulp.warn(
 			"This helper task is only available for webapp projects."
@@ -159,10 +162,10 @@ gulp.task("dist", function(done) {
 		return done();
 	}
 
-	// get the gulp build tasks
+	// Get the gulp build tasks.
 	var tasks = bundle_dist.tasks;
 
-	// add callback to the sequence
+	// Add callback to the sequence.
 	tasks.push(function() {
 		var message = "Distribution folder complete.";
 		notify(message);
@@ -170,6 +173,6 @@ gulp.task("dist", function(done) {
 		done();
 	});
 
-	// apply the tasks and callback to sequence
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });

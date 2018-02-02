@@ -1,9 +1,9 @@
 /**
- * Watch for files changes.
+ * Watch for file changes.
  */
 gulp.task("watch", function(done) {
-	// add auto tab closing capability to browser-sync. this will
-	// auto close the used bs tabs when gulp closes.
+	// Add auto tab closing capability to browser-sync. This will
+	// auto close the created browser-sync tabs when gulp closes.
 	bs.use({
 		plugin() {},
 		hooks: {
@@ -11,7 +11,7 @@ gulp.task("watch", function(done) {
 		}
 	});
 
-	// start browser-sync
+	// Start browser-sync.
 	bs.init(
 		{
 			browser: browser,
@@ -19,7 +19,7 @@ gulp.task("watch", function(done) {
 				appdir: APPDIR,
 				filepath: INDEX,
 				https: HTTPS
-			}), // "markdown/preview/README.html"
+			}),
 			port: bs.__ports[0],
 			ui: {
 				port: bs.__ports[1]
@@ -28,34 +28,34 @@ gulp.task("watch", function(done) {
 			open: true
 		},
 		function() {
-			// gulp watcher paths
+			// Gulp watcher paths.
 			var watch_paths = bundle_gulp.watch;
 
-			// Watch for any changes to HTML files.
+			// Watch for any changes to HTML source files.
 			$.watcher.create("watcher:html", watch_paths.html, ["html"]);
 
-			// Watch for any changes to CSS Source files.
+			// Watch for any changes to CSS source files.
 			$.watcher.create("watcher:css:app", watch_paths.css.app, [
 				"css:app"
 			]);
 
-			// Watch for any changes to CSS Lib files.
+			// Watch for any changes to CSS vendor files.
 			$.watcher.create("watcher:css:vendor", watch_paths.css.vendor, [
 				"css:vendor"
 			]);
 
-			// watch for any changes to JS Source files
+			// Watch for any changes to JS source files.
 			$.watcher.create("watcher:js:app", watch_paths.js.app, ["js:app"]);
 
-			// watch for any changes to JS Lib files
+			// Watch for any changes to JS vendor files.
 			$.watcher.create("watcher:js:vendor", watch_paths.js.vendor, [
 				"js:vendor"
 			]);
 
-			// watch for any changes to IMG files
+			// Watch for any changes to IMG files.
 			$.watcher.create("watcher:img", watch_paths.img, ["img"]);
 
-			// watch for any changes to config files
+			// Watch for any changes to config files.
 			$.watcher.create("watcher:settings", watch_paths.config, [
 				"settings"
 			]);

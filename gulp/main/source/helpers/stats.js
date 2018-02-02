@@ -13,7 +13,7 @@
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
 
-	// get all files excluding the following: node_modules/, .git/, and img/.
+	// Get all files excluding: node_modules/, .git/, and img/.
 	var files = [
 		$paths.files_code,
 		bangify($paths.img_source),
@@ -24,7 +24,7 @@ gulp.task("stats", function(done) {
 	var file_count = 0;
 	var extensions = {};
 
-	// get needed files
+	// Get needed files.
 	pump(
 		[
 			gulp.src(files, {
@@ -32,13 +32,13 @@ gulp.task("stats", function(done) {
 				read: false
 			}),
 			$.fn(function(file) {
-				// get the extension type
+				// Get the extension type.
 				var ext = path
 					.extname(file.path)
 					.toLowerCase()
 					.slice(1);
 
-				// exclude any extension-less files
+				// Exclude any extension-less files.
 				if (!ext) {
 					return;
 				}
@@ -48,33 +48,34 @@ gulp.task("stats", function(done) {
 				file_count++;
 
 				if (ext_count === undefined) {
-					// does not exist, so start extension count
+					// Does not exist, so start extension count.
 					extensions[ext] = 1;
 				} else {
-					// already exists just increment the value
+					// Already exists just increment the value.
 					extensions[ext] = ++ext_count;
 				}
 			})
 		],
 		function() {
-			// instantiate
+			// Instantiate.
 			var table = new Table({
 				head: ["Extensions", `Count (${file_count})`, "% Of Project"],
 				style: { head: ["green"] }
 			});
 
-			// add data to table
+			// Add data to table.
 			for (var ext in extensions) {
 				if (extensions.hasOwnProperty(ext)) {
 					var count = +extensions[ext];
 					table.push([
-						extension.toUpperCase(),
+						ext.toUpperCase(),
 						count,
 						Math.round(count / file_count * 100)
 					]);
 				}
 			}
 
+			// Sort table descendingly.
 			table.sort(function(a, b) {
 				return b[2] - a[2];
 			});

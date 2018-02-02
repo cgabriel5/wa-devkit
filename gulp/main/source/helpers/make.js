@@ -7,7 +7,7 @@
  *     Re-build gulpfile.
  */
 gulp.task("make", function(done) {
-	// get concat file names to use
+	// Get file names to use.
 	var names = bundle_gulp.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
@@ -19,7 +19,7 @@ gulp.task("make", function(done) {
 			}),
 			$.debug(),
 			$.foreach(function(stream, file) {
-				// the max length of characters for decoration line
+				// The max length of characters for decoration line.
 				var max_length = 80;
 				var decor = "// " + "-".repeat(max_length - 3);
 
@@ -30,8 +30,8 @@ gulp.task("make", function(done) {
 
 				return stream.pipe($.insert.prepend(line_info));
 			}),
-			// if gulpfile.js exists use that name,
-			// else fallback to gulpfile.main.js
+			// If gulpfile.js exists use that name else fall back to
+			// gulpfile.main.js.
 			$.gulpif(
 				fe.sync($paths.basedir + name_default),
 				$.concat(name_default),
