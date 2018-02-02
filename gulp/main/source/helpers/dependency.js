@@ -38,7 +38,7 @@
  */
 gulp.task("dependency", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("name", {
 			alias: "n",
 			type: "string"
@@ -68,10 +68,10 @@ gulp.task("dependency", function(done) {
 			type: "boolean"
 		}).argv;
 	// Get the command line arguments from yargs.
-	var name = _args.n || _args.name;
-	var type = _args.t || _args.type;
-	var action = _args.a || _args.action;
-	var list = _args.l || _args.list;
+	var name = __flags.n || __flags.name;
+	var type = __flags.t || __flags.type;
+	var action = __flags.a || __flags.action;
+	var list = __flags.l || __flags.list;
 
 	// Get needed paths.
 	var dest = type === "js" ? $paths.js_vendor : $paths.css_vendor;

@@ -14,13 +14,13 @@
  */
 gulp.task("linthtml", function(done) {
 	// Run yargs.
-	var _args = yargs.option("file", {
+	var __flags = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
 	// Get the command line arguments from yargs.
-	var file = _args.f || _args.file || "";
+	var file = __flags.f || __flags.file || "";
 
 	function reporter(filepath, issues) {
 		if (issues.length) {

@@ -50,12 +50,12 @@ gulp.task("module", function(done) {
 	var linenumber = require("linenumber");
 
 	// Run yargs.
-	var _args = yargs.option("remove", {
+	var __flags = yargs.option("remove", {
 		type: "string"
 	}).argv;
 
 	// Get the command line arguments from yargs.
-	var remove = _args.remove;
+	var remove = __flags.remove;
 
 	// Get the configuration file.
 	var config_file = get_config_file($paths.config_$bundles);
@@ -112,7 +112,7 @@ gulp.task("module", function(done) {
 		);
 	} else {
 		// Run yargs.
-		var _args = yargs
+		var __flags = yargs
 			.option("filename", {
 				type: "string",
 				demandOption: true
@@ -135,12 +135,12 @@ gulp.task("module", function(done) {
 			}).argv;
 
 		// Get the command line arguments from yargs.
-		var filename = _args.filename;
-		var modname = _args.modname;
-		var description = _args.description;
-		var mode = _args.mode;
-		var same = _args.same;
-		var ending = _args["line-ending"] || EOL_ENDING;
+		var filename = __flags.filename;
+		var modname = __flags.modname;
+		var description = __flags.description;
+		var mode = __flags.mode;
+		var same = __flags.same;
+		var ending = __flags["line-ending"] || EOL_ENDING;
 
 		// Get the basename from the filename.
 		var ext = path.extname(filename);

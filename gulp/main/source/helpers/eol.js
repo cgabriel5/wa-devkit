@@ -16,13 +16,13 @@
  */
 gulp.task("eol", function(done) {
 	// Run yargs.
-	var _args = yargs.option("line-ending", {
+	var __flags = yargs.option("line-ending", {
 		alias: "l",
 		type: "string"
 	}).argv;
 
 	// Get the command line arguments from yargs.
-	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
+	var ending = __flags.l || __flags["line-ending"] || EOL_ENDING;
 
 	// Check: HTML, CSS, JS, JSON, TXT, TEXT, and MD files. They also
 	// exclude files containing a ".min." as this is the convention used

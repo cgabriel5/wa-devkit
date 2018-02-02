@@ -13,12 +13,12 @@ var __markdown_stopped;
  */
 gulp.task("tohtml:prepcss", function(done) {
 	// Run yargs.
-	var _args = yargs.option("file", {
+	var __flags = yargs.option("file", {
 		type: "string"
 	}).argv;
 
 	// Get the command line arguments from yargs.
-	var filename = _args.f || _args.file;
+	var filename = __flags.f || __flags.file;
 
 	// Check that the file is a markdown file.
 	if (!extension.ismd({ path: filename })) {
@@ -96,7 +96,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	require("prism-languages");
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("file", {
 			alias: "f",
 			default: "./README.md",
@@ -108,8 +108,8 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var filename = _args.f || _args.file;
-	var open = _args.o || _args.open;
+	var filename = __flags.f || __flags.file;
+	var open = __flags.o || __flags.open;
 
 	// Task logic:
 	// - Get file markdown file contents.

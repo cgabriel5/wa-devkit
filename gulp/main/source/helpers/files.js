@@ -50,7 +50,7 @@ gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("type", {
 			alias: "t",
 			type: "string"
@@ -76,12 +76,12 @@ gulp.task("files", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var types = _args.t || _args.type;
-	var stypes = _args.s || _args.stype;
-	var whereis = _args.w || _args.whereis;
-	var no_fuzzy = _args.n || _args.nofuzzy;
-	var highlight = _args.H || _args.highlight;
-	var sub_extensions = _args.subs;
+	var types = __flags.t || __flags.type;
+	var stypes = __flags.s || __flags.stype;
+	var whereis = __flags.w || __flags.whereis;
+	var no_fuzzy = __flags.n || __flags.nofuzzy;
+	var highlight = __flags.H || __flags.highlight;
+	var sub_extensions = __flags.subs;
 
 	var clean_types = function(text) {
 		// Collapse multiple spaces + remove left/right padding.

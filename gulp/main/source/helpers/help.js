@@ -33,7 +33,7 @@
  */
 gulp.task("help", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("verbose", {
 			type: "boolean"
 		})
@@ -43,9 +43,9 @@ gulp.task("help", function(done) {
 		.option("internal", {
 			type: "boolean"
 		}).argv;
-	var verbose = _args.v || _args.verbose;
-	var filter = _args.f || _args.filter;
-	var internal = _args.i || _args.internal;
+	var verbose = __flags.v || __flags.verbose;
+	var filter = __flags.f || __flags.filter;
+	var internal = __flags.i || __flags.internal;
 
 	// Get file names to use.
 	var names = bundle_gulp.source.names;

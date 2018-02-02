@@ -139,13 +139,13 @@ if (fe.sync($paths.config_settings)) {
 	}
 } else {
 	// Run yargs.
-	var _args = yargs.argv;
+	var __flags = yargs.argv;
 
 	// Note: When the settings file is missing this error message will get
 	// shown. Follow the rebuild command and the file will get rebuilt. The
 	// code is only allowed to run when the rebuild flag is set.
 
-	if (!_args.rebuild || !-~_args._.indexOf("settings")) {
+	if (!__flags.rebuild || !-~__flags._.indexOf("settings")) {
 		// Settings file does not exist so give a message and exit process.
 		print.gulp.error(
 			chalk.magenta($paths.config_settings),
@@ -581,10 +581,10 @@ var __process_stopped;
  * @internal - Used with the default task.
  */
 gulp.task("default:active-pid-check", function(done) {
-	var _args = yargs.argv; // Get cli parameters.
+	var __flags = yargs.argv; // Get cli parameters.
 
 	// When the --stop flag is provided the Gulp instance must be stopped.
-	if (_args.stop) {
+	if (__flags.stop) {
 		// Set the task variable to true.
 		__process_stopped = true;
 
@@ -1393,12 +1393,12 @@ var __markdown_stopped;
  */
 gulp.task("tohtml:prepcss", function(done) {
 	// Run yargs.
-	var _args = yargs.option("file", {
+	var __flags = yargs.option("file", {
 		type: "string"
 	}).argv;
 
 	// Get the command line arguments from yargs.
-	var filename = _args.f || _args.file;
+	var filename = __flags.f || __flags.file;
 
 	// Check that the file is a markdown file.
 	if (!extension.ismd({ path: filename })) {
@@ -1476,7 +1476,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	require("prism-languages");
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("file", {
 			alias: "f",
 			default: "./README.md",
@@ -1488,8 +1488,8 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var filename = _args.f || _args.file;
-	var open = _args.o || _args.open;
+	var filename = __flags.f || __flags.file;
+	var open = __flags.o || __flags.open;
 
 	// Task logic:
 	// - Get file markdown file contents.
@@ -1662,7 +1662,7 @@ gulp.task("open", function(done) {
 	var task = this;
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("directory", {
 			alias: "d",
 			type: "string"
@@ -1673,8 +1673,8 @@ gulp.task("open", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var directory = _args.d || _args.directory;
-	var editor = _args.e || _args.editor;
+	var directory = __flags.d || __flags.directory;
+	var editor = __flags.e || __flags.editor;
 
 	// If the directory flag is provided open directory in a file manager.
 	if (directory) {
@@ -1723,7 +1723,7 @@ gulp.task("open", function(done) {
 		}
 
 		// Run yargs.
-		var _args = yargs
+		var __flags = yargs
 			.option("wait", {
 				type: "boolean"
 			})
@@ -1738,10 +1738,10 @@ gulp.task("open", function(done) {
 			}).argv;
 
 		// Get the command line arguments from yargs.
-		var wait = _args.wait;
-		var line = _args.line;
-		var column = _args.column;
-		var use_editor = _args.use;
+		var wait = __flags.wait;
+		var line = __flags.line;
+		var column = __flags.column;
+		var use_editor = __flags.use;
 
 		// Get user's editor/flags needed to open file via the terminal.
 		var editor = get_editor({
@@ -1783,7 +1783,7 @@ gulp.task("open", function(done) {
 		// originally set out to do.
 
 		// Run yargs.
-		var _args = yargs
+		var __flags = yargs
 			.option("file", {
 				alias: "f",
 				demandOption: true,
@@ -1795,13 +1795,13 @@ gulp.task("open", function(done) {
 			}).argv;
 
 		// Get the command line arguments from yargs.
-		var file = _args.f || _args.file;
+		var file = __flags.f || __flags.file;
 
 		// Check for explicitly provided port. If none is provided check
 		// the internally fetched free ports and get the local port.
 		var port =
-			_args.p ||
-			_args.port ||
+			__flags.p ||
+			__flags.port ||
 			(
 				INT_PORTS || {
 					local: null
@@ -1885,7 +1885,7 @@ var __modified_git_files;
  */
 gulp.task("pretty:gitfiles", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("quick", {
 			alias: "q",
 			type: "boolean"
@@ -1895,8 +1895,8 @@ gulp.task("pretty:gitfiles", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var quick = _args.quick;
-	var staged = _args.staged;
+	var quick = __flags.quick;
+	var staged = __flags.staged;
 
 	// The flags must be present to get the modified files or else
 	// skip to the main pretty task.
@@ -1996,7 +1996,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var shorthand = require("postcss-merge-longhand");
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("type", {
 			alias: "t",
 			type: "string"
@@ -2022,12 +2022,12 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var type = _args.t || _args.type;
-	var patterns = _args.p || _args.pattern;
-	var ignores = _args.i || _args.ignore;
-	var test = _args.test;
-	var empty = _args.e || _args.empty;
-	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
+	var type = __flags.t || __flags.type;
+	var patterns = __flags.p || __flags.pattern;
+	var ignores = __flags.i || __flags.ignore;
+	var test = __flags.test;
+	var empty = __flags.e || __flags.empty;
+	var ending = __flags.l || __flags["line-ending"] || EOL_ENDING;
 
 	// Default globs: look for HTML, CSS, JS, and JSON files. They also
 	// exclude files containing a ".min." as this is the convention used
@@ -2225,12 +2225,12 @@ gulp.task("module", function(done) {
 	var linenumber = require("linenumber");
 
 	// Run yargs.
-	var _args = yargs.option("remove", {
+	var __flags = yargs.option("remove", {
 		type: "string"
 	}).argv;
 
 	// Get the command line arguments from yargs.
-	var remove = _args.remove;
+	var remove = __flags.remove;
 
 	// Get the configuration file.
 	var config_file = get_config_file($paths.config_$bundles);
@@ -2287,7 +2287,7 @@ gulp.task("module", function(done) {
 		);
 	} else {
 		// Run yargs.
-		var _args = yargs
+		var __flags = yargs
 			.option("filename", {
 				type: "string",
 				demandOption: true
@@ -2310,12 +2310,12 @@ gulp.task("module", function(done) {
 			}).argv;
 
 		// Get the command line arguments from yargs.
-		var filename = _args.filename;
-		var modname = _args.modname;
-		var description = _args.description;
-		var mode = _args.mode;
-		var same = _args.same;
-		var ending = _args["line-ending"] || EOL_ENDING;
+		var filename = __flags.filename;
+		var modname = __flags.modname;
+		var description = __flags.description;
+		var mode = __flags.mode;
+		var same = __flags.same;
+		var ending = __flags["line-ending"] || EOL_ENDING;
 
 		// Get the basename from the filename.
 		var ext = path.extname(filename);
@@ -2413,13 +2413,13 @@ gulp.task("module", function(done) {
  */
 gulp.task("eol", function(done) {
 	// Run yargs.
-	var _args = yargs.option("line-ending", {
+	var __flags = yargs.option("line-ending", {
 		alias: "l",
 		type: "string"
 	}).argv;
 
 	// Get the command line arguments from yargs.
-	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
+	var ending = __flags.l || __flags["line-ending"] || EOL_ENDING;
 
 	// Check: HTML, CSS, JS, JSON, TXT, TEXT, and MD files. They also
 	// exclude files containing a ".min." as this is the convention used
@@ -2598,7 +2598,7 @@ gulp.task("files", function(done) {
 	var fuzzy = require("fuzzy");
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("type", {
 			alias: "t",
 			type: "string"
@@ -2624,12 +2624,12 @@ gulp.task("files", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var types = _args.t || _args.type;
-	var stypes = _args.s || _args.stype;
-	var whereis = _args.w || _args.whereis;
-	var no_fuzzy = _args.n || _args.nofuzzy;
-	var highlight = _args.H || _args.highlight;
-	var sub_extensions = _args.subs;
+	var types = __flags.t || __flags.type;
+	var stypes = __flags.s || __flags.stype;
+	var whereis = __flags.w || __flags.whereis;
+	var no_fuzzy = __flags.n || __flags.nofuzzy;
+	var highlight = __flags.H || __flags.highlight;
+	var sub_extensions = __flags.subs;
 
 	var clean_types = function(text) {
 		// Collapse multiple spaces + remove left/right padding.
@@ -2878,7 +2878,7 @@ gulp.task("files", function(done) {
  */
 gulp.task("dependency", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("name", {
 			alias: "n",
 			type: "string"
@@ -2908,10 +2908,10 @@ gulp.task("dependency", function(done) {
 			type: "boolean"
 		}).argv;
 	// Get the command line arguments from yargs.
-	var name = _args.n || _args.name;
-	var type = _args.t || _args.type;
-	var action = _args.a || _args.action;
-	var list = _args.l || _args.list;
+	var name = __flags.n || __flags.name;
+	var type = __flags.t || __flags.type;
+	var action = __flags.a || __flags.action;
+	var list = __flags.l || __flags.list;
 
 	// Get needed paths.
 	var dest = type === "js" ? $paths.js_vendor : $paths.css_vendor;
@@ -3078,13 +3078,13 @@ gulp.task("make", function(done) {
  */
 gulp.task("lintjs", function(done) {
 	// Run yargs.
-	var _args = yargs.option("file", {
+	var __flags = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
 	// Get the command line arguments from yargs.
-	var file = _args.f || _args.file || "";
+	var file = __flags.f || __flags.file || "";
 
 	// Don't search for a config file as a config object will be supplied
 	// instead.
@@ -3123,13 +3123,13 @@ gulp.task("lintjs", function(done) {
  */
 gulp.task("lintcss", function(done) {
 	// Run yargs.
-	var _args = yargs.option("file", {
+	var __flags = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
 	// Get the command line arguments from yargs.
-	var file = _args.f || _args.file || "";
+	var file = __flags.f || __flags.file || "";
 
 	// Get the stylish logger.
 	var stylish = require("csslint-stylish");
@@ -3167,13 +3167,13 @@ gulp.task("lintcss", function(done) {
  */
 gulp.task("linthtml", function(done) {
 	// Run yargs.
-	var _args = yargs.option("file", {
+	var __flags = yargs.option("file", {
 		alias: "f",
 		type: "string",
 		demandOption: true
 	}).argv;
 	// Get the command line arguments from yargs.
-	var file = _args.f || _args.file || "";
+	var file = __flags.f || __flags.file || "";
 
 	function reporter(filepath, issues) {
 		if (issues.length) {
@@ -3292,7 +3292,7 @@ gulp.task("settings", function(done) {
  */
 gulp.task("indent", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("style", {
 			type: "string"
 		})
@@ -3301,8 +3301,8 @@ gulp.task("indent", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var style = _args.style || "tabs";
-	var size = _args.size || 4; // Spaces to use.
+	var style = __flags.style || "tabs";
+	var size = __flags.size || 4; // Spaces to use.
 
 	// Print the indentation information.
 	print.gulp.info(
@@ -3394,7 +3394,7 @@ gulp.task("indent", function(done) {
  */
 gulp.task("help", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("verbose", {
 			type: "boolean"
 		})
@@ -3404,9 +3404,9 @@ gulp.task("help", function(done) {
 		.option("internal", {
 			type: "boolean"
 		}).argv;
-	var verbose = _args.v || _args.verbose;
-	var filter = _args.f || _args.filter;
-	var internal = _args.i || _args.internal;
+	var verbose = __flags.v || __flags.verbose;
+	var filter = __flags.f || __flags.filter;
+	var internal = __flags.i || __flags.internal;
 
 	// Get file names to use.
 	var names = bundle_gulp.source.names;

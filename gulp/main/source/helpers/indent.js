@@ -24,7 +24,7 @@
  */
 gulp.task("indent", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("style", {
 			type: "string"
 		})
@@ -33,8 +33,8 @@ gulp.task("indent", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var style = _args.style || "tabs";
-	var size = _args.size || 4; // Spaces to use.
+	var style = __flags.style || "tabs";
+	var size = __flags.size || 4; // Spaces to use.
 
 	// Print the indentation information.
 	print.gulp.info(

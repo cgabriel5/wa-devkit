@@ -71,7 +71,7 @@ gulp.task("open", function(done) {
 	var task = this;
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("directory", {
 			alias: "d",
 			type: "string"
@@ -82,8 +82,8 @@ gulp.task("open", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var directory = _args.d || _args.directory;
-	var editor = _args.e || _args.editor;
+	var directory = __flags.d || __flags.directory;
+	var editor = __flags.e || __flags.editor;
 
 	// If the directory flag is provided open directory in a file manager.
 	if (directory) {
@@ -132,7 +132,7 @@ gulp.task("open", function(done) {
 		}
 
 		// Run yargs.
-		var _args = yargs
+		var __flags = yargs
 			.option("wait", {
 				type: "boolean"
 			})
@@ -147,10 +147,10 @@ gulp.task("open", function(done) {
 			}).argv;
 
 		// Get the command line arguments from yargs.
-		var wait = _args.wait;
-		var line = _args.line;
-		var column = _args.column;
-		var use_editor = _args.use;
+		var wait = __flags.wait;
+		var line = __flags.line;
+		var column = __flags.column;
+		var use_editor = __flags.use;
 
 		// Get user's editor/flags needed to open file via the terminal.
 		var editor = get_editor({
@@ -192,7 +192,7 @@ gulp.task("open", function(done) {
 		// originally set out to do.
 
 		// Run yargs.
-		var _args = yargs
+		var __flags = yargs
 			.option("file", {
 				alias: "f",
 				demandOption: true,
@@ -204,13 +204,13 @@ gulp.task("open", function(done) {
 			}).argv;
 
 		// Get the command line arguments from yargs.
-		var file = _args.f || _args.file;
+		var file = __flags.f || __flags.file;
 
 		// Check for explicitly provided port. If none is provided check
 		// the internally fetched free ports and get the local port.
 		var port =
-			_args.p ||
-			_args.port ||
+			__flags.p ||
+			__flags.port ||
 			(
 				INT_PORTS || {
 					local: null

@@ -21,7 +21,7 @@ var __modified_git_files;
  */
 gulp.task("pretty:gitfiles", function(done) {
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("quick", {
 			alias: "q",
 			type: "boolean"
@@ -31,8 +31,8 @@ gulp.task("pretty:gitfiles", function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var quick = _args.quick;
-	var staged = _args.staged;
+	var quick = __flags.quick;
+	var staged = __flags.staged;
 
 	// The flags must be present to get the modified files or else
 	// skip to the main pretty task.
@@ -132,7 +132,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var shorthand = require("postcss-merge-longhand");
 
 	// Run yargs.
-	var _args = yargs
+	var __flags = yargs
 		.option("type", {
 			alias: "t",
 			type: "string"
@@ -158,12 +158,12 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 		}).argv;
 
 	// Get the command line arguments from yargs.
-	var type = _args.t || _args.type;
-	var patterns = _args.p || _args.pattern;
-	var ignores = _args.i || _args.ignore;
-	var test = _args.test;
-	var empty = _args.e || _args.empty;
-	var ending = _args.l || _args["line-ending"] || EOL_ENDING;
+	var type = __flags.t || __flags.type;
+	var patterns = __flags.p || __flags.pattern;
+	var ignores = __flags.i || __flags.ignore;
+	var test = __flags.test;
+	var empty = __flags.e || __flags.empty;
+	var ending = __flags.l || __flags["line-ending"] || EOL_ENDING;
 
 	// Default globs: look for HTML, CSS, JS, and JSON files. They also
 	// exclude files containing a ".min." as this is the convention used

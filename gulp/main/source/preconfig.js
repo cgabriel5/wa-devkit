@@ -28,13 +28,13 @@ if (fe.sync($paths.config_settings)) {
 	}
 } else {
 	// Run yargs.
-	var _args = yargs.argv;
+	var __flags = yargs.argv;
 
 	// Note: When the settings file is missing this error message will get
 	// shown. Follow the rebuild command and the file will get rebuilt. The
 	// code is only allowed to run when the rebuild flag is set.
 
-	if (!_args.rebuild || !-~_args._.indexOf("settings")) {
+	if (!__flags.rebuild || !-~__flags._.indexOf("settings")) {
 		// Settings file does not exist so give a message and exit process.
 		print.gulp.error(
 			chalk.magenta($paths.config_settings),
