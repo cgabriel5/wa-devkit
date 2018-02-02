@@ -3,7 +3,7 @@
 
 root = true
 
-# all files
+# All files.
 [*]
 indent_style = tab
 end_of_line = lf
@@ -11,11 +11,11 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+# Set default displayed tab size for repository.
 # [https://stackoverflow.com/a/33831598]
-# set default displayed tab size for your repository
 [*.{js,jsx,html,sass}]
 indent_size = 4
 
-# override and allow for MarkDown files
+# Override and allow for Markdown files.
 [*.md]
 trim_trailing_whitespace = false
