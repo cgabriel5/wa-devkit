@@ -88,8 +88,8 @@
 			],
 			"names": {
 				"default": "gulpfile.js",
-				"main": "gulpfile.main.js",
-				"setup": "gulpfile.setup.js"
+				"main": "gulpfile-main.js",
+				"setup": "gulpfile-setup.js"
 			}
 		},
 		"tasks": ["css", "js", "img", "html"],

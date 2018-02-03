@@ -20,8 +20,8 @@ module.exports = {
 	gulp_setup_docs_app: "**/*.app.*",
 	gulp_setup_docs_lib: "**/*.lib.*",
 	gulp_file_name: "gulpfile.js",
-	gulp_file_setup: "gulpfile.setup.js",
-	gulp_file_main: "gulpfile.main.js",
+	gulp_file_setup: "gulpfile-setup.js",
+	gulp_file_main: "gulpfile-main.js",
 
 	// Configuration file paths.
 	config_home: "./${homedir}configs/",

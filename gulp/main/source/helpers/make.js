@@ -31,7 +31,7 @@ gulp.task("make", function(done) {
 				return stream.pipe($.insert.prepend(line_info));
 			}),
 			// If gulpfile.js exists use that name else fall back to
-			// gulpfile.main.js.
+			// gulpfile-main.js.
 			$.gulpif(
 				fe.sync($paths.basedir + name_default),
 				$.concat(name_default),

@@ -52,7 +52,7 @@ gulp.task("help", function(done) {
 	var name_default = names.default;
 	var name_main = names.main;
 
-	// If gulpfile.js exists use that. Else fall back to gulpfile.main.js.
+	// If gulpfile.js exists use that. Else fall back to gulpfile-main.js.
 	var gulpfile = fe.sync($paths.basedir + name_default)
 		? name_default
 		: name_main;

@@ -276,7 +276,7 @@ gulp.task("init:setup-readme", function(done) {
  *     Gulp file name.
  */
 gulp.task("init:rename-gulpfile", function(done) {
-	// Rename the gulpfile.main.js to gulpfile.js.
+	// Rename the gulpfile-main.js to gulpfile.js.
 	pump(
 		[
 			gulp.src($paths.gulp_file_main, {
@@ -313,7 +313,7 @@ gulp.task("init:remove-setup", function(done) {
 });
 
 /**
- * This initialization step runs gulpfile.js, formerly gulpfile.main.js,
+ * This initialization step runs gulpfile.js, formerly gulpfile-main.js,
  *     Gulp tasks. More specifically, it runs the tasks that generate the
  *     project CSS/JS bundles.
  */
@@ -333,7 +333,7 @@ gulp.task("init:create-bundles", function(done) {
 });
 
 /**
- * This initialization step runs the gulpfile.js, formerly gulpfile.main.js,
+ * This initialization step runs the gulpfile.js, formerly gulpfile-main.js,
  *     pretty task. This task runs through all the project files and pretty
  *     prints them.
  */
