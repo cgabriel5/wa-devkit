@@ -143,18 +143,6 @@ gulp.task("help", function(done) {
 			var newline = "\n";
 			var headers = ["Flags", "Usage", "Notes"];
 
-			// Sort alphabetically fallback to a length.
-			// [https://stackoverflow.com/a/9175783]
-			var cmp = function(a, b) {
-				if (a > b) {
-					return +1;
-				}
-				if (a < b) {
-					return -1;
-				}
-				return 0;
-			};
-
 			// Replacer function will bold all found flags in docblock.
 			var replacer = function(match) {
 				return chalk.bold(match);
@@ -215,11 +203,14 @@ gulp.task("help", function(done) {
 				// Get the description.
 				var desc = block.substring(0, newline_index);
 
+				// Add the information to the tasks object.
 				tasks[name] = {
 					text: block,
 					desc: desc,
 					internal: internal
 				};
+
+				// Skip the help name as this is always the first no matter
 				if (name !== "help") {
 					names.push(name);
 				}

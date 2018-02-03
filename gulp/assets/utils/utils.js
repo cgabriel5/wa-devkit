@@ -501,6 +501,18 @@ function cli_highlight(string) {
 	return output;
 }
 
+// Sort comparator function.
+// [https://stackoverflow.com/a/9175783]
+var comparator = function(a, b) {
+	if (a > b) {
+		return +1;
+	}
+	if (a < b) {
+		return -1;
+	}
+	return 0;
+};
+
 // Export functions.
 exports.browser = browser();
 exports.time = time;
@@ -517,3 +529,4 @@ exports.opts_sort = opts_sort;
 exports.escape = escape;
 exports.unique = unique;
 exports.cli_highlight = cli_highlight;
+exports.comparator = comparator;
