@@ -18,7 +18,7 @@ gulp.task("dist:clean", function(done) {
 gulp.task("dist:favicon", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.favicon, {
+			gulp.src(BUNDLE_DIST.source.files.favicon, {
 				dot: true,
 				cwd: $paths.basedir,
 				// To keep the sub-folders define the base in the options.
@@ -41,7 +41,7 @@ gulp.task("dist:favicon", function(done) {
 gulp.task("dist:css", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.css, {
+			gulp.src(BUNDLE_DIST.source.files.css, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -66,7 +66,7 @@ gulp.task("dist:img", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.img, {
+			gulp.src(BUNDLE_DIST.source.files.img, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -106,7 +106,7 @@ gulp.task("dist:img", function(done) {
 gulp.task("dist:js", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.js, {
+			gulp.src(BUNDLE_DIST.source.files.js, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -128,7 +128,7 @@ gulp.task("dist:js", function(done) {
 gulp.task("dist:root", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.root, {
+			gulp.src(BUNDLE_DIST.source.files.root, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -163,7 +163,7 @@ gulp.task("dist", function(done) {
 	}
 
 	// Get the gulp build tasks.
-	var tasks = bundle_dist.tasks;
+	var tasks = BUNDLE_DIST.tasks;
 
 	// Add callback to the sequence.
 	tasks.push(function() {

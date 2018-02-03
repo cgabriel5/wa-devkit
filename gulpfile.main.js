@@ -167,13 +167,13 @@ if (fe.sync($paths.config_settings)) {
 // Get all needed configuration values.
 
 // Bundles.
-var bundle_html = get($configs, "bundles.html", "");
-var bundle_css = get($configs, "bundles.css", "");
-var bundle_js = get($configs, "bundles.js", "");
-// var bundle_img = get($configs, "bundles.img", "");
-var bundle_gulp = get($configs, "bundles.gulp", "");
-var bundle_dist = get($configs, "bundles.dist", "");
-var bundle_lib = get($configs, "bundles.lib", "");
+var BUNDLE_HTML = get($configs, "bundles.html", "");
+var BUNDLE_CSS = get($configs, "bundles.css", "");
+var BUNDLE_JS = get($configs, "bundles.js", "");
+// var BUNDLE_IMG = get($configs, "bundles.img", "");
+var BUNDLE_GULP = get($configs, "bundles.gulp", "");
+var BUNDLE_DIST = get($configs, "bundles.dist", "");
+var BUNDLE_LIB = get($configs, "bundles.lib", "");
 
 // App configuration information.
 
@@ -232,12 +232,12 @@ var opts_remove = {
 // HTML injection variable object.
 var html_injection = {
 	css_bundle_app:
-		$paths.css_bundles + get(bundle_css, "source.names.main", ""),
+		$paths.css_bundles + get(BUNDLE_CSS, "source.names.main", ""),
 	css_bundle_vendor:
-		$paths.css_bundles + get(bundle_css, "vendor.names.main", ""),
-	js_bundle_app: $paths.js_bundles + get(bundle_js, "source.names.main", ""),
+		$paths.css_bundles + get(BUNDLE_CSS, "vendor.names.main", ""),
+	js_bundle_app: $paths.js_bundles + get(BUNDLE_JS, "source.names.main", ""),
 	js_bundle_vendor:
-		$paths.js_bundles + get(bundle_js, "vendor.names.main", "")
+		$paths.js_bundles + get(BUNDLE_JS, "vendor.names.main", "")
 };
 
 // -----------------------------------------------------------------------------
@@ -555,7 +555,7 @@ gulp.task("init:build", function(done) {
 	var task = this;
 
 	// Get the gulp build tasks.
-	var tasks = bundle_gulp.tasks;
+	var tasks = BUNDLE_GULP.tasks;
 
 	// Add callback to the sequence.
 	tasks.push(function() {
@@ -783,7 +783,7 @@ gulp.task("dist:clean", function(done) {
 gulp.task("dist:favicon", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.favicon, {
+			gulp.src(BUNDLE_DIST.source.files.favicon, {
 				dot: true,
 				cwd: $paths.basedir,
 				// To keep the sub-folders define the base in the options.
@@ -806,7 +806,7 @@ gulp.task("dist:favicon", function(done) {
 gulp.task("dist:css", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.css, {
+			gulp.src(BUNDLE_DIST.source.files.css, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -831,7 +831,7 @@ gulp.task("dist:img", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.img, {
+			gulp.src(BUNDLE_DIST.source.files.img, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -871,7 +871,7 @@ gulp.task("dist:img", function(done) {
 gulp.task("dist:js", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.js, {
+			gulp.src(BUNDLE_DIST.source.files.js, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -893,7 +893,7 @@ gulp.task("dist:js", function(done) {
 gulp.task("dist:root", function(done) {
 	pump(
 		[
-			gulp.src(bundle_dist.source.files.root, {
+			gulp.src(BUNDLE_DIST.source.files.root, {
 				dot: true,
 				cwd: $paths.basedir,
 				base: $paths.dot
@@ -928,7 +928,7 @@ gulp.task("dist", function(done) {
 	}
 
 	// Get the gulp build tasks.
-	var tasks = bundle_dist.tasks;
+	var tasks = BUNDLE_DIST.tasks;
 
 	// Add callback to the sequence.
 	tasks.push(function() {
@@ -966,19 +966,19 @@ gulp.task("lib:clean", function(done) {
 gulp.task("lib:js", function(done) {
 	pump(
 		[
-			gulp.src(bundle_js.source.files, {
+			gulp.src(BUNDLE_JS.source.files, {
 				nocase: true,
 				cwd: $paths.js_source
 			}),
 			// Filter out all but test files (^test*/i).
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
-			$.concat(bundle_js.source.names.libs.main),
+			$.concat(BUNDLE_JS.source.names.libs.main),
 			$.prettier(PRETTIER),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
 			$.uglify(),
-			$.rename(bundle_js.source.names.libs.min),
+			$.rename(BUNDLE_JS.source.names.libs.min),
 			gulp.dest($paths.lib_home),
 			$.debug.edit()
 		],
@@ -1007,7 +1007,7 @@ gulp.task("lib", function(done) {
 	}
 
 	// Get the gulp build tasks.
-	var tasks = bundle_lib.tasks;
+	var tasks = BUNDLE_LIB.tasks;
 
 	// Add callback to the sequence.
 	tasks.push(function() {
@@ -1056,7 +1056,7 @@ gulp.task("watch", function(done) {
 		},
 		function() {
 			// Gulp watcher paths.
-			var watch_paths = bundle_gulp.watch;
+			var watch_paths = BUNDLE_GULP.watch;
 
 			// Watch for any changes to HTML source files.
 			$.watcher.create("watcher:html", watch_paths.html, ["html"]);
@@ -1116,11 +1116,11 @@ gulp.task("html", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_html.source.files, {
+			gulp.src(BUNDLE_HTML.source.files, {
 				cwd: $paths.html_source
 			}),
 			$.debug(),
-			$.concat(bundle_html.source.names.main),
+			$.concat(BUNDLE_HTML.source.names.main),
 			$.injection.pre({ replacements: html_injection }),
 			$.beautify(JSBEAUTIFY),
 			$.injection.post({ replacements: html_injection }),
@@ -1157,11 +1157,11 @@ gulp.task("css:app", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_css.source.files, {
+			gulp.src(BUNDLE_CSS.source.files, {
 				cwd: $paths.css_source
 			}),
 			$.debug(),
-			$.concat(bundle_css.source.names.main),
+			$.concat(BUNDLE_CSS.source.names.main),
 			$.postcss([
 				unprefix(),
 				shorthand(),
@@ -1201,9 +1201,9 @@ gulp.task("css:vendor", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_css.vendor.files),
+			gulp.src(BUNDLE_CSS.vendor.files),
 			$.debug(),
-			$.concat(bundle_css.vendor.names.main),
+			$.concat(BUNDLE_CSS.vendor.names.main),
 			$.postcss([
 				unprefix(),
 				shorthand(),
@@ -1248,11 +1248,11 @@ gulp.task("js:app", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_js.source.files, {
+			gulp.src(BUNDLE_JS.source.files, {
 				cwd: $paths.js_source
 			}),
 			$.debug(),
-			$.concat(bundle_js.source.names.main),
+			$.concat(BUNDLE_JS.source.names.main),
 			$.prettier(PRETTIER),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
@@ -1282,9 +1282,9 @@ gulp.task("js:vendor", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_js.vendor.files),
+			gulp.src(BUNDLE_JS.vendor.files),
 			$.debug(),
-			$.concat(bundle_js.vendor.names.main),
+			$.concat(BUNDLE_JS.vendor.names.main),
 			$.prettier(PRETTIER),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
@@ -2921,8 +2921,8 @@ gulp.task("dependency", function(done) {
 	// Print used vendor dependencies if flag provided.
 	if (list) {
 		// Get the vendor dependencies.
-		var css_dependencies = bundle_css.vendor.files;
-		var js_dependencies = bundle_js.vendor.files;
+		var css_dependencies = BUNDLE_CSS.vendor.files;
+		var js_dependencies = BUNDLE_JS.vendor.files;
 
 		print.ln();
 		print(chalk.underline("Dependencies"));
@@ -3021,13 +3021,13 @@ gulp.task("dependency", function(done) {
  */
 gulp.task("make", function(done) {
 	// Get file names to use.
-	var names = bundle_gulp.source.names;
+	var names = BUNDLE_GULP.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
 
 	pump(
 		[
-			gulp.src(bundle_gulp.source.files, {
+			gulp.src(BUNDLE_GULP.source.files, {
 				cwd: $paths.gulp_source
 			}),
 			$.debug(),
@@ -3409,7 +3409,7 @@ gulp.task("help", function(done) {
 	var internal = __flags.i || __flags.internal;
 
 	// Get file names to use.
-	var names = bundle_gulp.source.names;
+	var names = BUNDLE_GULP.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
 

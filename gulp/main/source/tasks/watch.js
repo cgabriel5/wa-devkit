@@ -29,7 +29,7 @@ gulp.task("watch", function(done) {
 		},
 		function() {
 			// Gulp watcher paths.
-			var watch_paths = bundle_gulp.watch;
+			var watch_paths = BUNDLE_GULP.watch;
 
 			// Watch for any changes to HTML source files.
 			$.watcher.create("watcher:html", watch_paths.html, ["html"]);

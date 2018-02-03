@@ -8,13 +8,13 @@
  */
 gulp.task("make", function(done) {
 	// Get file names to use.
-	var names = bundle_gulp.source.names;
+	var names = BUNDLE_GULP.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
 
 	pump(
 		[
-			gulp.src(bundle_gulp.source.files, {
+			gulp.src(BUNDLE_GULP.source.files, {
 				cwd: $paths.gulp_source
 			}),
 			$.debug(),

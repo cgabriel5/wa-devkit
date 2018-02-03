@@ -7,11 +7,11 @@ gulp.task("html", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_html.source.files, {
+			gulp.src(BUNDLE_HTML.source.files, {
 				cwd: $paths.html_source
 			}),
 			$.debug(),
-			$.concat(bundle_html.source.names.main),
+			$.concat(BUNDLE_HTML.source.names.main),
 			$.injection.pre({ replacements: html_injection }),
 			$.beautify(JSBEAUTIFY),
 			$.injection.post({ replacements: html_injection }),

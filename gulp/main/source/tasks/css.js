@@ -14,11 +14,11 @@ gulp.task("css:app", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_css.source.files, {
+			gulp.src(BUNDLE_CSS.source.files, {
 				cwd: $paths.css_source
 			}),
 			$.debug(),
-			$.concat(bundle_css.source.names.main),
+			$.concat(BUNDLE_CSS.source.names.main),
 			$.postcss([
 				unprefix(),
 				shorthand(),
@@ -58,9 +58,9 @@ gulp.task("css:vendor", function(done) {
 
 	pump(
 		[
-			gulp.src(bundle_css.vendor.files),
+			gulp.src(BUNDLE_CSS.vendor.files),
 			$.debug(),
-			$.concat(bundle_css.vendor.names.main),
+			$.concat(BUNDLE_CSS.vendor.names.main),
 			$.postcss([
 				unprefix(),
 				shorthand(),

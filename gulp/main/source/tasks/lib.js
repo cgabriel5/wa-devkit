@@ -18,19 +18,19 @@ gulp.task("lib:clean", function(done) {
 gulp.task("lib:js", function(done) {
 	pump(
 		[
-			gulp.src(bundle_js.source.files, {
+			gulp.src(BUNDLE_JS.source.files, {
 				nocase: true,
 				cwd: $paths.js_source
 			}),
 			// Filter out all but test files (^test*/i).
 			$.filter([$paths.files_all, $paths.not_tests]),
 			$.debug(),
-			$.concat(bundle_js.source.names.libs.main),
+			$.concat(BUNDLE_JS.source.names.libs.main),
 			$.prettier(PRETTIER),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
 			$.uglify(),
-			$.rename(bundle_js.source.names.libs.min),
+			$.rename(BUNDLE_JS.source.names.libs.min),
 			gulp.dest($paths.lib_home),
 			$.debug.edit()
 		],
@@ -59,7 +59,7 @@ gulp.task("lib", function(done) {
 	}
 
 	// Get the gulp build tasks.
-	var tasks = bundle_lib.tasks;
+	var tasks = BUNDLE_LIB.tasks;
 
 	// Add callback to the sequence.
 	tasks.push(function() {

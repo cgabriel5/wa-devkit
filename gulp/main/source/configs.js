@@ -1,13 +1,13 @@
 // Get all needed configuration values.
 
 // Bundles.
-var bundle_html = get($configs, "bundles.html", "");
-var bundle_css = get($configs, "bundles.css", "");
-var bundle_js = get($configs, "bundles.js", "");
-// var bundle_img = get($configs, "bundles.img", "");
-var bundle_gulp = get($configs, "bundles.gulp", "");
-var bundle_dist = get($configs, "bundles.dist", "");
-var bundle_lib = get($configs, "bundles.lib", "");
+var BUNDLE_HTML = get($configs, "bundles.html", "");
+var BUNDLE_CSS = get($configs, "bundles.css", "");
+var BUNDLE_JS = get($configs, "bundles.js", "");
+// var BUNDLE_IMG = get($configs, "bundles.img", "");
+var BUNDLE_GULP = get($configs, "bundles.gulp", "");
+var BUNDLE_DIST = get($configs, "bundles.dist", "");
+var BUNDLE_LIB = get($configs, "bundles.lib", "");
 
 // App configuration information.
 

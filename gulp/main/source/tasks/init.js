@@ -170,7 +170,7 @@ gulp.task("init:build", function(done) {
 	var task = this;
 
 	// Get the gulp build tasks.
-	var tasks = bundle_gulp.tasks;
+	var tasks = BUNDLE_GULP.tasks;
 
 	// Add callback to the sequence.
 	tasks.push(function() {

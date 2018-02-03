@@ -81,8 +81,8 @@ gulp.task("dependency", function(done) {
 	// Print used vendor dependencies if flag provided.
 	if (list) {
 		// Get the vendor dependencies.
-		var css_dependencies = bundle_css.vendor.files;
-		var js_dependencies = bundle_js.vendor.files;
+		var css_dependencies = BUNDLE_CSS.vendor.files;
+		var js_dependencies = BUNDLE_JS.vendor.files;
 
 		print.ln();
 		print(chalk.underline("Dependencies"));

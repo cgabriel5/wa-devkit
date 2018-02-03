@@ -48,7 +48,7 @@ gulp.task("help", function(done) {
 	var internal = __flags.i || __flags.internal;
 
 	// Get file names to use.
-	var names = bundle_gulp.source.names;
+	var names = BUNDLE_GULP.source.names;
 	var name_default = names.default;
 	var name_main = names.main;
 
