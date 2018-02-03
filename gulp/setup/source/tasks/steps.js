@@ -18,11 +18,11 @@ gulp.task("init:app-settings", function(done) {
 					// task in the terminal.
 
 					// Update the app object.
-					$app.index = __data.entry_point;
-					$app.base = __data.base;
-					$app.https = __data.https;
-					$app.port = __data.port;
-					$app.eol = {
+					APP.index = __data.entry_point;
+					APP.base = __data.base;
+					APP.https = __data.https;
+					APP.port = __data.port;
+					APP.eol = {
 						ending: __data.eol[1],
 						style: __data.eol[0]
 					};
@@ -30,12 +30,12 @@ gulp.task("init:app-settings", function(done) {
 					// Hacky-method: comment-json removes all empty lines so
 					// the lines are added back to make the config file easier
 					// to read.
-					for (var key in $app) {
-						if ($app.hasOwnProperty(key)) {
+					for (var key in APP) {
+						if (APP.hasOwnProperty(key)) {
 							// Only modify the comments.
 							if (key.charAt(0) === "/") {
 								// Prepend a placeholder for the new lines.
-								$app[key][0].unshift("// $LINE");
+								APP[key][0].unshift("// $LINE");
 							}
 						}
 					}
@@ -43,7 +43,7 @@ gulp.task("init:app-settings", function(done) {
 					// Stringify the answers object and remove the placeholders
 					// with new lines.
 					var content = jsonc
-						.stringify($app, null, JINDENT)
+						.stringify(APP, null, JINDENT)
 						.replace(/\/\/ \$LINE/gm, "\n")
 						.trim();
 

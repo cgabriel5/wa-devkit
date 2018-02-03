@@ -31,7 +31,7 @@ gulp.task("make", function(done) {
 				return stream.pipe($.insert.prepend(line_info));
 			}),
 			$.concat($paths.gulp_file_setup),
-			$.prettier($prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],

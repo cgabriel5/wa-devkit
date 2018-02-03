@@ -62,11 +62,7 @@ var print = utils.print;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
-var bangify = utils.bangify;
-var globall = utils.globall;
-var ext = utils.ext;
 var expand_paths = utils.expand_paths;
-var opts_sort = utils.opts_sort;
 var cli_highlight = utils.cli_highlight;
 
 // -----------------------------------------------------------------------------
@@ -99,17 +95,14 @@ var $internal = require("./gulp/setup/exports/internal.json");
 var $pkg = json.read($paths.config_pkg);
 
 // Get individual plugin settings.
-var $app = jsonc.parse(fs.readFileSync($paths.config_app).toString());
-var $ap = require($paths.config_autoprefixer);
-var $bundles = json.read($paths.config_bundles);
-var $jsbeautify = require($paths.config_jsbeautify);
-var $perfectionist = require($paths.config_perfectionist);
-var $prettier = require($paths.config_prettier);
+var APP = jsonc.parse(fs.readFileSync($paths.config_app).toString());
+var BUNDLES = json.read($paths.config_bundles);
+var PRETTIER = require($paths.config_prettier);
 
 // Setup exports.
-var $questions = require($paths.gulp_setup_questions);
-var $templates = require($paths.gulp_setup_templates);
-var $jsconfigs = require($paths.gulp_setup_jsconfigs);
+var QUESTIONS = require($paths.gulp_setup_questions);
+var TEMPLATES = require($paths.gulp_setup_templates);
+var JSCONFIGS = require($paths.gulp_setup_jsconfigs);
 
 // -----------------------------------------------------------------------------
 // vars.js -- ./gulp/setup/source/vars.js
@@ -119,15 +112,10 @@ var $jsconfigs = require($paths.gulp_setup_jsconfigs);
 var __data = {};
 
 // App directory information.
-var INDEX = $app.index;
-
-// Line ending information.
-var EOL = $app.eol;
-var EOL_ENDING = EOL.ending;
-// var EOL_STYLE = EOL.style;
+var INDEX = APP.index;
 
 // App JSON indentation.
-var JINDENT = $app.eol;
+var JINDENT = APP.eol;
 
 // -----------------------------------------------------------------------------
 // functions.js -- ./gulp/setup/source/functions.js
@@ -187,26 +175,26 @@ gulp.task("init", function(done) {
 	// this seems to be the way to go. Questions are asked and their replies
 	// are stored in the __answers variable for later use.
 
-	inquirer.prompt($questions.ready).then(function(answers) {
+	inquirer.prompt(QUESTIONS.ready).then(function(answers) {
 		if (answers.continue) {
 			sep_message("initial");
 
 			// Ask the initial questions.
-			inquirer.prompt($questions.initial).then(function(answers) {
+			inquirer.prompt(QUESTIONS.initial).then(function(answers) {
 				// Store the answer.
 				__answers.push(answers);
 
 				sep_message("author");
 
 				// Ask the author questions.
-				inquirer.prompt($questions.author).then(function(answers) {
+				inquirer.prompt(QUESTIONS.author).then(function(answers) {
 					// Store the answer.
 					__answers.push(answers);
 
 					sep_message("license");
 
 					// Ask the other.
-					inquirer.prompt($questions.license).then(function(answers) {
+					inquirer.prompt(QUESTIONS.license).then(function(answers) {
 						// Store the answer.
 						__answers.push(answers);
 
@@ -214,7 +202,7 @@ gulp.task("init", function(done) {
 
 						// Ask the app questions.
 						inquirer
-							.prompt($questions.app)
+							.prompt(QUESTIONS.app)
 							.then(function(answers) {
 								// Store the answer.
 								__answers.push(answers);
@@ -237,15 +225,15 @@ gulp.task("init", function(done) {
 								$internal.apptype = type;
 								// Pick js bundle based on provided project type + reset the
 								// config js bundle.
-								$bundles.data.js = $jsconfigs[type];
+								BUNDLES.data.js = JSCONFIGS[type];
 
 								// Remove distribution configuration if type is library
 								// as the project is defaulted for a webapp project.
 								if (type === "library") {
 									// Remove the distribution configuration.
-									delete $bundles.data.dist;
+									delete BUNDLES.data.dist;
 									// Add the library configuration.
-									$bundles.data.lib = $jsconfigs.lib;
+									BUNDLES.data.lib = JSCONFIGS.lib;
 								} // Else leave as-is for webapp project.
 
 								// Set package.json properties.
@@ -254,30 +242,30 @@ gulp.task("init", function(done) {
 								$pkg.set("description", __data.description);
 								$pkg.set(
 									"author",
-									format($templates.author, __data)
+									format(TEMPLATES.author, __data)
 								);
 								$pkg.set("repository", {
 									type: "git",
 									url: format(
-										$templates["repository.url"],
+										TEMPLATES["repository.url"],
 										__data
 									)
 								});
 								$pkg.set("bugs", {
-									url: format($templates["bugs.url"], __data)
+									url: format(TEMPLATES["bugs.url"], __data)
 								});
 								$pkg.set(
 									"homepage",
-									format($templates.homepage, __data)
+									format(TEMPLATES.homepage, __data)
 								);
 								$pkg.set("private", __data.private);
 
 								// Sort keys.
-								$bundles.data = alphabetize($bundles.data);
+								BUNDLES.data = alphabetize(BUNDLES.data);
 								$pkg.data = alphabetize($pkg.data);
 
 								// Saves changes to files.
-								$bundles.writeSync(null, JINDENT);
+								BUNDLES.writeSync(null, JINDENT);
 								$pkg.write(
 									function() {
 										// Run initialization steps.
@@ -362,11 +350,11 @@ gulp.task("init:app-settings", function(done) {
 					// task in the terminal.
 
 					// Update the app object.
-					$app.index = __data.entry_point;
-					$app.base = __data.base;
-					$app.https = __data.https;
-					$app.port = __data.port;
-					$app.eol = {
+					APP.index = __data.entry_point;
+					APP.base = __data.base;
+					APP.https = __data.https;
+					APP.port = __data.port;
+					APP.eol = {
 						ending: __data.eol[1],
 						style: __data.eol[0]
 					};
@@ -374,12 +362,12 @@ gulp.task("init:app-settings", function(done) {
 					// Hacky-method: comment-json removes all empty lines so
 					// the lines are added back to make the config file easier
 					// to read.
-					for (var key in $app) {
-						if ($app.hasOwnProperty(key)) {
+					for (var key in APP) {
+						if (APP.hasOwnProperty(key)) {
 							// Only modify the comments.
 							if (key.charAt(0) === "/") {
 								// Prepend a placeholder for the new lines.
-								$app[key][0].unshift("// $LINE");
+								APP[key][0].unshift("// $LINE");
 							}
 						}
 					}
@@ -387,7 +375,7 @@ gulp.task("init:app-settings", function(done) {
 					// Stringify the answers object and remove the placeholders
 					// with new lines.
 					var content = jsonc
-						.stringify($app, null, JINDENT)
+						.stringify(APP, null, JINDENT)
 						.replace(/\/\/ \$LINE/gm, "\n")
 						.trim();
 
@@ -776,7 +764,7 @@ gulp.task("make", function(done) {
 				return stream.pipe($.insert.prepend(line_info));
 			}),
 			$.concat($paths.gulp_file_setup),
-			$.prettier($prettier),
+			$.prettier(PRETTIER),
 			gulp.dest($paths.basedir),
 			$.debug.edit()
 		],
