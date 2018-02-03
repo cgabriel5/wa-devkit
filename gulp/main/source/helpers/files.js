@@ -160,27 +160,52 @@ gulp.task("files", function(done) {
 		// List the used sub-extensions.
 		if (sub_extensions) {
 			// Store used sub-extensions.
-			var subs_ = [];
+			var sub_ext_obj = {};
 
 			print.ln();
 			print(chalk.underline("Sub-extensions"));
 
 			// Loop over each path to find the sub-extensions.
-			files.forEach(function(path_) {
+			files.forEach(function(filepath) {
 				// Get the paths sub-extensions.
-				var subs = extension.subs({ path: path_ });
+				var subs = extension.subs({ path: filepath });
 
 				// Loop over the found sub-extensions and print them.
 				if (subs.length) {
 					subs.forEach(function(sub) {
-						// If the sub does not exist store it and print.
-						if (!-~subs_.indexOf(sub)) {
-							print(`  ${sub}`);
-							subs_.push(sub);
+						// If the sub does not exist make the initial store.
+						if (!sub_ext_obj[sub]) {
+							sub_ext_obj[sub] = [filepath];
+						} else {
+							// Else it already exists so just add to array.
+							var array = sub_ext_obj[sub];
+							array.push(filepath);
 						}
 					});
 				}
 			});
+
+			// Print out the results.
+			for (var sub_ext_name in sub_ext_obj) {
+				if (sub_ext_obj.hasOwnProperty(sub_ext_name)) {
+					// Get the files array
+					var files_array = sub_ext_obj[sub_ext_name];
+
+					// Print out the sub name.
+					print(`  .${sub_ext_name}. (${files_array.length})`);
+
+					// Sort the array names alphabetically and fallback
+					// to a length comparison.
+					files_array.sort(function(a, b) {
+						return cmp(a, b) || cmp(a.length, b.length);
+					});
+
+					// Print the the files array.
+					files_array.forEach(function(file) {
+						print(`     ${chalk.magenta(file)}`);
+					});
+				}
+			}
 
 			print.ln();
 
