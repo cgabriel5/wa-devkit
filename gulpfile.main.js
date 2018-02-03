@@ -2468,9 +2468,19 @@ gulp.task("eol", function(done) {
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
 
+	// Run yargs.
+	var __flags = yargs.option("all", {
+		type: "boolean"
+	}).argv;
+
+	// Get the command line arguments from yargs.
+	var all = __flags.all;
+
 	// Get all files excluding: node_modules/, .git/, and img/.
 	var files = [
-		$paths.files_code,
+		// If the --all flag is provided use all the file types else
+		// only use the common web file types.
+		$paths["files_" + (all ? "code" : "common")],
 		bangify($paths.img_source),
 		bangify(globall($paths.node_modules_name)),
 		bangify(globall($paths.git))
