@@ -15,6 +15,12 @@ var BUNDLE_LIB = get($configs, "bundles.lib", "");
 var INDEX = get($configs, "app.index", "");
 var APPDIR = path.join(get($configs, "app.base", ""), $paths.rootdir);
 
+// App settings editor.
+var EDITOR = get($configs, "app.editor", {});
+var EDITOR_ACTIVE = get(EDITOR, "active", false);
+var EDITOR_CMD = get(EDITOR, "command", "");
+var EDITOR_FLAGS = get(EDITOR, "flags", []);
+
 // App line ending information.
 var EOL = get($configs, "app.eol", "");
 var EOL_ENDING = get(EOL, "ending", "");

@@ -41,10 +41,23 @@ function get_editor(options) {
 	// Default options.
 	options = options || {};
 
-	// Use the provided editor or get the environment variables.
-	var editor = options.editor || process.env.EDITOR || process.env.VISUAL;
+	// Note: Honor the provided editor information first. If nothing is
+	// provided look at the app settings for the set editor if the active
+	// flag is set. If not set then try the environment variables.
 
-	// Default to the tried and true editors when nothing is found.
+	// Use the provided editor.
+	var editor = options.editor;
+
+	// If still no editor use the app settings provided editor.
+	if (!editor && EDITOR_ACTIVE) {
+		// Form the command string: "editor + flags".
+		editor = EDITOR_CMD + " " + EDITOR_FLAGS.join(" ");
+	}
+
+	// If still no editor try the environment variables.
+	if (!editor) editor = process.env.EDITOR || process.env.VISUAL;
+
+	// Finally, if nothing is found, default to the tried and true editors.
 	if (!editor) editor = /^win/.test(process.platform) ? "notepad" : "vim";
 
 	// Lowercase everything.
