@@ -20,7 +20,7 @@ module.exports = {
 		{
 			type: "list",
 			name: "apptype",
-			message: "Setting up a:",
+			message: "Setup a:",
 			choices: ["webapp", "library"],
 			default: "webapp"
 		},
@@ -130,49 +130,24 @@ module.exports = {
 		{
 			type: "input",
 			name: "base",
-			message: function(answer) {
-				console.log(
-					`  The project address is the location that will be used
-  when launching the project. For example, the address
-  defaults to "localhost/projects/", minus the double
-  quotes. This means that when the project is launched,
-  it will launch at "http://localhost/projects/...", for
-  example.
-`
-				);
-				return "Address:";
-			},
+			message: "Address:",
 			default: "localhost/projects/"
 		},
 		{
 			type: "confirm",
 			name: "https",
-			message: function(answer) {
-				console.log(
-					`\n  When launching the project should https be used. For,
-  example, open as https://localhost/projects/...?
-`
-				);
-				return "Use https:";
-			}
+			message: "Use https:"
 		},
 		{
 			type: "input",
 			name: "port",
-			message: function(answer) {
-				console.log(
-					`\n  When launching the project the default port will be 80.
-  Use a different port if needed.
-`
-				);
-				return "Port:";
-			},
+			message: "Port:",
 			default: 80
 		},
 		{
 			type: "list",
 			name: "eol",
-			message: "Use what type of line endings:",
+			message: "Line endings:",
 			choices: ["Mac OS", "Windows/DOS", "Unix (OS X/Linux)"],
 			default: "Unix (OS X/Linux)",
 			filter: function(answer) {

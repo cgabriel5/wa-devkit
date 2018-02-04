@@ -31,17 +31,17 @@ gulp.task("init", function(done) {
 	 */
 	function sep_message(message) {
 		var messages = {
-			initial: "[Project Questions]",
-			author: "[Author Questions]",
-			license: "[Generate License]",
-			app: "[App Questions]"
+			initial: "Project Questions",
+			author: "Author Questions",
+			license: "Generate License",
+			app: "App Questions"
 		};
 
 		// Overwrite the var.
 		message = messages[message];
 
 		print.ln();
-		print.gulp(chalk.green(`${message}\n`));
+		print(chalk.green(`${message}\n`));
 	}
 
 	// Not really the most ideal but to ask the setup questions in groups
