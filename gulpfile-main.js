@@ -191,7 +191,7 @@ var EDITOR_FLAGS = get(EDITOR, "flags", []);
 // App line ending information.
 var EOL = get($configs, "app.eol", "");
 var EOL_ENDING = get(EOL, "ending", "");
-// var EOL_STYLE = EOL.style;
+// var EOL_STYLE = get(EOL, "style", "");
 
 // Use https or not.
 var HTTPS = get($configs, "app.https", false);
@@ -204,6 +204,7 @@ var PRETTIER = get($configs, "prettier", {});
 var JSBEAUTIFY = get($configs, "jsbeautify", {});
 var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
+var REALFAVICONGEN = get($configs, "realfavicongen", {});
 
 // Internal information.
 var INT_APPTYPE = get($internal.data, "apptype", "");
@@ -3710,91 +3711,17 @@ gulp.task("help", function(done) {
  * @internal - Used to prepare the favicon task.
  */
 gulp.task("favicon:generate", function(done) {
-	// Note: Most of the used plugins have their own dedicated config
-	// file found in configs/. This plugin, however, does not and therefore
-	// requires this file to be changed. Maybe in the future this might
-	// change and a dedicated config file will be made.
-
 	$.real_favicon.generateFavicon(
-		{
+		Object.assign(REALFAVICONGEN, {
+			// Add in the following paths to the settings object:
 			masterPicture: $paths.favicon_master_pic,
 			dest: $paths.favicon_dest,
 			iconsPath: $paths.favicon_dest,
-			design: {
-				ios: {
-					pictureAspect: "backgroundAndMargin",
-					backgroundColor: "#f6f5dd",
-					margin: "53%",
-					assets: {
-						ios6AndPriorIcons: true,
-						ios7AndLaterIcons: true,
-						precomposedIcons: true,
-						declareOnlyDefaultIcon: true
-					}
-				},
-				desktopBrowser: {},
-				windows: {
-					pictureAspect: "whiteSilhouette",
-					backgroundColor: "#00a300",
-					onConflict: "override",
-					assets: {
-						windows80Ie10Tile: true,
-						windows10Ie11EdgeTiles: {
-							small: true,
-							medium: true,
-							big: true,
-							rectangle: true
-						}
-					}
-				},
-				androidChrome: {
-					pictureAspect: "backgroundAndMargin",
-					margin: "42%",
-					backgroundColor: "#f6f5dd",
-					themeColor: "#f6f5dd",
-					manifest: {
-						display: "standalone",
-						orientation: "notSet",
-						onConflict: "override",
-						declared: true
-					},
-					assets: {
-						legacyIcon: false,
-						lowResolutionIcons: false
-					}
-				},
-				safariPinnedTab: {
-					pictureAspect: "silhouette",
-					themeColor: "#699935"
-				}
-			},
-			settings: {
-				scalingAlgorithm: "Mitchell",
-				errorOnImageTooSmall: false
-			},
 			markupFile: get_config_file($paths.config_$favicondata)
-		},
+		}),
 		function() {
 			done();
 		}
-	);
-});
-
-/**
- * Update manifest.json.
- *
- * @internal - Used to prepare the favicon task.
- */
-gulp.task("favicon:edit-manifest", function(done) {
-	var manifest = json.read($paths.favicon_root_manifest);
-	manifest.set("name", "wa-devkit");
-	manifest.set("short_name", "WADK");
-	manifest.write(
-		function() {
-			done();
-		},
-		null,
-		JINDENT
 	);
 });
 
@@ -3874,20 +3801,15 @@ gulp.task("favicon", function(done) {
 	// Cache task.
 	var task = this;
 
-	var tasks = [
-		"favicon:generate",
-		"favicon:edit-manifest",
-		"favicon:root",
-		"favicon:delete",
-		"favicon:html",
-		"html",
-		"tohtml",
-		"pretty"
-	];
+	// Get the gulp favicon tasks.
+	var tasks = favicon.tasks;
+
 	tasks.push(function() {
 		print.gulp.success("Favicons generated.");
 		done();
 	});
+
+	// Apply the tasks and callback to sequence and run the tasks.
 	return sequence.apply(task, tasks);
 });
 

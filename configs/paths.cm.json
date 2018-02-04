@@ -39,6 +39,7 @@
 	"config_settings": "./${homedir}configs/.__settings.json",
 	"config_settings_json_files": "./${homedir}configs/**/*.json",
 	"config_settings_name": ".__settings.json",
+	"config_$realfavicongen": "realfavicongen",
 	"config_$perfectionist": "perfectionist",
 	"config_$findfreeport": "findfreeport",
 	"config_$autoprefixer": "autoprefixer",

@@ -24,7 +24,7 @@ var EDITOR_FLAGS = get(EDITOR, "flags", []);
 // App line ending information.
 var EOL = get($configs, "app.eol", "");
 var EOL_ENDING = get(EOL, "ending", "");
-// var EOL_STYLE = EOL.style;
+// var EOL_STYLE = get(EOL, "style", "");
 
 // Use https or not.
 var HTTPS = get($configs, "app.https", false);
@@ -37,6 +37,7 @@ var PRETTIER = get($configs, "prettier", {});
 var JSBEAUTIFY = get($configs, "jsbeautify", {});
 var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
+var REALFAVICONGEN = get($configs, "realfavicongen", {});
 
 // Internal information.
 var INT_APPTYPE = get($internal.data, "apptype", "");

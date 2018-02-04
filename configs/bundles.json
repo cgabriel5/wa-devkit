@@ -50,6 +50,17 @@
 		]
 	},
 	"gulp": {
+		"favicon": {
+			"tasks": [
+				"favicon:generate",
+				"favicon:root",
+				"favicon:delete",
+				"favicon:html",
+				"html",
+				"tohtml",
+				"pretty"
+			]
+		},
 		"source": {
 			"files": [
 				"requires.js",
