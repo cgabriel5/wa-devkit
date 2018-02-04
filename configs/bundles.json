@@ -56,8 +56,7 @@
 				"favicon:root",
 				"favicon:delete",
 				"favicon:html",
-				"html",
-				"pretty"
+				"html"
 			]
 		},
 		"source": {

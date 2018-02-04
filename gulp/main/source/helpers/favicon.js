@@ -105,8 +105,19 @@ gulp.task("favicon", function(done) {
 	var tasks = get($configs, "bundles.gulp.favicon.tasks", []);
 
 	tasks.push(function() {
-		print.gulp.success("Favicons generated.");
-		done();
+		// Finally, pretty files.
+		cmd.get(`${GULPCLI} pretty -q`, function(err, data) {
+			if (err) {
+				throw err;
+			}
+
+			// Highlight data string.
+			print(cli_highlight(data));
+
+			// Finally, print success message.
+			print.gulp.success("Favicons generated.");
+			done();
+		});
 	});
 
 	// Apply the tasks and callback to sequence and run the tasks.
