@@ -26,7 +26,7 @@ gulp.task("favicon:generate", function(done) {
 });
 
 /**
- * Copy favicon.ico and apple-touch-icon.png to the root.
+ * Copy needed favicon files to the root.
  *
  * @internal - Used to prepare the favicon task.
  */
