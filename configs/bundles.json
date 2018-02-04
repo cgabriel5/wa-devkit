@@ -34,7 +34,7 @@
 				"root": [
 					"apple-touch-icon.png",
 					"browserconfig.xml",
-					"manifest.json",
+					"site.webmanifest",
 					"favicon.ico",
 					"index.html"
 				]

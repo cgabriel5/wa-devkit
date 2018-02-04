@@ -61,7 +61,7 @@
 	"favicon_root_ico": "./${homedir}favicon/favicon.ico",
 	"favicon_root_png": "./${homedir}favicon/apple-touch-icon.png",
 	"favicon_root_config": "./${homedir}favicon/browserconfig.xml",
-	"favicon_root_manifest": "./${homedir}favicon/manifest.json",
+	"favicon_root_manifest": "./${homedir}favicon/site.webmanifest",
 	"favicon_html": "./${homedir}html/source/head/favicon.html",
 	"favicon_html_dest": "./${homedir}html/source/head/",
 
