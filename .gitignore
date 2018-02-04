@@ -421,5 +421,4 @@ $RECYCLE.BIN/
 # Custom
 build/
 dist/
-*._.*
 markdown/previews/
