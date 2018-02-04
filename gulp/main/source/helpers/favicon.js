@@ -102,7 +102,7 @@ gulp.task("favicon", function(done) {
 	var task = this;
 
 	// Get the gulp favicon tasks.
-	var tasks = favicon.tasks;
+	var tasks = get($configs, "bundles.gulp.favicon.tasks", []);
 
 	tasks.push(function() {
 		print.gulp.success("Favicons generated.");
