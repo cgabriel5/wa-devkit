@@ -138,7 +138,7 @@ gulp.task("files", function(done) {
 		// argument is provided.
 		if (types) {
 			files = files.filter(function(filepath) {
-				return ext({ path: filepath }, types);
+				return extension({ path: filepath }, types);
 			});
 		}
 
