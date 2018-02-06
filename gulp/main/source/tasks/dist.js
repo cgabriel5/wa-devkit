@@ -11,7 +11,7 @@ gulp.task("dist:clean", function(done) {
 });
 
 /**
- * Copy new file/folders.
+ * Copy needed favicon file and folders.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -34,7 +34,7 @@ gulp.task("dist:favicon", function(done) {
 });
 
 /**
- * Build the distribution CSS files/folders.
+ * Build the dist/ CSS files and folders.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -56,7 +56,7 @@ gulp.task("dist:css", function(done) {
 });
 
 /**
- * Run images through imagemin to optimize them.
+ * Optimize images via imagemin.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -99,7 +99,7 @@ gulp.task("dist:img", function(done) {
 });
 
 /**
- * Build the distribution JS files/folders.
+ * Build the dist/ JS files and folders.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -121,7 +121,7 @@ gulp.task("dist:js", function(done) {
 });
 
 /**
- * Copy over the root files to the distribution folder.
+ * Copy root files to the dist/ folder.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -143,9 +143,7 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
- * Build the dist/ folder (webapp projects only).
- *
- * Usage
+ * Build the dist/ folder (webapp only).
  *
  * $ gulp dist
  *     Create dist/ folder.

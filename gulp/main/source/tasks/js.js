@@ -1,5 +1,5 @@
 /**
- * Build app.js + minify + beautify.
+ * Build app.js bundle (prettify, etc.).
  *
  * @internal - Ran via the "js" task.
  */
@@ -29,7 +29,7 @@ gulp.task("js:app", function(done) {
 });
 
 /**
- * Build vendor bundle + minify + beautify.
+ * Build vendor.js bundle (prettify, etc.).
  *
  * @internal - Ran via the "js" task.
  */
@@ -61,7 +61,10 @@ gulp.task("js:vendor", function(done) {
 });
 
 /**
- * Build app.js & js vendor files + autoprefix + minify.
+ * Build app.js and vendor.js.
+ *
+ * $ gulp js
+ *     Build app/vendor bundle files.
  */
 gulp.task("js", function(done) {
 	// Runs the js:* tasks.

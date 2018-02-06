@@ -1,50 +1,46 @@
 /**
- * Provides Gulp task documentation (this documentation).
+ * Provides this Gulp task documentation.
  *
- * Notes
+ * -V, --verbose [boolean]
+ *     Print complete documentation.
  *
- * • Help documentation will always show even when verbose flag
- *   is not provided.
+ * -i, --internal [boolean]
+ *     Print internal (yellow) tasks.
  *
- * Flags
- *
- * --verbose
- *     [boolean] Shows all documentation.
- *
- * --internal
- *     [boolean] Shows all internal (yellow) tasks.
- *
- * --filter
- *     [string] Names of tasks to show documentation for.
- *
- * Usage
+ * -F, --filter [string]
+ *     Names of tasks to show documentation for.
  *
  * $ gulp help
- *     Show a list of tasks and their short descriptions.
+ *     Print tasks with descriptions only.
  *
  * $ gulp help --verbose
- *     Show full documentation (flags, usage, notes...).
+ *     Print full documentation (flags, usage, etc.).
  *
  * $ gulp help --filter "open default dependency"
- *     Show documentation for specific tasks.
+ *     Print documentation for provided task names.
  *
  * $ gulp help --internal
- *     Show documentation for internally used tasks.
+ *     Include documentation for internally used tasks.
  */
 gulp.task("help", function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("verbose", {
+			alias: "V",
 			type: "boolean"
 		})
 		.option("filter", {
+			alias: "F",
 			type: "string"
 		})
 		.option("internal", {
+			alias: "i",
 			type: "boolean"
 		}).argv;
-	var verbose = __flags.v || __flags.verbose;
-	var filter = __flags.f || __flags.filter;
+
+	// Get flag values.
+	var verbose = __flags.V || __flags.verbose;
+	var filter = __flags.F || __flags.filter;
 	var internal = __flags.i || __flags.internal;
 
 	// Get file names to use.
@@ -156,7 +152,7 @@ gulp.task("help", function(done) {
 			};
 
 			print.ln();
-			print(chalk.bold("Tasks"));
+			print(chalk.bold.underline("Available Tasks"));
 			print.ln();
 
 			var tasks = {};
@@ -239,19 +235,14 @@ gulp.task("help", function(done) {
 				// Loop over lines.
 				if (verbose || name === "help") {
 					// Bold the tasks.
-					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
+					block = block.replace(/\s\-\-?[a-z-]*/gi, replacer);
 
 					// Print the task name.
 					print("   " + chalk[color](name));
 
 					var lines = block.split(newline);
 					lines.forEach(function(line) {
-						if (-~headers.indexOf(line.trim())) {
-							line = " ".repeat(6) + (line + ":");
-						} else {
-							line = "\t" + line;
-						}
-						print(line);
+						print(`     ${chalk.gray(line)}`);
 					});
 
 					// Bottom padding.

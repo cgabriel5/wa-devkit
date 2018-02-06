@@ -1,38 +1,34 @@
 /**
  * Indent all JS files with tabs or spaces.
  *
- * Notes
+ * • Task is currently experimental.
+ * • Ignores ./node_modules/*, ./git/* and vendor/* files.
  *
- * • This task is currently experimental.
- * • Ignores ./node_modules/, ./git/ and vendor/ files.
+ * --style [string]
+ *     Indent using spaces or tabs. Defaults to tabs.
  *
- * Flags
+ * --size [string]
+ *     The amount of spaces to use. Defaults to 4.
  *
- * --style
- *     [string] Indent using spaces or tabs. Defaults to tabs.
- *
- * --size
- *     [string] The amount of spaces to use. Defaults to 4.
- *
- * Usage
- *
- * $ gulp indent --style tabs
+ * $ gulp indent --style "tabs"
  *     Turn all 4 starting spaces into tabs.
  *
- * $ gulp indent --style spaces --size 2
- *     Expand all line starting tabs into 2 spaces.
+ * $ gulp indent --style "spaces" --size "2"
+ *     Expand lines starting with tabs into 2 spaces.
  */
 gulp.task("indent", function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("style", {
+			alias: "s",
 			type: "string"
 		})
 		.option("size", {
+			alias: "z",
 			type: "number"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var style = __flags.style || "tabs";
 	var size = __flags.size || 4; // Spaces to use.
 
@@ -45,7 +41,7 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					$paths.files_all.replace(/\*$/, "js"), // Only JS FILES.
+					$paths.files_all.replace(/\*$/, "js"), // Only JS files.
 					bangify(globall($paths.node_modules_name)),
 					bangify(globall($paths.git)),
 					$paths.not_vendor

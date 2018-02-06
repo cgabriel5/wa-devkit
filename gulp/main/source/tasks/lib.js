@@ -11,7 +11,7 @@ gulp.task("lib:clean", function(done) {
 });
 
 /**
- * Build the library JS files/folders.
+ * Build the lib/ JS files and folders.
  *
  * @internal - Used to prepare the lib task.
  */
@@ -39,9 +39,7 @@ gulp.task("lib:js", function(done) {
 });
 
 /**
- * Build the lib/ folder. (only for library projects).
-
- * Usage
+ * Build the lib/ folder (library only).
  *
  * $ gulp lib
  *     Create lib/ folder.

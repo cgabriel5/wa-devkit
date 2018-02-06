@@ -1,30 +1,24 @@
 /**
- * List project files.
+ * Search and list project files.
  *
- * Flags
+ * -t, --type [string]
+ *     File extensions files should match.
  *
- * -t, --type
- *     [string] The optional extensions of files to list.
+ * -s, --stypes [string]
+ *     File sub-extensions files should match.
  *
- * -s, --stypes
- *     [string] The optional sub-extensions of files to list.
+ * -w, --whereis [string]
+ *     String to search for. Uses fuzzy search by default
+ *     and ignores ./node_modules/* and .git/* directories.
  *
- * -w, --whereis
- *     [string] Substring to search for. Uses fuzzy search by
- *     and default. (Ignores ./node_modules/ and .git/).
+ * -n, --nofuzzy [boolean]
+ *     Used an indexOf() search over fuzzy search.
  *
- * -n, --nofuzzy
- *     [string] Flag indicating to turn off fuzzy search. Will
- *     use a simple indexOf() search instead.
- *
- * -h, --highlight
- *     [string] Highlight the --whereis term in the file path.
- *
- * Usage
+ * -h, --highlight [string]
+ *     Highlight the --whereis string in the file path.
  *
  * $ gulp files
- *     Shows all files excluding files in ./node_modules/ &
- *     .git/.
+ *     Print all files except ./node_modules/* & .git/* directories.
  *
  * $ gulp files --type "js html"
  *     Only list HTML and JS files.
@@ -75,7 +69,11 @@ gulp.task("files", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Yargs --no-flag-name behavior:
+	// [https://github.com/yargs/yargs/issues/879]
+	// [https://github.com/yargs/yargs-parser#boolean-negation]
+
+	// Get flag values.
 	var types = __flags.t || __flags.type;
 	var stypes = __flags.s || __flags.stype;
 	var whereis = __flags.w || __flags.whereis;
@@ -83,6 +81,12 @@ gulp.task("files", function(done) {
 	var highlight = __flags.H || __flags.highlight;
 	var sub_extensions = __flags.subs;
 
+	/**
+	 * Collapse white spaces and split string into an array.
+	 *
+	 * @param  {string} text - The string to clean.
+	 * @return {array} - The cleaned string in .
+	 */
 	var clean_types = function(text) {
 		// Collapse multiple spaces + remove left/right padding.
 		text = text.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");

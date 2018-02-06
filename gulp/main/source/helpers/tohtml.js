@@ -7,7 +7,7 @@ var __markdown_styles;
 var __markdown_stopped;
 
 /**
- * Get the CSS markdown + prismjs styles.
+ * Get CSS Markdown and prismjs styles.
  *
  * @internal - Used to prepare the tohtml task.
  */
@@ -17,7 +17,7 @@ gulp.task("tohtml:prepcss", function(done) {
 		type: "string"
 	}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var filename = __flags.f || __flags.file;
 
 	// Check that the file is a markdown file.
@@ -62,25 +62,19 @@ gulp.task("tohtml:prepcss", function(done) {
 /**
  * Converts Markdown (.md) file to .html.
  *
- * Notes
- *
  * • Files will get placed in ./markdown/previews/.
  *
- * Flags
+ * --file <string>
+ *     Path of file to convert. Defaults to ./README.md
  *
- * -f, --file
- *     [string] Path of file to convert. Defaults to ./README.md
- *
- * -o, --open
- *     [boolean] Flag indicating whether to open the converted file
+ * -o, --open [boolean]
+ *     Flag indicating whether to open the converted file
  *     in the browser.
  *
- * Usage
- *
- * $ gulp tohtml --file ./README.md
+ * $ gulp tohtml --file "./README.md"
  *     Convert README.md to README.html.
  *
- * $ gulp tohtml --file ./README.md --open
+ * $ gulp tohtml --file "./README.md" --open
  *     Convert README.md to README.html and open file in browser.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
@@ -98,8 +92,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("file", {
-			alias: "f",
-			default: "./README.md",
 			type: "string"
 		})
 		.option("open", {
@@ -107,7 +99,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 			type: "boolean"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var filename = __flags.f || __flags.file;
 	var open = __flags.o || __flags.open;
 

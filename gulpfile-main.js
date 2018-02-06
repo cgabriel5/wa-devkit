@@ -465,9 +465,7 @@ cleanup(function(exit_code, signal) {
 });
 
 /**
- * Store the current process information (internal config. file).
- *
- * Notes
+ * Store current process information in internal config. file.
  *
  * • This will write current process information to an internal gulp
  *     configuration file. This is done to prevent multiple Gulp
@@ -493,8 +491,6 @@ gulp.task("init:save-pid", function(done) {
 
 /**
  * Watch for Git branch changes.
- *
- * Notes
  *
  * • Branch name checks are done to check whether the branch was changed
  *     after the Gulp instance was made. When switching branches files
@@ -597,7 +593,7 @@ var __process_exists;
 var __process_stopped;
 
 /**
- * Checks for an active Gulp process before making another.
+ * Check for an active Gulp process before making another.
  *
  * @internal - Used with the default task.
  */
@@ -680,24 +676,20 @@ gulp.task("default:active-pid-check", function(done) {
 /**
  * Runs Gulp.
  *
- * Notes
- *
  * • This is the default task that will build project files, watch files,
  *     run browser-sync, etc.
  * • Only one instance can be run at a time.
  *
- * Flags
- *
- * -s, --stop
- *     [boolean] Flag indicating to stop Gulp.
- *
- * Usage
+ * -s, --stop [boolean]
+ *     Flag indicating to stop Gulp.
  *
  * $ gulp
  *     Run Gulp.
  *
  * $ gulp --stop
- *     Stops the active Gulp process, if running.
+ *     Ir running, stops the active Gulp process.
+ *
+ * @internal - Set as internal to hide from default help output.
  */
 gulp.task("default", ["default:active-pid-check"], function(done) {
 	// Check the default:active-pid-check variables before the actual
@@ -797,7 +789,7 @@ gulp.task("dist:clean", function(done) {
 });
 
 /**
- * Copy new file/folders.
+ * Copy needed favicon file and folders.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -820,7 +812,7 @@ gulp.task("dist:favicon", function(done) {
 });
 
 /**
- * Build the distribution CSS files/folders.
+ * Build the dist/ CSS files and folders.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -842,7 +834,7 @@ gulp.task("dist:css", function(done) {
 });
 
 /**
- * Run images through imagemin to optimize them.
+ * Optimize images via imagemin.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -885,7 +877,7 @@ gulp.task("dist:img", function(done) {
 });
 
 /**
- * Build the distribution JS files/folders.
+ * Build the dist/ JS files and folders.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -907,7 +899,7 @@ gulp.task("dist:js", function(done) {
 });
 
 /**
- * Copy over the root files to the distribution folder.
+ * Copy root files to the dist/ folder.
  *
  * @internal - Used to prepare the dist task.
  */
@@ -929,9 +921,7 @@ gulp.task("dist:root", function(done) {
 });
 
 /**
- * Build the dist/ folder (webapp projects only).
- *
- * Usage
+ * Build the dist/ folder (webapp only).
  *
  * $ gulp dist
  *     Create dist/ folder.
@@ -980,7 +970,7 @@ gulp.task("lib:clean", function(done) {
 });
 
 /**
- * Build the library JS files/folders.
+ * Build the lib/ JS files and folders.
  *
  * @internal - Used to prepare the lib task.
  */
@@ -1008,9 +998,7 @@ gulp.task("lib:js", function(done) {
 });
 
 /**
- * Build the lib/ folder. (only for library projects).
-
- * Usage
+ * Build the lib/ folder (library only).
  *
  * $ gulp lib
  *     Create lib/ folder.
@@ -1047,7 +1035,9 @@ gulp.task("lib", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Watch for file changes.
+ * Watch project for file changes.
+ *
+ * @internal - Set as internal to hide from default help output.
  */
 gulp.task("watch", function(done) {
 	// Add auto tab closing capability to browser-sync. This will
@@ -1129,7 +1119,10 @@ gulp.task("watch", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Init HTML files + minify.
+ * Build ./index.html.
+ *
+ * $ gulp html
+ *     Build ./index.html.
  */
 gulp.task("html", function(done) {
 	// Pause the watcher to prevent infinite loops.
@@ -1163,7 +1156,7 @@ gulp.task("html", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Build app.css + autoprefix + minify.
+ * Build app.css bundle (autoprefix, prettify, etc.).
  *
  * @internal - Ran via the "css" task.
  */
@@ -1203,7 +1196,7 @@ gulp.task("css:app", function(done) {
 });
 
 /**
- * Build vendor bundle + minify + beautify.
+ * Build vendor.css bundle (autoprefix, prettify, etc.).
  *
  * @internal - Ran via the "css" task.
  */
@@ -1245,7 +1238,10 @@ gulp.task("css:vendor", function(done) {
 });
 
 /**
- * Build app.css & css vendor files + autoprefix + minify.
+ * Build app.css and vendor.css.
+ *
+ * $ gulp css
+ *     Build app/vendor bundle files.
  */
 gulp.task("css", function(done) {
 	// Runs the css:* tasks.
@@ -1259,7 +1255,7 @@ gulp.task("css", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Build app.js + minify + beautify.
+ * Build app.js bundle (prettify, etc.).
  *
  * @internal - Ran via the "js" task.
  */
@@ -1289,7 +1285,7 @@ gulp.task("js:app", function(done) {
 });
 
 /**
- * Build vendor bundle + minify + beautify.
+ * Build vendor.js bundle (prettify, etc.).
  *
  * @internal - Ran via the "js" task.
  */
@@ -1321,7 +1317,10 @@ gulp.task("js:vendor", function(done) {
 });
 
 /**
- * Build app.js & js vendor files + autoprefix + minify.
+ * Build app.js and vendor.js.
+ *
+ * $ gulp js
+ *     Build app/vendor bundle files.
  */
 gulp.task("js", function(done) {
 	// Runs the js:* tasks.
@@ -1335,7 +1334,11 @@ gulp.task("js", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Just trigger a browser-sync stream.
+ * Handle project image operations.
+ *
+ * • By default the task does not do much as no image files exist.
+ *     Update the task as needed.
+ *
  */
 gulp.task("img", function(done) {
 	// Pause the watcher to prevent infinite loops.
@@ -1357,18 +1360,17 @@ gulp.task("img", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Build Modernizr file.
- *
- * Usage
+ * Build modernizr.js.
  *
  * $ gulp modernizr
- *     Build modernizr.js (uses ./modernizr.config.json).
+ *     Build modernizr.js.
  */
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
+	// Uses ./modernizr.json.
 	modernizr.build($configs.modernizr, function(build) {
-		// Build the modernizr file path.
+		// Build the modernizr description file path.
 		var file_location =
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
 
@@ -1408,7 +1410,7 @@ var __markdown_styles;
 var __markdown_stopped;
 
 /**
- * Get the CSS markdown + prismjs styles.
+ * Get CSS Markdown and prismjs styles.
  *
  * @internal - Used to prepare the tohtml task.
  */
@@ -1418,7 +1420,7 @@ gulp.task("tohtml:prepcss", function(done) {
 		type: "string"
 	}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var filename = __flags.f || __flags.file;
 
 	// Check that the file is a markdown file.
@@ -1463,25 +1465,19 @@ gulp.task("tohtml:prepcss", function(done) {
 /**
  * Converts Markdown (.md) file to .html.
  *
- * Notes
- *
  * • Files will get placed in ./markdown/previews/.
  *
- * Flags
+ * --file <string>
+ *     Path of file to convert. Defaults to ./README.md
  *
- * -f, --file
- *     [string] Path of file to convert. Defaults to ./README.md
- *
- * -o, --open
- *     [boolean] Flag indicating whether to open the converted file
+ * -o, --open [boolean]
+ *     Flag indicating whether to open the converted file
  *     in the browser.
  *
- * Usage
- *
- * $ gulp tohtml --file ./README.md
+ * $ gulp tohtml --file "./README.md"
  *     Convert README.md to README.html.
  *
- * $ gulp tohtml --file ./README.md --open
+ * $ gulp tohtml --file "./README.md" --open
  *     Convert README.md to README.html and open file in browser.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
@@ -1499,8 +1495,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("file", {
-			alias: "f",
-			default: "./README.md",
 			type: "string"
 		})
 		.option("open", {
@@ -1508,7 +1502,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 			type: "boolean"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var filename = __flags.f || __flags.file;
 	var open = __flags.o || __flags.open;
 
@@ -1613,8 +1607,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 /**
  * Opens provided file in browser.
  *
- * Notes
- *
  * • Tabs should be opened using the terminal via this task. Doing
  *   so will ensure the generated tab will auto-close when Gulp is
  *   closed. Opening tabs by typing/copy-pasting the project URL
@@ -1622,40 +1614,36 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *   due to security issues as noted here:
  *   [https://stackoverflow.com/q/19761241].
  *
- * Flags
+ * --file <file>
+ *     The path of the file to open.
  *
- * -f, --file
- *     <file> The path of the file to open.
- *
- * -p, --port
- *     [number] The port to open in. (Defaults to browser-sync port if
+ * -p, --port [number]
+ *     The port to open in. (Defaults to browser-sync port if
  *     available or no port at all.)
  *
- * -d, --directory
- *     [string] The directory path to open in a file manager.
+ * -d, --directory [string]
+ *     The directory path to open in a file manager.
  *
- * -e, --editor
- *     [string] The file path to open in the user's text editor to edit.
+ * -e, --editor [string]
+ *     The file path to open in the user's text editor to edit.
  *
- * --wait
- *     [boolean] To be Used with the -e/--editor flag. If provided the
+ * --wait [boolean]
+ *     To be Used with the -e/--editor flag. If provided the
  *     editor will wait to close and will only close manually (i.e.
  *     close the editor or exit the terminal task).
  *
- * --line
- *     [number] To be used with -e/--editor flag. Open the file at the
+ * --line [number]
+ *     To be used with -e/--editor flag. Open the file at the
  *     provided line.
  *
- * --column
- *     [number] To be used with -e/--editor flag. Open the file at the
+ * --column [number]
+ *     To be used with -e/--editor flag. Open the file at the
  *     provided column.
  *
- * --use
- *     [string] To be used with -e/--editor flag. Manually set the editor
- *     to use. Will default to the user's default editor via ($EDITOR/$VISUAL)
- *     environment variables.
- *
- * Usage
+ * --use [string]
+ *     To be used with -e/--editor flag. Manually set the editor
+ *     to use. Will default to the user's default editor via
+ *     ($EDITOR/$VISUAL) environment variables.
  *
  * $ gulp open --file index.html --port 3000
  *     Open index.html in port 3000.
@@ -1664,9 +1652,10 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *     Open index.html in browser-sync port is available or no port.
  *
  * $ gulp open --editor ./index.html --wait --line 12 --column 20 --use atom
- *     Open "./index.html" using the text editor Atom if available. Set
- *     the line to 12 and column 20. Use the --wait flag to close the process
- *     after the editor is close or the process is killed via the terminal.
+ *     Open "./index.html" using the text editor Atom if available.
+ *     Set the line to 12 and column 20. Use the --wait flag to close
+ *     the process after the editor is close or the process is killed via
+ *     the terminal.
  *
  * $ gulp open --directory .
  *     Open the root directory in a file manager.
@@ -1693,7 +1682,7 @@ gulp.task("open", function(done) {
 			type: "string"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var directory = __flags.d || __flags.directory;
 	var editor = __flags.e || __flags.editor;
 
@@ -1758,7 +1747,7 @@ gulp.task("open", function(done) {
 				type: "string"
 			}).argv;
 
-		// Get the command line arguments from yargs.
+		// Get flag values.
 		var wait = __flags.wait;
 		var line = __flags.line;
 		var column = __flags.column;
@@ -1806,7 +1795,6 @@ gulp.task("open", function(done) {
 		// Run yargs.
 		var __flags = yargs
 			.option("file", {
-				alias: "f",
 				demandOption: true,
 				type: "string"
 			})
@@ -1815,8 +1803,8 @@ gulp.task("open", function(done) {
 				type: "number"
 			}).argv;
 
-		// Get the command line arguments from yargs.
-		var file = __flags.f || __flags.file;
+		// Get flag values.
+		var file = __flags.file;
 
 		// Check for explicitly provided port. If none is provided check
 		// the internally fetched free ports and get the local port.
@@ -1841,8 +1829,6 @@ gulp.task("open", function(done) {
 /**
  * Print whether there is an active Gulp instance.
  *
- * Usage
- *
  * $ gulp status
  *     Print Gulp status.
  */
@@ -1856,9 +1842,7 @@ gulp.task("status", function(done) {
 });
 
 /**
- * Print the currently used ports for browser-sync.
- *
- * Usage
+ * Print the currently used ports by browser-sync.
  *
  * $ gulp ports
  *     Print uses ports.
@@ -1891,15 +1875,13 @@ gulp.task("ports", function(done) {
 var __modified_git_files;
 
 /**
- * Gets the modified files via Git.
+ * Get modified files as listed by Git.
  *
- * Flags
+ * -q, --quick [boolean]
+ *     Only prettify the git modified files.
  *
- * -q, --quick
- *     [boolean] Only prettify the git modified files.
- *
- * --staged
- *     [boolean] Used with the --quick flag it only prettifies the staged
+ * --staged [boolean]
+ *     Used with the --quick flag it only prettifies the staged
  *     files.
  *
  * @internal - Used to prepare the pretty task.
@@ -1915,7 +1897,7 @@ gulp.task("pretty:gitfiles", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var quick = __flags.quick;
 	var staged = __flags.staged;
 
@@ -1946,9 +1928,7 @@ gulp.task("pretty:gitfiles", function(done) {
 });
 
 /**
- * Beautify all HTML, JS, CSS, and JSON project files.
- *
- * Notes
+ * Beautify (HTML, JS, CSS, & JSON) project files.
  *
  * • By default files in the following directories or containing the
  *   following sub-extensions are ignored: ./node_modules/, ./git/,
@@ -1956,32 +1936,28 @@ gulp.task("pretty:gitfiles", function(done) {
  * • Special characters in globs provided via the CLI (--pattern) might
  *   need to be escaped if getting an error.
  *
- * Flags
+ * -t, --type [string]
+ *     The file extensions types to clean.
  *
- * -t, --type
- *     [string] The file extensions types to clean.
+ * -p, --pattern [array]
+ *     Use a glob to find files to prettify.
  *
- * -p, --pattern
- *     [array] Use a glob to find files to prettify.
+ * -i, --ignore [array]
+ *     Use a glob to ignore files.
  *
- * -i, --ignore
- *     [array] Use a glob to ignore files.
- *
- * --test
- *     [boolean] A test run that only shows the used globs before
+ * --test [boolean]
+ *     A test run that only shows the used globs before
  *     prettifying. Does not prettify at all.
  *
- * -e, --empty
- *     [boolean] Empty default globs array. Careful as this can prettify
+ * -e, --empty [boolean]
+ *     Empty default globs array. Careful as this can prettify
  *     all project files. By default the node_modules/ is ignored, for
  *     example. Be sure to exclude files that don't need to be prettified
  *     by adding the necessary globs with the --pattern option.
  *
- * -l, --line-ending
- *     [string] If provided, the file ending will get changed to provided
+ * -l, --line-ending [string]
+ *     If provided, the file ending will get changed to provided
  *     character(s). Line endings default to LF ("\n").
- *
- * Usage
  *
  * $ gulp pretty
  *     Prettify all HTML, CSS, JS, JSON files.
@@ -2042,7 +2018,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			type: "string"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var type = __flags.t || __flags.type;
 	var patterns = __flags.p || __flags.pattern;
 	var ignores = __flags.i || __flags.ignore;
@@ -2195,47 +2171,40 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Beautify all HTML, JS, CSS, and JSON project files.
+ * Create or remove a module.
  *
- * Flags
+ * --filename <string> OR --remove <string>
+ *     The file name of the module to add/remove.
  *
- * --filename
- *     <string> The file name of the new module file.
- *
- * --remove
- *     [string] The file name of the module to remove.
- *
- * --modname
- *     [string] The name of the module within the app. Defaults to the
+ * --modname [string]
+ *     The name of the module within the app. Defaults to the
  *     filename without the extension.
  *
- * --description
- *     [string] Optional description of the module.
+ * --description [string]
+ *     Optional description of the module.
  *
- * --mode
- *     [string] The mode the module should load via. (interactive/complete)
+ * --mode [string]
+ *     The mode the module should load via (interactive/complete).
  *
- * --same
- *     [boolean] Flag indicating whether to use the same filename for the
+ * --same [boolean]
+ *     Flag indicating whether to use the same filename for the
  *     modname.
  *
- * Usage
- *
  * $ gulp module --filename "my_module" --same --mode "complete"
- *     Make a module "new_module.js". The extension will be added it not
+ *     Make a module "new_module.js". The extension will be added if not
  *     provided. The same file name will be used for the modname. It will
- *     also load when the document readyState hits complete.
+ *     also load when the document readyState hits "complete".
  *
  * $ gulp module --filename "test" --same --description "My cool module."
- *     Make a module "test.js" with a description of "My cool module."
+ *     Make a module "test.js" with a description of "My cool module.".
  *
  * $ gulp module --filename "my_cool_module"
  *     Simplest way to make a module. This will make a module with the name
- *     "my_cool_module.js". Have the name of "my_cool_module", load on
+ *     "my_cool_module.js", have the name of "my_cool_module", load on
  *     "complete", and have an empty description.
  *
  * $ gulp module --filename "my_cool_module" --modname "coolModule"
- *     This will make a module with the name "my_cool_module.js". Have the
+ *     This will make a module with the name "my_cool_module.js", have the
  *     name of "coolModule", load on "complete", and have an empty
  *     description.
  *
@@ -2250,7 +2219,7 @@ gulp.task("module", function(done) {
 		type: "string"
 	}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var remove = __flags.remove;
 
 	// Get the configuration file.
@@ -2417,29 +2386,37 @@ gulp.task("module", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Correct file line endings.
+ * Change file line endings.
  *
- * Flags
- *
- * -l, --line-ending
- *     [string] The type of line ending to use. Defauls to "\n".
- *
- * Usage
+ * -l, --line-ending <string>
+ *     The type of line ending to use. Defaults to "lf" (\n).
  *
  * $ gulp eol
  *     Check file line endings.
  *
- * $ gulp eol --line-ending "\n"
- *     Enforce "\n" line endings.
+ * $ gulp eol --line-ending "lf"
+ *     Enforce lf (\n) line endings.
  */
 gulp.task("eol", function(done) {
 	// Run yargs.
-	var __flags = yargs.option("line-ending", {
-		alias: "l",
-		type: "string"
-	}).argv;
+	var __flags = yargs
+		.option("line-ending", {
+			alias: "l",
+			choices: ["cr", "lf", "crlf", "\r", "\n", "\r\n"],
+			type: "string"
+		})
+		// Reset the line ending.
+		.coerce("line-ending", function(value) {
+			var lookup = {
+				cr: "\r", // Mac OS
+				lf: "\n", // Unix/OS X
+				crlf: "\r\n" // Windows/DOS
+			};
 
-	// Get the command line arguments from yargs.
+			return lookup[value.toLowerCase()];
+		}).argv;
+
+	// Get flag values.
 	var ending = __flags.l || __flags["line-ending"] || EOL_ENDING;
 
 	// Check: HTML, CSS, JS, JSON, TXT, TEXT, and MD files. They also
@@ -2454,7 +2431,6 @@ gulp.task("eol", function(done) {
 		bangify(globall($paths.git))
 	];
 
-	// Get needed files.
 	pump(
 		[
 			gulp.src(files, {
@@ -2475,16 +2451,12 @@ gulp.task("eol", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Prints table containing project file type breakdown.
+ * Print a table containing project file type breakdown.
  *
- * Notes
- *
- * • Depending on the project size, this task might take a while to run.
- *
- * Usage
+ * • Depending on project size, task might take time to run.
  *
  * $ gulp stats
- *     Print a table containing project files type information.
+ *     Print file type breakdown.
  */
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
@@ -2494,7 +2466,7 @@ gulp.task("stats", function(done) {
 		type: "boolean"
 	}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag value.
 	var all = __flags.all;
 
 	// Get all files excluding: node_modules/, .git/, and img/.
@@ -2578,32 +2550,26 @@ gulp.task("stats", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * List project files.
+ * Search and list project files.
  *
- * Flags
+ * -t, --type [string]
+ *     File extensions files should match.
  *
- * -t, --type
- *     [string] The optional extensions of files to list.
+ * -s, --stypes [string]
+ *     File sub-extensions files should match.
  *
- * -s, --stypes
- *     [string] The optional sub-extensions of files to list.
+ * -w, --whereis [string]
+ *     String to search for. Uses fuzzy search by default
+ *     and ignores ./node_modules/* and .git/* directories.
  *
- * -w, --whereis
- *     [string] Substring to search for. Uses fuzzy search by
- *     and default. (Ignores ./node_modules/ and .git/).
+ * -n, --nofuzzy [boolean]
+ *     Used an indexOf() search over fuzzy search.
  *
- * -n, --nofuzzy
- *     [string] Flag indicating to turn off fuzzy search. Will
- *     use a simple indexOf() search instead.
- *
- * -h, --highlight
- *     [string] Highlight the --whereis term in the file path.
- *
- * Usage
+ * -h, --highlight [string]
+ *     Highlight the --whereis string in the file path.
  *
  * $ gulp files
- *     Shows all files excluding files in ./node_modules/ &
- *     .git/.
+ *     Print all files except ./node_modules/* & .git/* directories.
  *
  * $ gulp files --type "js html"
  *     Only list HTML and JS files.
@@ -2654,7 +2620,11 @@ gulp.task("files", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Yargs --no-flag-name behavior:
+	// [https://github.com/yargs/yargs/issues/879]
+	// [https://github.com/yargs/yargs-parser#boolean-negation]
+
+	// Get flag values.
 	var types = __flags.t || __flags.type;
 	var stypes = __flags.s || __flags.stype;
 	var whereis = __flags.w || __flags.whereis;
@@ -2662,6 +2632,12 @@ gulp.task("files", function(done) {
 	var highlight = __flags.H || __flags.highlight;
 	var sub_extensions = __flags.subs;
 
+	/**
+	 * Collapse white spaces and split string into an array.
+	 *
+	 * @param  {string} text - The string to clean.
+	 * @return {array} - The cleaned string in .
+	 */
 	var clean_types = function(text) {
 		// Collapse multiple spaces + remove left/right padding.
 		text = text.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
@@ -2895,38 +2871,31 @@ gulp.task("files", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Add/remove front-end dependencies.
- *
- * Notes
+ * Add or remove front-end dependencies.
  *
  * • Dependencies are grabbed from ./node_modules/<name> and moved
  *   to its corresponding ./<type>/vendor/ folder.
  * • name, type, and action options are grouped. This means when one
  *   is used they must all be provided.
  *
- * Flags
+ * Group 1:
+ * -a, --add <string> OR -r, --remove <string>
+ *     The module name to add/remove.
+ * -t, --type <string>
+ *     Dependency type ("js" or "css"). Needed when the --add or
+ *     --remove flag is used.
  *
- * -n, --name
- *     <string>  The module name.
+ * Group 2:
+ * -l, --list <boolean>
+ *     Print all CSS/JS dependencies.
  *
- * -t, --type
- *     <string>  Dependency type (js/css).
- *
- * -a, --action
- *     <string>  Action to take (add/remove).
- *
- * -l, --list
- *     <boolean> Print all CSS/JS dependencies.
- *
- * Usage
- *
- * $ gulp dependency --name fastclick --type js --action add
+ * $ gulp dependency --add "fastclick" --type "js"
  *     Copy fastclick to JS vendor directory.
  *
- * $ gulp dependency --name fastclick --type js --action remove
+ * $ gulp dependency --remove "fastclick" --type "js"
  *     Remove fastclick from JS vendor directory.
  *
- * $ gulp dependency --name font-awesome --type css --action add
+ * $ gulp dependency --add "font-awesome" --type "css"
  *     Add font-awesome to CSS vendor directory.
  *
  * $ gulp dependency --list
@@ -2935,8 +2904,12 @@ gulp.task("files", function(done) {
 gulp.task("dependency", function(done) {
 	// Run yargs.
 	var __flags = yargs
-		.option("name", {
-			alias: "n",
+		.option("add", {
+			alias: "a",
+			type: "string"
+		})
+		.option("remove", {
+			alias: "r",
 			type: "string"
 		})
 		.option("type", {
@@ -2944,29 +2917,19 @@ gulp.task("dependency", function(done) {
 			choices: ["js", "css"],
 			type: "string"
 		})
-		.option("action", {
-			alias: "a",
-			choices: ["add", "remove"],
-			type: "string"
-		})
-		.group(
-			["name", "type", "action"],
-			"Options: Vendor dependency information (all required when any is provided)"
-		)
-		// Name, type, and action must all be provided when one is provided.
-		.implies({
-			name: "type",
-			type: "action",
-			action: "name"
-		})
 		.option("list", {
 			alias: "l",
 			type: "boolean"
-		}).argv;
-	// Get the command line arguments from yargs.
-	var name = __flags.n || __flags.name;
+		})
+		.implies("add", "type")
+		.implies("remove", "type").argv;
+
+	// Get flag values.
+	var add = __flags.a || __flags.add;
+	var remove = __flags.r || __flags.remove;
+	var name = add || remove;
+	var action = add ? "add" : remove ? "remove" : null;
 	var type = __flags.t || __flags.type;
-	var action = __flags.a || __flags.action;
 	var list = __flags.l || __flags.list;
 
 	// Get needed paths.
@@ -2974,7 +2937,16 @@ gulp.task("dependency", function(done) {
 	var delete_path = dest + name;
 	var module_path = $paths.node_modules + name;
 
-	// Print used vendor dependencies if flag provided.
+	// Give an error message when a name is not provided.
+	if (!list && !name) {
+		print.gulp.error("Provide a name via the --add/--remove flag.");
+		return done();
+	}
+
+	// Note: If the --list flag is provided it takes precedence over
+	// other flags. Meaning it negates all the other flags provided.
+	// Once the listing of vendor dependencies has completed the task
+	// is terminated.
 	if (list) {
 		// Get the vendor dependencies.
 		var css_dependencies = BUNDLE_CSS.vendor.files;
@@ -3018,6 +2990,7 @@ gulp.task("dependency", function(done) {
 		print.gulp.info(
 			`Install the dependency by running: $ yarn add ${name} --dev. Then try again.`
 		);
+
 		return done();
 	} else if (action === "remove" && !de.sync(delete_path)) {
 		print.gulp.warn(
@@ -3025,15 +2998,40 @@ gulp.task("dependency", function(done) {
 			chalk.magenta(delete_path),
 			"does not exist."
 		);
+
 		return done();
 	}
+
+	/**
+	 * Print the final steps after the dependency has been added or removed.
+	 *
+	 * @param  {function} done - The Gulp callback.
+	 * @return {undefined} - Nothing.
+	 */
+	function final_steps(done) {
+		// Get the configuration file.
+		var config_file = get_config_file($paths.config_$bundles);
+
+		print.gulp.info(
+			`1. Update ${chalk.magenta(
+				config_file
+			)} with the necessary vendor path changes.`
+		);
+		print.gulp.info(
+			`2. To complete changes run: $ gulp settings && gulp ${type.toLowerCase()}.`
+		);
+
+		done();
+	}
+
 	// Delete the old module folder.
 	del([delete_path]).then(function() {
 		var message =
 			`Dependency (${name}) ` +
 			(action === "add" ? "added" : "removed" + ".");
+
+		// Copy module to location.
 		if (action === "add") {
-			// Copy module to location.
 			pump(
 				[
 					gulp.src(name + $paths.delimiter + $paths.files_all, {
@@ -3052,13 +3050,17 @@ gulp.task("dependency", function(done) {
 				],
 				function() {
 					print.gulp.success(message);
-					done();
+
+					// Print the final steps.
+					final_steps(done);
 				}
 			);
 		} else {
-			// Remove.
+			// Removing completed just print the success message.
 			print.gulp.success(message);
-			done();
+
+			// Print the final steps.
+			final_steps(done);
 		}
 	});
 });
@@ -3070,10 +3072,8 @@ gulp.task("dependency", function(done) {
 /**
  * Build gulpfile from source files.
  *
- * Usage
- *
  * $ gulp make
- *     Re-build gulpfile.
+ *     Build gulpfile.
  */
 gulp.task("make", function(done) {
 	// Get file names to use.
@@ -3121,29 +3121,29 @@ gulp.task("make", function(done) {
 /**
  * Lint a JS file.
  *
- * Flags
- *
- * -f, --file
- *     <string>  The JS file to lint.
- *
- * Usage
+ * --file <string>
+ *     The JS file to lint.
  *
  * $ gulp lintjs --file ./gulpfile.js
- *     Lint gulpfile.js
- *
+ *     Lint ./gulpfile.js.
  */
 gulp.task("lintjs", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
-		alias: "f",
-		type: "string",
-		demandOption: true
+		type: "string"
+		// demandOption: true
 	}).argv;
-	// Get the command line arguments from yargs.
-	var file = __flags.f || __flags.file || "";
 
-	// Don't search for a config file as a config object will be supplied
-	// instead.
+	// Get flag values.
+	var file = __flags.file;
+
+	// When no file is provided print an error.
+	if (!file) {
+		print.gulp.error("Provide a file to lint.");
+		return done();
+	}
+
+	// Don't search for a config file. A config object will be supplied.
 	$.jshint.lookup = false;
 
 	pump(
@@ -3166,26 +3166,27 @@ gulp.task("lintjs", function(done) {
 /**
  * Lint a CSS file.
  *
- * Flags
- *
- * -f, --file
- *     <string>  The CSS file to lint.
- *
- * Usage
+ * --file <string>
+ *     The CSS file to lint.
  *
  * $ gulp lintcss --file ./css/bundles/vendor.css
- *     Lint ./css/bundles/vendor.css
- *
+ *     Lint ./css/bundles/vendor.css.
  */
 gulp.task("lintcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
-		alias: "f",
-		type: "string",
-		demandOption: true
+		type: "string"
+		// demandOption: true
 	}).argv;
-	// Get the command line arguments from yargs.
-	var file = __flags.f || __flags.file || "";
+
+	// Get flag values.
+	var file = __flags.file;
+
+	// When no file is provided print an error.
+	if (!file) {
+		print.gulp.error("Provide a file to lint.");
+		return done();
+	}
 
 	// Get the stylish logger.
 	var stylish = require("csslint-stylish");
@@ -3210,51 +3211,88 @@ gulp.task("lintcss", function(done) {
 /**
  * Lint a HTML file.
  *
- * Flags
- *
- * -f, --file
- *     <string>  The HTML file to lint.
- *
- * Usage
+ * --file <string>
+ *     The HTML file to lint.
  *
  * $ gulp linthtml --file ./index.html
- *     Lint ./index.html
- *
+ *     Lint ./index.html.
  */
 gulp.task("linthtml", function(done) {
+	var table = require("text-table");
+	var strip_ansi = require("strip-ansi");
+
 	// Run yargs.
 	var __flags = yargs.option("file", {
-		alias: "f",
-		type: "string",
-		demandOption: true
+		type: "string"
+		// demandOption: true
 	}).argv;
-	// Get the command line arguments from yargs.
-	var file = __flags.f || __flags.file || "";
 
+	// Get flag values.
+	var file = __flags.file;
+
+	// When no file is provided print an error.
+	if (!file) {
+		print.gulp.error("Provide a file to lint.");
+		return done();
+	}
+
+	/**
+	 * Custom htmllint plugin reporter. The function tries to mimic
+	 *     other popular linter reporter outputs.
+	 *
+	 * @param  {string} filepath - The file path of linted file.
+	 * @param  {array} issues - Array containing issues in objects.
+	 * @return {undefined} - Nothing.
+	 */
 	function reporter(filepath, issues) {
+		// Make the file path relative.
+		filepath = path.relative($paths.cwd, filepath);
+
+		print.ln();
+		print(chalk.underline(filepath));
+
+		// Print issues.
 		if (issues.length) {
-			filepath = path.relative($paths.cwd, filepath);
+			var __issues = [];
+
+			// Loop over all issues and print them.
 			issues.forEach(function(issue) {
 				// Make sure the first letter is always capitalized.
 				var first_letter = issue.msg[0];
 				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
 
 				// Try to print in the style of other linters.
-				print.ln();
-				print(chalk.underline(filepath));
-				print(
-					" ",
-					chalk.white(`line ${issue.line} char ${issue.column}`),
+				__issues.push([
+					"",
+					chalk.gray(`line ${issue.line}`),
+					chalk.gray(`char ${issue.column}`),
 					chalk.blue(`(${issue.code})`),
 					chalk.yellow(`${issue.msg}.`)
-				);
-				print.ln();
+				]);
 			});
 
-			print(`    ${chalk.yellow("⚠")}  ${issues.length} warning(s)`);
+			print(
+				table(__issues, {
+					// Remove ansi color to get the string length.
+					stringLength: function(string) {
+						return strip_ansi(string).length;
+					}
+				})
+			);
+
 			print.ln();
 
-			process.exitCode = 1;
+			// Make the warning plural if needed.
+			var warning = "warning";
+			if (issues.length !== 1) warning += "s";
+
+			print(`  ${chalk.yellow("⚠")}  ${issues.length} ${warning}`);
+			print.ln();
+		} else {
+			// No issues found.
+			print.ln();
+			print(`  ${chalk.yellow("⚠")}  0 warnings`);
+			print.ln();
 		}
 	}
 
@@ -3277,20 +3315,17 @@ gulp.task("linthtml", function(done) {
 /**
  * Build ./configs/.__settings.json
  *
- * Flags
+ * --rebuild [boolean]
+ *     Flag is used to rebuild the combined config file when it was
+ *     deleted for example. The gulpfile needs this file and this
+ *     will force its re-build when it gets deleted for whatever reason.
  *
- * --rebuild
- *     [boolean] Flag is used to rebuild the combined config file
- *     when it was deleted for example. The gulpfile needs this
- *     file and this will force its re-build when it gets deleted
- *     for whatever reason.
+ * $ gulp settings
+ *     Build the settings file.
  *
- * Usage
- *
- * $ gulp settings # Re-build the settings file.
- *
- * $ gulp settings --rebuild # Force settings file re-build when
- *     the file gets deleted for whatever reason.
+ * $ gulp settings --rebuild
+ *     Force settings file re-build when the file gets deleted for
+ *     whatever reason.
  */
 gulp.task("settings", function(done) {
 	// Pause the watcher to prevent infinite loops.
@@ -3325,38 +3360,34 @@ gulp.task("settings", function(done) {
 /**
  * Indent all JS files with tabs or spaces.
  *
- * Notes
+ * • Task is currently experimental.
+ * • Ignores ./node_modules/*, ./git/* and vendor/* files.
  *
- * • This task is currently experimental.
- * • Ignores ./node_modules/, ./git/ and vendor/ files.
+ * --style [string]
+ *     Indent using spaces or tabs. Defaults to tabs.
  *
- * Flags
+ * --size [string]
+ *     The amount of spaces to use. Defaults to 4.
  *
- * --style
- *     [string] Indent using spaces or tabs. Defaults to tabs.
- *
- * --size
- *     [string] The amount of spaces to use. Defaults to 4.
- *
- * Usage
- *
- * $ gulp indent --style tabs
+ * $ gulp indent --style "tabs"
  *     Turn all 4 starting spaces into tabs.
  *
- * $ gulp indent --style spaces --size 2
- *     Expand all line starting tabs into 2 spaces.
+ * $ gulp indent --style "spaces" --size "2"
+ *     Expand lines starting with tabs into 2 spaces.
  */
 gulp.task("indent", function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("style", {
+			alias: "s",
 			type: "string"
 		})
 		.option("size", {
+			alias: "z",
 			type: "number"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var style = __flags.style || "tabs";
 	var size = __flags.size || 4; // Spaces to use.
 
@@ -3369,7 +3400,7 @@ gulp.task("indent", function(done) {
 		[
 			gulp.src(
 				[
-					$paths.files_all.replace(/\*$/, "js"), // Only JS FILES.
+					$paths.files_all.replace(/\*$/, "js"), // Only JS files.
 					bangify(globall($paths.node_modules_name)),
 					bangify(globall($paths.git)),
 					$paths.not_vendor
@@ -3416,52 +3447,48 @@ gulp.task("indent", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Provides Gulp task documentation (this documentation).
+ * Provides this Gulp task documentation.
  *
- * Notes
+ * -V, --verbose [boolean]
+ *     Print complete documentation.
  *
- * • Help documentation will always show even when verbose flag
- *   is not provided.
+ * -i, --internal [boolean]
+ *     Print internal (yellow) tasks.
  *
- * Flags
- *
- * --verbose
- *     [boolean] Shows all documentation.
- *
- * --internal
- *     [boolean] Shows all internal (yellow) tasks.
- *
- * --filter
- *     [string] Names of tasks to show documentation for.
- *
- * Usage
+ * -F, --filter [string]
+ *     Names of tasks to show documentation for.
  *
  * $ gulp help
- *     Show a list of tasks and their short descriptions.
+ *     Print tasks with descriptions only.
  *
  * $ gulp help --verbose
- *     Show full documentation (flags, usage, notes...).
+ *     Print full documentation (flags, usage, etc.).
  *
  * $ gulp help --filter "open default dependency"
- *     Show documentation for specific tasks.
+ *     Print documentation for provided task names.
  *
  * $ gulp help --internal
- *     Show documentation for internally used tasks.
+ *     Include documentation for internally used tasks.
  */
 gulp.task("help", function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("verbose", {
+			alias: "V",
 			type: "boolean"
 		})
 		.option("filter", {
+			alias: "F",
 			type: "string"
 		})
 		.option("internal", {
+			alias: "i",
 			type: "boolean"
 		}).argv;
-	var verbose = __flags.v || __flags.verbose;
-	var filter = __flags.f || __flags.filter;
+
+	// Get flag values.
+	var verbose = __flags.V || __flags.verbose;
+	var filter = __flags.F || __flags.filter;
 	var internal = __flags.i || __flags.internal;
 
 	// Get file names to use.
@@ -3573,7 +3600,7 @@ gulp.task("help", function(done) {
 			};
 
 			print.ln();
-			print(chalk.bold("Tasks"));
+			print(chalk.bold.underline("Available Tasks"));
 			print.ln();
 
 			var tasks = {};
@@ -3656,19 +3683,14 @@ gulp.task("help", function(done) {
 				// Loop over lines.
 				if (verbose || name === "help") {
 					// Bold the tasks.
-					block = block.replace(/\s\-\-?[a-z-]+/g, replacer);
+					block = block.replace(/\s\-\-?[a-z-]*/gi, replacer);
 
 					// Print the task name.
 					print("   " + chalk[color](name));
 
 					var lines = block.split(newline);
 					lines.forEach(function(line) {
-						if (-~headers.indexOf(line.trim())) {
-							line = " ".repeat(6) + (line + ":");
-						} else {
-							line = "\t" + line;
-						}
-						print(line);
+						print(`     ${chalk.gray(line)}`);
 					});
 
 					// Bottom padding.
@@ -3749,7 +3771,7 @@ gulp.task("favicon:root", function(done) {
 });
 
 /**
- * Copy delete unneeded files.
+ * Delete unneeded favicon files.
  *
  * @internal - Used to prepare the favicon task.
  */
@@ -3790,59 +3812,70 @@ gulp.task("favicon:html", function(done) {
 });
 
 /**
- * Re-build project favicons.
+ * Generate favicon files.
  *
- * Usage
+ * -c, --check-updates [boolean]
+ *     Check for RealFaviconGenerator updates.
  *
  * $ gulp favicon
  *     Re-build favicons.
+ *
+ * $ gulp favicon --check-updates
+ *     Check for RealFaviconGenerator updates.
  */
 gulp.task("favicon", function(done) {
-	// Cache task.
-	var task = this;
+	// Run yargs.
+	var __flags = yargs.option("check-updates", {
+		alias: "c",
+		type: "boolean"
+	}).argv;
 
-	// Get the gulp favicon tasks.
-	var tasks = get($configs, "bundles.gulp.favicon.tasks", []);
+	// Get flag values.
+	var check_updates = __flags.c || __flags["check-updates"];
 
-	tasks.push(function() {
-		// Finally, pretty files.
-		cmd.get(`${GULPCLI} pretty -q`, function(err, data) {
+	// Only check for plugin updates when the flag is provided.
+	if (check_updates) {
+		// Note: Think: Apple has just released a new Touch icon along
+		// with the latest version of iOS. Run this task from time to time.
+		// Ideally, make it part of your continuous integration system.
+		// Check for RealFaviconGenerator updates.
+
+		// Get the favicon data file.
+		var favicondata_file = JSON.parse(
+			fs.readFileSync(get_config_file($paths.config_$favicondata))
+		).version;
+
+		$.real_favicon.checkForUpdates(favicondata_file, function(err) {
 			if (err) {
 				throw err;
 			}
 
-			// Highlight data string.
-			print(cli_highlight(data));
-
-			// Finally, print success message.
-			print.gulp.success("Favicons generated.");
-			done();
-		});
-	});
-
-	// Apply the tasks and callback to sequence and run the tasks.
-	return sequence.apply(task, tasks);
-});
-
-/**
- * Check for RealFaviconGenerator updates.
- *
- * Notes
- *
- * • Think: Apple has just released a new Touch icon along with the
- *     latest version of iOS. Run this task from time to time. Ideally,
- *     make it part of your continuous integration system. Check for
- *     RealFaviconGenerator updates.
- */
-gulp.task("favicon-updates", function(done) {
-	var currentVersion = JSON.parse(
-		fs.readFileSync(get_config_file($paths.config_$favicondata))
-	).version;
-	$.real_favicon.checkForUpdates(currentVersion, function(err) {
-		if (err) {
-			throw err;
-		} else {
 			return done();
-		}
-	});
+		});
+	} else {
+		// Cache task.
+		var task = this;
+
+		// Get the gulp favicon tasks.
+		var tasks = get($configs, "bundles.gulp.favicon.tasks", []);
+
+		tasks.push(function() {
+			// Finally, pretty files.
+			cmd.get(`${GULPCLI} pretty -q`, function(err, data) {
+				if (err) {
+					throw err;
+				}
+
+				// Highlight data string.
+				print(cli_highlight(data));
+
+				// Finally, print success message.
+				print.gulp.success("Favicons generated.");
+				done();
+			});
+		});
+
+		// Apply the tasks and callback to sequence and run the tasks.
+		return sequence.apply(task, tasks);
+	}
 });

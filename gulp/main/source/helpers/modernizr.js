@@ -1,16 +1,15 @@
 /**
- * Build Modernizr file.
- *
- * Usage
+ * Build modernizr.js.
  *
  * $ gulp modernizr
- *     Build modernizr.js (uses ./modernizr.config.json).
+ *     Build modernizr.js.
  */
 gulp.task("modernizr", function(done) {
 	var modernizr = require("modernizr");
 
+	// Uses ./modernizr.json.
 	modernizr.build($configs.modernizr, function(build) {
-		// Build the modernizr file path.
+		// Build the modernizr description file path.
 		var file_location =
 			$paths.vendor_modernizr + $paths.modernizr_file_name;
 

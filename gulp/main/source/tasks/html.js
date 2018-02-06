@@ -1,5 +1,8 @@
 /**
- * Init HTML files + minify.
+ * Build ./index.html.
+ *
+ * $ gulp html
+ *     Build ./index.html.
  */
 gulp.task("html", function(done) {
 	// Pause the watcher to prevent infinite loops.

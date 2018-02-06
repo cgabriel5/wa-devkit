@@ -1,5 +1,9 @@
 /**
- * Just trigger a browser-sync stream.
+ * Handle project image operations.
+ *
+ * • By default the task does not do much as no image files exist.
+ *     Update the task as needed.
+ *
  */
 gulp.task("img", function(done) {
 	// Pause the watcher to prevent infinite loops.

@@ -1,36 +1,29 @@
 /**
- * Add/remove front-end dependencies.
- *
- * Notes
+ * Add or remove front-end dependencies.
  *
  * • Dependencies are grabbed from ./node_modules/<name> and moved
  *   to its corresponding ./<type>/vendor/ folder.
  * • name, type, and action options are grouped. This means when one
  *   is used they must all be provided.
  *
- * Flags
+ * Group 1:
+ * -a, --add <string> OR -r, --remove <string>
+ *     The module name to add/remove.
+ * -t, --type <string>
+ *     Dependency type ("js" or "css"). Needed when the --add or
+ *     --remove flag is used.
  *
- * -n, --name
- *     <string>  The module name.
+ * Group 2:
+ * -l, --list <boolean>
+ *     Print all CSS/JS dependencies.
  *
- * -t, --type
- *     <string>  Dependency type (js/css).
- *
- * -a, --action
- *     <string>  Action to take (add/remove).
- *
- * -l, --list
- *     <boolean> Print all CSS/JS dependencies.
- *
- * Usage
- *
- * $ gulp dependency --name fastclick --type js --action add
+ * $ gulp dependency --add "fastclick" --type "js"
  *     Copy fastclick to JS vendor directory.
  *
- * $ gulp dependency --name fastclick --type js --action remove
+ * $ gulp dependency --remove "fastclick" --type "js"
  *     Remove fastclick from JS vendor directory.
  *
- * $ gulp dependency --name font-awesome --type css --action add
+ * $ gulp dependency --add "font-awesome" --type "css"
  *     Add font-awesome to CSS vendor directory.
  *
  * $ gulp dependency --list
@@ -39,8 +32,12 @@
 gulp.task("dependency", function(done) {
 	// Run yargs.
 	var __flags = yargs
-		.option("name", {
-			alias: "n",
+		.option("add", {
+			alias: "a",
+			type: "string"
+		})
+		.option("remove", {
+			alias: "r",
 			type: "string"
 		})
 		.option("type", {
@@ -48,29 +45,19 @@ gulp.task("dependency", function(done) {
 			choices: ["js", "css"],
 			type: "string"
 		})
-		.option("action", {
-			alias: "a",
-			choices: ["add", "remove"],
-			type: "string"
-		})
-		.group(
-			["name", "type", "action"],
-			"Options: Vendor dependency information (all required when any is provided)"
-		)
-		// Name, type, and action must all be provided when one is provided.
-		.implies({
-			name: "type",
-			type: "action",
-			action: "name"
-		})
 		.option("list", {
 			alias: "l",
 			type: "boolean"
-		}).argv;
-	// Get the command line arguments from yargs.
-	var name = __flags.n || __flags.name;
+		})
+		.implies("add", "type")
+		.implies("remove", "type").argv;
+
+	// Get flag values.
+	var add = __flags.a || __flags.add;
+	var remove = __flags.r || __flags.remove;
+	var name = add || remove;
+	var action = add ? "add" : remove ? "remove" : null;
 	var type = __flags.t || __flags.type;
-	var action = __flags.a || __flags.action;
 	var list = __flags.l || __flags.list;
 
 	// Get needed paths.
@@ -78,7 +65,16 @@ gulp.task("dependency", function(done) {
 	var delete_path = dest + name;
 	var module_path = $paths.node_modules + name;
 
-	// Print used vendor dependencies if flag provided.
+	// Give an error message when a name is not provided.
+	if (!list && !name) {
+		print.gulp.error("Provide a name via the --add/--remove flag.");
+		return done();
+	}
+
+	// Note: If the --list flag is provided it takes precedence over
+	// other flags. Meaning it negates all the other flags provided.
+	// Once the listing of vendor dependencies has completed the task
+	// is terminated.
 	if (list) {
 		// Get the vendor dependencies.
 		var css_dependencies = BUNDLE_CSS.vendor.files;
@@ -122,6 +118,7 @@ gulp.task("dependency", function(done) {
 		print.gulp.info(
 			`Install the dependency by running: $ yarn add ${name} --dev. Then try again.`
 		);
+
 		return done();
 	} else if (action === "remove" && !de.sync(delete_path)) {
 		print.gulp.warn(
@@ -129,15 +126,40 @@ gulp.task("dependency", function(done) {
 			chalk.magenta(delete_path),
 			"does not exist."
 		);
+
 		return done();
 	}
+
+	/**
+	 * Print the final steps after the dependency has been added or removed.
+	 *
+	 * @param  {function} done - The Gulp callback.
+	 * @return {undefined} - Nothing.
+	 */
+	function final_steps(done) {
+		// Get the configuration file.
+		var config_file = get_config_file($paths.config_$bundles);
+
+		print.gulp.info(
+			`1. Update ${chalk.magenta(
+				config_file
+			)} with the necessary vendor path changes.`
+		);
+		print.gulp.info(
+			`2. To complete changes run: $ gulp settings && gulp ${type.toLowerCase()}.`
+		);
+
+		done();
+	}
+
 	// Delete the old module folder.
 	del([delete_path]).then(function() {
 		var message =
 			`Dependency (${name}) ` +
 			(action === "add" ? "added" : "removed" + ".");
+
+		// Copy module to location.
 		if (action === "add") {
-			// Copy module to location.
 			pump(
 				[
 					gulp.src(name + $paths.delimiter + $paths.files_all, {
@@ -156,13 +178,17 @@ gulp.task("dependency", function(done) {
 				],
 				function() {
 					print.gulp.success(message);
-					done();
+
+					// Print the final steps.
+					final_steps(done);
 				}
 			);
 		} else {
-			// Remove.
+			// Removing completed just print the success message.
 			print.gulp.success(message);
-			done();
+
+			// Print the final steps.
+			final_steps(done);
 		}
 	});
 });

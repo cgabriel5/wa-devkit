@@ -1,5 +1,7 @@
 /**
- * Watch for file changes.
+ * Watch project for file changes.
+ *
+ * @internal - Set as internal to hide from default help output.
  */
 gulp.task("watch", function(done) {
 	// Add auto tab closing capability to browser-sync. This will

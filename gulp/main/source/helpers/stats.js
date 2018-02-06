@@ -1,14 +1,10 @@
 /**
- * Prints table containing project file type breakdown.
+ * Print a table containing project file type breakdown.
  *
- * Notes
- *
- * • Depending on the project size, this task might take a while to run.
- *
- * Usage
+ * • Depending on project size, task might take time to run.
  *
  * $ gulp stats
- *     Print a table containing project files type information.
+ *     Print file type breakdown.
  */
 gulp.task("stats", function(done) {
 	var Table = require("cli-table2");
@@ -18,7 +14,7 @@ gulp.task("stats", function(done) {
 		type: "boolean"
 	}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag value.
 	var all = __flags.all;
 
 	// Get all files excluding: node_modules/, .git/, and img/.

@@ -1,10 +1,8 @@
 /**
  * Build gulpfile from source files.
  *
- * Usage
- *
  * $ gulp make
- *     Re-build gulpfile.
+ *     Build gulpfile.
  */
 gulp.task("make", function(done) {
 	// Get file names to use.

@@ -139,7 +139,7 @@ gulp.task("default", function(done) {
 
 /**
  * Ask user questions and setup the project based on the replies. The
- *     initialization steps are shown down below.
+ *     initialization steps are shown below.
  */
 gulp.task("init", function(done) {
 	// Cache task.
@@ -331,7 +331,7 @@ gulp.task("init", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * This initialization step updates the app config file with the user
+ * Initialization step: Update the app config file with the user
  *     provided values.
  */
 gulp.task("init:app-settings", function(done) {
@@ -390,10 +390,8 @@ gulp.task("init:app-settings", function(done) {
 });
 
 /**
- * This initialization step takes the internal JSON object export and saves
+ * Initialization step: Takes the internal JSON object export and saves
  *     it into the configs/ directory.
- *
- * Notes
  *
  * • This file (.__internal.json) is used internally and should not be
  *     modified.
@@ -424,7 +422,7 @@ gulp.task("init:settings-internal", function(done) {
 });
 
 /**
- * This initialization step combines all the config files under configs/
+ * Initialization step: Combines all the config files under configs/
  *     to generate the collective .__settings.js file.
  */
 gulp.task("init:settings-main", function(done) {
@@ -447,7 +445,7 @@ gulp.task("init:settings-main", function(done) {
 });
 
 /**
- * This initialization step removes unneeded doc files depending on whether
+ * Initialization step: Removes unneeded doc files depending on whether
  *     setting up a webapp or library.
  */
 gulp.task("init:clean-docs", function(done) {
@@ -473,7 +471,7 @@ gulp.task("init:clean-docs", function(done) {
 });
 
 /**
- * This initialization step is only ran when setting up a library project.
+ * Initialization step: Is only ran when setting up a library project.
  *     It removes all webapp files as the project is defaulted to a webapp.
  */
 gulp.task("init:--lib-remove-webapp-files", function(done) {
@@ -496,7 +494,7 @@ gulp.task("init:--lib-remove-webapp-files", function(done) {
 });
 
 /**
- * This initialization step is only ran when setting up a library project.
+ * Initialization step: Is only ran when setting up a library project.
  *     As the project is defaulted to a webapp it adds the needed library
  *     project files.
  */
@@ -520,7 +518,7 @@ gulp.task("init:--lib-add-library-files", function(done) {
 });
 
 /**
- * This initialization step creates the user selected license and inserts
+ * Initialization step: Creates the user selected license and inserts
  *     the provided data (year, name, etc.).
  */
 gulp.task("init:create-license", function(done) {
@@ -561,8 +559,7 @@ gulp.task("init:create-license", function(done) {
 });
 
 /**
- * This initialization step inserts any placeholders with the provided
- *    data.
+ * Initialization step: Replaces placeholders with the provided data.
  */
 gulp.task("init:fill-placeholders", function(done) {
 	// Replace placeholder with real data.
@@ -587,7 +584,7 @@ gulp.task("init:fill-placeholders", function(done) {
 });
 
 /**
- * This initialization step moves the readme template export to its setup
+ * Initialization step: Moves the readme template export to its setup
  *     location to the root.
  */
 gulp.task("init:setup-readme", function(done) {
@@ -604,7 +601,7 @@ gulp.task("init:setup-readme", function(done) {
 });
 
 /**
- * This initialization step renames the main gulpfile to the conventional
+ * Initialization step: Renames the main gulpfile to the conventional
  *     Gulp file name.
  */
 gulp.task("init:rename-gulpfile", function(done) {
@@ -625,7 +622,7 @@ gulp.task("init:rename-gulpfile", function(done) {
 });
 
 /**
- * This initialization step removes all setup files as they are no longer
+ * Initialization step: Removes all setup files as they are no longer
  *     needed in the further steps.
  */
 gulp.task("init:remove-setup", function(done) {
@@ -645,7 +642,7 @@ gulp.task("init:remove-setup", function(done) {
 });
 
 /**
- * This initialization step runs gulpfile.js, formerly gulpfile-main.js,
+ * Initialization step: Runs gulpfile.js, formerly gulpfile-main.js,
  *     Gulp tasks. More specifically, it runs the tasks that generate the
  *     project CSS/JS bundles.
  */
@@ -665,9 +662,9 @@ gulp.task("init:create-bundles", function(done) {
 });
 
 /**
- * This initialization step runs the gulpfile.js, formerly gulpfile-main.js,
- *     pretty task. This task runs through all the project files and pretty
- *     prints them.
+ * Initialization step: Runs the gulpfile.js, formerly gulpfile-main.js,
+ *     pretty task. This task runs through all the project files and
+ *     prettifies them.
  */
 gulp.task("init:pretty", function(done) {
 	// Create the CSS/JS bundles before.
@@ -685,8 +682,8 @@ gulp.task("init:pretty", function(done) {
 });
 
 /**
- * This initialization step programmatically makes the first project Git
- *     commit and lightly configures Git with useful settings.
+ * Initialization step: Programmatically make the first project Git commit
+ *     and lightly configures Git with useful settings.
  */
 gulp.task("init:git", function(done) {
 	// Git init new project.
@@ -732,7 +729,10 @@ gulp.task("init:git", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Build gulpfile-setup.js from source.
+ * Build gulpfile from source files.
+ *
+ * $ gulp make
+ *     Build gulpfile.
  */
 gulp.task("make", function(done) {
 	var files = [

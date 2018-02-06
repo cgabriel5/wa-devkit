@@ -1,8 +1,6 @@
 /**
  * Print whether there is an active Gulp instance.
  *
- * Usage
- *
  * $ gulp status
  *     Print Gulp status.
  */
@@ -16,9 +14,7 @@ gulp.task("status", function(done) {
 });
 
 /**
- * Print the currently used ports for browser-sync.
- *
- * Usage
+ * Print the currently used ports by browser-sync.
  *
  * $ gulp ports
  *     Print uses ports.

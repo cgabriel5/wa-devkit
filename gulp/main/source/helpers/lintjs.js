@@ -1,29 +1,29 @@
 /**
  * Lint a JS file.
  *
- * Flags
- *
- * -f, --file
- *     <string>  The JS file to lint.
- *
- * Usage
+ * --file <string>
+ *     The JS file to lint.
  *
  * $ gulp lintjs --file ./gulpfile.js
- *     Lint gulpfile.js
- *
+ *     Lint ./gulpfile.js.
  */
 gulp.task("lintjs", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
-		alias: "f",
-		type: "string",
-		demandOption: true
+		type: "string"
+		// demandOption: true
 	}).argv;
-	// Get the command line arguments from yargs.
-	var file = __flags.f || __flags.file || "";
 
-	// Don't search for a config file as a config object will be supplied
-	// instead.
+	// Get flag values.
+	var file = __flags.file;
+
+	// When no file is provided print an error.
+	if (!file) {
+		print.gulp.error("Provide a file to lint.");
+		return done();
+	}
+
+	// Don't search for a config file. A config object will be supplied.
 	$.jshint.lookup = false;
 
 	pump(

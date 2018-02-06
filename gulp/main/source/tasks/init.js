@@ -59,9 +59,7 @@ cleanup(function(exit_code, signal) {
 });
 
 /**
- * Store the current process information (internal config. file).
- *
- * Notes
+ * Store current process information in internal config. file.
  *
  * • This will write current process information to an internal gulp
  *     configuration file. This is done to prevent multiple Gulp
@@ -87,8 +85,6 @@ gulp.task("init:save-pid", function(done) {
 
 /**
  * Watch for Git branch changes.
- *
- * Notes
  *
  * • Branch name checks are done to check whether the branch was changed
  *     after the Gulp instance was made. When switching branches files
@@ -191,7 +187,7 @@ var __process_exists;
 var __process_stopped;
 
 /**
- * Checks for an active Gulp process before making another.
+ * Check for an active Gulp process before making another.
  *
  * @internal - Used with the default task.
  */
@@ -274,24 +270,20 @@ gulp.task("default:active-pid-check", function(done) {
 /**
  * Runs Gulp.
  *
- * Notes
- *
  * • This is the default task that will build project files, watch files,
  *     run browser-sync, etc.
  * • Only one instance can be run at a time.
  *
- * Flags
- *
- * -s, --stop
- *     [boolean] Flag indicating to stop Gulp.
- *
- * Usage
+ * -s, --stop [boolean]
+ *     Flag indicating to stop Gulp.
  *
  * $ gulp
  *     Run Gulp.
  *
  * $ gulp --stop
- *     Stops the active Gulp process, if running.
+ *     Ir running, stops the active Gulp process.
+ *
+ * @internal - Set as internal to hide from default help output.
  */
 gulp.task("default", ["default:active-pid-check"], function(done) {
 	// Check the default:active-pid-check variables before the actual

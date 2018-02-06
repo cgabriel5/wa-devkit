@@ -6,15 +6,13 @@
 var __modified_git_files;
 
 /**
- * Gets the modified files via Git.
+ * Get modified files as listed by Git.
  *
- * Flags
+ * -q, --quick [boolean]
+ *     Only prettify the git modified files.
  *
- * -q, --quick
- *     [boolean] Only prettify the git modified files.
- *
- * --staged
- *     [boolean] Used with the --quick flag it only prettifies the staged
+ * --staged [boolean]
+ *     Used with the --quick flag it only prettifies the staged
  *     files.
  *
  * @internal - Used to prepare the pretty task.
@@ -30,7 +28,7 @@ gulp.task("pretty:gitfiles", function(done) {
 			type: "boolean"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var quick = __flags.quick;
 	var staged = __flags.staged;
 
@@ -61,9 +59,7 @@ gulp.task("pretty:gitfiles", function(done) {
 });
 
 /**
- * Beautify all HTML, JS, CSS, and JSON project files.
- *
- * Notes
+ * Beautify (HTML, JS, CSS, & JSON) project files.
  *
  * • By default files in the following directories or containing the
  *   following sub-extensions are ignored: ./node_modules/, ./git/,
@@ -71,32 +67,28 @@ gulp.task("pretty:gitfiles", function(done) {
  * • Special characters in globs provided via the CLI (--pattern) might
  *   need to be escaped if getting an error.
  *
- * Flags
+ * -t, --type [string]
+ *     The file extensions types to clean.
  *
- * -t, --type
- *     [string] The file extensions types to clean.
+ * -p, --pattern [array]
+ *     Use a glob to find files to prettify.
  *
- * -p, --pattern
- *     [array] Use a glob to find files to prettify.
+ * -i, --ignore [array]
+ *     Use a glob to ignore files.
  *
- * -i, --ignore
- *     [array] Use a glob to ignore files.
- *
- * --test
- *     [boolean] A test run that only shows the used globs before
+ * --test [boolean]
+ *     A test run that only shows the used globs before
  *     prettifying. Does not prettify at all.
  *
- * -e, --empty
- *     [boolean] Empty default globs array. Careful as this can prettify
+ * -e, --empty [boolean]
+ *     Empty default globs array. Careful as this can prettify
  *     all project files. By default the node_modules/ is ignored, for
  *     example. Be sure to exclude files that don't need to be prettified
  *     by adding the necessary globs with the --pattern option.
  *
- * -l, --line-ending
- *     [string] If provided, the file ending will get changed to provided
+ * -l, --line-ending [string]
+ *     If provided, the file ending will get changed to provided
  *     character(s). Line endings default to LF ("\n").
- *
- * Usage
  *
  * $ gulp pretty
  *     Prettify all HTML, CSS, JS, JSON files.
@@ -157,7 +149,7 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			type: "string"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var type = __flags.t || __flags.type;
 	var patterns = __flags.p || __flags.pattern;
 	var ignores = __flags.i || __flags.ignore;

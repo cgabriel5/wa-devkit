@@ -1,5 +1,8 @@
 /**
- * Build gulpfile-setup.js from source.
+ * Build gulpfile from source files.
+ *
+ * $ gulp make
+ *     Build gulpfile.
  */
 gulp.task("make", function(done) {
 	var files = [

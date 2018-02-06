@@ -1,26 +1,27 @@
 /**
  * Lint a CSS file.
  *
- * Flags
- *
- * -f, --file
- *     <string>  The CSS file to lint.
- *
- * Usage
+ * --file <string>
+ *     The CSS file to lint.
  *
  * $ gulp lintcss --file ./css/bundles/vendor.css
- *     Lint ./css/bundles/vendor.css
- *
+ *     Lint ./css/bundles/vendor.css.
  */
 gulp.task("lintcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
-		alias: "f",
-		type: "string",
-		demandOption: true
+		type: "string"
+		// demandOption: true
 	}).argv;
-	// Get the command line arguments from yargs.
-	var file = __flags.f || __flags.file || "";
+
+	// Get flag values.
+	var file = __flags.file;
+
+	// When no file is provided print an error.
+	if (!file) {
+		print.gulp.error("Provide a file to lint.");
+		return done();
+	}
 
 	// Get the stylish logger.
 	var stylish = require("csslint-stylish");

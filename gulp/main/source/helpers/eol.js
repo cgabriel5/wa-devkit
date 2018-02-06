@@ -1,27 +1,35 @@
 /**
- * Correct file line endings.
+ * Change file line endings.
  *
- * Flags
- *
- * -l, --line-ending
- *     [string] The type of line ending to use. Defauls to "\n".
- *
- * Usage
+ * -l, --line-ending <string>
+ *     The type of line ending to use. Defaults to "lf" (\n).
  *
  * $ gulp eol
  *     Check file line endings.
  *
- * $ gulp eol --line-ending "\n"
- *     Enforce "\n" line endings.
+ * $ gulp eol --line-ending "lf"
+ *     Enforce lf (\n) line endings.
  */
 gulp.task("eol", function(done) {
 	// Run yargs.
-	var __flags = yargs.option("line-ending", {
-		alias: "l",
-		type: "string"
-	}).argv;
+	var __flags = yargs
+		.option("line-ending", {
+			alias: "l",
+			choices: ["cr", "lf", "crlf", "\r", "\n", "\r\n"],
+			type: "string"
+		})
+		// Reset the line ending.
+		.coerce("line-ending", function(value) {
+			var lookup = {
+				cr: "\r", // Mac OS
+				lf: "\n", // Unix/OS X
+				crlf: "\r\n" // Windows/DOS
+			};
 
-	// Get the command line arguments from yargs.
+			return lookup[value.toLowerCase()];
+		}).argv;
+
+	// Get flag values.
 	var ending = __flags.l || __flags["line-ending"] || EOL_ENDING;
 
 	// Check: HTML, CSS, JS, JSON, TXT, TEXT, and MD files. They also
@@ -36,7 +44,6 @@ gulp.task("eol", function(done) {
 		bangify(globall($paths.git))
 	];
 
-	// Get needed files.
 	pump(
 		[
 			gulp.src(files, {

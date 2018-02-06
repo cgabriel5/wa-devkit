@@ -1,8 +1,6 @@
 /**
  * Opens provided file in browser.
  *
- * Notes
- *
  * • Tabs should be opened using the terminal via this task. Doing
  *   so will ensure the generated tab will auto-close when Gulp is
  *   closed. Opening tabs by typing/copy-pasting the project URL
@@ -10,40 +8,36 @@
  *   due to security issues as noted here:
  *   [https://stackoverflow.com/q/19761241].
  *
- * Flags
+ * --file <file>
+ *     The path of the file to open.
  *
- * -f, --file
- *     <file> The path of the file to open.
- *
- * -p, --port
- *     [number] The port to open in. (Defaults to browser-sync port if
+ * -p, --port [number]
+ *     The port to open in. (Defaults to browser-sync port if
  *     available or no port at all.)
  *
- * -d, --directory
- *     [string] The directory path to open in a file manager.
+ * -d, --directory [string]
+ *     The directory path to open in a file manager.
  *
- * -e, --editor
- *     [string] The file path to open in the user's text editor to edit.
+ * -e, --editor [string]
+ *     The file path to open in the user's text editor to edit.
  *
- * --wait
- *     [boolean] To be Used with the -e/--editor flag. If provided the
+ * --wait [boolean]
+ *     To be Used with the -e/--editor flag. If provided the
  *     editor will wait to close and will only close manually (i.e.
  *     close the editor or exit the terminal task).
  *
- * --line
- *     [number] To be used with -e/--editor flag. Open the file at the
+ * --line [number]
+ *     To be used with -e/--editor flag. Open the file at the
  *     provided line.
  *
- * --column
- *     [number] To be used with -e/--editor flag. Open the file at the
+ * --column [number]
+ *     To be used with -e/--editor flag. Open the file at the
  *     provided column.
  *
- * --use
- *     [string] To be used with -e/--editor flag. Manually set the editor
- *     to use. Will default to the user's default editor via ($EDITOR/$VISUAL)
- *     environment variables.
- *
- * Usage
+ * --use [string]
+ *     To be used with -e/--editor flag. Manually set the editor
+ *     to use. Will default to the user's default editor via
+ *     ($EDITOR/$VISUAL) environment variables.
  *
  * $ gulp open --file index.html --port 3000
  *     Open index.html in port 3000.
@@ -52,9 +46,10 @@
  *     Open index.html in browser-sync port is available or no port.
  *
  * $ gulp open --editor ./index.html --wait --line 12 --column 20 --use atom
- *     Open "./index.html" using the text editor Atom if available. Set
- *     the line to 12 and column 20. Use the --wait flag to close the process
- *     after the editor is close or the process is killed via the terminal.
+ *     Open "./index.html" using the text editor Atom if available.
+ *     Set the line to 12 and column 20. Use the --wait flag to close
+ *     the process after the editor is close or the process is killed via
+ *     the terminal.
  *
  * $ gulp open --directory .
  *     Open the root directory in a file manager.
@@ -81,7 +76,7 @@ gulp.task("open", function(done) {
 			type: "string"
 		}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var directory = __flags.d || __flags.directory;
 	var editor = __flags.e || __flags.editor;
 
@@ -146,7 +141,7 @@ gulp.task("open", function(done) {
 				type: "string"
 			}).argv;
 
-		// Get the command line arguments from yargs.
+		// Get flag values.
 		var wait = __flags.wait;
 		var line = __flags.line;
 		var column = __flags.column;
@@ -194,7 +189,6 @@ gulp.task("open", function(done) {
 		// Run yargs.
 		var __flags = yargs
 			.option("file", {
-				alias: "f",
 				demandOption: true,
 				type: "string"
 			})
@@ -203,8 +197,8 @@ gulp.task("open", function(done) {
 				type: "number"
 			}).argv;
 
-		// Get the command line arguments from yargs.
-		var file = __flags.f || __flags.file;
+		// Get flag values.
+		var file = __flags.file;
 
 		// Check for explicitly provided port. If none is provided check
 		// the internally fetched free ports and get the local port.

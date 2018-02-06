@@ -49,7 +49,7 @@ gulp.task("favicon:root", function(done) {
 });
 
 /**
- * Copy delete unneeded files.
+ * Delete unneeded favicon files.
  *
  * @internal - Used to prepare the favicon task.
  */
@@ -90,59 +90,70 @@ gulp.task("favicon:html", function(done) {
 });
 
 /**
- * Re-build project favicons.
+ * Generate favicon files.
  *
- * Usage
+ * -c, --check-updates [boolean]
+ *     Check for RealFaviconGenerator updates.
  *
  * $ gulp favicon
  *     Re-build favicons.
+ *
+ * $ gulp favicon --check-updates
+ *     Check for RealFaviconGenerator updates.
  */
 gulp.task("favicon", function(done) {
-	// Cache task.
-	var task = this;
+	// Run yargs.
+	var __flags = yargs.option("check-updates", {
+		alias: "c",
+		type: "boolean"
+	}).argv;
 
-	// Get the gulp favicon tasks.
-	var tasks = get($configs, "bundles.gulp.favicon.tasks", []);
+	// Get flag values.
+	var check_updates = __flags.c || __flags["check-updates"];
 
-	tasks.push(function() {
-		// Finally, pretty files.
-		cmd.get(`${GULPCLI} pretty -q`, function(err, data) {
+	// Only check for plugin updates when the flag is provided.
+	if (check_updates) {
+		// Note: Think: Apple has just released a new Touch icon along
+		// with the latest version of iOS. Run this task from time to time.
+		// Ideally, make it part of your continuous integration system.
+		// Check for RealFaviconGenerator updates.
+
+		// Get the favicon data file.
+		var favicondata_file = JSON.parse(
+			fs.readFileSync(get_config_file($paths.config_$favicondata))
+		).version;
+
+		$.real_favicon.checkForUpdates(favicondata_file, function(err) {
 			if (err) {
 				throw err;
 			}
 
-			// Highlight data string.
-			print(cli_highlight(data));
-
-			// Finally, print success message.
-			print.gulp.success("Favicons generated.");
-			done();
-		});
-	});
-
-	// Apply the tasks and callback to sequence and run the tasks.
-	return sequence.apply(task, tasks);
-});
-
-/**
- * Check for RealFaviconGenerator updates.
- *
- * Notes
- *
- * • Think: Apple has just released a new Touch icon along with the
- *     latest version of iOS. Run this task from time to time. Ideally,
- *     make it part of your continuous integration system. Check for
- *     RealFaviconGenerator updates.
- */
-gulp.task("favicon-updates", function(done) {
-	var currentVersion = JSON.parse(
-		fs.readFileSync(get_config_file($paths.config_$favicondata))
-	).version;
-	$.real_favicon.checkForUpdates(currentVersion, function(err) {
-		if (err) {
-			throw err;
-		} else {
 			return done();
-		}
-	});
+		});
+	} else {
+		// Cache task.
+		var task = this;
+
+		// Get the gulp favicon tasks.
+		var tasks = get($configs, "bundles.gulp.favicon.tasks", []);
+
+		tasks.push(function() {
+			// Finally, pretty files.
+			cmd.get(`${GULPCLI} pretty -q`, function(err, data) {
+				if (err) {
+					throw err;
+				}
+
+				// Highlight data string.
+				print(cli_highlight(data));
+
+				// Finally, print success message.
+				print.gulp.success("Favicons generated.");
+				done();
+			});
+		});
+
+		// Apply the tasks and callback to sequence and run the tasks.
+		return sequence.apply(task, tasks);
+	}
 });

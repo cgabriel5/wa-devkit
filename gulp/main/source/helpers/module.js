@@ -1,45 +1,38 @@
 /**
- * Beautify all HTML, JS, CSS, and JSON project files.
+ * Create or remove a module.
  *
- * Flags
+ * --filename <string> OR --remove <string>
+ *     The file name of the module to add/remove.
  *
- * --filename
- *     <string> The file name of the new module file.
- *
- * --remove
- *     [string] The file name of the module to remove.
- *
- * --modname
- *     [string] The name of the module within the app. Defaults to the
+ * --modname [string]
+ *     The name of the module within the app. Defaults to the
  *     filename without the extension.
  *
- * --description
- *     [string] Optional description of the module.
+ * --description [string]
+ *     Optional description of the module.
  *
- * --mode
- *     [string] The mode the module should load via. (interactive/complete)
+ * --mode [string]
+ *     The mode the module should load via (interactive/complete).
  *
- * --same
- *     [boolean] Flag indicating whether to use the same filename for the
+ * --same [boolean]
+ *     Flag indicating whether to use the same filename for the
  *     modname.
  *
- * Usage
- *
  * $ gulp module --filename "my_module" --same --mode "complete"
- *     Make a module "new_module.js". The extension will be added it not
+ *     Make a module "new_module.js". The extension will be added if not
  *     provided. The same file name will be used for the modname. It will
- *     also load when the document readyState hits complete.
+ *     also load when the document readyState hits "complete".
  *
  * $ gulp module --filename "test" --same --description "My cool module."
- *     Make a module "test.js" with a description of "My cool module."
+ *     Make a module "test.js" with a description of "My cool module.".
  *
  * $ gulp module --filename "my_cool_module"
  *     Simplest way to make a module. This will make a module with the name
- *     "my_cool_module.js". Have the name of "my_cool_module", load on
+ *     "my_cool_module.js", have the name of "my_cool_module", load on
  *     "complete", and have an empty description.
  *
  * $ gulp module --filename "my_cool_module" --modname "coolModule"
- *     This will make a module with the name "my_cool_module.js". Have the
+ *     This will make a module with the name "my_cool_module.js", have the
  *     name of "coolModule", load on "complete", and have an empty
  *     description.
  *
@@ -54,7 +47,7 @@ gulp.task("module", function(done) {
 		type: "string"
 	}).argv;
 
-	// Get the command line arguments from yargs.
+	// Get flag values.
 	var remove = __flags.remove;
 
 	// Get the configuration file.

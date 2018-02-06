@@ -91,6 +91,8 @@
 		"pump": "^1.0.2",
 		"run-sequence": "^1.2.2",
 		"simple-git": "^1.77.0",
+		"strip-ansi": "^4.0.0",
+		"text-table": "^0.2.0",
 		"uglify-es": "^3.1.6",
 		"url-parse": "^1.1.9",
 		"yargs": "^8.0.1"

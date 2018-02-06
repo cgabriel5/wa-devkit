@@ -12,7 +12,7 @@ gulp.task("default", function(done) {
 
 /**
  * Ask user questions and setup the project based on the replies. The
- *     initialization steps are shown down below.
+ *     initialization steps are shown below.
  */
 gulp.task("init", function(done) {
 	// Cache task.
