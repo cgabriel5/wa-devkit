@@ -42,8 +42,8 @@
 ### Dependencies
 
 - Project uses:
-	- [`NodeJS`](https://nodejs.org/en/) &mdash; An open source, cross-platform server framework.
-	- [`Gulp`](https://gulpjs.com/) &mdash; Automates painful or time-consuming development tasks.
+	- [`NodeJS`](https://nodejs.org/en/) &mdash; An open source, cross-platform JS runtime environment.
+	- [`Gulp`](https://gulpjs.com/) &mdash; Automate painful, time-consuming development tasks.
 	- [`Yarn`](https://yarnpkg.com/en/) &mdash; Fast, reliable, and secure dependency management.
 	- [`Git`](https://git-scm.com/) &mdash; Distributed version control system.
 	- [`Growl`](https://github.com/tj/node-growl/) &mdash; Unobtrusive notification system for NodeJS.
