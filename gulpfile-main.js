@@ -598,7 +598,8 @@ var __process_stopped;
  * @internal - Used with the default task.
  */
 gulp.task("default:active-pid-check", function(done) {
-	var __flags = yargs.argv; // Get cli parameters.
+	// Run yargs.
+	var __flags = yargs.argv;
 
 	// When the --stop flag is provided the Gulp instance must be stopped.
 	if (__flags.stop) {
@@ -1417,11 +1418,12 @@ var __markdown_stopped;
 gulp.task("tohtml:prepcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 	}).argv;
 
 	// Get flag values.
-	var filename = __flags.f || __flags.file;
+	var filename = __flags.F || __flags.file;
 
 	// Check that the file is a markdown file.
 	if (!extension.ismd({ path: filename })) {
@@ -1467,7 +1469,7 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * • Files will get placed in ./markdown/previews/.
  *
- * --file <string>
+ * -F, --file <string>
  *     Path of file to convert. Defaults to ./README.md
  *
  * -o, --open [boolean]
@@ -1495,6 +1497,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("file", {
+			alias: "F",
 			type: "string"
 		})
 		.option("open", {
@@ -1503,7 +1506,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		}).argv;
 
 	// Get flag values.
-	var filename = __flags.f || __flags.file;
+	var filename = __flags.F || __flags.file;
 	var open = __flags.o || __flags.open;
 
 	// Task logic:
@@ -1614,7 +1617,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
  *   due to security issues as noted here:
  *   [https://stackoverflow.com/q/19761241].
  *
- * --file <file>
+ * -F, --file <file>
  *     The path of the file to open.
  *
  * -p, --port [number]
@@ -1795,8 +1798,9 @@ gulp.task("open", function(done) {
 		// Run yargs.
 		var __flags = yargs
 			.option("file", {
-				demandOption: true,
-				type: "string"
+				alias: "F",
+				type: "string",
+				demandOption: true
 			})
 			.option("port", {
 				alias: "p",
@@ -1804,7 +1808,7 @@ gulp.task("open", function(done) {
 			}).argv;
 
 		// Get flag values.
-		var file = __flags.file;
+		var file = __flags.F || __flags.file;
 
 		// Check for explicitly provided port. If none is provided check
 		// the internally fetched free ports and get the local port.
@@ -3121,7 +3125,7 @@ gulp.task("make", function(done) {
 /**
  * Lint a JS file.
  *
- * --file <string>
+ * -F, --file <string>
  *     The JS file to lint.
  *
  * $ gulp lintjs --file ./gulpfile.js
@@ -3130,12 +3134,13 @@ gulp.task("make", function(done) {
 gulp.task("lintjs", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 		// demandOption: true
 	}).argv;
 
 	// Get flag values.
-	var file = __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// When no file is provided print an error.
 	if (!file) {
@@ -3166,7 +3171,7 @@ gulp.task("lintjs", function(done) {
 /**
  * Lint a CSS file.
  *
- * --file <string>
+ * -F, --file <string>
  *     The CSS file to lint.
  *
  * $ gulp lintcss --file ./css/bundles/vendor.css
@@ -3175,12 +3180,13 @@ gulp.task("lintjs", function(done) {
 gulp.task("lintcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 		// demandOption: true
 	}).argv;
 
 	// Get flag values.
-	var file = __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// When no file is provided print an error.
 	if (!file) {
@@ -3211,7 +3217,7 @@ gulp.task("lintcss", function(done) {
 /**
  * Lint a HTML file.
  *
- * --file <string>
+ * -F, --file <string>
  *     The HTML file to lint.
  *
  * $ gulp linthtml --file ./index.html
@@ -3223,12 +3229,13 @@ gulp.task("linthtml", function(done) {
 
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 		// demandOption: true
 	}).argv;
 
 	// Get flag values.
-	var file = __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// When no file is provided print an error.
 	if (!file) {

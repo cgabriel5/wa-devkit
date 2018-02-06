@@ -192,7 +192,8 @@ var __process_stopped;
  * @internal - Used with the default task.
  */
 gulp.task("default:active-pid-check", function(done) {
-	var __flags = yargs.argv; // Get cli parameters.
+	// Run yargs.
+	var __flags = yargs.argv;
 
 	// When the --stop flag is provided the Gulp instance must be stopped.
 	if (__flags.stop) {

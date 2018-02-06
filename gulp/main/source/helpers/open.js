@@ -8,7 +8,7 @@
  *   due to security issues as noted here:
  *   [https://stackoverflow.com/q/19761241].
  *
- * --file <file>
+ * -F, --file <file>
  *     The path of the file to open.
  *
  * -p, --port [number]
@@ -189,8 +189,9 @@ gulp.task("open", function(done) {
 		// Run yargs.
 		var __flags = yargs
 			.option("file", {
-				demandOption: true,
-				type: "string"
+				alias: "F",
+				type: "string",
+				demandOption: true
 			})
 			.option("port", {
 				alias: "p",
@@ -198,7 +199,7 @@ gulp.task("open", function(done) {
 			}).argv;
 
 		// Get flag values.
-		var file = __flags.file;
+		var file = __flags.F || __flags.file;
 
 		// Check for explicitly provided port. If none is provided check
 		// the internally fetched free ports and get the local port.

@@ -1,7 +1,7 @@
 /**
  * Lint a CSS file.
  *
- * --file <string>
+ * -F, --file <string>
  *     The CSS file to lint.
  *
  * $ gulp lintcss --file ./css/bundles/vendor.css
@@ -10,12 +10,13 @@
 gulp.task("lintcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 		// demandOption: true
 	}).argv;
 
 	// Get flag values.
-	var file = __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// When no file is provided print an error.
 	if (!file) {

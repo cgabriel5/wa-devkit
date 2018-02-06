@@ -14,11 +14,12 @@ var __markdown_stopped;
 gulp.task("tohtml:prepcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 	}).argv;
 
 	// Get flag values.
-	var filename = __flags.f || __flags.file;
+	var filename = __flags.F || __flags.file;
 
 	// Check that the file is a markdown file.
 	if (!extension.ismd({ path: filename })) {
@@ -64,7 +65,7 @@ gulp.task("tohtml:prepcss", function(done) {
  *
  * • Files will get placed in ./markdown/previews/.
  *
- * --file <string>
+ * -F, --file <string>
  *     Path of file to convert. Defaults to ./README.md
  *
  * -o, --open [boolean]
@@ -92,6 +93,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Run yargs.
 	var __flags = yargs
 		.option("file", {
+			alias: "F",
 			type: "string"
 		})
 		.option("open", {
@@ -100,7 +102,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		}).argv;
 
 	// Get flag values.
-	var filename = __flags.f || __flags.file;
+	var filename = __flags.F || __flags.file;
 	var open = __flags.o || __flags.open;
 
 	// Task logic:

@@ -1,7 +1,7 @@
 /**
  * Lint a JS file.
  *
- * --file <string>
+ * -F, --file <string>
  *     The JS file to lint.
  *
  * $ gulp lintjs --file ./gulpfile.js
@@ -10,12 +10,13 @@
 gulp.task("lintjs", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
+		alias: "F",
 		type: "string"
 		// demandOption: true
 	}).argv;
 
 	// Get flag values.
-	var file = __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// When no file is provided print an error.
 	if (!file) {
