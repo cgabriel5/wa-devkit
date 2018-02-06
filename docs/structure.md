@@ -175,18 +175,19 @@
         ├── configs.js
         ├── functions.js
         ├── helpers/
-        │   ├── csslint.js
         │   ├── dependency.js
         │   ├── eol.js
         │   ├── favicon.js
         │   ├── files.js
         │   ├── help.js
-        │   ├── htmllint.js
         │   ├── indent.js
         │   ├── instance.js
-        │   ├── jshint.js
+        │   ├── lintcss.js
+        │   ├── linthtml.js
+        │   ├── lintjs.js
         │   ├── make.js
         │   ├── modernizr.js
+        │   ├── module.js
         │   ├── open.js
         │   ├── pretty.js
         │   ├── settings.js
@@ -238,6 +239,7 @@
 ├── paths.cm.json
 ├── perfectionist.json
 ├── prettier.json
+├── realfavicongen.json
 ├── .__internal.json
 └── .__settings.json
 ```
@@ -301,13 +303,13 @@
 ├── favicon.ico
 ├── .gitattributes
 ├── .gitignore
-├── gulpfile.main.js
-├── gulpfile.setup.js
+├── gulpfile-main.js
+├── gulpfile-setup.js
 ├── index.html
 ├── LICENSE.txt
-├── manifest.json
 ├── package.json
 ├── README.md
+├── site.webmanifest
 └── yarn.lock
 ```
 

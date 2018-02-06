@@ -15,7 +15,7 @@ Once created the file can be manually opened in a browser or be opened by using 
 ```
 $ gulp open --file "markdown/previews/tohtml.html"
 
-# Or...
+# Or.
 
-$ gulp open --file "markdown/previews/tohtml.html" --open # convert and open file in a new tab
+$ gulp open --file "markdown/previews/tohtml.html" --open # Convert and open file in a new tab.
 ```
