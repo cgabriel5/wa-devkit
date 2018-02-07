@@ -21,20 +21,20 @@
  * -e, --editor [string]
  *     The file path to open in the user's text editor to edit.
  *
- * --wait [boolean]
+ * -w, --wait [boolean]
  *     To be Used with the -e/--editor flag. If provided the
  *     editor will wait to close and will only close manually (i.e.
  *     close the editor or exit the terminal task).
  *
- * --line [number]
+ * -l, --line [number]
  *     To be used with -e/--editor flag. Open the file at the
  *     provided line.
  *
- * --column [number]
+ *-c,  --column [number]
  *     To be used with -e/--editor flag. Open the file at the
  *     provided column.
  *
- * --use [string]
+ * -u, --use [string]
  *     To be used with -e/--editor flag. Manually set the editor
  *     to use. Will default to the user's default editor via
  *     ($EDITOR/$VISUAL) environment variables.
@@ -129,23 +129,27 @@ gulp.task("open", function(done) {
 		// Run yargs.
 		var __flags = yargs
 			.option("wait", {
+				alias: "w",
 				type: "boolean"
 			})
 			.option("line", {
+				alias: "l",
 				type: "number"
 			})
 			.option("column", {
+				alias: "c",
 				type: "number"
 			})
 			.option("use", {
+				alias: "u",
 				type: "string"
 			}).argv;
 
 		// Get flag values.
-		var wait = __flags.wait;
-		var line = __flags.line;
-		var column = __flags.column;
-		var use_editor = __flags.use;
+		var wait = __flags.w || __flags.wait;
+		var line = __flags.l || __flags.line;
+		var column = __flags.c || __flags.column;
+		var use_editor = __flags.u || __flags.use;
 
 		// Get user's editor/flags needed to open file via the terminal.
 		var editor = get_editor({
