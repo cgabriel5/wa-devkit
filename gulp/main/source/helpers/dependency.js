@@ -30,6 +30,9 @@
  *     Show all CSS/JS dependencies.
  */
 gulp.task("dependency", function(done) {
+	var table = require("text-table");
+	var strip_ansi = require("strip-ansi");
+
 	// Run yargs.
 	var __flags = yargs
 		.option("add", {
@@ -84,24 +87,58 @@ gulp.task("dependency", function(done) {
 		print(chalk.underline("Dependencies"));
 
 		// Printer function.
-		var printer = function(dependency) {
+		var printer = function(dependency, index, array) {
 			// Get the name of the folder.
 			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/);
 			// When folder name is not present leave the name empty.
-			name = name ? `(${name[2]})` : "";
+			name = name ? `${name[2]}` : "";
 
-			print(`    ${chalk.magenta(dependency)} ${name}`);
+			// Reset the array item, in this case the dependency string
+			// path with an array containing the following information.
+			// This is done to be able to pass is to text-table to print
+			// everything neatly and aligned.
+			return [
+				`   `,
+				` ${chalk.green(index + 1)} `,
+				`${chalk.gray(name)}`,
+				` => ${chalk.magenta(dependency)}`
+			];
 		};
 
 		// Get the config path for the bundles file.
 		var bundles_path = get_config_file($paths.config_$bundles);
-		var header = `${bundles_path} > $.vendor.files[...]`;
+		var header = `${bundles_path} > $.vendor.files<Array>`;
 
 		// Print the dependencies.
-		print(" ", chalk.green(header.replace("$", "css")));
-		css_dependencies.forEach(printer);
-		print(" ", chalk.green(header.replace("$", "js")));
-		js_dependencies.forEach(printer);
+		print(" ", header.replace("$", "css"));
+		css_dependencies = css_dependencies.map(printer);
+		print(
+			table(css_dependencies, {
+				// Remove ansi color to get the string length.
+				stringLength: function(string) {
+					return strip_ansi(string).length;
+				},
+				hsep: ""
+				// Handle column separation manually to keep consistency
+				// with gulp-debug output.
+			})
+		);
+
+		print.ln();
+
+		print(" ", header.replace("$", "js"));
+		js_dependencies = js_dependencies.map(printer);
+		print(
+			table(js_dependencies, {
+				// Remove ansi color to get the string length.
+				stringLength: function(string) {
+					return strip_ansi(string).length;
+				},
+				hsep: ""
+				// Handle column separation manually to keep consistency
+				// with gulp-debug output.
+			})
+		);
 
 		print.ln();
 
