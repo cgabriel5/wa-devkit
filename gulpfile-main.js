@@ -2720,7 +2720,7 @@ gulp.task("stats", function(done) {
  * -n, --nofuzzy [boolean]
  *     Used an indexOf() search over fuzzy search.
  *
- * -h, --highlight [string]
+ * -H, --highlight [string]
  *     Highlight the --whereis string in the file path.
  *
  * $ gulp files
