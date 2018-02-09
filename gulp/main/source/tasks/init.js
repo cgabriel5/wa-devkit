@@ -46,9 +46,9 @@ cleanup(function(exit_code, signal) {
 		$internal.writeSync(null, JINDENT);
 
 		// Cleanup other variables.
-		branch_name = undefined;
-		if (bs) {
-			bs.exit();
+		__branch_name = undefined;
+		if (__bs && __bs.exit) {
+			__bs.exit();
 		}
 
 		// Finally kill the process.
@@ -111,7 +111,7 @@ gulp.task("init:watch-git-branch", function(done) {
 			}
 
 			// Record branch name.
-			branch_name = result.branch;
+			__branch_name = result.branch;
 
 			// Create a Gulp watcher as .git/ exists.
 			gulp.watch(
@@ -125,20 +125,22 @@ gulp.task("init:watch-git-branch", function(done) {
 					var brn_current = git.checkSync($paths.dirname).branch;
 
 					// Print the branch name being watched.
-					if (branch_name) {
+					if (__branch_name) {
 						print.gulp.info(
 							"Gulp is monitoring branch:",
-							chalk.magenta(branch_name)
+							chalk.magenta(__branch_name)
 						);
 					}
 
 					// When the branch names do not match a switch was made.
 					// Print some messages and exit the process.
-					if (brn_current !== branch_name) {
+					if (brn_current !== __branch_name) {
 						// message + exit
 						print.gulp.warn(
 							"Gulp stopped due to a branch switch.",
-							`(branch_name => ${chalk.magenta(brn_current)})`
+							`(${__branch_name} => ${chalk.magenta(
+								brn_current
+							)})`
 						);
 						print.gulp.info(
 							"Restart Gulp to monitor",
@@ -331,7 +333,7 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 			$internal.write(
 				function() {
 					// Store ports on the browser-sync object itself.
-					bs.__ports = [p1, p2]; // [app, ui]
+					__bs.__ports = [p1, p2]; // [app, ui]
 
 					// After getting the free ports run the build task.
 					return sequence(

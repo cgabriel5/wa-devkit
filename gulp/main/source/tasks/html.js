@@ -20,7 +20,7 @@ gulp.task("html", function(done) {
 			$.injection.post({ replacements: html_injection }),
 			gulp.dest($paths.basedir),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		function() {
 			// Un-pause and re-start the watcher.

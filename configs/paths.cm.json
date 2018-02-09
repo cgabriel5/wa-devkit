@@ -44,7 +44,7 @@
 	"config_$findfreeport": "findfreeport",
 	"config_$autoprefixer": "autoprefixer",
 	"config_$favicondata": "favicondata",
-	"config_$browsersync": "browsersync",
+	"config_$browsersync": "browsersync.cm",
 	"config_$jsbeautify": "jsbeautify",
 	"config_$htmllint": "htmllint.cm",
 	"config_$modernizr": "modernizr",

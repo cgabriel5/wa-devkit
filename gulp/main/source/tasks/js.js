@@ -17,7 +17,7 @@ gulp.task("js:app", function(done) {
 			$.prettier(PRETTIER),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		function() {
 			// Un-pause and re-start the watcher.
@@ -49,7 +49,7 @@ gulp.task("js:vendor", function(done) {
 			$.prettier(PRETTIER),
 			gulp.dest($paths.js_bundles),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		function() {
 			// Un-pause and re-start the watcher.

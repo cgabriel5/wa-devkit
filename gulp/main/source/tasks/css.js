@@ -27,7 +27,7 @@ gulp.task("css:app", function(done) {
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		function() {
 			// Un-pause and re-start the watcher.
@@ -69,7 +69,7 @@ gulp.task("css:vendor", function(done) {
 			]),
 			gulp.dest($paths.css_bundles),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		function() {
 			// Un-pause and re-start the watcher.

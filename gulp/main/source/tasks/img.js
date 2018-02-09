@@ -12,7 +12,7 @@ gulp.task("img", function(done) {
 	// Copy hidden files/folders?
 	// [https://github.com/klaascuvelier/gulp-copy/issues/5]
 
-	pump([gulp.src($paths.img_source), $.debug(), bs.stream()], function() {
+	pump([gulp.src($paths.img_source), $.debug(), __bs.stream()], function() {
 		// Un-pause and re-start the watcher.
 		$.watcher.start("watcher:img");
 

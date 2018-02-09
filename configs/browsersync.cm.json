@@ -1,0 +1,26 @@
+{
+	// The name given to the identify the server.
+	// [https://browsersync.io/docs/api#api-create]
+	"name": "localhost",
+	// Clear all defaults & only use the options found in this file.
+	"clear": false,
+
+	// Place plugin options in this object.
+	// [https://browsersync.io/docs/api]
+	"plugin": {
+		// Options here will overwrite defaults.
+		//
+		// These are the defaults used:
+		//
+		// "browser": Defaults to chrome. Falling back to Firefox.
+		// "proxy": Built on the fly using the project location and
+		//  		information provided in app.cm.json.
+		// "port": Automatically finds a free port.
+		// "ui": {
+		// 	"port": Automatically finds a free port.
+		// },
+		// "notify": false,
+		// "open": true,
+		// "logPrefix": "BS"
+	}
+}

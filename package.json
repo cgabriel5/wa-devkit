@@ -58,6 +58,7 @@
 		"gulp-markdown": "^1.2.0",
 		"gulp-minify-html": "^1.0.6",
 		"gulp-modify": "^0.1.1",
+		"gulp-noop": "^1.0.0",
 		"gulp-open": "^2.0.0",
 		"gulp-postcss": "^7.0.0",
 		"gulp-prettier-plugin": "^1.1.0",

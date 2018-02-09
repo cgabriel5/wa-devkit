@@ -42,7 +42,7 @@ gulp.task("favicon:root", function(done) {
 			$.debug(),
 			gulp.dest($paths.basedir),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		done
 	);
@@ -83,7 +83,7 @@ gulp.task("favicon:html", function(done) {
 			),
 			gulp.dest($paths.favicon_html_dest),
 			$.debug.edit(),
-			bs.stream()
+			__bs.stream()
 		],
 		done
 	);
