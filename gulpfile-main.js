@@ -1076,14 +1076,20 @@ gulp.task("watch", function(done) {
 	// [https://github.com/shakyShane/html-injector/blob/master/client.js]
 	// [https://github.com/shakyShane/html-injector/blob/master/index.js]
 
-	// Plugin: Add auto tab closing capability to browser-sync. This will
-	// auto close the created browser-sync tabs when gulp closes.
-	__bs.use({
-		plugin: function() {}, // Function does nothing but is needed.
-		hooks: {
-			"client:js": bs_autoclose
-		}
-	});
+	// Plugin: Add auto tab closing capability to browser-sync when the
+	// auto close tabs flag is set. Basically, when the browser-sync server
+	// closes all the tabs opened by browser-sync or the terminal will be
+	// auto closed. Tabs that are created manually (i.e. copy/pasting URL
+	// or typing out URL then hitting enter) cannot be auto closed due to
+	// security issues as noted here: [https://stackoverflow.com/q/19761241].
+	if (get(BROWSERSYNC, "auto_close_tabs", "")) {
+		__bs.use({
+			plugin: function() {}, // Function does nothing but is needed.
+			hooks: {
+				"client:js": bs_autoclose
+			}
+		});
+	}
 
 	// // Plugin: Hook into the browser-sync socket instance to be able to
 	// // reload by checking the window's URL.
@@ -1523,13 +1529,13 @@ gulp.task("tohtml:prepcss", function(done) {
 	}).argv;
 
 	// Get flag values.
-	var filename = __flags.F || __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// Check that the file is a markdown file.
-	if (!extension.ismd({ path: filename })) {
+	if (!extension.ismd({ path: file })) {
 		print.gulp.warn(
 			`.${extension({
-				path: filename
+				path: file
 			})} file was provided.`
 		);
 		print.gulp.info("Need a .md (Markdown) file.");
@@ -1549,7 +1555,7 @@ gulp.task("tohtml:prepcss", function(done) {
 					cwd: $paths.markdown_assets
 				}
 			),
-			$.debug(),
+			// $.debug(),
 			$.concat($paths.markdown_concat_name),
 			$.modify({
 				fileModifier: function(file, contents) {
@@ -1557,8 +1563,8 @@ gulp.task("tohtml:prepcss", function(done) {
 					__markdown_styles = contents;
 					return contents;
 				}
-			}),
-			$.debug.edit()
+			})
+			// $.debug.edit()
 		],
 		done
 	);
@@ -1576,11 +1582,18 @@ gulp.task("tohtml:prepcss", function(done) {
  *     Flag indicating whether to open the converted file
  *     in the browser.
  *
+ * -l, --linkify [boolean]
+ *     Flag indicating whether to convert links to HTTP URLs for previewing
+ *     purposes. Again, this is only for development previewing purposes.
+ *     This feature comes in handy as the file's output destination is
+ *     different than that of the source Markdown file's location source.
+ *
  * $ gulp tohtml --file "./README.md"
  *     Convert README.md to README.html.
  *
- * $ gulp tohtml --file "./README.md" --open
- *     Convert README.md to README.html and open file in browser.
+ * $ gulp tohtml --file "./README.md" --open --linkify
+ *     Convert README.md to README.html, open file in browser, and
+ *     linkify URLs.
  */
 gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Check the tohtml:prepcss variables before the actual task code runs.
@@ -1603,11 +1616,16 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		.option("open", {
 			alias: "o",
 			type: "boolean"
+		})
+		.option("linkify", {
+			alias: "l",
+			type: "boolean"
 		}).argv;
 
 	// Get flag values.
-	var filename = __flags.F || __flags.file;
+	var file = __flags.F || __flags.file;
 	var open = __flags.o || __flags.open;
+	var linkify = __flags.l || __flags.linkify;
 
 	// Task logic:
 	// - Get file markdown file contents.
@@ -1624,10 +1642,64 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		}
 	});
 
+	/**
+	 * Turn relative links into HTTP URLs
+	 *
+	 * @param  {string} string - The string content to linkify.
+	 * @return {string} - The linkified string.
+	 */
+	var linkifier = function(string) {
+		// URL lookup pattern.
+		var pattern = /=("|')((\.\.?)?\/[^/])([^\\]*?)\1/gm;
+
+		return string.replace(pattern, function(match) {
+			// Get the quote style (single or double quotes).
+			var quote_style = match[match.length - 1];
+
+			// Remove unneeded chars to expose URL.
+			match = match.replace(/(^=("|')[\.\/]+|("|')$)/g, "");
+
+			// Create the resource HTTP URL.
+			var url = uri({
+				appdir: APPDIR,
+				filepath: match,
+				https: HTTPS
+			});
+
+			// Note: The following code is commented out as the utils.uri
+			// function seems to handle the link conversion pretty well.
+			// If needed to fallback the following code can be used.
+
+			// // Make the path an absolute path.
+			// var resolved_path = path.resolve(match);
+			// // Although absolute, remove the cwd from the path.
+			// resolved_path = path.relative(
+			// 	$paths.cwd,
+			// 	resolved_path
+			// );
+
+			// // Make the URL scheme.
+			// var scheme = "http" + HTTPS ? "s://" : "://";
+
+			// // Turn path to an HTTP URL.
+			// resolved_path =
+			// 	scheme + path.join(APPDIR, resolved_path);
+
+			// // Add the quotes and return.
+			// return `=${quote_style}${resolved_path}${quote_style}`;
+
+			return `=${quote_style}${url}${quote_style}`;
+		});
+	};
+
 	// Run gulp process.
 	pump(
 		[
-			gulp.src(filename),
+			gulp.src(file, {
+				// Maintain the original directory structure.
+				cwd: $paths.dot,
+				base: $paths.dot
+			}),
 			$.debug(),
 			$.marked(),
 			$.modify({
@@ -1637,13 +1709,19 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 					// Get file name.
 					var filename = path.basename(file.path);
 
-					// Return filled in template.
-					return `
-<!doctype html>
-<html lang="en">
-<head>
-    <title>${filename}</title>
-    <meta charset="utf-8">
+					// Linkify URLs when the flag is provided.
+					if (linkify) {
+						contents = linkifier(contents);
+					}
+
+					// Create the resource HTTP URL.
+					var url = uri({
+						appdir: APPDIR,
+						filepath: "",
+						https: HTTPS
+					});
+
+					var template_meta = linkifier(`<meta charset="utf-8">
     <meta name="description" content="Markdown to HTML preview.">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -1656,12 +1734,49 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <meta name="msapplication-TileColor" content="#00a300">
     <meta name="msapplication-TileImage" content="${fpath}/mstile-144x144.png">
     <meta name="msapplication-config" content="${fpath}/browserconfig.xml">
-    <meta name="theme-color" content="#f6f5dd">
+    <meta name="theme-color" content="#f6f5dd">`);
+					var template = `<!doctype html>
+<html lang="en">
+<head>
+    <title>${filename}</title>
+	${template_meta}
     <!-- https://github.com/sindresorhus/github-markdown-css -->
 	<style>${__markdown_styles}</style>
 </head>
-    <body class="markdown-body">${contents}</body>
+    <body class="markdown-body">${contents}<script>
+		// [https://stackoverflow.com/a/8578840]
+		(function(d, type, id) {
+			var source =
+				"//" +
+				location.host +
+				"/browser-sync/browser-sync-client.js?v=2.20.0'";
+
+			// Create the script element.
+			var el = d.createElement(type);
+			el.id = id;
+			el.type = "text/javascript";
+			el.async = true;
+			el.onload = function() {
+				console.log("BrowserSync loaded.");
+			};
+			el.src = source;
+
+			// Make it the last body child.
+			d.getElementsByTagName("body")[0].appendChild(el);
+		})(document, "script", "__bs_script__");
+	</script>
+	</body>
 </html>`;
+
+					// Add browser-sync to the file. Tried to go this route:
+					// [Browsersync] Copy the following snippet into your website, just before the closing </body> tag
+					// <script id="__bs_script__">//<![CDATA[
+					//     document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.20.0'><\/script>".replace("HOST", location.hostname));
+					// //]]></script>
+					// However, I could not get this to work so script was
+					// gets created on the fly as shown below.
+
+					return template;
 				}
 			}),
 			$.beautify(JSBEAUTIFY),
