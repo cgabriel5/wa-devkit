@@ -19,13 +19,13 @@ gulp.task("tohtml:prepcss", function(done) {
 	}).argv;
 
 	// Get flag values.
-	var filename = __flags.F || __flags.file;
+	var file = __flags.F || __flags.file;
 
 	// Check that the file is a markdown file.
-	if (!extension.ismd({ path: filename })) {
+	if (!extension.ismd({ path: file })) {
 		print.gulp.warn(
 			`.${extension({
-				path: filename
+				path: file
 			})} file was provided.`
 		);
 		print.gulp.info("Need a .md (Markdown) file.");
@@ -102,7 +102,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		}).argv;
 
 	// Get flag values.
-	var filename = __flags.F || __flags.file;
+	var file = __flags.F || __flags.file;
 	var open = __flags.o || __flags.open;
 
 	// Task logic:
@@ -123,7 +123,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Run gulp process.
 	pump(
 		[
-			gulp.src(filename),
+			gulp.src(file),
 			$.debug(),
 			$.marked(),
 			$.modify({
