@@ -4,6 +4,12 @@
 	"name": "localhost",
 	// Clear all defaults & only use the options found in this file.
 	"clear": false,
+	// Auto close created tabs. Basically, when the browser-sync server
+	// closes all the tabs opened by browser-sync or the terminal will be
+	// auto closed. Tabs that are created manually (i.e. copy/pasting URL
+	// or typing out URL then hitting enter) cannot be auto closed due to
+	// security issues as noted here: [https://stackoverflow.com/q/19761241].
+	"auto_close_tabs": true,
 
 	// Place plugin options in this object.
 	// [https://browsersync.io/docs/api]

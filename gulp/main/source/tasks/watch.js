@@ -28,14 +28,20 @@ gulp.task("watch", function(done) {
 	// [https://github.com/shakyShane/html-injector/blob/master/client.js]
 	// [https://github.com/shakyShane/html-injector/blob/master/index.js]
 
-	// Plugin: Add auto tab closing capability to browser-sync. This will
-	// auto close the created browser-sync tabs when gulp closes.
-	__bs.use({
-		plugin: function() {}, // Function does nothing but is needed.
-		hooks: {
-			"client:js": bs_autoclose
-		}
-	});
+	// Plugin: Add auto tab closing capability to browser-sync when the
+	// auto close tabs flag is set. Basically, when the browser-sync server
+	// closes all the tabs opened by browser-sync or the terminal will be
+	// auto closed. Tabs that are created manually (i.e. copy/pasting URL
+	// or typing out URL then hitting enter) cannot be auto closed due to
+	// security issues as noted here: [https://stackoverflow.com/q/19761241].
+	if (get(BROWSERSYNC, "auto_close_tabs", "")) {
+		__bs.use({
+			plugin: function() {}, // Function does nothing but is needed.
+			hooks: {
+				"client:js": bs_autoclose
+			}
+		});
+	}
 
 	// // Plugin: Hook into the browser-sync socket instance to be able to
 	// // reload by checking the window's URL.
