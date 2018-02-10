@@ -123,7 +123,11 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 	// Run gulp process.
 	pump(
 		[
-			gulp.src(file),
+			gulp.src(file, {
+				// Maintain the original directory structure.
+				cwd: $paths.dot,
+				base: $paths.dot
+			}),
 			$.debug(),
 			$.marked(),
 			$.modify({
