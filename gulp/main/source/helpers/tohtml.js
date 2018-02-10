@@ -45,7 +45,7 @@ gulp.task("tohtml:prepcss", function(done) {
 					cwd: $paths.markdown_assets
 				}
 			),
-			$.debug(),
+			// $.debug(),
 			$.concat($paths.markdown_concat_name),
 			$.modify({
 				fileModifier: function(file, contents) {
@@ -53,8 +53,8 @@ gulp.task("tohtml:prepcss", function(done) {
 					__markdown_styles = contents;
 					return contents;
 				}
-			}),
-			$.debug.edit()
+			})
+			// $.debug.edit()
 		],
 		done
 	);
