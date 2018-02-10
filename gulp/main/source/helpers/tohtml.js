@@ -233,8 +233,38 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <!-- https://github.com/sindresorhus/github-markdown-css -->
 	<style>${__markdown_styles}</style>
 </head>
-    <body class="markdown-body">${contents}</body>
+    <body class="markdown-body">${contents}<script>
+		// [https://stackoverflow.com/a/8578840]
+		(function(d, type, id) {
+			var source =
+				"//" +
+				location.host +
+				"/browser-sync/browser-sync-client.js?v=2.20.0'";
+
+			// Create the script element.
+			var el = d.createElement(type);
+			el.id = id;
+			el.type = "text/javascript";
+			el.async = true;
+			el.onload = function() {
+				console.log("BrowserSync loaded.");
+			};
+			el.src = source;
+
+			// Make it the last body child.
+			d.getElementsByTagName("body")[0].appendChild(el);
+		})(document, "script", "__bs_script__");
+	</script>
+	</body>
 </html>`;
+
+					// Add browser-sync to the file. Tried to go this route:
+					// [Browsersync] Copy the following snippet into your website, just before the closing </body> tag
+					// <script id="__bs_script__">//<![CDATA[
+					//     document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.20.0'><\/script>".replace("HOST", location.hostname));
+					// //]]></script>
+					// However, I could not get this to work so script was
+					// gets created on the fly as shown below.
 
 					return template;
 				}
