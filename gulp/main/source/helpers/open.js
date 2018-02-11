@@ -65,8 +65,11 @@ gulp.task("open", function(done) {
 	// Cache task.
 	var task = this;
 
+	// Variables.
+	var __flags;
+
 	// Run yargs.
-	var __flags = yargs
+	__flags = yargs
 		.option("directory", {
 			alias: "d",
 			type: "string"
@@ -127,7 +130,7 @@ gulp.task("open", function(done) {
 		}
 
 		// Run yargs.
-		var __flags = yargs
+		__flags = yargs
 			.option("wait", {
 				alias: "w",
 				type: "boolean"
@@ -152,11 +155,13 @@ gulp.task("open", function(done) {
 		var use_editor = __flags.u || __flags.use;
 
 		// Get user's editor/flags needed to open file via the terminal.
-		var editor = get_editor({
+		// Note: The editor variable here is being reused. This is alright
+		// as it gets passed into the function before being overwritten.
+		editor = get_editor({
 			file: {
 				name: editor,
 				line: line,
-				column: 0
+				column: column
 			},
 			editor: use_editor
 		});
@@ -178,7 +183,7 @@ gulp.task("open", function(done) {
 		// user closes the file or the terminal process is ended manually.
 		if (wait) {
 			// Once the file is closed continue with the task...
-			child_process.on("exit", function(code, sig) {
+			child_process.on("exit", function() {
 				done();
 			});
 		} else {
@@ -191,7 +196,7 @@ gulp.task("open", function(done) {
 		// originally set out to do.
 
 		// Run yargs.
-		var __flags = yargs
+		__flags = yargs
 			.option("file", {
 				alias: "F",
 				type: "string",

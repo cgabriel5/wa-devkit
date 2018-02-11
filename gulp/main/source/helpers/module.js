@@ -42,8 +42,13 @@
 gulp.task("module", function(done) {
 	var linenumber = require("linenumber");
 
+	// Variables.
+	var __flags;
+	var file;
+	var ext;
+
 	// Run yargs.
-	var __flags = yargs.option("remove", {
+	__flags = yargs.option("remove", {
 		type: "string"
 	}).argv;
 
@@ -56,7 +61,7 @@ gulp.task("module", function(done) {
 	// Remove the module when the remove flag is provided.
 	if (remove) {
 		// Check for a file extension.
-		var ext = extension({ path: remove });
+		ext = extension({ path: remove });
 
 		// If no extension make sure to add the extension.
 		if (!ext) {
@@ -64,7 +69,7 @@ gulp.task("module", function(done) {
 		}
 
 		// Path to the config file.
-		var file = path.join($paths.js_source_modules, remove);
+		file = path.join($paths.js_source_modules, remove);
 
 		// Before anything is done make sure to check that the name
 		// is not already taken by another file. We don't want to
@@ -90,7 +95,7 @@ gulp.task("module", function(done) {
 
 				cmd.get(
 					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
-					function(err, data) {
+					function(err) {
 						if (err) {
 							throw err;
 						}
@@ -105,7 +110,7 @@ gulp.task("module", function(done) {
 		);
 	} else {
 		// Run yargs.
-		var __flags = yargs
+		__flags = yargs
 			.option("filename", {
 				type: "string",
 				demandOption: true
@@ -133,10 +138,9 @@ gulp.task("module", function(done) {
 		var description = __flags.description;
 		var mode = __flags.mode;
 		var same = __flags.same;
-		var ending = __flags["line-ending"] || EOL_ENDING;
 
 		// Get the basename from the filename.
-		var ext = path.extname(filename);
+		ext = path.extname(filename);
 
 		// When no extension is found reset it and the file name.
 		if (!ext) {
@@ -163,7 +167,7 @@ gulp.task("module", function(done) {
 );`;
 
 		// Path to the config file.
-		var file = path.join($paths.js_source_modules, filename);
+		file = path.join($paths.js_source_modules, filename);
 
 		// Before anything is done make sure to check that the name
 		// is not already taken by another file. We don't want to
@@ -193,7 +197,7 @@ gulp.task("module", function(done) {
 
 				cmd.get(
 					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
-					function(err, data) {
+					function(err) {
 						if (err) {
 							throw err;
 						}

@@ -87,7 +87,7 @@ gulp.task("dependency", function(done) {
 		print(chalk.underline("Dependencies"));
 
 		// Printer function.
-		var printer = function(dependency, index, array) {
+		var printer = function(dependency, index) {
 			// Get the name of the folder.
 			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/);
 			// When folder name is not present leave the name empty.

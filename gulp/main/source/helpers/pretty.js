@@ -34,7 +34,9 @@ gulp.task("pretty:gitfiles", function(done) {
 
 	// The flags must be present to get the modified files or else
 	// skip to the main pretty task.
-	if (!(quick || staged)) return done();
+	if (!(quick || staged)) {
+		return done();
+	}
 
 	// Reset the variable when the staged flag is provided.
 	staged = staged ? "--cached" : "";
@@ -46,7 +48,7 @@ gulp.task("pretty:gitfiles", function(done) {
 	var command = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
 
 	// Get the list of modified files.
-	cmd.get(command, function(err, data, stderr) {
+	cmd.get(command, function(err, data) {
 		// Clean the data.
 		data = data.trim();
 

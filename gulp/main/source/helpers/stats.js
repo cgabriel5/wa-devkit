@@ -132,7 +132,9 @@ gulp.task("stats", function(done) {
 		});
 
 		// Highlight data string.
-		if (list) print(cli_highlight(data));
+		if (list) {
+			print(cli_highlight(data));
+		}
 
 		print(table.toString());
 

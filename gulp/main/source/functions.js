@@ -55,10 +55,14 @@ function get_editor(options) {
 	}
 
 	// If still no editor try the environment variables.
-	if (!editor) editor = process.env.EDITOR || process.env.VISUAL;
+	if (!editor) {
+		editor = process.env.EDITOR || process.env.VISUAL;
+	}
 
 	// Finally, if nothing is found, default to the tried and true editors.
-	if (!editor) editor = /^win/.test(process.platform) ? "notepad" : "vim";
+	if (!editor) {
+		editor = /^win/.test(process.platform) ? "notepad" : "vim";
+	}
 
 	// Lowercase everything.
 	editor = editor.toLowerCase();

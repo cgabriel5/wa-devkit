@@ -208,13 +208,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						contents = linkifier(contents);
 					}
 
-					// Create the resource HTTP URL.
-					var url = uri({
-						appdir: APPDIR,
-						filepath: "",
-						https: HTTPS
-					});
-
 					// Where browser-sync script will be contained if
 					// a server instance is currently running.
 					var bs_script = "";
@@ -311,7 +304,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						// re-write the task logic.
 						cmd.get(
 							`${GULPCLI} open --file ${filename_rel}`,
-							function(err, data) {
+							function(err) {
 								if (err) {
 									throw err;
 								}

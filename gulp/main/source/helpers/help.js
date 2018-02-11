@@ -137,7 +137,6 @@ gulp.task("help", function(done) {
 			var max_length = Math.max.apply(null, lengths);
 
 			var newline = "\n";
-			var headers = ["Flags", "Usage", "Notes"];
 
 			// Replacer function will bold all found flags in docblock.
 			var replacer = function(match) {

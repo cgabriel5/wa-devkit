@@ -11,13 +11,13 @@ if (fe.sync($paths.config_settings)) {
 		fs.readFileSync($paths.config_settings).toString()
 	);
 
+	// configuration files must match this pattern.
+	var pattern = /^config_\$[a-z_.]+$/i;
+
 	// Get individual plugin settings and store in an object.
 	for (var $config in $paths) {
-		// configuration files must match this pattern.
-		var config_file_pattern = /^config_\$[a-z_.]+$/i.test($config);
-
 		// Path must match the following pattern to be a config path.
-		if ($paths.hasOwnProperty($config) && config_file_pattern) {
+		if ($paths.hasOwnProperty($config) && pattern.test($config)) {
 			// Remove any file name sub-extensions. For example,
 			// turn "csslint.cm" to "csslint".
 			var config_name = $paths[$config].split(".")[0];

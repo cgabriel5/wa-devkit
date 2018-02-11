@@ -153,7 +153,7 @@ gulp.task("dist", function(done) {
 	var task = this;
 
 	// If the apptype is not a webapp then stop task.
-	if (INt_APPTYPE !== "webapp") {
+	if (INT_APPTYPE !== "webapp") {
 		print.gulp.warn(
 			"This helper task is only available for webapp projects."
 		);

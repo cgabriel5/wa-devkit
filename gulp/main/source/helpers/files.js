@@ -189,6 +189,14 @@ gulp.task("files", function(done) {
 				}
 			});
 
+			// Functions placed outside of loop so JSHint does not complain.
+			var sorter_fn = function(a, b) {
+				return cmp(a, b) || cmp(a.length, b.length);
+			};
+			var foreach_print_fn = function(file) {
+				print(`     ${chalk.magenta(file)}`);
+			};
+
 			// Print out the results.
 			for (var sub_ext_name in sub_ext_obj) {
 				if (sub_ext_obj.hasOwnProperty(sub_ext_name)) {
@@ -200,14 +208,10 @@ gulp.task("files", function(done) {
 
 					// Sort the array names alphabetically and fallback
 					// to a length comparison.
-					files_array.sort(function(a, b) {
-						return cmp(a, b) || cmp(a.length, b.length);
-					});
+					files_array.sort(sorter_fn);
 
 					// Print the the files array.
-					files_array.forEach(function(file) {
-						print(`     ${chalk.magenta(file)}`);
-					});
+					files_array.forEach(foreach_print_fn);
 				}
 			}
 
