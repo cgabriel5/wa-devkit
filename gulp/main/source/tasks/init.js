@@ -26,6 +26,16 @@ cleanup(function(exit_code, signal) {
 		// Don't call cleanup handler again.
 		cleanup.uninstall();
 
+		// Note: Remove markdown previews to keep things clean but also due
+		// to changed port numbers. Some previews might contain old instance
+		// browser-sync port numbers. Resulting in an console error. Though
+		// nothing major as the HTML file will still load this just prevents
+		// this issue.
+		del.sync([
+			globall($paths.markdown_preview),
+			bangify($paths.markdown_preview)
+		]);
+
 		// When closed due to an error give an error message & notification.
 		if (exit_code) {
 			var message = `Error caused instance ${chalk.green(
