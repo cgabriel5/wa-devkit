@@ -182,6 +182,10 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 		});
 	};
 
+	// Get the browser-sync version outside of the Gulp process to only
+	// make a single request for it.
+	var bs_version = json.read($paths.browser_sync_pkg).data.version;
+
 	// Run gulp process.
 	pump(
 		[
@@ -211,6 +215,44 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						https: HTTPS
 					});
 
+					// Where browser-sync script will be contained if
+					// a server instance is currently running.
+					var bs_script = "";
+
+					// Check internal file for a browser-sync local port.
+					var bs_local_port = get(
+						$internal.data,
+						"process.ports.local"
+					);
+
+					// If a browser-sync instance exists we populate the
+					// variable with the script injection code.
+					if (bs_local_port) {
+						bs_script = `<script>
+// [https://stackoverflow.com/a/8578840]
+(function(d, type, id) {
+	var source =
+		"//" +
+		location.hostname +
+		":${bs_local_port}" +
+		"/browser-sync/browser-sync-client.js?v=${bs_version}";
+
+	// Create the script element.
+	var el = d.createElement(type);
+	el.id = id;
+	el.type = "text/javascript";
+	el.async = true;
+	el.onload = function() {
+		console.log("BrowserSync loaded.");
+	};
+	el.src = source;
+
+	// Make it the last body child.
+	d.getElementsByTagName("body")[0].appendChild(el);
+})(document, "script", "__bs_script__");
+</script>`;
+					}
+
 					var template_meta = linkifier(`<meta charset="utf-8">
     <meta name="description" content="Markdown to HTML preview.">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -233,28 +275,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
     <!-- https://github.com/sindresorhus/github-markdown-css -->
 	<style>${__markdown_styles}</style>
 </head>
-    <body class="markdown-body">${contents}<script>
-		// [https://stackoverflow.com/a/8578840]
-		(function(d, type, id) {
-			var source =
-				"//" +
-				location.host +
-				"/browser-sync/browser-sync-client.js?v=2.20.0'";
-
-			// Create the script element.
-			var el = d.createElement(type);
-			el.id = id;
-			el.type = "text/javascript";
-			el.async = true;
-			el.onload = function() {
-				console.log("BrowserSync loaded.");
-			};
-			el.src = source;
-
-			// Make it the last body child.
-			d.getElementsByTagName("body")[0].appendChild(el);
-		})(document, "script", "__bs_script__");
-	</script>
+    <body class="markdown-body">${contents}${bs_script}
 	</body>
 </html>`;
 

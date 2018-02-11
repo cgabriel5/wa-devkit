@@ -72,6 +72,7 @@
 	// node_modules/ paths.
 	"node_modules": "./node_modules/",
 	"node_modules_name": "node_modules/",
+	"browser_sync_pkg": "./${homedir}node_modules/browser-sync/package.json",
 
 	// Readme paths.
 	"readme": "readme.md",
