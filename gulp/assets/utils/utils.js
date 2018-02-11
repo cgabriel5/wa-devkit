@@ -25,7 +25,7 @@ var chalk = gutil.colors;
  *     formatting.
  *
  * @return {function} - The wrapped console.log() function.
-
+ *
  * @resource [https://gist.github.com/bgrins/5108712]
  */
 var print = function() {
