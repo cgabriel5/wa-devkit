@@ -3537,7 +3537,7 @@ gulp.task("make", function(done) {
 /**
  * Lint a JS file.
  *
- * -F, --file <string>
+ * -F, --file <array>
  *     The JS file to lint.
  *
  * $ gulp lintjs --file ./gulpfile.js
@@ -3547,15 +3547,14 @@ gulp.task("lintjs", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
-		type: "string"
-		// demandOption: true
+		type: "array"
 	}).argv;
 
 	// Get flag values.
 	var file = __flags.F || __flags.file;
 
-	// When no file is provided print an error.
-	if (!file) {
+	// When no files are provided print an error.
+	if (!file.length) {
 		print.gulp.error("Provide a file to lint.");
 		return done();
 	}
@@ -3568,7 +3567,7 @@ gulp.task("lintjs", function(done) {
 			gulp.src(file, {
 				cwd: $paths.basedir
 			}),
-			$.debug(),
+			$.debug({ loader: false }),
 			$.jshint($configs.jshint),
 			// Note: Avoid implementing a jshint reporter to match the
 			// csslint reporter implementation. gulp-jshint attaches a
@@ -3612,7 +3611,7 @@ gulp.task("lintjs", function(done) {
 /**
  * Lint a CSS file.
  *
- * -F, --file <string>
+ * -F, --file <array>
  *     The CSS file to lint.
  *
  * $ gulp lintcss --file ./css/bundles/vendor.css
@@ -3622,15 +3621,14 @@ gulp.task("lintcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
-		type: "string"
-		// demandOption: true
+		type: "array"
 	}).argv;
 
 	// Get flag values.
 	var file = __flags.F || __flags.file;
 
-	// When no file is provided print an error.
-	if (!file) {
+	// When no files are provided print an error.
+	if (!file.length) {
 		print.gulp.error("Provide a file to lint.");
 		return done();
 	}
@@ -3640,7 +3638,7 @@ gulp.task("lintcss", function(done) {
 			gulp.src(file, {
 				cwd: $paths.basedir
 			}),
-			$.debug(),
+			$.debug({ loader: false }),
 			$.csslint($configs.csslint),
 			// Note: Avoid implementing a csslint custom reporter as the
 			// reporter does not fire when there are no errors/warnings
@@ -3685,7 +3683,7 @@ gulp.task("lintcss", function(done) {
 /**
  * Lint a HTML file.
  *
- * -F, --file <string>
+ * -F, --file <array>
  *     The HTML file to lint.
  *
  * $ gulp linthtml --file ./index.html
@@ -3695,15 +3693,14 @@ gulp.task("linthtml", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
-		type: "string"
-		// demandOption: true
+		type: "array"
 	}).argv;
 
 	// Get flag values.
 	var file = __flags.F || __flags.file;
 
-	// When no file is provided print an error.
-	if (!file) {
+	// When no files are provided print an error.
+	if (!file.length) {
 		print.gulp.error("Provide a file to lint.");
 		return done();
 	}

@@ -1,7 +1,7 @@
 /**
  * Lint a JS file.
  *
- * -F, --file <string>
+ * -F, --file <array>
  *     The JS file to lint.
  *
  * $ gulp lintjs --file ./gulpfile.js
@@ -11,15 +11,14 @@ gulp.task("lintjs", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
-		type: "string"
-		// demandOption: true
+		type: "array"
 	}).argv;
 
 	// Get flag values.
 	var file = __flags.F || __flags.file;
 
-	// When no file is provided print an error.
-	if (!file) {
+	// When no files are provided print an error.
+	if (!file.length) {
 		print.gulp.error("Provide a file to lint.");
 		return done();
 	}
@@ -32,7 +31,7 @@ gulp.task("lintjs", function(done) {
 			gulp.src(file, {
 				cwd: $paths.basedir
 			}),
-			$.debug(),
+			$.debug({ loader: false }),
 			$.jshint($configs.jshint),
 			// Note: Avoid implementing a jshint reporter to match the
 			// csslint reporter implementation. gulp-jshint attaches a

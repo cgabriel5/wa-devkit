@@ -1,7 +1,7 @@
 /**
  * Lint a HTML file.
  *
- * -F, --file <string>
+ * -F, --file <array>
  *     The HTML file to lint.
  *
  * $ gulp linthtml --file ./index.html
@@ -11,15 +11,14 @@ gulp.task("linthtml", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
-		type: "string"
-		// demandOption: true
+		type: "array"
 	}).argv;
 
 	// Get flag values.
 	var file = __flags.F || __flags.file;
 
-	// When no file is provided print an error.
-	if (!file) {
+	// When no files are provided print an error.
+	if (!file.length) {
 		print.gulp.error("Provide a file to lint.");
 		return done();
 	}

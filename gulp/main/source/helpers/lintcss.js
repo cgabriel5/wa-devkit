@@ -1,7 +1,7 @@
 /**
  * Lint a CSS file.
  *
- * -F, --file <string>
+ * -F, --file <array>
  *     The CSS file to lint.
  *
  * $ gulp lintcss --file ./css/bundles/vendor.css
@@ -11,15 +11,14 @@ gulp.task("lintcss", function(done) {
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
-		type: "string"
-		// demandOption: true
+		type: "array"
 	}).argv;
 
 	// Get flag values.
 	var file = __flags.F || __flags.file;
 
-	// When no file is provided print an error.
-	if (!file) {
+	// When no files are provided print an error.
+	if (!file.length) {
 		print.gulp.error("Provide a file to lint.");
 		return done();
 	}
@@ -29,7 +28,7 @@ gulp.task("lintcss", function(done) {
 			gulp.src(file, {
 				cwd: $paths.basedir
 			}),
-			$.debug(),
+			$.debug({ loader: false }),
 			$.csslint($configs.csslint),
 			// Note: Avoid implementing a csslint custom reporter as the
 			// reporter does not fire when there are no errors/warnings
