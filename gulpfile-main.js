@@ -74,7 +74,7 @@ var extension = utils.ext;
 var expand_paths = utils.expand_paths;
 var opts_sort = utils.opts_sort;
 var escape = utils.escape;
-var unique = utils.unique;
+// var unique = utils.unique;
 var cli_highlight = utils.cli_highlight;
 var cmp = utils.comparator;
 
@@ -123,13 +123,13 @@ if (fe.sync($paths.config_settings)) {
 		fs.readFileSync($paths.config_settings).toString()
 	);
 
+	// configuration files must match this pattern.
+	var pattern = /^config_\$[a-z_.]+$/i;
+
 	// Get individual plugin settings and store in an object.
 	for (var $config in $paths) {
-		// configuration files must match this pattern.
-		var config_file_pattern = /^config_\$[a-z_.]+$/i.test($config);
-
 		// Path must match the following pattern to be a config path.
-		if ($paths.hasOwnProperty($config) && config_file_pattern) {
+		if ($paths.hasOwnProperty($config) && pattern.test($config)) {
 			// Remove any file name sub-extensions. For example,
 			// turn "csslint.cm" to "csslint".
 			var config_name = $paths[$config].split(".")[0];
@@ -318,10 +318,14 @@ function get_editor(options) {
 	}
 
 	// If still no editor try the environment variables.
-	if (!editor) editor = process.env.EDITOR || process.env.VISUAL;
+	if (!editor) {
+		editor = process.env.EDITOR || process.env.VISUAL;
+	}
 
 	// Finally, if nothing is found, default to the tried and true editors.
-	if (!editor) editor = /^win/.test(process.platform) ? "notepad" : "vim";
+	if (!editor) {
+		editor = /^win/.test(process.platform) ? "notepad" : "vim";
+	}
 
 	// Lowercase everything.
 	editor = editor.toLowerCase();
@@ -407,6 +411,70 @@ function get_editor(options) {
  */
 function get_config_file(name) {
 	return `${$paths.config_home}${name}.json`;
+}
+
+/**
+ * This function abstracts the linter printer logic. It prints the
+ *     issues in a consistent manner between different HTML, CSS,
+ *     and JS linters.
+ *
+ * @param  {array} issues - Array containing issues as object.
+ * @param  {string} filepath - The path of the linted file.
+ * @return {undefined} - Nothing.
+ */
+function lint_printer(issues, filepath) {
+	var table = require("text-table");
+	var strip_ansi = require("strip-ansi");
+
+	// Get the file name.
+	var filename = path.relative($paths.cwd, filepath);
+
+	// Print the file name header.
+	print.ln();
+	print(chalk.underline(filename));
+
+	// No issues found.
+	if (!issues.length) {
+		print.ln();
+		print(`  ${chalk.yellow("⚠")}  0 warnings`);
+		print.ln();
+
+		return;
+	}
+
+	// Else issues exist so print them.
+
+	// Loop over issues to add custom reporter format/styling.
+	issues = issues.map(function(issue) {
+		// Replace the array item with the new styled/highlighted parts.
+		return [
+			"", // Empty space for spacing purposes.
+			// Highlight parts.
+			chalk.gray(`line ${issue[0]}`),
+			chalk.gray(`char ${issue[1]}`),
+			chalk.blue(`(${issue[2]})`),
+			chalk.yellow(`${issue[3]}.`)
+		];
+	});
+
+	// Print issues.
+	print(
+		table(issues, {
+			// Remove ansi color to get the string length.
+			stringLength: function(string) {
+				return strip_ansi(string).length;
+			}
+		})
+	);
+
+	print.ln();
+
+	// Make the warning plural if needed.
+	var warning = "warning" + (issues.length > 1 ? "s" : "");
+
+	// Print the issue count.
+	print(`  ${chalk.yellow("⚠")}  ${issues.length} ${warning}`);
+	print.ln();
 }
 
 // -----------------------------------------------------------------------------
@@ -953,7 +1021,7 @@ gulp.task("dist", function(done) {
 	var task = this;
 
 	// If the apptype is not a webapp then stop task.
-	if (INt_APPTYPE !== "webapp") {
+	if (INT_APPTYPE !== "webapp") {
 		print.gulp.warn(
 			"This helper task is only available for webapp projects."
 		);
@@ -1728,13 +1796,6 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						contents = linkifier(contents);
 					}
 
-					// Create the resource HTTP URL.
-					var url = uri({
-						appdir: APPDIR,
-						filepath: "",
-						https: HTTPS
-					});
-
 					// Where browser-sync script will be contained if
 					// a server instance is currently running.
 					var bs_script = "";
@@ -1831,7 +1892,7 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 						// re-write the task logic.
 						cmd.get(
 							`${GULPCLI} open --file ${filename_rel}`,
-							function(err, data) {
+							function(err) {
 								if (err) {
 									throw err;
 								}
@@ -1920,8 +1981,11 @@ gulp.task("open", function(done) {
 	// Cache task.
 	var task = this;
 
+	// Variables.
+	var __flags;
+
 	// Run yargs.
-	var __flags = yargs
+	__flags = yargs
 		.option("directory", {
 			alias: "d",
 			type: "string"
@@ -1982,7 +2046,7 @@ gulp.task("open", function(done) {
 		}
 
 		// Run yargs.
-		var __flags = yargs
+		__flags = yargs
 			.option("wait", {
 				alias: "w",
 				type: "boolean"
@@ -2007,11 +2071,13 @@ gulp.task("open", function(done) {
 		var use_editor = __flags.u || __flags.use;
 
 		// Get user's editor/flags needed to open file via the terminal.
-		var editor = get_editor({
+		// Note: The editor variable here is being reused. This is alright
+		// as it gets passed into the function before being overwritten.
+		editor = get_editor({
 			file: {
 				name: editor,
 				line: line,
-				column: 0
+				column: column
 			},
 			editor: use_editor
 		});
@@ -2033,7 +2099,7 @@ gulp.task("open", function(done) {
 		// user closes the file or the terminal process is ended manually.
 		if (wait) {
 			// Once the file is closed continue with the task...
-			child_process.on("exit", function(code, sig) {
+			child_process.on("exit", function() {
 				done();
 			});
 		} else {
@@ -2046,7 +2112,7 @@ gulp.task("open", function(done) {
 		// originally set out to do.
 
 		// Run yargs.
-		var __flags = yargs
+		__flags = yargs
 			.option("file", {
 				alias: "F",
 				type: "string",
@@ -2157,7 +2223,9 @@ gulp.task("pretty:gitfiles", function(done) {
 
 	// The flags must be present to get the modified files or else
 	// skip to the main pretty task.
-	if (!(quick || staged)) return done();
+	if (!(quick || staged)) {
+		return done();
+	}
 
 	// Reset the variable when the staged flag is provided.
 	staged = staged ? "--cached" : "";
@@ -2169,7 +2237,7 @@ gulp.task("pretty:gitfiles", function(done) {
 	var command = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
 
 	// Get the list of modified files.
-	cmd.get(command, function(err, data, stderr) {
+	cmd.get(command, function(err, data) {
 		// Clean the data.
 		data = data.trim();
 
@@ -2468,8 +2536,13 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 gulp.task("module", function(done) {
 	var linenumber = require("linenumber");
 
+	// Variables.
+	var __flags;
+	var file;
+	var ext;
+
 	// Run yargs.
-	var __flags = yargs.option("remove", {
+	__flags = yargs.option("remove", {
 		type: "string"
 	}).argv;
 
@@ -2482,7 +2555,7 @@ gulp.task("module", function(done) {
 	// Remove the module when the remove flag is provided.
 	if (remove) {
 		// Check for a file extension.
-		var ext = extension({ path: remove });
+		ext = extension({ path: remove });
 
 		// If no extension make sure to add the extension.
 		if (!ext) {
@@ -2490,7 +2563,7 @@ gulp.task("module", function(done) {
 		}
 
 		// Path to the config file.
-		var file = path.join($paths.js_source_modules, remove);
+		file = path.join($paths.js_source_modules, remove);
 
 		// Before anything is done make sure to check that the name
 		// is not already taken by another file. We don't want to
@@ -2516,7 +2589,7 @@ gulp.task("module", function(done) {
 
 				cmd.get(
 					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
-					function(err, data) {
+					function(err) {
 						if (err) {
 							throw err;
 						}
@@ -2531,7 +2604,7 @@ gulp.task("module", function(done) {
 		);
 	} else {
 		// Run yargs.
-		var __flags = yargs
+		__flags = yargs
 			.option("filename", {
 				type: "string",
 				demandOption: true
@@ -2559,10 +2632,9 @@ gulp.task("module", function(done) {
 		var description = __flags.description;
 		var mode = __flags.mode;
 		var same = __flags.same;
-		var ending = __flags["line-ending"] || EOL_ENDING;
 
 		// Get the basename from the filename.
-		var ext = path.extname(filename);
+		ext = path.extname(filename);
 
 		// When no extension is found reset it and the file name.
 		if (!ext) {
@@ -2589,7 +2661,7 @@ gulp.task("module", function(done) {
 );`;
 
 		// Path to the config file.
-		var file = path.join($paths.js_source_modules, filename);
+		file = path.join($paths.js_source_modules, filename);
 
 		// Before anything is done make sure to check that the name
 		// is not already taken by another file. We don't want to
@@ -2619,7 +2691,7 @@ gulp.task("module", function(done) {
 
 				cmd.get(
 					`${GULPCLI} open -e ${config_file} --line ${line} --wait`,
-					function(err, data) {
+					function(err) {
 						if (err) {
 							throw err;
 						}
@@ -2838,7 +2910,9 @@ gulp.task("stats", function(done) {
 		});
 
 		// Highlight data string.
-		if (list) print(cli_highlight(data));
+		if (list) {
+			print(cli_highlight(data));
+		}
 
 		print(table.toString());
 
@@ -3041,6 +3115,14 @@ gulp.task("files", function(done) {
 				}
 			});
 
+			// Functions placed outside of loop so JSHint does not complain.
+			var sorter_fn = function(a, b) {
+				return cmp(a, b) || cmp(a.length, b.length);
+			};
+			var foreach_print_fn = function(file) {
+				print(`     ${chalk.magenta(file)}`);
+			};
+
 			// Print out the results.
 			for (var sub_ext_name in sub_ext_obj) {
 				if (sub_ext_obj.hasOwnProperty(sub_ext_name)) {
@@ -3052,14 +3134,10 @@ gulp.task("files", function(done) {
 
 					// Sort the array names alphabetically and fallback
 					// to a length comparison.
-					files_array.sort(function(a, b) {
-						return cmp(a, b) || cmp(a.length, b.length);
-					});
+					files_array.sort(sorter_fn);
 
 					// Print the the files array.
-					files_array.forEach(function(file) {
-						print(`     ${chalk.magenta(file)}`);
-					});
+					files_array.forEach(foreach_print_fn);
 				}
 			}
 
@@ -3260,7 +3338,7 @@ gulp.task("dependency", function(done) {
 		print(chalk.underline("Dependencies"));
 
 		// Printer function.
-		var printer = function(dependency, index, array) {
+		var printer = function(dependency, index) {
 			// Get the name of the folder.
 			var name = dependency.match(/^(css|js)\/vendor\/(.*)\/.*$/);
 			// When folder name is not present leave the name empty.
@@ -3492,7 +3570,36 @@ gulp.task("lintjs", function(done) {
 			}),
 			$.debug(),
 			$.jshint($configs.jshint),
-			$.jshint.reporter("jshint-stylish")
+			// Note: Avoid implementing a jshint reporter to match the
+			// csslint reporter implementation. gulp-jshint attaches a
+			// 'jshint' result object to the vinyl file object containing
+			// information about the linting. The gulp-fn plugin is then
+			// used to grab the attached information and run the custom
+			// reporter logic.
+			$.fn(function(file) {
+				// Array will contain the standardized issues.
+				var issues_std = [];
+
+				// Only if there were issues found.
+				if (!file.jshint.success) {
+					// Get the issues.
+					var issues = file.jshint.results;
+
+					// Loop over the issues to standardized.
+					issues.forEach(function(issue) {
+						// Add the standardized issue to the array.
+						issues_std.push([
+							issue.error.line,
+							issue.error.character,
+							issue.error.code,
+							issue.error.reason
+						]);
+					});
+				}
+
+				// Pretty print the issues.
+				lint_printer(issues_std, file.path);
+			})
 		],
 		done
 	);
@@ -3528,9 +3635,6 @@ gulp.task("lintcss", function(done) {
 		return done();
 	}
 
-	// Get the stylish logger.
-	var stylish = require("csslint-stylish");
-
 	pump(
 		[
 			gulp.src(file, {
@@ -3538,7 +3642,37 @@ gulp.task("lintcss", function(done) {
 			}),
 			$.debug(),
 			$.csslint($configs.csslint),
-			$.csslint.formatter(stylish)
+			// Note: Avoid implementing a csslint custom reporter as the
+			// reporter does not fire when there are no errors/warnings
+			// found. In the case that nothing is found it is nice to sill
+			// print a message showing that nothing was found. As most
+			// reporters just attach the information to the vinyl file
+			// object the gulp-fn plugin is used to grab the attached
+			// information and run the custom reporter logic.
+			$.fn(function(file) {
+				// Array will contain the standardized issues.
+				var issues_std = [];
+
+				// Only if there were issues found.
+				if (!file.csslint.success) {
+					// Get the issues.
+					var issues = file.csslint.report.messages;
+
+					// Loop over the issues to standardized.
+					issues.forEach(function(issue) {
+						// Add the standardized issue to the array.
+						issues_std.push([
+							issue.line,
+							issue.col,
+							issue.rule.id,
+							issue.message
+						]);
+					});
+				}
+
+				// Pretty print the issues.
+				lint_printer(issues_std, file.path);
+			})
 		],
 		done
 	);
@@ -3558,9 +3692,6 @@ gulp.task("lintcss", function(done) {
  *     Lint ./index.html.
  */
 gulp.task("linthtml", function(done) {
-	var table = require("text-table");
-	var strip_ansi = require("strip-ansi");
-
 	// Run yargs.
 	var __flags = yargs.option("file", {
 		alias: "F",
@@ -3577,73 +3708,48 @@ gulp.task("linthtml", function(done) {
 		return done();
 	}
 
-	/**
-	 * Custom htmllint plugin reporter. The function tries to mimic
-	 *     other popular linter reporter outputs.
-	 *
-	 * @param  {string} filepath - The file path of linted file.
-	 * @param  {array} issues - Array containing issues in objects.
-	 * @return {undefined} - Nothing.
-	 */
-	function reporter(filepath, issues) {
-		// Make the file path relative.
-		filepath = path.relative($paths.cwd, filepath);
-
-		print.ln();
-		print(chalk.underline(filepath));
-
-		// Print issues.
-		if (issues.length) {
-			var __issues = [];
-
-			// Loop over all issues and print them.
-			issues.forEach(function(issue) {
-				// Make sure the first letter is always capitalized.
-				var first_letter = issue.msg[0];
-				issue.msg = first_letter.toUpperCase() + issue.msg.slice(1);
-
-				// Try to print in the style of other linters.
-				__issues.push([
-					"",
-					chalk.gray(`line ${issue.line}`),
-					chalk.gray(`char ${issue.column}`),
-					chalk.blue(`(${issue.code})`),
-					chalk.yellow(`${issue.msg}.`)
-				]);
-			});
-
-			print(
-				table(__issues, {
-					// Remove ansi color to get the string length.
-					stringLength: function(string) {
-						return strip_ansi(string).length;
-					}
-				})
-			);
-
-			print.ln();
-
-			// Make the warning plural if needed.
-			var warning = "warning";
-			if (issues.length !== 1) warning += "s";
-
-			print(`  ${chalk.yellow("⚠")}  ${issues.length} ${warning}`);
-			print.ln();
-		} else {
-			// No issues found.
-			print.ln();
-			print(`  ${chalk.yellow("⚠")}  0 warnings`);
-			print.ln();
-		}
-	}
-
 	pump(
 		[
 			gulp.src(file, {
 				cwd: $paths.basedir
 			}),
 			$.debug({ loader: false }),
-			$.htmllint({ rules: $configs.htmllint }, reporter)
+			// Note: Avoid implementing a htmllint reporter to match the
+			// csslint reporter implementation. gulp-htmllint attaches a
+			// htmllint result object to the vinyl file object containing
+			// information about the linting. The gulp-fn plugin is then
+			// used to grab the attached information and run the custom
+			// reporter logic.
+			$.htmllint({ rules: $configs.htmllint }, $.noop),
+			$.fn(function(file) {
+				// Array will contain the standardized issues.
+				var issues_std = [];
+
+				// Only if there were issues found.
+				if (!file.htmllint.success) {
+					// Get the issues.
+					var issues = file.htmllint.issues;
+
+					// Loop over the issues to standardized.
+					issues.forEach(function(issue) {
+						// Make sure the first letter is always capitalized.
+						var first_letter = issue.msg[0];
+						issue.msg =
+							first_letter.toUpperCase() + issue.msg.slice(1);
+
+						// Add the standardized issue to the array.
+						issues_std.push([
+							issue.line,
+							issue.column,
+							issue.code,
+							issue.msg
+						]);
+					});
+				}
+
+				// Pretty print the issues.
+				lint_printer(issues_std, file.path);
+			})
 		],
 		done
 	);
@@ -3926,7 +4032,6 @@ gulp.task("help", function(done) {
 			var max_length = Math.max.apply(null, lengths);
 
 			var newline = "\n";
-			var headers = ["Flags", "Usage", "Notes"];
 
 			// Replacer function will bold all found flags in docblock.
 			var replacer = function(match) {
