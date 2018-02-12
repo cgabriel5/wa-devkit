@@ -34,7 +34,36 @@ gulp.task("lintjs", function(done) {
 			}),
 			$.debug(),
 			$.jshint($configs.jshint),
-			$.jshint.reporter("jshint-stylish")
+			// Note: Avoid implementing a jshint reporter to match the
+			// csslint reporter implementation. gulp-jshint attaches a
+			// 'jshint' result object to the vinyl file object containing
+			// information about the linting. The gulp-fn plugin is then
+			// used to grab the attached information and run the custom
+			// reporter logic.
+			$.fn(function(file) {
+				// Array will contain the standardized issues.
+				var issues_std = [];
+
+				// Only if there were issues found.
+				if (!file.jshint.success) {
+					// Get the issues.
+					var issues = file.jshint.results;
+
+					// Loop over the issues to standardized.
+					issues.forEach(function(issue) {
+						// Add the standardized issue to the array.
+						issues_std.push([
+							issue.error.line,
+							issue.error.character,
+							issue.error.code,
+							issue.error.reason
+						]);
+					});
+				}
+
+				// Pretty print the issues.
+				lint_printer(issues_std, file.path);
+			})
 		],
 		done
 	);
