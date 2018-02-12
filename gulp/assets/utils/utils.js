@@ -14,9 +14,8 @@ var gulp = require(modules_path + "gulp");
 var growl = require(modules_path + "growl");
 
 var format_date = require(modules_path + "dateformat");
-var gutil = require(modules_path + "gulp-util");
-var log = gutil.log;
-var chalk = gutil.colors;
+var log = require(modules_path + "fancy-log");
+var chalk = require(modules_path + "chalk");
 
 /**
  * Wrapper function for console.log().
