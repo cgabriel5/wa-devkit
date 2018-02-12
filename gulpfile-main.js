@@ -773,11 +773,21 @@ gulp.task("default:active-pid-check", function(done) {
  * -s, --stop [boolean]
  *     Flag indicating to stop Gulp.
  *
+ * -p, --ports [string]
+ *     The ports for browser-sync to use. Ports must be provided in the
+ *     following format: "local-port:ui-port". Some valid examples are
+ *     "3000:3001", "3000:", "3000", and  ":3001". Provided ports must
+ *     obviously not be in use. When ports are provided empty ports are
+ *     found and passed to browser-sync.
+ *
  * $ gulp
  *     Run Gulp.
  *
  * $ gulp --stop
- *     Ir running, stops the active Gulp process.
+ *     If running, stops the active Gulp process.
+ *
+ * $ gulp --ports "3000:3001"
+ *     Open BrowserSync server on port 3000 and UI on port 3001.
  *
  * @internal - Set as internal to hide from default help output.
  */
@@ -807,13 +817,55 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 
 	var find_free_port = require("find-free-port");
 
+	var __flags = yargs
+		.option("ports", {
+			alias: "p",
+			type: "string"
+		})
+		.coerce("ports", function(opt) {
+			// Remove all but non numbers and colons (:).
+			opt = opt.replace(/[^\d:]/g, "");
+			// Split ports by the colon.
+			return opt.split(":");
+		}).argv;
+
+	// Get the values.
+	var ports = __flags.p || __flags.ports;
+
 	// Find free ports to open browser-sync on.
-	return find_free_port(
-		$configs.findfreeport.range.start,
-		$configs.findfreeport.range.end,
-		$configs.findfreeport.ip,
-		$configs.findfreeport.count,
-		function(err, p1, p2) {
+	new Promise(function(resolve, reject) {
+		// Find two free ports in case ports are not provided via CLI.
+		find_free_port(
+			$configs.findfreeport.range.start,
+			$configs.findfreeport.range.end,
+			$configs.findfreeport.ip,
+			$configs.findfreeport.count,
+			function(err, p1, p2) {
+				if (err) {
+					reject(err);
+				}
+
+				// Reset the ports when ports are provided.
+				if (ports) {
+					// Reset the local port if provided via CLI.
+					if (ports[0]) {
+						p1 = ports[0] * 1; // Cast to number.
+					}
+					// Reset the UI port if provided via CLI.
+					if (ports[1]) {
+						p2 = ports[1] * 1; // Cast to number.
+					}
+				}
+
+				resolve([p1, p2]);
+			}
+		);
+	})
+		.then(function(ports) {
+			// Get the ports.
+			var p1 = ports[0];
+			var p2 = ports[1];
+
 			// Store the ports.
 			$internal.set("process", {
 				ports: {
@@ -858,8 +910,14 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 				null,
 				JINDENT
 			);
-		}
-	);
+		})
+		.catch(function(err) {
+			if (err) {
+				throw err;
+			}
+
+			done();
+		});
 });
 
 // -----------------------------------------------------------------------------
