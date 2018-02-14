@@ -136,7 +136,8 @@ module.exports = {
 		{
 			type: "confirm",
 			name: "https",
-			message: "Use https:"
+			message: "Use https:",
+			default: false
 		},
 		{
 			type: "input",
@@ -152,16 +153,12 @@ module.exports = {
 			default: "Unix (OS X/Linux)",
 			filter: function(answer) {
 				var options = {
-					"Mac OS": "(CR, \\r)",
-					"Unix (OS X/Linux)": "(LF, \\n)",
-					"Windows/DOS": "(CRLF, \\r\\n)"
+					"Mac OS": ["cr", "\r"],
+					"Unix (OS X/Linux)": ["lf", "\n"],
+					"Windows/DOS": ["crlf", "\r\n"]
 				};
 				// Work the answer to remove all unneeded text.
-				return options[answer]
-					.match(/\(.*\)/)[0]
-					.replace(/\(|\)|\s/g, "")
-					.toLowerCase()
-					.split(",");
+				return options[answer];
 			}
 		}
 	]
