@@ -115,7 +115,7 @@ var __data = {};
 var INDEX = APP.index;
 
 // App JSON indentation.
-var JINDENT = APP.eol;
+var JINDENT = APP.indent_char;
 
 // -----------------------------------------------------------------------------
 // functions.js -- ./gulp/setup/source/functions.js
@@ -338,7 +338,9 @@ gulp.task("init:app-settings", function(done) {
 	// Run gulp process.
 	pump(
 		[
-			gulp.src($paths.config_app),
+			gulp.src($paths.config_app, {
+				base: $paths.dot
+			}),
 			$.debug(),
 			$.modify({
 				fileModifier: function(file, contents) {

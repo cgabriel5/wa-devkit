@@ -6,7 +6,9 @@ gulp.task("init:app-settings", function(done) {
 	// Run gulp process.
 	pump(
 		[
-			gulp.src($paths.config_app),
+			gulp.src($paths.config_app, {
+				base: $paths.dot
+			}),
 			$.debug(),
 			$.modify({
 				fileModifier: function(file, contents) {

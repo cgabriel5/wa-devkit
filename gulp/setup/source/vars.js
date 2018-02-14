@@ -5,4 +5,4 @@ var __data = {};
 var INDEX = APP.index;
 
 // App JSON indentation.
-var JINDENT = APP.eol;
+var JINDENT = APP.indent_char;
