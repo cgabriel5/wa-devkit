@@ -49,7 +49,7 @@ var pump = require("pump");
 var chalk = require("chalk");
 var cmd = require("node-cmd");
 var json = require("json-file");
-var git = require("simple-git")();
+var sgit = require("simple-git/promise");
 var inquirer = require("inquirer");
 var jsonc = require("comment-json");
 var sequence = require("run-sequence");
@@ -146,7 +146,7 @@ gulp.task("init", function(done) {
 	var task = this;
 
 	// Contain user replies/answers here.
-	var __answers = [{}];
+	var __answers = [];
 
 	print.ln();
 
@@ -161,6 +161,7 @@ gulp.task("init", function(done) {
 			initial: "Project Questions",
 			author: "Author Questions",
 			license: "Generate License",
+			github: "GitHub Questions",
 			app: "App Questions"
 		};
 
@@ -171,159 +172,174 @@ gulp.task("init", function(done) {
 		print(chalk.green(`${message}\n`));
 	}
 
-	// Not really the most ideal but to ask the setup questions in groups
-	// this seems to be the way to go. Questions are asked and their replies
-	// are stored in the __answers variable for later use.
+	// Promises:
+	// [https://stackoverflow.com/a/20715224].
+	// [https://github.com/steveukx/git-js/issues/230]
 
-	inquirer.prompt(QUESTIONS.ready).then(function(answers) {
-		if (answers.continue) {
+	inquirer
+		.prompt(QUESTIONS.ready)
+		.then(function(answers) {
+			if (!answers.continue) {
+				return Promise.reject("Project setup was aborted.");
+			}
+
 			sep_message("initial");
 
-			// Ask the initial questions.
-			inquirer.prompt(QUESTIONS.initial).then(function(answers) {
-				// Store the answer.
-				__answers.push(answers);
-
-				sep_message("author");
-
-				// Ask the author questions.
-				inquirer.prompt(QUESTIONS.author).then(function(answers) {
-					// Store the answer.
-					__answers.push(answers);
-
-					sep_message("license");
-
-					// Ask the other.
-					inquirer.prompt(QUESTIONS.license).then(function(answers) {
-						// Store the answer.
-						__answers.push(answers);
-
-						sep_message("app");
-
-						// Ask the app questions.
-						inquirer
-							.prompt(QUESTIONS.app)
-							.then(function(answers) {
-								// Store the answer.
-								__answers.push(answers);
-							})
-							.then(function() {
-								// Combine all answers.
-								var answers = Object.assign.apply(
-									null,
-									__answers
-								);
-
-								// Get answers.
-								__data = answers;
-								var type = __data.apptype;
-
-								// Set the path for js option.
-								$paths.js_options_dynamic = `gulp/setup/${type}/**/*.*`;
-
-								// Set the application type.
-								$internal.apptype = type;
-								// Pick js bundle based on provided project type + reset the
-								// config js bundle.
-								BUNDLES.data.js = JSCONFIGS[type];
-
-								// Remove distribution configuration if type is library
-								// as the project is defaulted for a webapp project.
-								if (type === "library") {
-									// Remove the distribution configuration.
-									delete BUNDLES.data.dist;
-									// Add the library configuration.
-									BUNDLES.data.lib = JSCONFIGS.lib;
-								} // Else leave as-is for webapp project.
-
-								// Set package.json properties.
-								$pkg.set("name", __data.name);
-								$pkg.set("version", __data.version);
-								$pkg.set("description", __data.description);
-								$pkg.set(
-									"author",
-									format(TEMPLATES.author, __data)
-								);
-								$pkg.set("repository", {
-									type: "git",
-									url: format(
-										TEMPLATES["repository.url"],
-										__data
-									)
-								});
-								$pkg.set("bugs", {
-									url: format(TEMPLATES["bugs.url"], __data)
-								});
-								$pkg.set(
-									"homepage",
-									format(TEMPLATES.homepage, __data)
-								);
-								$pkg.set("private", __data.private);
-
-								// Sort keys.
-								BUNDLES.data = alphabetize(BUNDLES.data);
-								$pkg.data = alphabetize($pkg.data);
-
-								// Saves changes to files.
-								BUNDLES.writeSync(null, JINDENT);
-								$pkg.write(
-									function() {
-										// Run initialization steps.
-										var tasks = [
-											"init:app-settings",
-											"init:settings-internal",
-											"init:settings-main",
-											"init:clean-docs",
-											// !-- The following 2 tasks are only ran
-											// for library type projects. They are
-											// removed for webapp projects.
-											"init:--lib-remove-webapp-files",
-											"init:--lib-add-library-files",
-											// --!
-											"init:create-license",
-											"init:fill-placeholders",
-											"init:setup-readme",
-											"init:rename-gulpfile",
-											"init:remove-setup",
-											"init:create-bundles",
-											"init:pretty",
-											"init:git"
-										];
-
-										// Remove steps that are only for library project setup
-										// when the apptype is set to webapp.
-										if (__data.apptype === "webapp") {
-											tasks = tasks.filter(function(
-												task
-											) {
-												return !-~task.indexOf("--lib");
-											});
-										}
-
-										tasks.push(function() {
-											var message = `Project initialized. (${type})`;
-											notify(message);
-											print.gulp.success(message);
-											print.gulp.info(
-												"Start watching for file changes by running: $ gulp."
-											);
-
-											done();
-										});
-										return sequence.apply(task, tasks);
-									},
-									null,
-									JINDENT
-								);
-							});
-					});
-				});
+			return inquirer.prompt(QUESTIONS.initial).then(null, function() {
+				return Promise.reject(
+					"Something went wrong with the initial questions."
+				);
 			});
-		} else {
-			print.ln();
-			return print.gulp.error("Project setup canceled.");
-		}
-	});
+		})
+		.then(function(answers) {
+			// Store the answers.
+			__answers.push(answers);
+
+			sep_message("author");
+
+			return inquirer.prompt(QUESTIONS.author).then(null, function() {
+				return Promise.reject(
+					"Something went wrong with the author questions."
+				);
+			});
+		})
+		.then(function(answers) {
+			// Store the answers.
+			__answers.push(answers);
+
+			sep_message("license");
+
+			return inquirer.prompt(QUESTIONS.license).then(null, function() {
+				return Promise.reject(
+					"Something went wrong with the license questions."
+				);
+			});
+		})
+		.then(function(answers) {
+			// Store the answers.
+			__answers.push(answers);
+
+			sep_message("app");
+
+			return inquirer.prompt(QUESTIONS.app).then(null, function() {
+				return Promise.reject(
+					"Something went wrong with the app questions."
+				);
+			});
+		})
+		.then(function(answers) {
+			// Store the answers.
+			__answers.push(answers);
+
+			sep_message("github");
+
+			return inquirer.prompt(QUESTIONS.github).then(null, function() {
+				return Promise.reject(
+					"Something went wrong with the GitHub questions."
+				);
+			});
+		})
+		.then(function(answers) {
+			// Store the answers.
+			__answers.push(answers);
+
+			// Combine all answers.
+			answers = Object.assign.apply({}, __answers);
+
+			// Get answers.
+			__data = answers;
+			var type = __data.apptype;
+
+			// Set the path for js option.
+			$paths.js_options_dynamic = `gulp/setup/${type}/**/*.*`;
+
+			// Set the application type.
+			$internal.apptype = type;
+			// Pick js bundle based on provided project type + reset the
+			// config js bundle.
+			BUNDLES.data.js = JSCONFIGS[type];
+
+			// Remove distribution configuration if type is library
+			// as the project is defaulted for a webapp project.
+			if (type === "library") {
+				// Remove the distribution configuration.
+				delete BUNDLES.data.dist;
+				// Add the library configuration.
+				BUNDLES.data.lib = JSCONFIGS.lib;
+			} // Else leave as-is for webapp project.
+
+			// Set package.json properties.
+			$pkg.set("name", __data.name);
+			$pkg.set("version", __data.version);
+			$pkg.set("description", __data.description);
+			$pkg.set("author", format(TEMPLATES.author, __data));
+			$pkg.set("repository", {
+				type: "git",
+				url: format(TEMPLATES["repository.url"], __data)
+			});
+			$pkg.set("bugs", {
+				url: format(TEMPLATES["bugs.url"], __data)
+			});
+			$pkg.set("homepage", format(TEMPLATES.homepage, __data));
+			$pkg.set("private", __data.private);
+
+			// Sort keys.
+			BUNDLES.data = alphabetize(BUNDLES.data);
+			$pkg.data = alphabetize($pkg.data);
+
+			// Saves changes to files.
+			BUNDLES.writeSync(null, JINDENT);
+			$pkg.write(
+				function() {
+					// Run initialization steps.
+					var tasks = [
+						"init:app-settings",
+						"init:settings-internal",
+						"init:settings-main",
+						"init:clean-docs",
+						// !-- The following 2 tasks are only ran
+						// for library type projects. They are
+						// removed for webapp projects.
+						"init:--lib-remove-webapp-files",
+						"init:--lib-add-library-files",
+						// --!
+						"init:create-license",
+						"init:fill-placeholders",
+						"init:setup-readme",
+						"init:rename-gulpfile",
+						"init:remove-setup",
+						"init:create-bundles",
+						"init:pretty",
+						"init:git"
+					];
+
+					// Remove steps that are only for library project setup
+					// when the apptype is set to webapp.
+					if (__data.apptype === "webapp") {
+						tasks = tasks.filter(function(task) {
+							return !-~task.indexOf("--lib");
+						});
+					}
+
+					tasks.push(function() {
+						var message = `Project initialized. (${type})`;
+						notify(message);
+						print.gulp.success(message);
+						print.gulp.info(
+							"Start watching for file changes by running: $ gulp."
+						);
+
+						done();
+					});
+					return sequence.apply(task, tasks);
+				},
+				null,
+				JINDENT
+			);
+		})
+		.catch(function(err_message) {
+			print.gulp(err_message);
+		});
 });
 
 // -----------------------------------------------------------------------------
@@ -684,46 +700,98 @@ gulp.task("init:pretty", function(done) {
 });
 
 /**
- * Initialization step: Programmatically make the first project Git commit
- *     and lightly configures Git with useful settings.
+ * Initialization step: Programmatically setup Git, lightly configures Git,
+ *     make the first commit, and push project to repo.
  */
 gulp.task("init:git", function(done) {
-	// Git init new project.
-	git.init("", function() {
-		// Set gitconfig values.
-		cmd.get(
-			`
-		git config --local core.fileMode false
-		git config --local core.autocrlf input
-		git config --local user.email ${__data.email}
-		git config --local user.name ${__data.git_id}`,
-			function(err) {
-				if (err) {
-					throw err;
+	var git = sgit($paths.cwd);
+
+	git
+		// Determine whether the cwd is part of a git repository.
+		.checkIsRepo()
+		.then(function(is_git_repo) {
+			if (is_git_repo) {
+				return Promise.reject("Project is already a Git repo.");
+			}
+
+			// If directory has not been setup as a repo, do so.
+			return init_repo(git).then(null, function(err) {
+				return Promise.reject("Failed to Git initialize project.");
+			});
+		})
+		.then(function() {
+			if (__data.git_commit) {
+				return git
+					.add("./*")
+					.then(function() {
+						return git.commit(
+							"chore: Initial commit\n\nProject initialization."
+						);
+					})
+					.then(null, function() {
+						return Promise.reject("Failed to make first commit.");
+					});
+			}
+		})
+		.then(function() {
+			if (__data.git_push) {
+				return git
+					.push(["-u", "origin", "master"])
+					.then(final_success, function() {
+						return Promise.reject(
+							"Failed to push project to repo."
+						);
+					});
+			}
+		})
+		.then(function() {
+			done();
+		})
+		.catch(function(err_message) {
+			print.gulp(err_message);
+		});
+
+	function final_success() {
+		print.gulp.info("Set a default editor if not set already.");
+		print.gulp.info(
+			"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
+		);
+		print.gulp.success(
+			"Git initialized and configured ($ git config --list --local)."
+		);
+	}
+
+	function init_repo(git) {
+		return git.init().then(function() {
+			// Add custom Git configuration settings.
+			git.addConfig("core.autocrlf", "input");
+			git.addConfig("core.fileMode", false);
+			git.addConfig("user.name", `${__data.git_id}`);
+			git.addConfig("user.email", `${__data.email}`);
+
+			// Add the remote is user wanted to.
+			if (__data.git_remote) {
+				// Get the needed user data.
+				var type = __data.git_repo_type;
+				var username = __data.git_id;
+				var repo_name = __data.repo_name;
+
+				// Use the project name as the repo name.
+				if (__data.same_name) {
+					repo_name = __data.name;
 				}
 
-				// Make the first commit.
-				git
-					.add("./*")
-					.commit(
-						"chore: Initial commit\n\nProject initialization.",
-						function() {
-							print.gulp.info(
-								"It not already set, make sure to set your default text editor."
-							);
-							print.gulp.info(
-								"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
-							);
-							print.gulp.success(
-								"Git initialized and configured ($ git config --list --local)."
-							);
+				// Make the remote string.
+				var remote_template =
+					type === "ssh"
+						? `git@github.com:${username}/${repo_name}.git`
+						: `https://github.com/${username}/${repo_name}.git`;
 
-							done();
-						}
-					);
+				// Add the remote.
+				git.addRemote("origin", remote_template);
 			}
-		);
-	});
+		});
+	}
 });
 
 // -----------------------------------------------------------------------------

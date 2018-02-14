@@ -352,44 +352,96 @@ gulp.task("init:pretty", function(done) {
 });
 
 /**
- * Initialization step: Programmatically make the first project Git commit
- *     and lightly configures Git with useful settings.
+ * Initialization step: Programmatically setup Git, lightly configures Git,
+ *     make the first commit, and push project to repo.
  */
 gulp.task("init:git", function(done) {
-	// Git init new project.
-	git.init("", function() {
-		// Set gitconfig values.
-		cmd.get(
-			`
-		git config --local core.fileMode false
-		git config --local core.autocrlf input
-		git config --local user.email ${__data.email}
-		git config --local user.name ${__data.git_id}`,
-			function(err) {
-				if (err) {
-					throw err;
+	var git = sgit($paths.cwd);
+
+	git
+		// Determine whether the cwd is part of a git repository.
+		.checkIsRepo()
+		.then(function(is_git_repo) {
+			if (is_git_repo) {
+				return Promise.reject("Project is already a Git repo.");
+			}
+
+			// If directory has not been setup as a repo, do so.
+			return init_repo(git).then(null, function(err) {
+				return Promise.reject("Failed to Git initialize project.");
+			});
+		})
+		.then(function() {
+			if (__data.git_commit) {
+				return git
+					.add("./*")
+					.then(function() {
+						return git.commit(
+							"chore: Initial commit\n\nProject initialization."
+						);
+					})
+					.then(null, function() {
+						return Promise.reject("Failed to make first commit.");
+					});
+			}
+		})
+		.then(function() {
+			if (__data.git_push) {
+				return git
+					.push(["-u", "origin", "master"])
+					.then(final_success, function() {
+						return Promise.reject(
+							"Failed to push project to repo."
+						);
+					});
+			}
+		})
+		.then(function() {
+			done();
+		})
+		.catch(function(err_message) {
+			print.gulp(err_message);
+		});
+
+	function final_success() {
+		print.gulp.info("Set a default editor if not set already.");
+		print.gulp.info(
+			"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
+		);
+		print.gulp.success(
+			"Git initialized and configured ($ git config --list --local)."
+		);
+	}
+
+	function init_repo(git) {
+		return git.init().then(function() {
+			// Add custom Git configuration settings.
+			git.addConfig("core.autocrlf", "input");
+			git.addConfig("core.fileMode", false);
+			git.addConfig("user.name", `${__data.git_id}`);
+			git.addConfig("user.email", `${__data.email}`);
+
+			// Add the remote is user wanted to.
+			if (__data.git_remote) {
+				// Get the needed user data.
+				var type = __data.git_repo_type;
+				var username = __data.git_id;
+				var repo_name = __data.repo_name;
+
+				// Use the project name as the repo name.
+				if (__data.same_name) {
+					repo_name = __data.name;
 				}
 
-				// Make the first commit.
-				git
-					.add("./*")
-					.commit(
-						"chore: Initial commit\n\nProject initialization.",
-						function() {
-							print.gulp.info(
-								"It not already set, make sure to set your default text editor."
-							);
-							print.gulp.info(
-								"https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
-							);
-							print.gulp.success(
-								"Git initialized and configured ($ git config --list --local)."
-							);
+				// Make the remote string.
+				var remote_template =
+					type === "ssh"
+						? `git@github.com:${username}/${repo_name}.git`
+						: `https://github.com/${username}/${repo_name}.git`;
 
-							done();
-						}
-					);
+				// Add the remote.
+				git.addRemote("origin", remote_template);
 			}
-		);
-	});
+		});
+	}
 });

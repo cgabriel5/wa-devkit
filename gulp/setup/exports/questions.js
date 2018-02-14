@@ -83,12 +83,6 @@ module.exports = {
 			name: "email",
 			message: "Email:",
 			default: "johndoe@example.com"
-		},
-		{
-			type: "input",
-			name: "git_id",
-			message: "GitHub username:",
-			default: "johndoe23"
 		}
 	],
 	license: [
@@ -159,6 +153,51 @@ module.exports = {
 				};
 				// Work the answer to remove all unneeded text.
 				return options[answer];
+			}
+		}
+	],
+	github: [
+		{
+			type: "input",
+			name: "git_id",
+			message: "Username:",
+			default: "johndoe23"
+		},
+		{
+			type: "confirm",
+			name: "git_remote",
+			message: "Add origin remote?"
+		},
+		{
+			type: "list",
+			name: "git_repo_type",
+			message: "Use:",
+			choices: ["HTTPS", "SSH"],
+			default: "SSH",
+			when: function(answers) {
+				// Only ask question when git_remote is true.
+				return answers.git_remote;
+			},
+			filter: function(type) {
+				return type.toLowerCase();
+			}
+		},
+		{
+			type: "confirm",
+			name: "git_commit",
+			message: "Make initial commit?",
+			when: function(answers) {
+				// Only ask question when git_remote is true.
+				return answers.git_remote && answers.git_repo_type;
+			}
+		},
+		{
+			type: "confirm",
+			name: "git_push",
+			message: "Push repo?",
+			when: function(answers) {
+				// Only ask question when git_commit is true.
+				return answers.git_commit;
 			}
 		}
 	]
