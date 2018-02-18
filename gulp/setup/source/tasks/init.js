@@ -1,11 +1,10 @@
 /**
- * The default Gulp task. As this file is the Gulp setup file this task
+ * The default Gulp task. As this file is the Gulp setup file, this task
  *     does nothing but tell the user to run the init task before running
  *     the default task. The init task will ask questions to setup the
  *     project.
  */
 gulp.task("default", function(done) {
-	// Show the user the init message.
 	print.gulp.info("To start project setup run: $ gulp init.");
 	done();
 });
@@ -24,13 +23,13 @@ gulp.task("init", function(done) {
 	print.ln();
 
 	/**
-	 * Prints the message group name.
+	 * Prints current setup question section.
 	 *
-	 * @param  {string} message - The group message name.
+	 * @param  {string} section - The name of the current section.
 	 * @return {undefined} - Nothing.
 	 */
-	function sep_message(message) {
-		var messages = {
+	function print_header_section(section) {
+		var sections = {
 			initial: "Project Questions",
 			author: "Author Questions",
 			license: "Generate License",
@@ -39,10 +38,20 @@ gulp.task("init", function(done) {
 		};
 
 		// Overwrite the var.
-		message = messages[message];
+		var header = sections[section];
 
 		print.ln();
-		print(chalk.green(`${message}\n`));
+		print(chalk.green(`${header}\n`));
+	}
+
+	/**
+	 * Make template-error question-setup message.
+	 *
+	 * @param  {string} section - The name of the current section.
+	 * @return {string} - The setup error.
+	 */
+	function setup_error(section) {
+		return `Something went wrong with the ${section} questions.`;
 	}
 
 	// Promises:
@@ -56,60 +65,50 @@ gulp.task("init", function(done) {
 				return Promise.reject("Project setup was aborted.");
 			}
 
-			sep_message("initial");
+			print_header_section("initial");
 
 			return inquirer.prompt(QUESTIONS.initial).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the initial questions."
-				);
+				return Promise.reject(setup_error("initial"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("author");
+			print_header_section("author");
 
 			return inquirer.prompt(QUESTIONS.author).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the author questions."
-				);
+				return Promise.reject(setup_error("author"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("license");
+			print_header_section("license");
 
 			return inquirer.prompt(QUESTIONS.license).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the license questions."
-				);
+				return Promise.reject(setup_error("license"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("app");
+			print_header_section("app");
 
 			return inquirer.prompt(QUESTIONS.app).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the app questions."
-				);
+				return Promise.reject(setup_error("app"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("github");
+			print_header_section("github");
 
 			return inquirer.prompt(QUESTIONS.github).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the GitHub questions."
-				);
+				return Promise.reject(setup_error("GitHub"));
 			});
 		})
 		.then(function(answers) {
@@ -170,12 +169,10 @@ gulp.task("init", function(done) {
 						"init:settings-internal",
 						"init:settings-main",
 						"init:clean-docs",
-						// !-- The following 2 tasks are only ran
-						// for library type projects. They are
-						// removed for webapp projects.
+						// Note: The following 2 tasks are only for library
+						// type projects and are removed for webapp projects.
 						"init:--lib-remove-webapp-files",
 						"init:--lib-add-library-files",
-						// --!
 						"init:create-license",
 						"init:fill-placeholders",
 						"init:setup-readme",
@@ -186,8 +183,8 @@ gulp.task("init", function(done) {
 						"init:git"
 					];
 
-					// Remove steps that are only for library project setup
-					// when the apptype is set to webapp.
+					// Remove steps only for library project setup when
+					// apptype is webapp.
 					if (__data.apptype === "webapp") {
 						tasks = tasks.filter(function(task) {
 							return !-~task.indexOf("--lib");
@@ -211,6 +208,6 @@ gulp.task("init", function(done) {
 			);
 		})
 		.catch(function(err_message) {
-			print.gulp(err_message);
+			print.gulp.error(err_message);
 		});
 });
