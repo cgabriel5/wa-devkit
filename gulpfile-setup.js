@@ -18,29 +18,8 @@ var path = require("path");
 // Lazy load gulp plugins.
 var $ = require("gulp-load-plugins")({
 	rename: {
-		"gulp-if": "gulpif",
-		"gulp-markdown": "marked",
-		"gulp-purifycss": "purify",
-		"gulp-clean-css": "clean_css",
-		"gulp-json-sort": "json_sort",
-		"gulp-jsbeautifier": "beautify",
-		"gulp-minify-html": "minify_html",
 		"gulp-prettier-plugin": "prettier",
-		"gulp-inject-content": "injection",
-		"gulp-real-favicon": "real_favicon",
-		"gulp-strip-json-comments": "strip_jsonc"
-	},
-	postRequireTransforms: {
-		json_sort: function(plugin) {
-			return plugin.default;
-		},
-		uglify: function() {
-			// By default es-uglify is used to uglify JS.
-			// [https://stackoverflow.com/a/45554108]
-			var uglifyjs = require("uglify-es");
-			var composer = require("gulp-uglify/composer");
-			return composer(uglifyjs, console);
-		}
+		"gulp-inject-content": "injection"
 	}
 });
 
@@ -49,11 +28,11 @@ var pump = require("pump");
 var chalk = require("chalk");
 var cmd = require("node-cmd");
 var json = require("json-file");
-var sgit = require("simple-git/promise");
 var inquirer = require("inquirer");
 var jsonc = require("comment-json");
 var sequence = require("run-sequence");
 var license = require("create-license");
+var sgit = require("simple-git/promise");
 var alphabetize = require("alphabetize-object-keys");
 
 // Project utils.
@@ -126,13 +105,12 @@ var JINDENT = APP.indent_char;
 // -----------------------------------------------------------------------------
 
 /**
- * The default Gulp task. As this file is the Gulp setup file this task
+ * The default Gulp task. As this file is the Gulp setup file, this task
  *     does nothing but tell the user to run the init task before running
  *     the default task. The init task will ask questions to setup the
  *     project.
  */
 gulp.task("default", function(done) {
-	// Show the user the init message.
 	print.gulp.info("To start project setup run: $ gulp init.");
 	done();
 });
@@ -151,13 +129,13 @@ gulp.task("init", function(done) {
 	print.ln();
 
 	/**
-	 * Prints the message group name.
+	 * Prints current setup question section.
 	 *
-	 * @param  {string} message - The group message name.
+	 * @param  {string} section - The name of the current section.
 	 * @return {undefined} - Nothing.
 	 */
-	function sep_message(message) {
-		var messages = {
+	function print_header_section(section) {
+		var sections = {
 			initial: "Project Questions",
 			author: "Author Questions",
 			license: "Generate License",
@@ -166,10 +144,20 @@ gulp.task("init", function(done) {
 		};
 
 		// Overwrite the var.
-		message = messages[message];
+		var header = sections[section];
 
 		print.ln();
-		print(chalk.green(`${message}\n`));
+		print(chalk.green(`${header}\n`));
+	}
+
+	/**
+	 * Make template-error question-setup message.
+	 *
+	 * @param  {string} section - The name of the current section.
+	 * @return {string} - The setup error.
+	 */
+	function setup_error(section) {
+		return `Something went wrong with the ${section} questions.`;
 	}
 
 	// Promises:
@@ -183,60 +171,50 @@ gulp.task("init", function(done) {
 				return Promise.reject("Project setup was aborted.");
 			}
 
-			sep_message("initial");
+			print_header_section("initial");
 
 			return inquirer.prompt(QUESTIONS.initial).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the initial questions."
-				);
+				return Promise.reject(setup_error("initial"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("author");
+			print_header_section("author");
 
 			return inquirer.prompt(QUESTIONS.author).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the author questions."
-				);
+				return Promise.reject(setup_error("author"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("license");
+			print_header_section("license");
 
 			return inquirer.prompt(QUESTIONS.license).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the license questions."
-				);
+				return Promise.reject(setup_error("license"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("app");
+			print_header_section("app");
 
 			return inquirer.prompt(QUESTIONS.app).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the app questions."
-				);
+				return Promise.reject(setup_error("app"));
 			});
 		})
 		.then(function(answers) {
 			// Store the answers.
 			__answers.push(answers);
 
-			sep_message("github");
+			print_header_section("github");
 
 			return inquirer.prompt(QUESTIONS.github).then(null, function() {
-				return Promise.reject(
-					"Something went wrong with the GitHub questions."
-				);
+				return Promise.reject(setup_error("GitHub"));
 			});
 		})
 		.then(function(answers) {
@@ -297,12 +275,10 @@ gulp.task("init", function(done) {
 						"init:settings-internal",
 						"init:settings-main",
 						"init:clean-docs",
-						// !-- The following 2 tasks are only ran
-						// for library type projects. They are
-						// removed for webapp projects.
+						// Note: The following 2 tasks are only for library
+						// type projects and are removed for webapp projects.
 						"init:--lib-remove-webapp-files",
 						"init:--lib-add-library-files",
-						// --!
 						"init:create-license",
 						"init:fill-placeholders",
 						"init:setup-readme",
@@ -313,8 +289,8 @@ gulp.task("init", function(done) {
 						"init:git"
 					];
 
-					// Remove steps that are only for library project setup
-					// when the apptype is set to webapp.
+					// Remove steps only for library project setup when
+					// apptype is webapp.
 					if (__data.apptype === "webapp") {
 						tasks = tasks.filter(function(task) {
 							return !-~task.indexOf("--lib");
@@ -338,7 +314,7 @@ gulp.task("init", function(done) {
 			);
 		})
 		.catch(function(err_message) {
-			print.gulp(err_message);
+			print.gulp.error(err_message);
 		});
 });
 
@@ -347,11 +323,9 @@ gulp.task("init", function(done) {
 // -----------------------------------------------------------------------------
 
 /**
- * Initialization step: Update the app config file with the user
- *     provided values.
+ * Initialization step: Update app config file with the user provided values.
  */
 gulp.task("init:app-settings", function(done) {
-	// Run gulp process.
 	pump(
 		[
 			gulp.src($paths.config_app, {
@@ -444,22 +418,17 @@ gulp.task("init:settings-internal", function(done) {
  *     to generate the collective .__settings.js file.
  */
 gulp.task("init:settings-main", function(done) {
-	// Make the main settings file.
-	pump(
-		[
-			gulp.src($paths.config_settings_json_files, {
-				cwd: $paths.basedir
-			}),
-			$.debug(),
-			$.strip_jsonc(), // Remove any JSON comments.
-			$.jsoncombine($paths.config_settings_name, function(data) {
-				return new Buffer(JSON.stringify(data, null, JINDENT));
-			}),
-			gulp.dest($paths.config_home),
-			$.debug.edit()
-		],
-		done
-	);
+	// Create settings file by running settings task from the main gulp file.
+	cmd.get(`gulp -f gulpfile-main.js settings --rebuild`, function(err, data) {
+		if (err) {
+			throw err;
+		}
+
+		// Highlight data string.
+		print(cli_highlight(data));
+
+		done();
+	});
 });
 
 /**
@@ -467,8 +436,7 @@ gulp.task("init:settings-main", function(done) {
  *     setting up a webapp or library.
  */
 gulp.task("init:clean-docs", function(done) {
-	// Get the correct file sub types to remove. This depends on the project
-	// setup.
+	// Get the correct file sub types to remove (depends on project setup).
 	var files =
 		$paths[
 			"gulp_setup_docs_" + (__data.apptype === "webapp" ? "lib" : "app")
@@ -580,7 +548,6 @@ gulp.task("init:create-license", function(done) {
  * Initialization step: Replaces placeholders with the provided data.
  */
 gulp.task("init:fill-placeholders", function(done) {
-	// Replace placeholder with real data.
 	pump(
 		[
 			gulp.src(
@@ -640,11 +607,10 @@ gulp.task("init:rename-gulpfile", function(done) {
 });
 
 /**
- * Initialization step: Removes all setup files as they are no longer
- *     needed in the further steps.
+ * Initialization step: Remove all setup files and old .git/ folder as
+ *     they are no longer needed in the further steps.
  */
 gulp.task("init:remove-setup", function(done) {
-	// Remove the setup files/folders/old .git folder.
 	pump(
 		[
 			gulp.src([$paths.gulp_file_setup, $paths.gulp_setup, $paths.git], {
@@ -674,7 +640,6 @@ gulp.task("init:create-bundles", function(done) {
 		// Highlight data string.
 		print(cli_highlight(data));
 
-		// End the task.
 		done();
 	});
 });
@@ -694,7 +659,6 @@ gulp.task("init:pretty", function(done) {
 		// Highlight data string.
 		print(cli_highlight(data));
 
-		// End the task.
 		done();
 	});
 });
