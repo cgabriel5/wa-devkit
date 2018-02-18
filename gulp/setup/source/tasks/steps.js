@@ -1,9 +1,7 @@
 /**
- * Initialization step: Update the app config file with the user
- *     provided values.
+ * Initialization step: Update app config file with the user provided values.
  */
 gulp.task("init:app-settings", function(done) {
-	// Run gulp process.
 	pump(
 		[
 			gulp.src($paths.config_app, {
@@ -96,22 +94,17 @@ gulp.task("init:settings-internal", function(done) {
  *     to generate the collective .__settings.js file.
  */
 gulp.task("init:settings-main", function(done) {
-	// Make the main settings file.
-	pump(
-		[
-			gulp.src($paths.config_settings_json_files, {
-				cwd: $paths.basedir
-			}),
-			$.debug(),
-			$.strip_jsonc(), // Remove any JSON comments.
-			$.jsoncombine($paths.config_settings_name, function(data) {
-				return new Buffer(JSON.stringify(data, null, JINDENT));
-			}),
-			gulp.dest($paths.config_home),
-			$.debug.edit()
-		],
-		done
-	);
+	// Create settings file by running settings task from the main gulp file.
+	cmd.get(`gulp -f gulpfile-main.js settings --rebuild`, function(err, data) {
+		if (err) {
+			throw err;
+		}
+
+		// Highlight data string.
+		print(cli_highlight(data));
+
+		done();
+	});
 });
 
 /**
@@ -119,8 +112,7 @@ gulp.task("init:settings-main", function(done) {
  *     setting up a webapp or library.
  */
 gulp.task("init:clean-docs", function(done) {
-	// Get the correct file sub types to remove. This depends on the project
-	// setup.
+	// Get the correct file sub types to remove (depends on project setup).
 	var files =
 		$paths[
 			"gulp_setup_docs_" + (__data.apptype === "webapp" ? "lib" : "app")
@@ -232,7 +224,6 @@ gulp.task("init:create-license", function(done) {
  * Initialization step: Replaces placeholders with the provided data.
  */
 gulp.task("init:fill-placeholders", function(done) {
-	// Replace placeholder with real data.
 	pump(
 		[
 			gulp.src(
@@ -292,11 +283,10 @@ gulp.task("init:rename-gulpfile", function(done) {
 });
 
 /**
- * Initialization step: Removes all setup files as they are no longer
- *     needed in the further steps.
+ * Initialization step: Remove all setup files and old .git/ folder as
+ *     they are no longer needed in the further steps.
  */
 gulp.task("init:remove-setup", function(done) {
-	// Remove the setup files/folders/old .git folder.
 	pump(
 		[
 			gulp.src([$paths.gulp_file_setup, $paths.gulp_setup, $paths.git], {
@@ -326,7 +316,6 @@ gulp.task("init:create-bundles", function(done) {
 		// Highlight data string.
 		print(cli_highlight(data));
 
-		// End the task.
 		done();
 	});
 });
@@ -346,7 +335,6 @@ gulp.task("init:pretty", function(done) {
 		// Highlight data string.
 		print(cli_highlight(data));
 
-		// End the task.
 		done();
 	});
 });
