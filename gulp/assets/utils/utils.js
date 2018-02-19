@@ -169,7 +169,7 @@ var current_task = function(gulp) {
 	// [http://stackoverflow.com/a/27535245]
 	gulp.Gulp.prototype.__runTask = gulp.Gulp.prototype._runTask;
 	gulp.Gulp.prototype._runTask = function(task) {
-		this.__wadevkit = {
+		this.__wapplr = {
 			debug: {
 				name: task.name
 			}

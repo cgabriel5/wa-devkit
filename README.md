@@ -1,10 +1,14 @@
-<p align="center"><img src="/docs/brand/img/leaf-216.png?raw=true" alt="wa-devkit logo-leaf" width="8%"></p>
-<p align="center"><img src="/docs/brand/img/text.png?raw=true" alt="wa-devkit logo-text" width="40%"></p>
-<p align="center"><code>wa-devkit</code> (WebApplication-DevelopmentKit) is a simple, easy-to-use, modular<br>boilerplate solution made for building web-applications or JavaScript libraries.</p>
+<p align="center"><img src="/docs/brand/img/leaf-216.png?raw=true" alt="logo-leaf" width="8%"></p>
+<p align="center"><img src="/docs/brand/img/text.png?raw=true" alt="logo-text" width="25%"></p>
+<p align="center"><code><b>w</b>eb-<b>app</b>-boi<b>l</b>e<b>r</b></code> is an easy-to-use boilerplate and tooling solution.</p>
 <h1></h1>
 
+### Overview
+
+Having to start a project, while not hard, can be annoying. Creating the file structure, writing the usual HTML5 boiler code, adding a CSS reset, jQuery, Modernizr, etc... (*the list goes on*). This project aims to circumvent all that. Simply download the project, start the setup via the command line to answer some questions about your new project, and a base project will get scaffolded so you can get to developing. This project also bakes in a lot of Gulp *tooling* to help make developing easier. For example, live-reloading, converting `.md` files to `.html` for quick previewing, generating project favicons, and many other things are made easy by running the provided Gulp commands. 
+
 ### Quick Start
-1. Clone repo &mdash; `$ git clone https://github.com/cgabriel5/wa-devkit.git "my_app_name"`
+1. Clone repo &mdash; `$ git clone https://github.com/cgabriel5/wapplr.git "my-app"`
 2. [Setup](/docs/setup.md) boilerplate to get up and running:
 	- First install dependencies... &mdash; `$ yarn install`
 	- ...then start setup prompt. &mdash; `$ gulp -f gulpfile-setup.js init`

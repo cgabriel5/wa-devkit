@@ -7,11 +7,11 @@
 		console.log("Client browser-sync socket.io connected.");
 
 		// Add socket listener for our custom event.
-		socket.on("wadevkit:get-url", function(data) {
-			console.log("sent wadevkit:get-url");
+		socket.on("wapplr:get-url", function(data) {
+			console.log("sent wapplr:get-url");
 
 			// Send the URL to server.
-			socket.emit("wadevkit:url", {
+			socket.emit("wapplr:url", {
 				url: window.location.href
 			});
 		});

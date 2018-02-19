@@ -12,7 +12,7 @@ Browsers that support [`data:text/html`](https://developer.mozilla.org/en-US/doc
 
 ### Text Logo
 
-The `wa-devkit` text logo uses the [Quicksand](https://fonts.google.com/specimen/Quicksand) free Google font with the following configuration:
+The project text logo uses the [Quicksand](https://fonts.google.com/specimen/Quicksand) free Google font with the following configuration:
 
 ```json
 {

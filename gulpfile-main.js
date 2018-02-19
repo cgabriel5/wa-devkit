@@ -1296,11 +1296,11 @@ gulp.task("watch", function(done) {
 		// 	print("Server browser-sync socket.io connected.");
 
 		// 	// Send custom event.
-		// 	// __bs.sockets.emit("wadevkit:get-url");
+		// 	// __bs.sockets.emit("wapplr:get-url");
 
 		// 	// Listen to custom event from the client.
-		// 	socket.on("wadevkit:url", function(data) {
-		// 		console.log("got wadevkit:get-url");
+		// 	socket.on("wapplr:url", function(data) {
+		// 		console.log("got wapplr:get-url");
 
 		// 		var url = require("url-parse");
 		// 		var parsed = new url(data.url);
