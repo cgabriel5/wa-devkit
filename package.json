@@ -94,7 +94,7 @@
 		"text-table": "^0.2.0",
 		"uglify-es": "^3.3.10",
 		"url-parse": "^1.1.9",
-		"yargs": "^11.0.0"
+		"yargs": "^8.0.2"
 	},
 	"homepage": "https://github.com/johndoe_/my-app#readme",
 	"license": "MIT",
