@@ -1,5 +1,5 @@
-<p align="center"><img src="/docs/brand/img/leaf-216.png?raw=true" alt="logo-leaf" width="8%"></p>
-<p align="center"><img src="/docs/brand/img/text.png?raw=true" alt="logo-text" width="25%"></p>
+<p align="center"><img src="/docs/branding/leaf-216.png?raw=true" alt="logo-leaf" width="8%"></p>
+<p align="center"><img src="/docs/branding/text.png?raw=true" alt="logo-text" width="25%"></p>
 <p align="center"><code><b>w</b>eb-<b>app</b>-boi<b>l</b>e<b>r</b></code> is an easy-to-use boilerplate and tooling solution.</p>
 <h1></h1>
 
