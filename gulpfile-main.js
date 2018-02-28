@@ -840,24 +840,30 @@ gulp.task("default", ["default:active-pid-check"], function(done) {
 			$configs.findfreeport.range.end,
 			$configs.findfreeport.ip,
 			$configs.findfreeport.count,
-			function(err, p1, p2) {
+			function(err) {
+				// Ports are in this order: p1:local, p2:UI.
 				if (err) {
 					reject(err);
 				}
 
-				// Reset the ports when ports are provided.
+				// Reset the ports (local, UI) when ports are provided via
+				// the CLI.
 				if (ports) {
-					// Reset the local port if provided via CLI.
-					if (ports[0]) {
-						p1 = ports[0] * 1; // Cast to number.
-					}
-					// Reset the UI port if provided via CLI.
-					if (ports[1]) {
-						p2 = ports[1] * 1; // Cast to number.
+					// Reset the port values.
+					for (var i = 1, l = arguments.length; i < l; i++) {
+						// Get the argument and port.
+						var argument = arguments[i];
+						var port = ports[i - 1];
+
+						// There must be a port to make the change.
+						if (port) {
+							arguments[i] = port * 1;
+						}
 					}
 				}
 
-				resolve([p1, p2]);
+				// Resolve the promise and return the ports.
+				resolve([arguments[1], arguments[2]]);
 			}
 		);
 	})
