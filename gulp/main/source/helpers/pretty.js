@@ -42,22 +42,28 @@ gulp.task("pretty:gitfiles", function(done) {
 	staged = staged ? "--cached" : "";
 
 	// Diff filter: [https://stackoverflow.com/a/6879568]
+	// Untracked files: [https://stackoverflow.com/a/3801554]
 	// Example plugin: [https://github.com/azz/pretty-quick]
 
-	// The command to run.
-	var command = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
+	// The commands to run.
+	var untracked_files = "git ls-files --others --exclude-standard";
+	var git_diff_files = `git diff --name-only --diff-filter="ACMRTUB" ${staged}`;
 
 	// Get the list of modified files.
-	cmd.get(command, function(err, data) {
-		// Clean the data.
-		data = data.trim();
+	cmd.get(
+		`${git_diff_files}
+		${untracked_files}`,
+		function(err, data) {
+			// Clean the data.
+			data = data.trim();
 
-		// Set the variable. If the data is empty there are no
-		// files to prettify so return an empty array.
-		__modified_git_files = data ? data.split("\n") : [];
+			// Set the variable. If the data is empty there are no
+			// files to prettify so return an empty array.
+			__modified_git_files = data ? data.split("\n") : [];
 
-		return done();
-	});
+			return done();
+		}
+	);
 });
 
 /**
