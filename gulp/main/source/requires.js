@@ -15,7 +15,6 @@ var path = require("path");
 var $ = require("gulp-load-plugins")({
 	rename: {
 		"gulp-if": "gulpif",
-		"gulp-markdown": "marked",
 		"gulp-purifycss": "purify",
 		"gulp-clean-css": "clean_css",
 		"gulp-json-sort": "json_sort",
