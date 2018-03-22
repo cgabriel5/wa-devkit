@@ -416,11 +416,6 @@ gulp.task("init:git", function(done) {
 				var username = __data.git_id;
 				var repo_name = __data.repo_name;
 
-				// Use the project name as the repo name.
-				if (__data.same_name) {
-					repo_name = __data.name;
-				}
-
 				// Make the remote string.
 				var remote_template =
 					type === "ssh"

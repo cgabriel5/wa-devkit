@@ -122,6 +122,12 @@ gulp.task("init", function(done) {
 			__data = answers;
 			var type = __data.apptype;
 
+			// Use the project name as the repo name when the same name
+			// flag is true.
+			if (__data.same_name) {
+				__data.repo_name = __data.name;
+			}
+
 			// Set the path for js option.
 			$paths.js_options_dynamic = `gulp/setup/${type}/**/*.*`;
 
