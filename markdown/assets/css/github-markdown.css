@@ -788,3 +788,19 @@ svg:not(:root) {
 		padding: 15px;
 	}
 }
+
+@media (max-width: 1000px) {
+	.markdown-body {
+		margin: auto auto 0;
+		border: none;
+	}
+
+	.github-heading {
+		margin: 0 auto auto;
+		border: none;
+	}
+
+	body {
+		margin: 0;
+	}
+}
