@@ -18,9 +18,7 @@
 	line-height: 1.5;
 	word-wrap: break-word;
 	color: #24292e;
-	-webkit-text-size-adjust: 100%;
-	    -ms-text-size-adjust: 100%;
-	        text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 .markdown-body .pl-c {
@@ -125,7 +123,8 @@
 }
 
 .markdown-body .pl-mi2 {
-	background-color: #f6f8fa;
+	/*background-color: #f6f8fa;*/
+	background-color: #fbfbfb;
 	background-color: #005cc5;
 }
 
@@ -155,8 +154,7 @@
 
 .markdown-body a {
 	background-color: transparent;
-	-webkit-text-decoration-skip: objects;
-	        text-decoration-skip: objects;
+	text-decoration-skip: objects;
 }
 
 .markdown-body a:active,
@@ -592,7 +590,8 @@
 }
 
 .markdown-body table tr:nth-child(2n) {
-	background-color: #f6f8fa;
+	/*background-color: #f6f8fa;*/
+	background-color: #fbfbfb;
 }
 
 .markdown-body img {
@@ -645,8 +644,8 @@
 	overflow: auto;
 	padding: 16px;
 	border-radius: 3px;
-	/* Custom color */
-	background-color: #f6f8fa;
+	/* Custom color *//*background-color: #f6f8fa;*/
+	background-color: #fbfbfb;
 }
 
 .markdown-body pre code {
@@ -673,6 +672,7 @@
 .markdown-body pre code {
 	color: #333333;
 	/*background: #f6f8fa;*/
+	background: #fbfbfb;
 }
 
 .markdown-body pre code::before,
@@ -756,7 +756,8 @@ svg:not(:root) {
 .github-heading {
 	display: block;
 	padding: 9px 10px 10px;
-	background-color: #f6f8fa;
+	/*background-color: #f6f8fa;*/
+	background-color: #fbfbfb;
 	border: 1px solid rgba(27, 31, 35, 0.15);
 	border-bottom: 0;
 	border-radius: 3px 3px 0 0;
