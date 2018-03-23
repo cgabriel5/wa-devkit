@@ -25,14 +25,14 @@ The following steps show how to add a `JavaScript` third-party library. Although
 
 1. The project provides a handy Gulp helper task to make this move easy. Simply run the following command:
 	- `$ yarn add jquery`
-	- `$ gulp dependency --type js --action add --name jquery`
+	- `$ gulp dependency --add jquery --type js`
 2. Once moved, you have to then properly link things together.
 	- This includes finding the path of the library and updating [`./configs/bundles.json`](/configs/bundles.json).
 	- Inside [`./configs/bundles.json`](/configs/bundles.json) the library path needs to be added to the `js.vendor.files` array.
 	- It is important to note that the array order is very important as it tells Gulp the order in which [`./js/bundles/vendor.js`](/js/bundles/vendor.js) needs to be built.
 3. Run `$ gulp js:vendor` to re-build [`./js/bundles/vendor.js`](/js/bundles/vendor.js).
 
-**Note**: For `library` projects [`./js/vendor/__init__.js`](/js/vendor/__init__.js) should always be last in the array as it is meant to help initialize any third-party library. In other words, any code needed to help initialize the used libraries must go in this file.
+**Note**: For `library` projects [`./js/vendor/__init.js`](/js/vendor/__init.js) should always be last in the array as it is meant to help initialize any third-party library. In other words, any code needed to help initialize the used libraries must go in this file.
 
 <a name="library-add-css"></a>
 ### CSS
@@ -47,7 +47,7 @@ The following steps show how to add a `CSS` third-party library. Although alread
 
 1. The project provides a handy Gulp helper task to make this move easy. Simply run the following command:
 	- `$ yarn add font-awesome`
-	- `$ gulp dependency --type css --action add --name font-awesome`
+	- `$ gulp dependency --add font-awesome --type css`
 2. Once moved, you have to then properly link things together.
 	- This includes finding the path of the library and updating [`./configs/bundles.json`](/configs/bundles.json).
 	- Inside [`./configs/bundles.json`](/configs/bundles.json) the library path needs to be added to the `css.vendor.files` array.
@@ -71,13 +71,13 @@ The following steps show how to remove a `JavaScript` third-party library. For t
 
 1. The project provides a handy Gulp helper task to make this move easy. Simply run the following command:
 	- `$ yarn remove jquery`
-	- `$ gulp dependency --type js --action remove --name jquery`
+	- `$ gulp dependency --remove jquery --type js`
 2. Once removed, you have to then properly unlink the library.
 	- Simply remove the file the `js.vendor.files` array in [`./configs/bundles.json`](/configs/bundles.json).
 	- It is important to note that the array order is very important as it tells Gulp the order in which [`./js/bundles/vendor.js`](/js/bundles/vendor.js) needs to be built so leave other library file paths alone.
 3. Run `$ gulp js:vendor` to re-build [`./js/bundles/vendor.js`](/js/bundles/vendor.js).
 
-**Note**: For `library` projects [`./js/vendor/__init__.js`](/js/vendor/__init__.js) should always be last in the array as it is meant to help initialize any third-party library. In other words, any code needed to help initialize the used libraries must go in this file.
+**Note**: For `library` projects [`./js/vendor/__init.js`](/js/vendor/__init.js) should always be last in the array as it is meant to help initialize any third-party library. In other words, any code needed to help initialize the used libraries must go in this file.
 
 <a name="library-remove-css"></a>
 ### CSS
@@ -92,7 +92,7 @@ The following steps show how to remove a `CSS` third-party library. For the sake
 
 1. The project provides a handy Gulp helper task to make this move easy. Simply run the following command:
 	- `$ yarn remove sanitize.css`
-	- `$ gulp dependency --type css --action remove --name sanitize.css`
+	- `$ gulp dependency --remove sanitize.css --type css`
 2. Once removed, you have to then properly unlink the library.
 	- Simply remove the file the `css.vendor.files` array in [`./configs/bundles.json`](/configs/bundles.json).
 	- It is important to note that the array order is very important as it tells Gulp the order in which [`./css/bundles/vendor.css`](/css/bundles/vendor.css) needs to be built so leave other library file paths alone.

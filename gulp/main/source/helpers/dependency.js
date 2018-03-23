@@ -3,8 +3,8 @@
  *
  * • Dependencies are grabbed from ./node_modules/<name> and moved
  *   to its corresponding ./<type>/vendor/ folder.
- * • name, type, and action options are grouped. This means when one
- *   is used they must all be provided.
+ * • name and type options are grouped. This means when one is used
+ *   they must all be provided.
  *
  * Group 1:
  * -a, --add <string> OR -r, --remove <string>
