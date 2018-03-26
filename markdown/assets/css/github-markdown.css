@@ -18,7 +18,9 @@
 	line-height: 1.5;
 	word-wrap: break-word;
 	color: #24292e;
-	text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	    -ms-text-size-adjust: 100%;
+	        text-size-adjust: 100%;
 }
 
 .markdown-body .pl-c {
@@ -154,7 +156,8 @@
 
 .markdown-body a {
 	background-color: transparent;
-	text-decoration-skip: objects;
+	-webkit-text-decoration-skip: objects;
+	        text-decoration-skip: objects;
 }
 
 .markdown-body a:active,
