@@ -2014,20 +2014,27 @@ gulp.task("tohtml", ["tohtml:prepcss"], function(done) {
 											}
 										}
 
+										// Get the absolute path of the file.
+										var findup_path = findup.sync(
+											`${path.join(
+												parts.dir,
+												parts.name + parts.ext
+											)}`
+										);
+										// When the file path does not exist
+										// findup returns null. In this case
+										// just return the original path.
+										var url_path = findup_path
+											? path.relative(
+													$paths.cwd,
+													findup_path
+												) + parts.trail
+											: url;
+
 										// Create the new resource HTTP URL.
 										url = uri({
 											appdir: APPDIR,
-											filepath:
-												path.relative(
-													$paths.cwd,
-													findup.sync(
-														`${path.join(
-															parts.dir,
-															parts.name +
-																parts.ext
-														)}`
-													)
-												) + parts.trail,
+											filepath: url_path,
 											https: HTTPS
 										});
 
