@@ -39,6 +39,7 @@ var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 var REALFAVICONGEN = get($configs, "realfavicongen", {});
 var BROWSERSYNC = get($configs, "browsersync", {});
+var HTMLMIN = get($configs, "htmlmin", {});
 
 // Internal information.
 var INT_APPTYPE = get($internal.data, "apptype", "");

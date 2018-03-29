@@ -134,7 +134,7 @@ gulp.task("dist:root", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(extension.ishtml, $.minify_html()),
+			$.gulpif(extension.ishtml, $.htmlmin(HTMLMIN)),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],

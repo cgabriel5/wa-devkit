@@ -47,6 +47,7 @@
 		"gulp-fn": "^0.0.0",
 		"gulp-foreach": "^0.1.0",
 		"gulp-htmllint": "^0.0.14",
+		"gulp-htmlmin": "^4.0.0",
 		"gulp-if": "^2.0.2",
 		"gulp-imagemin": "^4.1.0",
 		"gulp-inject-content":
@@ -57,7 +58,6 @@
 		"gulp-json-sort": "^1.0.0",
 		"gulp-jsoncombine": "^1.0.4",
 		"gulp-load-plugins": "^1.5.0",
-		"gulp-minify-html": "^1.0.6",
 		"gulp-modify": "^0.1.1",
 		"gulp-noop": "^1.0.0",
 		"gulp-open": "^2.1.0",

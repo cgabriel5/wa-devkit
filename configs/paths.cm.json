@@ -52,6 +52,7 @@
 	"config_$csslint": "csslint.cm",
 	"config_$prettier": "prettier",
 	"config_$jshint": "jshint.cm",
+	"config_$htmlmin": "htmlmin",
 	"config_$bundles": "bundles",
 	"config_$csscomb": "csscomb",
 	"config_$app": "app.cm",

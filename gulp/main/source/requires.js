@@ -19,7 +19,6 @@ var $ = require("gulp-load-plugins")({
 		"gulp-clean-css": "clean_css",
 		"gulp-json-sort": "json_sort",
 		"gulp-jsbeautifier": "beautify",
-		"gulp-minify-html": "minify_html",
 		"gulp-prettier-plugin": "prettier",
 		"gulp-inject-content": "injection",
 		"gulp-real-favicon": "real_favicon",

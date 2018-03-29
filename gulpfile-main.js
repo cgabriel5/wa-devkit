@@ -23,7 +23,6 @@ var $ = require("gulp-load-plugins")({
 		"gulp-clean-css": "clean_css",
 		"gulp-json-sort": "json_sort",
 		"gulp-jsbeautifier": "beautify",
-		"gulp-minify-html": "minify_html",
 		"gulp-prettier-plugin": "prettier",
 		"gulp-inject-content": "injection",
 		"gulp-real-favicon": "real_favicon",
@@ -210,6 +209,7 @@ var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 var REALFAVICONGEN = get($configs, "realfavicongen", {});
 var BROWSERSYNC = get($configs, "browsersync", {});
+var HTMLMIN = get($configs, "htmlmin", {});
 
 // Internal information.
 var INT_APPTYPE = get($internal.data, "apptype", "");
@@ -1070,7 +1070,7 @@ gulp.task("dist:root", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(extension.ishtml, $.minify_html()),
+			$.gulpif(extension.ishtml, $.htmlmin(HTMLMIN)),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
