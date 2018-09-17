@@ -29,7 +29,7 @@ gulp.task("lib:js", function(done) {
 			$.prettier(PRETTIER),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
-			$.uglify(),
+			$.uglify(UGLIFY),
 			$.rename(BUNDLE_JS.source.names.libs.min),
 			gulp.dest($paths.lib_home),
 			$.debug.edit()

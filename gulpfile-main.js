@@ -206,6 +206,7 @@ var JINDENT = get($configs, "app.indent_char", "\t");
 // Plugin configurations.
 var PRETTIER = get($configs, "prettier", {});
 var JSBEAUTIFY = get($configs, "jsbeautify", {});
+var UGLIFY = get($configs, "uglify", {});
 var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 var CSSSORTER = get($configs, "csssorter", {});
@@ -1050,7 +1051,7 @@ gulp.task("dist:js", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(extension.isjs, $.uglify()),
+			$.gulpif(extension.isjs, $.uglify(UGLIFY)),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
@@ -1148,7 +1149,7 @@ gulp.task("lib:js", function(done) {
 			$.prettier(PRETTIER),
 			gulp.dest($paths.lib_home),
 			$.debug.edit(),
-			$.uglify(),
+			$.uglify(UGLIFY),
 			$.rename(BUNDLE_JS.source.names.libs.min),
 			gulp.dest($paths.lib_home),
 			$.debug.edit()

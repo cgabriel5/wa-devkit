@@ -35,6 +35,7 @@ var JINDENT = get($configs, "app.indent_char", "\t");
 // Plugin configurations.
 var PRETTIER = get($configs, "prettier", {});
 var JSBEAUTIFY = get($configs, "jsbeautify", {});
+var UGLIFY = get($configs, "uglify", {});
 var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
 var CSSSORTER = get($configs, "csssorter", {});

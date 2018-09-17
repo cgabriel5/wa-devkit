@@ -112,7 +112,7 @@ gulp.task("dist:js", function(done) {
 				base: $paths.dot
 			}),
 			$.debug(),
-			$.gulpif(extension.isjs, $.uglify()),
+			$.gulpif(extension.isjs, $.uglify(UGLIFY)),
 			gulp.dest($paths.dist_home),
 			$.debug.edit()
 		],
