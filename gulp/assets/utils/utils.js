@@ -132,12 +132,20 @@ var time = function() {
  * Creates an OS notifcation.
  *
  * @param {string} message - The notifcation message to display.
+ * @param {boolean} title - Optional notification title.
+ * @param {boolean} error - Optional notification message.
  * @param {boolean} error - Flag indicating what image to use.
  * @return {undefined} - Nothing.
  */
-var notify = function(message, error) {
+var notify = function(message, title, img, error) {
 	// Determine what image to show.
 	var image = (error ? "error" : "success") + "_256.png";
+	image = path.join(__dirname, "../node-notifier/" + image);
+
+	// If an image path is provided reset the local one.
+	if (img) {
+		image = img;
+	}
 
 	// // OS agnostic.
 	// notifier.notify({
@@ -152,8 +160,8 @@ var notify = function(message, error) {
 	// depending on what OS one is using. More info here:
 	// [https://github.com/tj/node-growl#installation]
 	growl(message, {
-		title: "Gulp",
-		image: path.join(__dirname, "../node-notifier/" + image)
+		title: title || "Gulp",
+		image: image
 	});
 };
 
@@ -268,6 +276,9 @@ ext.ishtml = function(file) {
 };
 ext.iscss = function(file) {
 	return ext(file, ["css"]);
+};
+ext.isscss = function(file) {
+	return ext(file, ["scss"]);
 };
 ext.isjs = function(file) {
 	return ext(file, ["js"]);

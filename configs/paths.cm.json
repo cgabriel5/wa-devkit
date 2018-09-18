@@ -98,5 +98,6 @@
 	"not_min": "!**/*.min.*",
 	"not_tests": "!**/test/**",
 	"not_vendor": "!**/vendor/**",
-	"not_ignore": "!**/*.ig.*"
+	"not_ignore": "!**/*.ig.*",
+	"not_css_source": "!**/source/css/**"
 }
