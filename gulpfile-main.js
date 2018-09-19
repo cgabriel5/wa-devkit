@@ -1427,7 +1427,9 @@ gulp.task("css:sass", function(done) {
 
 	pump(
 		[
-			gulp.src([$paths.files_all.replace(/\*$/, "scss")], {
+			// Note: Make sure to exclude partials (_filename.scss) from processing.
+			// [https://stackoverflow.com/a/38095853]
+			gulp.src([$paths.files_all.replace(/\/\*\.\*$/, "/[^_]*.*scss")], {
 				cwd: $paths.scss_source
 			}),
 			$.debug({ loader: false, title: "files for SASS processing..." }),
@@ -2698,6 +2700,8 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	var perfectionist = require("perfectionist");
 	var shorthand = require("postcss-merge-longhand");
 	var csssorter = require("postcss-sorting");
+	// PostCSS SCSS parser.
+	var postcss_scss = require("postcss-scss");
 
 	// Run yargs.
 	var __flags = yargs
@@ -2754,7 +2758,10 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 	// files can also be autoprefixed when the --cssprefix/-p flag is used.
 	var css_plugins = [perfectionist(PERFECTIONIST)];
 	// Add the sorter plugin for SCSS files.
-	var css_plugins_scss = [perfectionist(PERFECTIONIST), csssorter(CSSSORTER)];
+	var css_plugins_scss = [
+		perfectionist(Object.assign(PERFECTIONIST, { syntax: "scss" })),
+		csssorter(CSSSORTER)
+	];
 
 	// To unprefix CSS files one of two things must happen. Either the
 	// unprefix or the cssprefix flag must be provided. The unprefix flag
@@ -2898,7 +2905,16 @@ gulp.task("pretty", ["pretty:gitfiles"], function(done) {
 			// Prettify CSS files.
 			$.gulpif(extension.iscss, $.postcss(css_plugins)),
 			// Prettify SCSS files.
-			$.gulpif(extension.isscss, $.postcss(css_plugins_scss)),
+			// Needs the "postcss-scss" parser.
+			// [https://github.com/postcss/gulp-postcss#passing-additional-options-to-postcss]
+			// [https://github.com/postcss/postcss#options]
+			// [https://github.com/postcss/postcss-scss#2-inline-comments-for-postcss]
+			// [https://github.com/moczolaszlo/postcss-inline-comment/issues/4#issuecomment-140556733]
+			// [https://github.com/postcss/postcss-scss/issues/82]
+			$.gulpif(
+				extension.isscss,
+				$.postcss(css_plugins_scss, { syntax: postcss_scss })
+			),
 			$.eol(ending),
 			$.debug.edit(),
 			gulp.dest($paths.basedir)
