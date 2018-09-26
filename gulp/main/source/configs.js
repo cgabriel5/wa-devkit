@@ -38,6 +38,7 @@ var JSBEAUTIFY = get($configs, "jsbeautify", {});
 var UGLIFY = get($configs, "uglify", {});
 var AUTOPREFIXER = get($configs, "autoprefixer", {});
 var PERFECTIONIST = get($configs, "perfectionist", {});
+var SASSLINT = get($configs, "sasslint", {});
 var CSSSORTER = get($configs, "csssorter", {});
 var REALFAVICONGEN = get($configs, "realfavicongen", {});
 var BROWSERSYNC = get($configs, "browsersync", {});
